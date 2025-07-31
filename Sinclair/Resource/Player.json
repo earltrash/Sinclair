@@ -1,0 +1,245 @@
+{
+  "frames": [
+    {
+      "filename": "GreenPlane 0.png",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 100
+      },
+      "duration": 100
+    },
+    {
+      "filename": "GreenPlane 1.png",
+      "frame": {
+        "x": 200,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 100
+      },
+      "duration": 100
+    },
+    {
+      "filename": "GreenPlane 2.png",
+      "frame": {
+        "x": 400,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 100
+      },
+      "duration": 100
+    },
+    {
+      "filename": "GreenPlane 3.png",
+      "frame": {
+        "x": 600,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 100
+      },
+      "duration": 100
+    },
+    {
+      "filename": "GreenPlane 4.png",
+      "frame": {
+        "x": 800,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 100
+      },
+      "duration": 100
+    },
+    {
+      "filename": "GreenPlane 5.png",
+      "frame": {
+        "x": 0,
+        "y": 100,
+        "w": 200,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 100
+      },
+      "duration": 100
+    },
+    {
+      "filename": "GreenPlane 6.png",
+      "frame": {
+        "x": 200,
+        "y": 100,
+        "w": 200,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 100
+      },
+      "duration": 100
+    },
+    {
+      "filename": "GreenPlane 7.png",
+      "frame": {
+        "x": 400,
+        "y": 100,
+        "w": 200,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 100
+      },
+      "duration": 100
+    },
+    {
+      "filename": "GreenPlane 8.png",
+      "frame": {
+        "x": 600,
+        "y": 100,
+        "w": 200,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 100
+      },
+      "duration": 100
+    },
+    {
+      "filename": "GreenPlane 9.png",
+      "frame": {
+        "x": 800,
+        "y": 100,
+        "w": 200,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 200,
+        "h": 100
+      },
+      "duration": 100
+    }
+  ],
+  "meta": {
+    "app": "https://www.aseprite.org/",
+    "version": "1.3.14.3-x64",
+    "image": "green_plane_sprite_1000x200.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1000,
+      "h": 200
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "Idle",
+        "from": 0,
+        "to": 9,
+        "direction": "forward",
+        "color": "#000000ff"
+      }
+    ]
+  },
+  "SceneInfo": [ "Stage", "Title", "End" ]
+}

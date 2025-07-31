@@ -1,0 +1,37 @@
+{
+  "frames": [
+    {
+      "filename": "START_Button_Clean_400x400.png",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 400,
+        "h": 200
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 400,
+        "h": 200
+      },
+      "sourceSize": {
+        "w": 400,
+        "h": 200
+      },
+      "duration": 100
+    }
+  ],
+  "meta": {
+    "frameTags": [
+      {
+        "name": "Idle",
+        "from": 0,
+        "to": 0,
+        "direction": "forward"
+      }
+    ]
+  },
+  "SceneInfo": "Title"
+}
