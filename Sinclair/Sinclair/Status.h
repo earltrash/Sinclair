@@ -17,8 +17,6 @@ struct fundamentalStatus //얘는 앞 글자 소문자로 표기 , 아이템이 가져야 할 구조�
 		int luck;
 };
 
-
-
 enum class Status_Total
 {
 		Strength,
@@ -72,7 +70,30 @@ enum class Need_Moment //-> 언제 필요하냐?
 		UnKnown
 };
 
+//----------------------------------- ui ----------------------------------------
+enum class UIWindowType
+{
+		SettingsWindow = 0,         // 설정창
+		InventoryWindow,            // 인벤토리
+		InventoryTooltip,           // 인벤토리툴팁
+		EquipmentWindow,            // 장비창
+		StatsWindow,                // 스탯창
+		EnhancementWindow,          // 강화창
+		SynthesisWindow,            // 합성창
+		StatPotionUseWindow         // 스탯 증가 물약 사용창
+};
 
+enum class CursorType
+{
+		Normal,
+		Move,
+		Pointer,
+		Drag
+};
 
-
-
+enum class DragSource
+{
+		Inventory,
+		Equipment,
+		None
+};
