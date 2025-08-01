@@ -135,8 +135,10 @@
     <ClInclude Include="AssetProvider.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="CallbackType.h" />
+    <ClInclude Include="CursorManager.h" />
     <ClInclude Include="Dispatcher.h" />
     <ClInclude Include="GameManager.h" />
+    <ClInclude Include="EquipmentWindow.h" />
     <ClInclude Include="IAssetProvider.h" />
     <ClInclude Include="Scene_InGame.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -161,6 +163,8 @@
     <ClInclude Include="Status.h" />
     <ClInclude Include="TMHelper.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="UIWindow.h" />
     <ClInclude Include="UI_Renderer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +174,8 @@
     <ClCompile Include="Scene_InGame.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="EquipmentWindow.cpp" />
+    <ClCompile Include="Scene_InGame.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ItemGlobal.cpp" />
     <ClCompile Include="M_Core.cpp" />
@@ -183,6 +189,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="UIWindow.cpp" />
     <ClCompile Include="UI_Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
