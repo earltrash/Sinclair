@@ -3,9 +3,12 @@
 #include "InputManager.h"
 #include "Dispatcher.h"
 #include "SceneManager.h"
+#include "GameManager.h"
 #include "ResourceManager.h"
 #include "IAssetProvider.h"
 #include "Renderer.h"
+#include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -66,6 +69,7 @@ void M_Core::GameLoop() //event state function render
 void M_Core::FixedUpdate() //시간 처리 
 {
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->LogicUpdate(m_timer->DeltaTime());
+    GameManager::Get().gameTime += m_timer->DeltaTime();
 }
 
 void M_Core::Update()
@@ -76,8 +80,15 @@ void M_Core::Update()
 
 void M_Core::Render()
 {
+    D2DRenderer::Get().RenderBegin();
+
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
 
+    //디버깅
+    wstring d= std::to_wstring(GameManager::Get().gameTime);
+    D2DRenderer::Get().DrawMessage( d.c_str(), 1.f, 1.f, 100.f, 10.f, D2D1::ColorF::DarkMagenta);
+
+    D2DRenderer::Get().RenderEnd();
 }
 
 void M_Core::End()

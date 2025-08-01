@@ -33,6 +33,4 @@ void Scene_InGame::Exit()
 {
 }
 
-void Scene_InGame::Render()
-{
-}
+
