@@ -21,8 +21,8 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{8226ff40-1d30-4efb-8c99-dcc1eca77cf1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI">
-      <UniqueIdentifier>{0f3856a3-96e3-492f-96d7-018a203f0cd6}</UniqueIdentifier>
+    <Filter Include="Item">
+      <UniqueIdentifier>{44ed9344-3ac6-4312-8aca-d09dd9a63c21}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -107,13 +107,43 @@
     <ClInclude Include="Scene_InGame.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="UIManager.h">
-      <Filter>UI</Filter>
+    <ClInclude Include="Enchancer.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemManager.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Potion.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Wearable.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemBank.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Bank.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonComponent.h">
+      <Filter>Component</Filter>
     </ClInclude>
     <ClInclude Include="CursorManager.h">
-      <Filter>UI</Filter>
+      <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="EquipmentWindow.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="UIWindow.h">
@@ -165,6 +195,33 @@
     </ClCompile>
     <ClCompile Include="Scene_InGame.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Enchancer.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Potion.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Wearable.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemParseing.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemBank.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Bank.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonComponent.cpp">
+      <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="EquipmentWindow.cpp">
       <Filter>소스 파일</Filter>

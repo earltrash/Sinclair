@@ -49,6 +49,14 @@ private:
     std::wstring to_wstring_hash(const std::string& s);
     //두 번에 걸쳐서 값을 가져옴. Scene -> Name -> Asset 순으로
 
+
+    //기존 에셋 관리 부분을 분리. 
     std::unordered_map<std::string, Clip_Asset> allClipAssets;
     std::unordered_map<string, std::vector<std::string>> sceneToClipKeys;
+
+
+
+    // Item_Bank
+    // UI_Bitmap_Bank
+    // AsepriteParser -> 파싱하는 건 
 };

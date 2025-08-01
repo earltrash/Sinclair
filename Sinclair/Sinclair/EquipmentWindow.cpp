@@ -2,8 +2,8 @@
 
 
 
-class EquipmentWindow
-{
-
-private:
-};
+//class EquipmentWindow
+//{
+//
+//private:
+//};

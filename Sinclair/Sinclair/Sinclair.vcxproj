@@ -134,11 +134,19 @@
     <ClInclude Include="AsepriteParser.h" />
     <ClInclude Include="AssetProvider.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="CallbackType.h" />
     <ClInclude Include="CursorManager.h" />
     <ClInclude Include="Dispatcher.h" />
+    <ClInclude Include="Enchancer.h" />
     <ClInclude Include="EquipmentWindow.h" />
     <ClInclude Include="IAssetProvider.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemBank.h" />
+    <ClInclude Include="ItemManager.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Potion.h" />
     <ClInclude Include="Scene_InGame.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ItemGlobal.h" />
@@ -160,12 +168,21 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UIWindow.h" />
+    <ClInclude Include="UI_Bank.h" />
     <ClInclude Include="UI_Renderer.h" />
+    <ClInclude Include="Wearable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AsepriteParser.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ButtonComponent.cpp" />
+    <ClCompile Include="Enchancer.cpp" />
     <ClCompile Include="EquipmentWindow.cpp" />
+    <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="ItemBank.cpp" />
+    <ClCompile Include="ItemParseing.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Potion.cpp" />
     <ClCompile Include="Scene_InGame.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ItemGlobal.cpp" />
@@ -179,7 +196,9 @@
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UIWindow.cpp" />
+    <ClCompile Include="UI_Bank.cpp" />
     <ClCompile Include="UI_Renderer.cpp" />
+    <ClCompile Include="Wearable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\M_E\M_E\M_E.vcxproj">

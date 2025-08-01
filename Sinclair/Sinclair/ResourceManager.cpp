@@ -44,6 +44,18 @@ void ResourceManager::AssetLoad(static D2DRenderer& renderer, const std::string&
         std::cerr << "디렉토리 순회 실패: " << e.what() << std::endl;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
