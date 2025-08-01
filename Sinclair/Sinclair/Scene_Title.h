@@ -18,10 +18,12 @@ public:
 		virtual void LogicUpdate(float delta) override;
 		virtual void Enter() override;
 		virtual void Exit() override; //하위 클래스에서 처리 
-		virtual void Render()override;
+		//virtual void Render()override;
 
 private:
-		std::multimap<std::string, std::unique_ptr<Object>> m_gameObjects;
+	
+
+
 
 };
 

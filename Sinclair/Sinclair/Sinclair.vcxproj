@@ -136,8 +136,11 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="CallbackType.h" />
     <ClInclude Include="Dispatcher.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="IAssetProvider.h" />
-    <ClInclude Include="Scene_InGame.h" />
+    <ClInclude Include="Scene_InGame.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ItemGlobal.h" />
     <ClInclude Include="json.hpp" />
@@ -149,7 +152,9 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="Scene_Outgame.h" />
+    <ClInclude Include="Scene_Outgame.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Scene_Title.h" />
     <ClInclude Include="SimpleMathHelper.h" />
     <ClInclude Include="SpriteRenderer.h" />
@@ -161,14 +166,19 @@
   <ItemGroup>
     <ClCompile Include="AsepriteParser.cpp" />
     <ClCompile Include="Button.cpp" />
-    <ClCompile Include="Scene_InGame.cpp" />
+    <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="Scene_InGame.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ItemGlobal.cpp" />
     <ClCompile Include="M_Core.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Scene_Outgame.cpp" />
+    <ClCompile Include="Scene_Outgame.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
