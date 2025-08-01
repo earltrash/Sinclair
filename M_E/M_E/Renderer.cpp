@@ -33,29 +33,16 @@ void D2DRenderer::Uninitialize()
 {
     ReleaseRenderTargets();
 
-     m_targetBitmap.Reset();
-    m_brush.Reset();
-    m_d2dContext.Reset();
-    m_d2dDevice.Reset();
-    m_swapChain.Reset();
-    m_d3dDevice.Reset();
-    // WIC Factory는 마지막에
-    if (m_wicFactory.Get() != nullptr)
-    {
-        m_wicFactory.Reset();
-    }
-   
-    //m_wicFactory = nullptr;
-   
+    m_wicFactory = nullptr;
 
-    //m_targetBitmap = nullptr;
-    //m_brush = nullptr;
+    m_targetBitmap = nullptr;
+    m_brush = nullptr;
 
-    //m_d2dContext = nullptr;
-    //m_d2dDevice = nullptr;
+    m_d2dContext = nullptr;
+    m_d2dDevice = nullptr;
 
-    //m_swapChain = nullptr;
-    //m_d3dDevice = nullptr;
+    m_swapChain = nullptr;
+    m_d3dDevice = nullptr;
 }
 
 void D2DRenderer::Resize(UINT width, UINT height)
