@@ -88,6 +88,11 @@ void ResourceManager::LoadTexture(static D2DRenderer& renderer, wsg name, path P
 
 ComPtr<ID2D1Bitmap1> ResourceManager::GetTexture(const string& Info)
 {
+    std::wstring wInfo(Info.begin(), Info.end());
+    auto it = m_textures.find(wInfo);
+    if (it != m_textures.end()) {
+        return it->second;
+    }
     return nullptr;
 }
 
