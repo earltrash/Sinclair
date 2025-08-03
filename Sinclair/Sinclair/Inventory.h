@@ -6,6 +6,7 @@
 #include "SpriteRenderer.h"
 using Vec2 = MYHelper::Vector2F;
 
+#include "UIWindow.h"
 
 //얘 어따가 옮길까 
 template <class T>
@@ -87,7 +88,7 @@ struct ItemInstance //하면 아이템을 통해서 읽을 값만 옮기는 형식으로 할 듯?
 
 
 class InventorySlot;
-class Inventory //: 
+class Inventory
 {
 public:
     Inventory(Rect MWP); //이 오브젝트의 전체 Rect 

@@ -1,20 +1,68 @@
 #pragma once
 #include "pch.h"
 #include "Dispatcher.h"
+#include "SimpleMathHelper.h"
 using namespace std;
 
-class InputManager { //얘 결국 싱글톤 안 쓸거면 얘 멤버를 싱글톤 하는 게 구조상 더 나아보이긴 함. 얘는 뭐랄까 관제탑 역할만 하는 애라. 
+enum class MouseButton
+{
+    Left = 0,
+    Right = 1,
+    Middle = 2
+};
 
-private:
-		InputManager();
-		~InputManager();
+enum class KeyCode
+{
+    // 필요한 키들 추가
+    ESC = VK_ESCAPE,
+    I = 'I',
+    E = 'E',
+    P = 'P'
+};
+
+class InputManager 
+{
 public:
 		static InputManager& Get();
 		bool MsgCheck(MSG& msg); //InputManager에서 다루는 입력이 아닌 경우는 프로시저로 넘김. 
 		void Clean();
 
-public:
-		unique_ptr<EventDispatcher> m_broadcaster = nullptr;
+        void Update();
 
+        // 마우스 관련
+        Vec2 GetMousePosition() const { return m_mousePosition; }
+        bool IsMouseClicked(MouseButton button) const;
+        bool IsMousePressed(MouseButton button) const;
+        bool IsMouseReleased(MouseButton button) const;
+        bool IsDoubleClicked() const { return m_isDoubleClicked; }
 
+        // 키보드 관련
+        bool IsKeyPressed(KeyCode key) const;
+        bool IsKeyDown(KeyCode key) const;
+        bool IsKeyUp(KeyCode key) const;
+
+        
+private:
+	InputManager();
+	~InputManager();
+
+    // 복사 방지용.
+    InputManager(const InputManager&) = delete;
+    InputManager& operator=(const InputManager&) = delete;
+
+    unique_ptr<EventDispatcher> m_broadcaster = nullptr;
+
+    // 마우스 상태
+    Vec2 m_mousePosition = { 0, 0 };
+    bool m_mouseButtons[3] = { false }; // Left, Right, Middle
+    bool m_previousMouseButtons[3] = { false };
+    bool m_isDoubleClicked = false;
+
+    // 키보드 상태  
+    bool m_keys[256] = { false };
+    bool m_previousKeys[256] = { false };
+
+    // 더블클릭 타이머
+    float m_doubleClickTimer = 0.0f;
+    const float DOUBLE_CLICK_TIME = 0.3f;
 };

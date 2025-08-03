@@ -29,7 +29,8 @@ public:
 	Item(ItemCommonData data) :m_data(data) {}; //stat을 넣어주자, 값 받아오는 거를 어떻게 하면 좋을까
 	virtual ~Item() = default;
 
-	const bool IsStackable() const {
+	const bool IsStackable() const 
+	{
 		return maxCount > 1;
 	}
 
