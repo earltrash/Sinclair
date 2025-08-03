@@ -68,8 +68,8 @@ void Scene_hyoje::CreateButtons()
 
 	auto gameStartButton_buttonComp = gameStartButton->AddComponent<ButtonComponent>();
 	auto gameStartButton_mouseListener = gameStartButton->AddComponent<MouseListenerComponent>(
-		// 여기서 어떻게 입력 처리 하지?
-		[](const MSG& msg) {
+		[gameStartButton_buttonComp](const MSG& msg) {
+			gameStartButton_buttonComp->Worked(msg);
 		}
 	);
 
@@ -99,7 +99,8 @@ void Scene_hyoje::CreateButtons()
 	auto gameSettingButton_buttonComp =    gameSettingButton->AddComponent<ButtonComponent>();
 	auto gameSettingButton_mouseListener = gameSettingButton->AddComponent<MouseListenerComponent>(
 		// 여기서 어떻게 입력 처리 하지?
-		[](const MSG& msg) {
+		[gameSettingButton_buttonComp](const MSG& msg) {
+		 gameSettingButton_buttonComp->Worked(msg);
 		}
 	);
 

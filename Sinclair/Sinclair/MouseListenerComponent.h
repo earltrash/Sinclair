@@ -5,14 +5,11 @@
 
 using Callback = std::function<void(const MSG&)>;
 
-//bool InRect(const Rect& ObjP, POINT& mouseP)
-//{
-//		return (ObjP.Contains({ mouseP.x, mouseP.y })); //결국 변환 과정에서 값이 짤릴 거는 필연적이긴 한데,,,
-//
-//}
-//
+inline bool InRect(const Rect& ObjP, POINT& mouseP)
+{
+		return (ObjP.Contains({ static_cast<float>(mouseP.x), static_cast<float>(mouseP.y) })); //결국 변환 과정에서 값이 짤릴 거는 필연적이긴 한데,,,
 
-
+}
 
 class MouseListenerComponent : public ListenerComponent //새로운 shared-raw-shared로 소유권 이중화를 막기 위함.
 {
