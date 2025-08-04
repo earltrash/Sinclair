@@ -141,6 +141,7 @@
     <ClInclude Include="Enchancer.h" />
     <ClInclude Include="EquipmentWindow.h" />
     <ClInclude Include="IAssetProvider.h" />
+    <ClInclude Include="InvenMem.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemBank.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="Enchancer.cpp" />
     <ClCompile Include="EquipmentWindow.cpp" />
+    <ClCompile Include="InvenMem.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="ItemBank.cpp" />
     <ClCompile Include="ItemParseing.cpp" />

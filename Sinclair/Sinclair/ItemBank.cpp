@@ -4,6 +4,7 @@
 #include <fstream>       // ifstream
 #include <filesystem>    // std::filesystem
 #include "UI_Renderer.h"
+#include "Renderer.h"
 
 namespace fs = std::filesystem;
 using json = nlohmann::json;

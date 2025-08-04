@@ -1,4 +1,6 @@
 #include "InvenTory.h"
+#include "ResourceManager.h"
+
 //: UI_Object(MWP) //생성자로 영역은 일단 설정함 (Inven 자기 영역 말임)
 Inventory::Inventory(Rect MWP) :m_bound(MWP)
 {
@@ -202,13 +204,13 @@ void Inventory::LoadUIBitmaps()
 
 
     controller.bitmaps.emplace("slot_disabled",
-        ResourceManager::Get().Get_UIBank().Get_Image("Slotdisabled"));
+        ResourceManager::Get().Get_UIBank().Get_Image("Slotdisabled").Get());
     controller.bitmaps.emplace("slot_hover",
-        ResourceManager::Get().Get_UIBank().Get_Image("slot_hover"));
+        ResourceManager::Get().Get_UIBank().Get_Image("slot_hover").Get());
     controller.bitmaps.emplace("slot_selected",
-        ResourceManager::Get().Get_UIBank().Get_Image("slot_selected"));
+        ResourceManager::Get().Get_UIBank().Get_Image("slot_selected").Get());
     controller.bitmaps.emplace("slot_normal",
-        ResourceManager::Get().Get_UIBank().Get_Image("slot_normal"));
+        ResourceManager::Get().Get_UIBank().Get_Image("slot_normal").Get());
 
 }
 
