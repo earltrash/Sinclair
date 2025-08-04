@@ -12,6 +12,8 @@ private:
 
     ~D2DRenderer() = default;
 
+    D2DRenderer(const D2DRenderer&) = delete;
+    D2DRenderer& operator=(const D2DRenderer&) = delete;
 public:
     static D2DRenderer& Get();
 
