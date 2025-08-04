@@ -15,7 +15,11 @@ public:
 	void BitmapPush(string NM, ComPtr<ID2D1Bitmap1> Bitmap);
 
 	void SetCurrentBitmap(string Nm);
+	ComPtr<ID2D1Bitmap1> GetCurrentBitmap();
+
+	// 이거 두 함수는 내 의도에 맞진 않음
 	ComPtr<ID2D1Bitmap1> GetBitmap();
+	ComPtr<ID2D1Bitmap1> GetBitmap(std::string);
 
 	// Getter
 	int GetWidth() const { return width; }

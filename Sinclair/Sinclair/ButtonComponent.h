@@ -41,6 +41,8 @@ public:
 	void SetWidth(int w) { width = w; }
 	void SetHeight(int h) { height = h; }
 	
+	// get set ³ªÁß¿¡ ¸¸µë
+	float m_opacity = 1.0f;
 
 private:
 	

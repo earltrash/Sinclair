@@ -88,3 +88,18 @@ ComPtr<ID2D1Bitmap1> UI_Bank::Get_Image(const string& Nm)
     else
         return nullptr;
 }
+
+
+ComPtr<ID2D1Bitmap1> UI_Bank::Get_Image(const string& Nm, const string& Nm2)
+{
+    auto stringIt = UI_MultiBitmaps.find(Nm);
+    if (stringIt != UI_MultiBitmaps.end())
+    {
+        auto bitmapIt = stringIt->second.find(Nm2);
+        if (bitmapIt != stringIt->second.end())
+        {
+            return bitmapIt->second;
+        }
+    }
+    return nullptr;
+}

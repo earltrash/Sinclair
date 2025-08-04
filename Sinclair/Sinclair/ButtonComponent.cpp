@@ -12,10 +12,10 @@ ComPtr<ID2D1Bitmap1> ButtonComponent::GetBitmap()
     string key;
     switch (m_currentState)
     {
-    case ButtonState::Normal:   key = "normal"; break;
-    case ButtonState::Hover:    key = "hover"; break;
-    case ButtonState::Pressed:  key = "pressed"; break;
-    case ButtonState::Disabled: key = "disabled"; break;
+    case ButtonState::Normal:   key = "normal";  m_opacity = 1.0f; break;
+    case ButtonState::Hover:    key = "hover";   m_opacity = 0.8f; break;
+    case ButtonState::Pressed:  key = "pressed"; m_opacity = 0.6f; break;
+    case ButtonState::Disabled: key = "disabled";m_opacity = 0.3f; break;
     default: key = "normal"; break;
     }
 

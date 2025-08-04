@@ -54,6 +54,8 @@ public:
     ID2D1Bitmap1** GetBitmap() { return m_targetBitmap.GetAddressOf(); }
 
     void CreateWriteResource();
+    void CreateWriteRegularResource();
+    void CreateWriteBoldResource();
 
     void CreateWriteResource(const wchar_t* fontName, DWRITE_FONT_WEIGHT fontWeight, float fontSize);
 

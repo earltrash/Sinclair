@@ -16,7 +16,7 @@ void ResourceManager::GameAssetLoad()
     AnimatedAssetLoad(D2DRenderer::Get(), "Resource");
     m_ItemBank.LoadItemStatus("Item"); //Status Only
     //m_ItemBank.LoadItemBitmap("") //얘는 Atlas 위치긴 한데 이거 얘기좀 해봐야 할 듯 . 
-    m_UI_Bank.Load_UI_Image("UI"); // Single / Multi Bitmap
+    m_UI_Bank.Load_UI_Image("UI_png"); // Single / Multi Bitmap
 
 }
 
@@ -55,9 +55,10 @@ void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std:
             if (entry.is_regular_file()) {
                 std::cout << "path: " << entry.path().string() << std::endl;
 
-                    if (entry.path().extension() == ".json") {
-                        std::string filename = entry.path().stem().string();
-                        std::wstring fullPath = entry.path().wstring();
+                if (entry.path().extension() == ".json") 
+                {
+                    std::string filename = entry.path().stem().string();
+                    std::wstring fullPath = entry.path().wstring();
 
                     std::cout << "name: " << filename << std::endl;
                     wsg name = wsg(filename.begin(), filename.end());
@@ -139,6 +140,28 @@ ComPtr<ID2D1Bitmap1> ResourceManager::GetTexture(const string& Info)
     else
     {
         std::cout << Info << " " << "에 해당하는 Bitmap이 없습니다" << endl;
+        return nullptr;
+    }
+
+    //std::wstring wInfo(Info.begin(), Info.end());
+    //auto it = m_textures.find(wInfo);
+    //if (it != m_textures.end()) {
+    //    return it->second;
+    //}
+    //return nullptr;
+}
+
+ComPtr<ID2D1Bitmap1> ResourceManager::GetTexture(const string& Info, const string& Info2)
+{
+    if (m_UI_Bank.Get_Image(Info, Info2) != nullptr) //Single bitmap -> 배경화면 같은 애들은 바로 가져올 수 있게.
+    {
+        //std::cout << Info << "_" << Info2 << "에 해당하는 Bitmap이 있습니다" << endl;
+        return m_UI_Bank.Get_Image(Info, Info2);
+    }
+
+    else
+    {
+        std::cout << Info << "_" << Info2 << "에 해당하는 Bitmap이 없습니다" << endl;
         return nullptr;
     }
 

@@ -10,12 +10,7 @@
 Scene_hyoje::Scene_hyoje(string name)
 {
 	m_name = name;
-
-
-
 	CreateObj();
-	
-
 }
 
 Scene_hyoje::~Scene_hyoje()
@@ -67,9 +62,9 @@ void Scene_hyoje::Render()
 		D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest);
 	}
 
-	D2DRenderer::Get().CreateWriteResource(L"궁서체", DWRITE_FONT_WEIGHT_BOLD, 100.0f);
+	//D2DRenderer::Get().CreateWriteResource(L"궁서체", DWRITE_FONT_WEIGHT_BOLD, 100.0f);
 	D2DRenderer::Get().DrawMessage(L"싱클레어 가 히스토리", 147.f, 254.f, 1300.f, 1000.f, D2D1::ColorF::LightPink);
-	D2DRenderer::Get().CreateWriteResource();
+	//D2DRenderer::Get().CreateWriteResource();
 
 	D2DRenderer::Get().RenderEnd();
 }
@@ -103,9 +98,9 @@ void Scene_hyoje::CreateObj()
 	// 리소스 매니저 해결하기
 	
 	// 1. 이미지 갖고 오기
-	auto gameStartButton_texture_normal = ResourceManager::Get().GetTexture("시작화면_2");
-	auto gameStartButton_texture_hover = ResourceManager::Get().GetTexture("시작화면_3");
-	auto gameStartButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면_4");
+	auto gameStartButton_texture_normal =  ResourceManager::Get().GetTexture("시작화면", "2");
+	auto gameStartButton_texture_hover =   ResourceManager::Get().GetTexture("시작화면", "3");
+	auto gameStartButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면", "4");
 
 	// 2. 오브젝트 만들기
 	auto gameStartButton = std::make_unique<Object>();
@@ -144,9 +139,9 @@ void Scene_hyoje::CreateObj()
 	// gameSettingButton
 	
 		// 리소스 매니저
-	auto gameSettingButton_texture_normal = ResourceManager::Get().GetTexture("시작화면_3");
-	auto gameSettingButton_texture_hover = ResourceManager::Get().GetTexture("시작화면_2");
-	auto gameSettingButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면_4");
+	auto gameSettingButton_texture_normal  = ResourceManager::Get().GetTexture("시작화면", "3");
+	auto gameSettingButton_texture_hover   = ResourceManager::Get().GetTexture("시작화면", "4");
+	auto gameSettingButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면", "2");
 
 	auto 
 	gameSettingButton = std::make_unique<Object>();
@@ -178,9 +173,9 @@ void Scene_hyoje::CreateObj()
 	// creditButton
 
 	// 리소스 매니저
-	auto creditButton_texture_normal = ResourceManager::Get().GetTexture("시작화면_4");
-	auto creditButton_texture_hover = ResourceManager::Get().GetTexture("시작화면_2");
-	auto creditButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면_3");
+	auto creditButton_texture_normal = ResourceManager::Get() .GetTexture("시작화면", "4");
+	auto creditButton_texture_hover = ResourceManager::Get()  .GetTexture("시작화면", "2");
+	auto creditButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면", "3");
 
 	auto
 	creditButton = std::make_unique<Object>();

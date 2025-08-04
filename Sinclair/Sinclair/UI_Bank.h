@@ -20,6 +20,8 @@ public:
 
 	ComPtr<ID2D1Bitmap1> Get_Image(const string& Nm);
 
+	ComPtr<ID2D1Bitmap1> Get_Image(const string& Nm, const string& Nm2);
+
 private:
 	unordered_map<std::string, std::unordered_map<std::string, ComPtr<ID2D1Bitmap1>>> UI_MultiBitmaps; //Button Àü¿ë 
 
