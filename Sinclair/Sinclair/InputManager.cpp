@@ -1,5 +1,9 @@
 #include "pch.h"
 #include "InputManager.h"
+#include "UIManager.h"
+
+#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
+#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp)) // 그냥 멋지게 쓰고 싶었다...
 
 InputManager::InputManager()
 {
@@ -58,3 +62,66 @@ InputManager& InputManager::Get()
 }
 
 
+void InputManager::Update()
+{
+    // 이전 프레임 상태 저장
+    memcpy(m_previousMouseButtons, m_mouseButtons, sizeof(m_mouseButtons));
+    memcpy(m_previousKeys, m_keys, sizeof(m_keys));
+
+    // 마우스 위치 업데이트
+    POINT cursorPos;
+    GetCursorPos(&cursorPos);
+    ScreenToClient(GetActiveWindow(), &cursorPos);
+    m_mousePosition = { static_cast<float>(cursorPos.x), static_cast<float>(cursorPos.y) };
+
+    // 마우스 버튼 상태
+    m_mouseButtons[0] = GetAsyncKeyState(VK_LBUTTON) & 0x8000;
+    m_mouseButtons[1] = GetAsyncKeyState(VK_RBUTTON) & 0x8000;
+    m_mouseButtons[2] = GetAsyncKeyState(VK_MBUTTON) & 0x8000;
+
+    // 더블클릭 타이머
+    if (m_doubleClickTimer > 0)
+        m_doubleClickTimer -= 0.016f; // 대략 60fps 기준
+
+    // 더블클릭 체크 (왼쪽 버튼만)
+    if (IsMouseClicked(MouseButton::Left))
+    {
+        if (m_doubleClickTimer > 0)
+        {
+            m_isDoubleClicked = true;
+            m_doubleClickTimer = 0;
+        }
+        else
+        {
+            m_isDoubleClicked = false;
+            m_doubleClickTimer = DOUBLE_CLICK_TIME;
+        }
+    }
+    else
+    {
+        m_isDoubleClicked = false;
+    }
+
+    // UIManager에 입력 전달
+    UIManager::Get().OnInput();
+}
+
+// 마우스 클릭
+bool InputManager::IsMouseClicked(MouseButton button) const
+{
+    int index = static_cast<int>(button);
+    return m_mouseButtons[index] && !m_previousMouseButtons[index];
+}
+
+// 눌렸는지
+bool InputManager::IsMousePressed(MouseButton button) const
+{
+    return m_mouseButtons[static_cast<int>(button)];
+}
+
+// 마우스 클릭 끝났는지 
+bool InputManager::IsMouseReleased(MouseButton button) const
+{
+    int index = static_cast<int>(button);
+    return !m_mouseButtons[index] && m_previousMouseButtons[index];
+}
