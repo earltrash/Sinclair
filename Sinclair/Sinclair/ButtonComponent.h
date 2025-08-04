@@ -2,12 +2,10 @@
 #include "pch.h"
 #include "Component.h"
 #include "Object.h"
-
+#include "MouseInput.h"
 using namespace Microsoft::WRL;
 using namespace std;
 
-#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
-#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
 
 class ButtonComponent : public Component
 {

@@ -4,6 +4,10 @@
 #include "Status.h"
 #include "SimpleMathHelper.h"
 #include "Inputmanager.h"
+#include "MouseInput.h"
+
+
+
 
 using namespace D2DTM;
 
@@ -66,9 +70,10 @@ public:
 				pos.y >= closeButtonPos.y && pos.y <= closeButtonPos.y + closeButtonHeight;
 		}
 
+
 		 bool HandleInput(const MSG& msg)
 		{
-			 Vec2 CORD = { GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam) };
+			 Vec2 CORD = { F_GET_X_LPARAM(msg.lParam), F_GET_X_LPARAM(msg.lParam) };
 
 			// 창이 비활성화되어 있으면 처리 안함
 			if (!m_isActive)
@@ -99,6 +104,8 @@ public:
 
 			return true; // 창 영역 안의 입력은 모두 "처리됨"으로 간주
 		}
+
+
 
 protected:
 	UIWindowType m_windowType;

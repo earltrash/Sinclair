@@ -1,9 +1,6 @@
 #include "pch.h"
 #include "InputManager.h"
 
-#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
-#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp)) // 그냥 멋지게 쓰고 싶었다...
-
 InputManager::InputManager()
 {
 }

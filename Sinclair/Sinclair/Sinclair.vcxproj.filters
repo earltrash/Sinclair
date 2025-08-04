@@ -164,6 +164,9 @@
     <ClInclude Include="UIManager.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="MouseInput.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -230,9 +233,6 @@
       <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="EquipmentWindow.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="UIWindow.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="UI_Bank.cpp">

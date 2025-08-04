@@ -70,8 +70,8 @@ void Wearable::SetPart(const Wearable_part& Part)
     case Wearable_part::Shoes:
         m_part = Wearable_part::Shoes;
         break;
-    case Wearable_part::EarRing:
-        m_part = Wearable_part::EarRing;
+    case Wearable_part::Ring:
+        m_part = Wearable_part::Ring;
         break;
     case Wearable_part::Neckless:
         m_part = Wearable_part::Neckless;

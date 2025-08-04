@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Dispatcher.h"
+#include "MouseInput.h"
 using namespace std;
 
 class InputManager { //얘 결국 싱글톤 안 쓸거면 얘 멤버를 싱글톤 하는 게 구조상 더 나아보이긴 함. 얘는 뭐랄까 관제탑 역할만 하는 애라. 

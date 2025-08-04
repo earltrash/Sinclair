@@ -148,6 +148,7 @@
     <ClInclude Include="ItemBank.h" />
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MouseInput.h" />
     <ClInclude Include="Potion.h" />
     <ClInclude Include="Scene_hyoje.h" />
     <ClInclude Include="Scene_InGame.h" />
@@ -201,7 +202,6 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="UIWindow.cpp" />
     <ClCompile Include="UI_Bank.cpp" />
     <ClCompile Include="UI_Renderer.cpp" />
     <ClCompile Include="Wearable.cpp" />

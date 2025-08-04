@@ -2,16 +2,13 @@
 #include "pch.h"
 #include "Status.h"
 #include "Object.h"
-
+#include "MouseInput.h"
 //밑은 파싱과 클래스 오염을 방지?
 #include "json.hpp"
 #include "ItemGlobal.h"
 using namespace std;
 
 using json = nlohmann::json;
-
-#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
-#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp)) // 그냥 멋지게 쓰고 싶었다...
 
 struct ItemCommonData {
 	std::string id;

@@ -249,7 +249,7 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
     if (!m_isActive)
     {
        // showTooltip = false;
-        return;
+        return false;
     }
 
     // 윈도우 드래그 중일 때
@@ -322,14 +322,14 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
 
 bool Inventory::HandleMouseDown(Vec2 mousePos)
 {
-    if (!m_isActive) return;
+    if (!m_isActive) return false;
 
     // 닫기 버튼 클릭 처리
     if (closeButtonBounds.Contains(mousePos))
     {
         m_isActive = false; // 창 비활성화
        // showTooltip = false; // 툴팁 숨김
-        return;
+        return true;
     }
 
     // 타이틀바 드래그 시작
@@ -338,7 +338,7 @@ bool Inventory::HandleMouseDown(Vec2 mousePos)
         isWindowDragging = true;
         dragStartMousePos = mousePos;
         dragStartWindowPos = windowPosition;
-        return; // 타이틀바 드래그 시작 시 다른 클릭 이벤트는 무시
+        return true; // 타이틀바 드래그 시작 시 다른 클릭 이벤트는 무시
     }
 
     // 슬롯 드래그 시작 (기존 로직)
@@ -362,21 +362,22 @@ bool Inventory::HandleMouseDown(Vec2 mousePos)
         slot->Clear();
         slot->UpdateItemBitmap(&controller, &m_itemDatabase);
     }
+    return true;
 }
 
 bool Inventory::HandleMouseUp(Vec2 mousePos)
 {
-    if (!m_isActive) return;
+    if (!m_isActive) return false;
 
     // 윈도우 드래그 종료
     if (isWindowDragging)
     {
         isWindowDragging = false;
-        return;
+        return true;
     }
 
     // 아이템 드래그 종료
-    if (!dragState.isDragging) return;
+    if (!dragState.isDragging)  return true;;
 
     bool placed = false;
     InventorySlot* targetSlot = GetSlotAt(mousePos); // 현재 마우스 위치의 슬롯을 다시 찾음
@@ -415,6 +416,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos)
     }
 
     dragState.isDragging = false;
+    return true;
 }
 
 bool Inventory::HandleDoubleClick(Vec2 mousePos)
