@@ -177,11 +177,11 @@ namespace D2DTM
     private:
 
         bool m_dirty;
-    public:
+    //public:
+    private:
         Vec2     m_position = { 0.f, 0.f }; // translation position
         float    m_rotation = 0.f;          // in degrees
         Vec2     m_scale = { 1.f, 1.f };
-
 
         Transform* m_parent;
         std::vector<Transform*> m_children;

@@ -16,6 +16,7 @@
 #pragma comment(lib, "d2d1.lib")     // D2D1CreateFactory
 #pragma comment(lib, "d3d11.lib")    // D3D11CreateDevice
 #pragma comment(lib, "dwrite.lib")
+#pragma comment(lib, "dxguid.lib")   // ID2D1Effect 라이브러리
 #include <wrl/client.h> 
 #include <d3d11.h>                // ID3D11Device, ID3D11DeviceContext
 #include <dxgi1_2.h>              // IDXGISwapChain1
@@ -24,6 +25,7 @@
 #include <d2d1_1.h> 
 #include <dwrite_3.h>                // DirectWrite (최신 텍스트 엔진)
 #include <wincodec.h>                // WIC (이미지 로딩)
+#include <d2d1effects_2.h>           // d2dIEffect 헤더
 #pragma endregion 
 
 #pragma region DX

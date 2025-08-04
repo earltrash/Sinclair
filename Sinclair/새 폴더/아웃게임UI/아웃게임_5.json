@@ -1,0 +1,37 @@
+{
+  "frames": [
+    {
+      "filename": "tmp 0.png",
+        "frame": {
+            "x": 0,
+            "y": 0,
+            "w": 140,
+            "h": 40
+        },
+      "rotated": false,
+      "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 140,
+            "h": 40
+        },
+        "sourceSize": {
+            "w": 140,
+            "h": 40
+        },
+      "duration": 100
+    }
+  ],
+  "meta": {
+    "frameTags": [
+      {
+        "name": "Idle",
+        "from": 0,
+        "to": 0,
+        "direction": "forward"
+      }
+    ]
+  },
+  "SceneInfo": "Outgame"
+}
