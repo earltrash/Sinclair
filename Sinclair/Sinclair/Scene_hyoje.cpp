@@ -57,10 +57,8 @@ void Scene_hyoje::Render()
 			continue;
 		}
 
-		auto size = bitmap->GetSize();
-
-		dest.left   += obj->GetTransform().m_position.x;
-		dest.top    += obj->GetTransform().m_position.y;
+		//dest.left   += obj->GetTransform().m_position.x;
+		//dest.top    += obj->GetTransform().m_position.y;
 		dest.right  +=			dest.left;
 		dest.bottom +=			dest.top ;
 
@@ -103,9 +101,11 @@ void Scene_hyoje::CreateObj()
 	// 리소스 매니저 해결하기
 	
 	// 1. 이미지 갖고 오기
-	auto gameStartButton_texture_normal = ResourceManager::Get().GetTexture("시작화면_2");
-	auto gameStartButton_texture_hover = ResourceManager::Get().GetTexture("시작화면_3");
-	auto gameStartButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면_4");
+	auto gameStartButton_texture_normal = ResourceManager::Get().GetTexture("시작화면2");
+	auto gameStartButton_texture_hover = ResourceManager::Get().GetTexture("시작화면3");
+	auto gameStartButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면4");
+
+
 
 	// 2. 오브젝트 만들기
 	auto gameStartButton = std::make_unique<Object>();
@@ -117,6 +117,7 @@ void Scene_hyoje::CreateObj()
 	gameStartButton_buttonComp->SetWidth(gameStartButton_texture_normal->GetSize().width);
 	gameStartButton_buttonComp->SetHeight(gameStartButton_texture_normal->GetSize().height);
 	
+
 	// 4. 버튼 비트맵 설정
 	gameStartButton_buttonComp->BitmapPush("normal", gameStartButton_texture_normal);
 	gameStartButton_buttonComp->BitmapPush("hover", gameStartButton_texture_hover);
@@ -140,73 +141,73 @@ void Scene_hyoje::CreateObj()
 	m_gameObjects.emplace("gameStartButton", std::move(gameStartButton));
 
 
-	//////////////////////
-	// gameSettingButton
-	
-		// 리소스 매니저
-	auto gameSettingButton_texture_normal = ResourceManager::Get().GetTexture("시작화면_3");
-	auto gameSettingButton_texture_hover = ResourceManager::Get().GetTexture("시작화면_2");
-	auto gameSettingButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면_4");
+	////////////////////////
+	//// gameSettingButton
+	//
+	//	// 리소스 매니저
+	//auto gameSettingButton_texture_normal = ResourceManager::Get().GetTexture("시작화면_3");
+	//auto gameSettingButton_texture_hover = ResourceManager::Get().GetTexture("시작화면_2");
+	//auto gameSettingButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면_4");
 
-	auto 
-	gameSettingButton = std::make_unique<Object>();
-	gameSettingButton->SetPosition(Vec2(147, 697));
+	//auto 
+	//gameSettingButton = std::make_unique<Object>();
+	//gameSettingButton->SetPosition(Vec2(147, 697));
 
-	auto gameSettingButton_buttonComp =    gameSettingButton->AddComponent<ButtonComponent>();
-	// 3.1.2 사이즈 같으면
-	gameSettingButton_buttonComp->SetWidth(gameStartButton_texture_normal->GetSize().width);
-	gameSettingButton_buttonComp->SetHeight(gameStartButton_texture_normal->GetSize().height);
-	auto gameSettingButton_mouseListener = gameSettingButton->AddComponent<MouseListenerComponent>(
-		// 여기서 어떻게 입력 처리 하지?
-		[gameSettingButton_buttonComp](const MSG& msg) {
-		 gameSettingButton_buttonComp->Worked(msg);
-		}
-	);
+	//auto gameSettingButton_buttonComp =    gameSettingButton->AddComponent<ButtonComponent>();
+	//// 3.1.2 사이즈 같으면
+	//gameSettingButton_buttonComp->SetWidth(gameStartButton_texture_normal->GetSize().width);
+	//gameSettingButton_buttonComp->SetHeight(gameStartButton_texture_normal->GetSize().height);
+	//auto gameSettingButton_mouseListener = gameSettingButton->AddComponent<MouseListenerComponent>(
+	//	// 여기서 어떻게 입력 처리 하지?
+	//	[gameSettingButton_buttonComp](const MSG& msg) {
+	//	 gameSettingButton_buttonComp->Worked(msg);
+	//	}
+	//);
 
-	// 버튼 설정
-	gameSettingButton_buttonComp->BitmapPush("normal",  gameSettingButton_texture_normal);
-	gameSettingButton_buttonComp->BitmapPush("hover",   gameSettingButton_texture_hover);
-	gameSettingButton_buttonComp->BitmapPush("pressed", gameSettingButton_texture_pressed);
-	gameSettingButton_buttonComp->SetOnClickCallback([this]() {
-		//SceneManager::Get().ChangeScene("Title");
-		std::cout << "The button is pressed." << std::endl;
-		});
+	//// 버튼 설정
+	//gameSettingButton_buttonComp->BitmapPush("normal",  gameSettingButton_texture_normal);
+	//gameSettingButton_buttonComp->BitmapPush("hover",   gameSettingButton_texture_hover);
+	//gameSettingButton_buttonComp->BitmapPush("pressed", gameSettingButton_texture_pressed);
+	//gameSettingButton_buttonComp->SetOnClickCallback([this]() {
+	//	//SceneManager::Get().ChangeScene("Title");
+	//	std::cout << "The button is pressed." << std::endl;
+	//	});
 
-	m_gameObjects.emplace("gameSettingButton", std::move(gameSettingButton));
+	//m_gameObjects.emplace("gameSettingButton", std::move(gameSettingButton));
 
-	//////////////////////
-	// creditButton
+	////////////////////////
+	//// creditButton
 
-	// 리소스 매니저
-	auto creditButton_texture_normal = ResourceManager::Get().GetTexture("시작화면_4");
-	auto creditButton_texture_hover = ResourceManager::Get().GetTexture("시작화면_2");
-	auto creditButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면_3");
+	//// 리소스 매니저
+	//auto creditButton_texture_normal = ResourceManager::Get().GetTexture("시작화면_4");
+	//auto creditButton_texture_hover = ResourceManager::Get().GetTexture("시작화면_2");
+	//auto creditButton_texture_pressed = ResourceManager::Get().GetTexture("시작화면_3");
 
-	auto
-	creditButton = std::make_unique<Object>();
-	creditButton->SetPosition(Vec2(147, 830));
+	//auto
+	//creditButton = std::make_unique<Object>();
+	//creditButton->SetPosition(Vec2(147, 830));
 
-	auto creditButton_buttonComp =    creditButton->AddComponent<ButtonComponent>();
-	// 3.1.2 사이즈 같으면
-	creditButton_buttonComp->SetWidth(gameStartButton_texture_normal->GetSize().width);
-	creditButton_buttonComp->SetHeight(gameStartButton_texture_normal->GetSize().height);
-	auto creditButton_mouseListener = creditButton->AddComponent<MouseListenerComponent>(
-		// 여기서 어떻게 입력 처리 하지?
-		[creditButton_buttonComp](const MSG& msg) {
-		 creditButton_buttonComp->Worked(msg);
-		}
-	);
+	//auto creditButton_buttonComp =    creditButton->AddComponent<ButtonComponent>();
+	//// 3.1.2 사이즈 같으면
+	//creditButton_buttonComp->SetWidth(gameStartButton_texture_normal->GetSize().width);
+	//creditButton_buttonComp->SetHeight(gameStartButton_texture_normal->GetSize().height);
+	//auto creditButton_mouseListener = creditButton->AddComponent<MouseListenerComponent>(
+	//	// 여기서 어떻게 입력 처리 하지?
+	//	[creditButton_buttonComp](const MSG& msg) {
+	//	 creditButton_buttonComp->Worked(msg);
+	//	}
+	//);
 
-	// 버튼 설정
-	creditButton_buttonComp->BitmapPush("normal",  creditButton_texture_normal);
-	creditButton_buttonComp->BitmapPush("hover",   creditButton_texture_hover);
-	creditButton_buttonComp->BitmapPush("pressed", creditButton_texture_pressed);
-	creditButton_buttonComp->SetOnClickCallback([this]() {
-		//SceneManager::Get().ChangeScene("Title");
-		std::cout << "The button is pressed." << std::endl;
-		});
+	//// 버튼 설정
+	//creditButton_buttonComp->BitmapPush("normal",  creditButton_texture_normal);
+	//creditButton_buttonComp->BitmapPush("hover",   creditButton_texture_hover);
+	//creditButton_buttonComp->BitmapPush("pressed", creditButton_texture_pressed);
+	//creditButton_buttonComp->SetOnClickCallback([this]() {
+	//	//SceneManager::Get().ChangeScene("Title");
+	//	std::cout << "The button is pressed." << std::endl;
+	//	});
 
-	m_gameObjects.emplace("gameSettingButton", std::move(creditButton));
+	//m_gameObjects.emplace("gameSettingButton", std::move(creditButton));
 
 
 }

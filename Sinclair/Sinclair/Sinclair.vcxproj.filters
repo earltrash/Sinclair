@@ -164,6 +164,15 @@
     <ClInclude Include="BackgroundComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="Scene_MK.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderInfo.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -251,6 +260,15 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="BackgroundComponent.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_MK.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectComponent.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderInfo.cpp">
       <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>

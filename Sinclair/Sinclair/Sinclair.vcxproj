@@ -139,6 +139,7 @@
     <ClInclude Include="CallbackType.h" />
     <ClInclude Include="CursorManager.h" />
     <ClInclude Include="Dispatcher.h" />
+    <ClInclude Include="EffectComponent.h" />
     <ClInclude Include="Enchancer.h" />
     <ClInclude Include="EquipmentWindow.h" />
     <ClInclude Include="IAssetProvider.h" />
@@ -149,6 +150,7 @@
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Potion.h" />
+    <ClInclude Include="RenderInfo.h" />
     <ClInclude Include="Scene_hyoje.h" />
     <ClInclude Include="Scene_InGame.h" />
     <ClInclude Include="InputManager.h" />
@@ -162,6 +164,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Scene_MK.h" />
     <ClInclude Include="Scene_Outgame.h" />
     <ClInclude Include="Scene_Title.h" />
     <ClInclude Include="SimpleMathHelper.h" />
@@ -180,6 +183,7 @@
     <ClCompile Include="BackgroundComponent.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
+    <ClCompile Include="EffectComponent.cpp" />
     <ClCompile Include="Enchancer.cpp" />
     <ClCompile Include="EquipmentWindow.cpp" />
     <ClCompile Include="InvenMem.cpp" />
@@ -188,6 +192,7 @@
     <ClCompile Include="ItemParseing.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="RenderInfo.cpp" />
     <ClCompile Include="Scene_hyoje.cpp" />
     <ClCompile Include="Scene_InGame.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -196,6 +201,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Scene_MK.cpp" />
     <ClCompile Include="Scene_Outgame.cpp" />
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Main.cpp" />

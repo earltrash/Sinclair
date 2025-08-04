@@ -7,7 +7,10 @@ void UI_Bank::Load_UI_Image(const string& path) // 자동 매핑이긴 함.
 {
 
     fs::path base = fs::current_path();
-    fs::path resourcePath = base.parent_path() / path;
+    //fs::path resourcePath = base.parent_path() / path;
+
+    fs::path resourcePath = base.parent_path() / path / "시작화면UI"; //path == "UI" -> 
+
 
     for (const auto& entry : fs::directory_iterator(resourcePath))
     {
@@ -58,14 +61,17 @@ void UI_Bank::Load_UI_Image(const string& path) // 자동 매핑이긴 함.
 //Object를 이름으로 관
 
 //나중에 Scene 만들고 나서, 오브젝트 이름이랑, Bitmap 이름 mapping 하면 되긴 함. 
-void UI_Bank::UI_Image_Mapping(const Object& UI_Obj, const string& name) //STATE는 입력 상태에 따른 Bitmap 정보긴 함. 
+
+
+
+void UI_Bank::UI_Image_Mapping(unique_ptr<Object>& UI_Obj, const string& name) //STATE는 입력 상태에 따른 Bitmap 정보긴 함. 
 {
-    if (UI_Obj.GetComponent<UI_Renderer>() != nullptr) //Single
+    if (UI_Obj.get()->GetComponent<UI_Renderer>() != nullptr) //Single
     {
-        UI_Obj.GetComponent<UI_Renderer>()->SetBitmap(UI_SingleBitmaps[name]);
+        UI_Obj.get()->GetComponent<UI_Renderer>()->SetBitmap(UI_SingleBitmaps[name]);
     }
 
-    else if (UI_Obj.GetComponent<ButtonComponent>() != nullptr)
+    else if (UI_Obj.get()->GetComponent<ButtonComponent>() != nullptr)
     {
         for (auto& [ObjNm, bitmapmap] : UI_MultiBitmaps) // 
         {
@@ -73,10 +79,10 @@ void UI_Bank::UI_Image_Mapping(const Object& UI_Obj, const string& name) //STATE
                 return;
             for (auto& [BitmapNM, bitmap_asset] : bitmapmap)
             {
-                UI_Obj.GetComponent<ButtonComponent>()->BitmapPush(BitmapNM, bitmap_asset); //효제는 수동으로 하긴 했음. 
+                UI_Obj.get()->GetComponent<ButtonComponent>()->BitmapPush(BitmapNM, bitmap_asset); //효제는 수동으로 하긴 했음. 
             }
         }
-        UI_Obj.GetComponent<ButtonComponent>()->SetCurrentBitmap("normal"); //효제 버전으로 바꿈 
+        UI_Obj.get()->GetComponent<ButtonComponent>()->SetCurrentBitmap("normal"); //효제 버전으로 바꿈 
     }
 }
 

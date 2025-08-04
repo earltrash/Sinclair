@@ -12,7 +12,20 @@ public:
 		virtual ~Object();
 		
 
-		virtual void Update() {};
+		virtual void Update() 
+		{
+			for (auto& obj : m_Components)
+			{
+				obj->Update();
+			}
+		};
+		virtual void FixedUpdate(float dt) 
+		{
+			for (auto& obj : m_Components)
+			{
+				obj->FixedUpdate(dt);
+			}
+		}
 		virtual void Render() {};
 
 		void SetActive(bool b) { activated = b; };
