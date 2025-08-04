@@ -133,12 +133,21 @@ void ResourceManager::UI_AssetLoad(const string Path)
 
 ComPtr<ID2D1Bitmap1> ResourceManager::GetTexture(const string& Info)
 {
-    std::wstring wInfo(Info.begin(), Info.end());
-    auto it = m_textures.find(wInfo);
-    if (it != m_textures.end()) {
-        return it->second;
+    if (m_UI_Bank.Get_Image(Info) != nullptr) //Single bitmap -> 배경화면 같은 애들은 바로 가져올 수 있게.
+        return m_UI_Bank.Get_Image(Info);
+
+    else
+    {
+        std::cout << Info << " " << "에 해당하는 Bitmap이 없습니다" << endl;
+        return nullptr;
     }
-    return nullptr;
+
+    //std::wstring wInfo(Info.begin(), Info.end());
+    //auto it = m_textures.find(wInfo);
+    //if (it != m_textures.end()) {
+    //    return it->second;
+    //}
+    //return nullptr;
 }
 
 UI_Bank& ResourceManager::Get_UIBank()
