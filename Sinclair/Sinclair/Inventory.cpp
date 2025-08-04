@@ -424,6 +424,11 @@ bool Inventory::HandleDoubleClick(Vec2 mousePos)
     return false;
 }
 
+UIWindowType Inventory::GetType()
+{
+    return m_windowType;
+}
+
 InventorySlot* Inventory::GetSlotAt(const Vec2& pos)
 {
     if (!m_isActive || isWindowDragging) return nullptr; // 윈도우 비활성 또는 드래그 중에는 슬롯 클릭 불가
@@ -606,7 +611,7 @@ void Inventory::LoadUIBitmaps()
     
 
     windowBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("InvenBG").Get();
-    tooltipBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("ToolTipBG").Get();
+    tooltipBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("Slotdisabled").Get(); //임의
     tooltipBackground.srcRect = D2D1::RectF(0, 0, 234, 345); // 예시. -> Tooltip 
     closeButton.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("InvenClose").Get();
     
@@ -614,11 +619,11 @@ void Inventory::LoadUIBitmaps()
     controller.bitmaps.emplace("slot_disabled",
         ResourceManager::Get().Get_UIBank().Get_Image("Slotdisabled").Get());
     controller.bitmaps.emplace("slot_hover",
-        ResourceManager::Get().Get_UIBank().Get_Image("slot_hover").Get());
+        ResourceManager::Get().Get_UIBank().Get_Image("slothover").Get());
     controller.bitmaps.emplace("slot_selected",
-        ResourceManager::Get().Get_UIBank().Get_Image("slot_selected").Get());
+        ResourceManager::Get().Get_UIBank().Get_Image("slotselected").Get());
     controller.bitmaps.emplace("slot_normal",
-        ResourceManager::Get().Get_UIBank().Get_Image("slot_normal").Get());
+        ResourceManager::Get().Get_UIBank().Get_Image("slotnormal").Get());
 
 }
 

@@ -140,9 +140,6 @@
     <ClInclude Include="CursorManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="EquipmentWindow.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="UI_Bank.h">
       <Filter>Bank</Filter>
     </ClInclude>
@@ -166,6 +163,12 @@
     </ClInclude>
     <ClInclude Include="MouseInput.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_BJ.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentWindow.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -232,9 +235,6 @@
     <ClCompile Include="ButtonComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
-    <ClCompile Include="EquipmentWindow.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="UI_Bank.cpp">
       <Filter>Bank</Filter>
     </ClCompile>
@@ -252,6 +252,12 @@
     </ClCompile>
     <ClCompile Include="BackgroundComponent.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_BJ.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentWindow.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ public:
  int GetStat(const Status_fundamental& statName) const;
  void SetPart(const Wearable_part& Part);
 
-
+ Wearable_part Getpart();
 
  //위 둘은 ItemGlobal 참고 
 private:

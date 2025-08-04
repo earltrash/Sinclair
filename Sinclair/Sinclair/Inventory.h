@@ -44,7 +44,7 @@ public:
      bool HandleDoubleClick(Vec2 mousePos) override;
 
      virtual void SetActivate(bool active) { m_isActive = active; }
-     virtual UIWindowType GetType() = 0;
+     UIWindowType GetType() override;
 
 
 

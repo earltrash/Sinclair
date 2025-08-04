@@ -9,7 +9,7 @@
 #include "Scene_Title.h"
 #include "Scene_Outgame.h"
 #include "Scene_InGame.h"
-
+#include "Scene_BJ.h"
 
 using namespace std;
 
@@ -28,7 +28,10 @@ public:
 				//m_Scene_map->emplace("Title", make_shared<Scene_Title>("Title"));
 				//m_Scene_map->emplace("Stage", make_shared<Scene_Outgame>("OutGame"));
 				//m_Scene_map->emplace("End", make_shared<Scene_InGame>("InGame"));
-				m_Scene_map->emplace("hyoje", make_shared<Scene_hyoje>("hyoje"));
+				//m_Scene_map->emplace("hyoje", make_shared<Scene_hyoje>("hyoje"));
+
+				m_Scene_map->emplace("BJ", make_shared<Scene_hyoje>("BJ"));
+
 
 				//m_currentindex = "Title";
 				m_currentindex = "hyoje";

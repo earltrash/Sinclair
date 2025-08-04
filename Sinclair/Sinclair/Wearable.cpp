@@ -94,3 +94,8 @@ void Wearable::SetPart(const Wearable_part& Part)
     }
 }
 
+Wearable_part Wearable::Getpart()
+{
+    return m_part;
+}
+

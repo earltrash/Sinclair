@@ -8,14 +8,17 @@
 #include "MouseListenerComponent.h"
 #include "ButtonComponent.h"
 
+
+#include "Inventory.h"
+#include "EquipmentWindow.h"
 //GamerManager
 //SoundManager
 // 각각의 inventory, settingwindow, equipment, enhancement, synthesis, statpotionwindow include 하기. 
 
 class InputManager;
 class CursorManager;
-class EquipmentWindow;
-class Inventory;
+//class EquipmentWindow;
+//class Inventory;
 
 class UIManager : public Object
 {
@@ -51,13 +54,20 @@ public:
             m_allWindows.emplace(UIWindowType::InventoryWindow, std::make_unique<Inventory>());
             if (auto* window = GetWindow(UIWindowType::InventoryWindow))
             {
-                window->SetActivate(false);
+               // window->SetActivate(false);
+
+                window->SetActivate(true);
+
             }
             // InventoryTooltip
             //m_allWindows.emplace(UIWindowType::InventoryTooltip, std::make_unique<InventoryTooltip>());
             if (auto* window = GetWindow(UIWindowType::InventoryTooltip))
             {
-                window->SetActivate(false);
+                //window->SetActivate(false);
+
+
+                window->SetActivate(true);
+
             }
 
             // EquipmentWindow
