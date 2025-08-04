@@ -152,6 +152,9 @@
     <ClInclude Include="Scene_hyoje.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="BackgroundComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -234,6 +237,9 @@
     </ClCompile>
     <ClCompile Include="Scene_hyoje.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="BackgroundComponent.cpp">
+      <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

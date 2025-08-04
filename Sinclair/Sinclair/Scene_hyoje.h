@@ -16,7 +16,6 @@ public:
 	//virtual void Exit() override;
 	virtual void Render();
 
-	void CreateButtons();
-	void CreateBackground();
+	void CreateObj();
 };
 
