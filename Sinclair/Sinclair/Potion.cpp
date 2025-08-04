@@ -8,5 +8,6 @@ Potion::Potion(const ItemCommonData& data, const json& j) : Item(data)
         much = j["much"];
 
     else cout << "얘 가져야 할 게 없는데요?" << endl;
+    maxCount = 10;
 }
 

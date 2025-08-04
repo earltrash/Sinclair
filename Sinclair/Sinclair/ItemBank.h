@@ -7,24 +7,35 @@
 #include "ItemGlobal.h"
 #include "Inventory.h"
 
+using namespace  Microsoft::WRL;
 using namespace std;
+
+struct ItemBitmapClip {
+	ComPtr<ID2D1Bitmap1> atlas;   // 어떤 atlas인지 (여러 개일 경우)
+	D2D_RECT_F srcRect;          // atlas 내 클립 위치
+};
+
 class ItemBank
 {
 public :
 	ItemBank() = default;
 	~ItemBank() = default; //에셋 정리하고 갈건데, 아마 ResourceManager.clean에서 여기 접근해다가 정리시킬듯 ㅇㅇ
 public:
-	void GetItem(string path); //json 읽어서 파일 load 시킬 거임 -> 아마 경로는 넣어줘야 할 듯 
+	void LoadItemStatus(const string& path); //json 읽어서 파일 load 시킬 거임 -> 아마 경로는 넣어줘야 할 듯 
+	void LoadItemRect(const string& path); //json ->rect
+	ComPtr<ID2D1Bitmap1> GetItemAtlas(const string& path); //Png
+public:
 
+	const ItemBitmapClip& GetItemClip(string name);
 	void GiveItem(Need_Moment Moment, ItemDatabase& InvenDatabase);
-
-
+	unique_ptr<Item> Get_Item_Status(string name);
 
 private:
-	
-	vector<unique_ptr<Item>> m_Delivered_Item; //Inven database에 보내줄 map  //id로 전달될 거임 ㅇㅇ. 
-	//차피 move로 비워줄거라 재사용 할 거긴 한데, move로 보내주는 경우도 있고, 한 번 쓱 읽고 다시 가져오는 경우도 생길 거라, 이건 더 생각해 봐야 할 듯, 모험 후에 처리할 부분이라 ㅇㅇ 
+	//실제 사용 Map 
+	unordered_multimap<Need_Moment, unique_ptr<Item>> m_S_Item; //처음에 받을 총 아이템의 map
+	unordered_map<string, ItemBitmapClip> m_Atlas; // Item의 id를 넘겨주면 해당하는 Bitmap의 Rect를 반환하는 map 
 
-	unordered_map<Need_Moment, unique_ptr<Item>> m_Total_Item; //처음에 받을 총 아이템의 map
 
+	//Load 할 떄만 사용함. 혹은 디버깅용 
+	unordered_map<std::string, ComPtr<ID2D1Bitmap1>> m_LoadedAtlases; //리소스 캐시를 아끼기 위한 map 
 };

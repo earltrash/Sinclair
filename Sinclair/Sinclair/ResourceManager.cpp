@@ -11,7 +11,16 @@ ResourceManager& ResourceManager::Get()
     return resourcemanager;
 }
 
-void ResourceManager::AssetLoad(static D2DRenderer& renderer, const std::string& directory)
+void ResourceManager::GameAssetLoad()
+{
+    AnimatedAssetLoad(D2DRenderer::Get(), "Resource");
+    m_ItemBank.LoadItemStatus("Item"); //Status Only
+    //m_ItemBank.LoadItemBitmap("") //얘는 Atlas 위치긴 한데 이거 얘기좀 해봐야 할 듯 . 
+    m_UI_Bank.Load_UI_Image("UI"); // Single / Multi Bitmap
+
+}
+
+void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std::string& directory)
 {
     namespace fs = std::filesystem;
     fs::path base = fs::current_path();
@@ -44,28 +53,12 @@ void ResourceManager::AssetLoad(static D2DRenderer& renderer, const std::string&
         std::cerr << "디렉토리 순회 실패: " << e.what() << std::endl;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 
 void ResourceManager::LoadTexture(static D2DRenderer& renderer, wsg name, path Path)
 {
-   /* if (!renderer)
-       /* std::wcout << "렌더러 없음" << std::endl;*/
-    //디버깅 양식 변경해야 함.
-
-
+   
     Clip_Asset clips = ap.Load(Path); // json 파싱은 string 기반
     std::filesystem::path imagePath = Path; // ← wstring 기반 path
     imagePath.replace_extension(L".png");
@@ -86,9 +79,31 @@ void ResourceManager::LoadTexture(static D2DRenderer& renderer, wsg name, path P
 
 }
 
-ComPtr<ID2D1Bitmap1> ResourceManager::GetTexture(const string& Info)
+void ResourceManager::UI_AssetLoad(const string Path)
 {
-    return nullptr;
+    m_UI_Bank.Load_UI_Image(Path); //m_UI_Bank 멤버에 들어감. 
+}
+
+ComPtr<ID2D1Bitmap1> ResourceManager::GetTexture(const string& Info) //
+{
+    if(m_UI_Bank.Get_Image(Info) != nullptr) //Single bitmap -> 배경화면 같은 애들은 바로 가져올 수 있게.
+    return m_UI_Bank.Get_Image(Info);
+    
+    else
+    {
+        std::cout << Info << " " << "에 해당하는 Bitmap이 없습니다" << endl;
+        return nullptr;
+    }
+}
+
+UI_Bank& ResourceManager::Get_UIBank()
+{
+    return m_UI_Bank;
+}
+
+ItemBank& ResourceManager::Get_ItemBank()
+{
+    return m_ItemBank;
 }
 
 std::vector<Clip_Asset> ResourceManager::GetClips(const string& Info)
@@ -126,17 +141,17 @@ void ResourceManager::Clean()
 
 }
 
-std::string ResourceManager::GetAbsoluteResourcePathA()
-{
-    wchar_t exePath[MAX_PATH];
-    GetModuleFileNameW(nullptr, exePath, MAX_PATH);
-
-    std::filesystem::path path(exePath);
-    path = path.parent_path();   // exe 위치
-    path /= "Resource";          // 같은 폴더 내 Resource
-
-    return path.string();
-}
+//std::string ResourceManager::GetAbsoluteResourcePathA()
+//{
+//    wchar_t exePath[MAX_PATH];
+//    GetModuleFileNameW(nullptr, exePath, MAX_PATH);
+//
+//    std::filesystem::path path(exePath);
+//    path = path.parent_path();   // exe 위치
+//    path /= "Resource";          // 같은 폴더 내 Resource
+//
+//    return path.string();
+//}
 
 
 
