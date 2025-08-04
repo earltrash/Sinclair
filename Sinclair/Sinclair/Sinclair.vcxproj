@@ -133,6 +133,7 @@
     <ClInclude Include="AnimationClip.h" />
     <ClInclude Include="AsepriteParser.h" />
     <ClInclude Include="AssetProvider.h" />
+    <ClInclude Include="BackgroundComponent.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="CallbackType.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Potion.h" />
+    <ClInclude Include="Scene_hyoje.h" />
     <ClInclude Include="Scene_InGame.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ItemGlobal.h" />
@@ -175,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AsepriteParser.cpp" />
+    <ClCompile Include="BackgroundComponent.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="Enchancer.cpp" />
@@ -185,6 +188,7 @@
     <ClCompile Include="ItemParseing.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="Scene_hyoje.cpp" />
     <ClCompile Include="Scene_InGame.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ItemGlobal.cpp" />

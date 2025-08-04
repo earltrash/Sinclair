@@ -14,7 +14,9 @@ inline bool InRect(const Rect& ObjP, POINT& mouseP)
 class MouseListenerComponent : public ListenerComponent //새로운 shared-raw-shared로 소유권 이중화를 막기 위함.
 {
 public:
-		explicit MouseListenerComponent(Callback cb) : callback(std::move(cb)) {}
+		explicit MouseListenerComponent(Callback cb) : callback(std::move(cb)) {
+			InputManager::Get().m_broadcaster->AddListener(this);
+		}
 		~MouseListenerComponent() { InputManager::Get().m_broadcaster->RemoveListener(this); } //Raii
 
 		void _OnEvent(const MSG& msg) override {

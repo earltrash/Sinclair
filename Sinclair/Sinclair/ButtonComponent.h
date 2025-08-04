@@ -33,11 +33,23 @@ public:
 
 	void Worked(const MSG& MSG);
 
+	// Getter
+	int GetWidth() const { return width; }
+	int GetHeight() const { return height; }
+
+	// Setter
+	void SetWidth(int w) { width = w; }
+	void SetHeight(int h) { height = h; }
+	
+
 private:
+	
 	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmap; 
 	ComPtr<ID2D1Bitmap1> m_curbm;
 
 	ButtonState m_currentState = ButtonState::Normal;
 
 	std::function<void()> m_onClick;
+
+	int width, height;
 };
