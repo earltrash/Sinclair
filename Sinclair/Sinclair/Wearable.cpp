@@ -13,9 +13,10 @@ Wearable::Wearable(const ItemCommonData& data, const json& j) : Item(data)
     {
         std::string part = j["part"];
         m_part = StringToWP(part);
+        Enchan_Count = (m_part == Wearable_part::Weapon) ? 5 : 3; //깔끔하다
     }
-
-
+    else
+        std::cout << "장비 파트 부분에서 문제 발생함" << endl;
 
 }
 

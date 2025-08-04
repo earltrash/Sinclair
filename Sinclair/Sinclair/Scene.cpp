@@ -10,7 +10,10 @@ void SceneStandard::Update()
 {
 		for (auto& e : m_gameObjects)
 		{
+			if (e.second->isActive())
+			{
 				e.second->Update(); //일단 뭐 없긴 함. 
+			}
 		}
 }
 

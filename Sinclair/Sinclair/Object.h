@@ -14,6 +14,9 @@ public:
 
 		virtual void Update() {};
 		virtual void Render() {};
+
+		void SetActive(bool b) { activated = b; };
+		bool isActive() { return activated; }
 public:
 		
 		void SetPosition(Vec2 position)
@@ -43,7 +46,7 @@ protected:
 		std::vector<std::unique_ptr<Component>> m_Components;
 
 		Transform m_transform;
-		bool activated = false;
+		bool activated = true;
 };
 
 

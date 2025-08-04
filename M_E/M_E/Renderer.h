@@ -53,13 +53,15 @@ public:
 
     ID2D1Bitmap1** GetBitmap() { return m_targetBitmap.GetAddressOf(); }
 
+    void CreateWriteResource();
+
+    void CreateWriteResource(const wchar_t* fontName, DWRITE_FONT_WEIGHT fontWeight, float fontSize);
+
 private:
 
     void CreateDeviceAndSwapChain(HWND hwnd);
 
     void CreateRenderTargets();
-
-    void CreateWriteResource();
 
     void ReleaseRenderTargets();
 

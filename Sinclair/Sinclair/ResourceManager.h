@@ -4,6 +4,11 @@
 #include "AsepriteParser.h"
 #include "Renderer.h"
 
+
+#include "UI_Bank.h"
+#include "ItemBank.h"
+
+
 using namespace std;
 
 using wsg = std::wstring;
@@ -32,23 +37,32 @@ public:
     static ResourceManager& Get();
 
     //static ResourceManager& Get();
-    void AssetLoad(static D2DRenderer& renderer, const std::string& directory);
-    void LoadTexture(static D2DRenderer& renderer, wsg name, path path);
 
-    ComPtr<ID2D1Bitmap1> GetTexture(const string& Info);
+    void GameAssetLoad();
+
+
+    void AnimatedAssetLoad(static D2DRenderer& renderer, const std::string& directory);
+    void LoadTexture(static D2DRenderer& renderer, wsg name, path path);
     void RegisterClip(const Clip_Asset& asset);
     std::vector<Clip_Asset> GetClips(const string& Info);
 
-    void Clean();
 
-    std::string GetAbsoluteResourcePathA();
+public:
+    void UI_AssetLoad(const string Path);
+    ComPtr<ID2D1Bitmap1> GetTexture(const string& Info);
+    
+    UI_Bank& Get_UIBank();
+    ItemBank& Get_ItemBank();
+
+   
+public:
+    void Clean();
+    //폐기 예정  std::string GetAbsoluteResourcePathA(); 
 
 private:
     AsepriteParser ap;
     std::unordered_map<std::wstring, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> m_textures;
     std::wstring to_wstring_hash(const std::string& s);
-    //두 번에 걸쳐서 값을 가져옴. Scene -> Name -> Asset 순으로
-
 
     //기존 에셋 관리 부분을 분리. 
     std::unordered_map<std::string, Clip_Asset> allClipAssets;
@@ -56,7 +70,7 @@ private:
 
 
 
-    // Item_Bank
-    // UI_Bitmap_Bank
+    ItemBank m_ItemBank;
+    UI_Bank m_UI_Bank;
     // AsepriteParser -> 파싱하는 건 
 };

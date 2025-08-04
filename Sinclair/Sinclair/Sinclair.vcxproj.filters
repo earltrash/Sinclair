@@ -24,6 +24,12 @@
     <Filter Include="Item">
       <UniqueIdentifier>{44ed9344-3ac6-4312-8aca-d09dd9a63c21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Bank">
+      <UniqueIdentifier>{d2f89555-7c54-4380-b0a7-5026decec4fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inventory">
+      <UniqueIdentifier>{2370e0cf-166a-4cb0-8322-de791ca209e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputManager.h">
@@ -125,14 +131,8 @@
     <ClInclude Include="Wearable.h">
       <Filter>Item</Filter>
     </ClInclude>
-    <ClInclude Include="ItemBank.h">
-      <Filter>Item</Filter>
-    </ClInclude>
     <ClInclude Include="Inventory.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_Bank.h">
-      <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="ButtonComponent.h">
       <Filter>Component</Filter>
@@ -148,6 +148,21 @@
     </ClInclude>
     <ClInclude Include="UIWindow.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Bank.h">
+      <Filter>Bank</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemBank.h">
+      <Filter>Bank</Filter>
+    </ClInclude>
+    <ClInclude Include="InvenMem.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_hyoje.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundComponent.h">
+      <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -174,9 +189,6 @@
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Component</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Scene</Filter>
@@ -211,13 +223,7 @@
     <ClCompile Include="ItemParseing.cpp">
       <Filter>Item</Filter>
     </ClCompile>
-    <ClCompile Include="ItemBank.cpp">
-      <Filter>Item</Filter>
-    </ClCompile>
     <ClCompile Include="Inventory.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_Bank.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ButtonComponent.cpp">
@@ -228,6 +234,24 @@
     </ClCompile>
     <ClCompile Include="UIManager.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Bank.cpp">
+      <Filter>Bank</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemBank.cpp">
+      <Filter>Bank</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Module</Filter>
+    </ClCompile>
+    <ClCompile Include="InvenMem.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_hyoje.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="BackgroundComponent.cpp">
+      <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
