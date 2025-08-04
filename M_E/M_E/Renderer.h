@@ -11,7 +11,9 @@ private:
     D2DRenderer() = default;
 
     ~D2DRenderer() = default;
-
+    // 복사 방지용.
+    D2DRenderer(const D2DRenderer&) = delete;
+    D2DRenderer& operator=(const D2DRenderer&) = delete;
 public:
     static D2DRenderer& Get();
 

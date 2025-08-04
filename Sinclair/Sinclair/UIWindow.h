@@ -15,7 +15,7 @@ public:
 		virtual ~UIWindow() = default;
 
 		virtual void Update() override {};
-		virtual void Render() override {};
+		virtual void Render() override = 0;
 		
 		// 마우스 인풋 관련 함수들.
 		virtual bool HandleMouseHover(Vec2 mousePos) = 0;

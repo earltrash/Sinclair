@@ -43,19 +43,6 @@ void ResourceManager::AssetLoad(static D2DRenderer& renderer, const std::string&
     catch (const fs::filesystem_error& e) {
         std::cerr << "디렉토리 순회 실패: " << e.what() << std::endl;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 
@@ -88,6 +75,12 @@ void ResourceManager::LoadTexture(static D2DRenderer& renderer, wsg name, path P
 
 ComPtr<ID2D1Bitmap1> ResourceManager::GetTexture(const string& Info)
 {
+    std::wstring wInfo(Info.begin(), Info.end());
+    auto it = m_textures.find(wInfo);
+    if (it != m_textures.end()) 
+    {
+        return it->second;
+    }
     return nullptr;
 }
 

@@ -50,7 +50,7 @@ bool EquipmentWindow::HandleMouseDown(Vec2 mousePos)
     Wearable_part clickedSlot = GetSlotTypeAt(mousePos);
     if (clickedSlot != Wearable_part::UnKnown)
     {
-        // 현재 커서가 아이템을 드래그 중인가?
+        // 현재 커서가 아이템을 드래그 중인지 체크.
         if (CursorManager::Get().IsDragging())
         {
             // 드래그 중인 아이템 가져오기
@@ -77,13 +77,13 @@ bool EquipmentWindow::HandleMouseDown(Vec2 mousePos)
             if (equippedItem)
             {
                 CursorManager::Get().StartItemDrag(*equippedItem, DragSource::Equipment);
-                // 실제 장비 해제는 마우스업에서 처리 (드래그가 성공적으로 완료되면)
+                // 실제 장비 해제는 마우스업에서 처리 
                 return true;
             }
         }
     }
 
-    // 4. 창 영역 내의 다른 곳 클릭 - 입력을 소비 (다른 창으로 전달 방지)
+    // 4. 창 영역 내의 다른 곳 클릭. 그냥 끝내기.
     return true;
 }
 
@@ -106,12 +106,21 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
             Item* draggedItem = CursorManager::Get().GetDraggedItem();
             if (draggedItem)
             {
-                // 해당 슬롯에서 아이템 제거
-                Wearable_part sourceSlot = draggedItem->GetWearablePart();
-                UnequipItem(sourceSlot);
+                // 드래그된 아이템의 슬롯 타입 찾아서 해제
+                for (auto& [slotType, item] : m_equippedItems)
+                {
+                    if (item == draggedItem)
+                    {
+                        UnequipItem(slotType);
+                        break;
+                    }
+                }
 
-                // 인벤토리로 아이템 이동 
-                //m_inventory->AddItem(draggedItem);
+                // UIManager를 통해 인벤토리에 아이템 추가
+                if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
+                {
+                    inventory->AddItem(draggedItem->m_data.name, 1);
+                }
             }
 
             CursorManager::Get().EndItemDrag();
@@ -131,8 +140,10 @@ bool EquipmentWindow::HandleDoubleClick(Vec2 mousePos)
         Item* item = UnequipItem(clickedSlot);
         if (item)
         {
-            // 인벤토리로 아이템 반환
-            //m_inventory->AddItem(item);
+            if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
+            {
+                inventory->AddItem(item->m_data.name, 1);
+            }
             return true;
         }
     }
@@ -169,82 +180,114 @@ void EquipmentWindow::EquipItem(Item* item)
 {
     if (!item) return;
 
-    Wearable_part slotType = item->GetWearablePart();
-
-    // 기존에 착용 중인 아이템이 있으면 교체
-    Item* previousItem = m_equippedItems[slotType];
-    if (previousItem)
+    Wearable_part slotType = Wearable_part::UnKnown;
+    if (item->m_data.name.find("Helmet") != std::string::npos) slotType = Wearable_part::Helmet;
+    else if (item->m_data.name.find("Weapon") != std::string::npos) slotType = Wearable_part::Weapon;
+    else if (item->m_data.name.find("Cape") != std::string::npos) slotType = Wearable_part::Cape;
+    else if (item->m_data.name.find("Upper") != std::string::npos) slotType = Wearable_part::Upper;
+    else if (item->m_data.name.find("Under") != std::string::npos) slotType = Wearable_part::Under;
+    else if (item->m_data.name.find("Glove") != std::string::npos) slotType = Wearable_part::Glove;
+    else if (item->m_data.name.find("Neckless") != std::string::npos) slotType = Wearable_part::Neckless;
+    else if (item->m_data.name.find("EarRing") != std::string::npos) slotType = Wearable_part::EarRing;
+    else if (item->m_data.name.find("Shoes") != std::string::npos) slotType = Wearable_part::Shoes;
+    
+    if (slotType != Wearable_part::UnKnown)
     {
-        // 기존 아이템을 인벤토리로 반환
-        // InventoryManager::Get().AddItem(previousItem);
+        // 기존에 착용 중인 아이템이 있으면 인벤토리로 반환
+        Item* previousItem = m_equippedItems[slotType];
+        if (previousItem)
+        {
+            if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
+            {
+                inventory->AddItem(previousItem->m_data.name, 1);
+            }
+        }
+
+        // 새 아이템 착용
+        m_equippedItems[slotType] = item;
+
+        // 스탯 업데이트
+        // GameManager::Get().UpdatePlayerStats();
     }
-
-    // 새 아이템 착용
-    m_equippedItems[slotType] = item;
-
-    // 플레이어 스탯 업데이트
-    // PlayerManager::Get().UpdateStats();
-
-    OutputDebugStringA(("Equipped item to slot: " + std::to_string(static_cast<int>(slotType)) + "\n").c_str());
-}
-
-Item* EquipmentWindow::UnequipItem(Wearable_part slotType)
-{
-    auto it = m_equippedItems.find(slotType);
-    if (it != m_equippedItems.end() && it->second != nullptr)
-    {
-        Item* item = it->second;
-        m_equippedItems[slotType] = nullptr; // 슬롯 비우기
-
-        // 플레이어 스탯 업데이트
-        // PlayerManager::Get().UpdateStats();
-
-        OutputDebugStringA(("Unequipped item from slot: " + std::to_string(static_cast<int>(slotType)) + "\n").c_str());
-        return item;
-    }
-
-    return nullptr;
-}
-
-Item* EquipmentWindow::GetEquippedItem(Wearable_part slotType) const
-{
-    auto it = m_equippedItems.find(slotType);
-    return (it != m_equippedItems.end()) ? it->second : nullptr;
 }
 
 void EquipmentWindow::RenderBackground()
 {
-    // 창 배경 렌더링
-    // Renderer::Get().DrawRectangle(m_position, m_size, Color::WindowBackground);
-    // Renderer::Get().DrawImage("equipment_window_bg.png", m_position);
-
+    UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
+    if (uiRenderer)
+    {
+        ID2D1Bitmap1* backgroundBitmap = uiRenderer->GetBitmap("equipment_window_bg").Get();
+        if (backgroundBitmap)
+        {
+            D2D1_RECT_F destRect = { m_position.x, m_position.y, m_position.x + m_size.x, m_position.y + m_size.y };
+            D2DRenderer::Get().DrawBitmap(backgroundBitmap, destRect);
+        }
+        else
+        {
+            D2DRenderer::Get().DrawRectangle(m_position.x, m_position.y, m_position.x + m_size.x, m_position.y + m_size.y, D2D1::ColorF(D2D1::ColorF::DarkGray, 0.8f));
+        }
+    }
+    else
+    {
+        D2DRenderer::Get().DrawRectangle(m_position.x, m_position.y, m_position.x + m_size.x, m_position.y + m_size.y, D2D1::ColorF(D2D1::ColorF::DarkGray, 0.8f));
+    }
 }
 
 void EquipmentWindow::RenderTitleBar()
 {
-    // 타이틀바 배경
+    UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
     Vec2 titleBarSize = { m_size.x, 42.0f };
-    // Renderer::Get().DrawRectangle(m_position, titleBarSize, Color::TitleBar);
 
-    // 타이틀 텍스트
+    if (uiRenderer)
+    {
+        ID2D1Bitmap1* titleBarBitmap = uiRenderer->GetBitmap("title_bar_bg").Get();
+        D2D1_RECT_F destRect = { m_position.x, m_position.y, m_position.x + titleBarSize.x, m_position.y + titleBarSize.y };
+        if (titleBarBitmap)
+        {
+            D2DRenderer::Get().DrawBitmap(titleBarBitmap, destRect);
+        }
+        else
+        {
+            D2DRenderer::Get().DrawRectangle(m_position.x, m_position.y, m_position.x + titleBarSize.x, m_position.y + titleBarSize.y, D2D1::ColorF(D2D1::ColorF::SteelBlue, 1.0f));
+        }
+    }
+    else
+    {
+        D2DRenderer::Get().DrawRectangle(m_position.x, m_position.y, m_position.x + titleBarSize.x, m_position.y + titleBarSize.y, D2D1::ColorF(D2D1::ColorF::SteelBlue, 1.0f));
+    }
+
     Vec2 textPos = m_position + Vec2(10, 10);
-    // Renderer::Get().DrawText("Equipment", textPos, Color::White, FontSize::Medium);
+    D2DRenderer::Get().DrawMessage(L"Equipment", textPos.x, textPos.y, 100, 20, D2D1::ColorF(D2D1::ColorF::White));
 }
 
 void EquipmentWindow::RenderSlots()
 {
-    // 모든 슬롯 렌더링
+    UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
+
     for (const auto& [slotType, position] : m_slotPositions)
     {
         Vec2 slotSize = m_slotSizes[slotType];
+        D2D1_RECT_F destRect = { position.x, position.y, position.x + slotSize.x, position.y + slotSize.y };
 
-        // 슬롯 배경 (빈 슬롯 이미지)
-        // Renderer::Get().DrawImage("empty_slot.png", position, slotSize);
+        if (uiRenderer)
+        {
+            ID2D1Bitmap1* slotBackgroundBitmap = uiRenderer->GetBitmap("empty_slot").Get(); // .Get() 추가
+            if (slotBackgroundBitmap)
+            {
+                D2DRenderer::Get().DrawBitmap(slotBackgroundBitmap, destRect);
+            }
+            else
+            {
+                D2DRenderer::Get().DrawRectangle(position.x, position.y, position.x + slotSize.x, position.y + slotSize.y, D2D1::ColorF(D2D1::ColorF::LightGray, 0.5f));
+            }
+        }
+        else
+        {
+            D2DRenderer::Get().DrawRectangle(position.x, position.y, position.x + slotSize.x, position.y + slotSize.y, D2D1::ColorF(D2D1::ColorF::LightGray, 0.5f));
+        }
 
-        // 디버그용 테두리
-        // Renderer::Get().DrawRectangleOutline(position, slotSize, Color::SlotBorder);
+        D2DRenderer::Get().DrawRectangle(position.x, position.y, position.x + slotSize.x, position.y + slotSize.y, D2D1::ColorF(D2D1::ColorF::Black));
 
-        // 슬롯 타입별 아이콘 (어떤 장비가 들어가는지 표시)
         RenderSlotIcon(slotType, position);
     }
 }
@@ -258,39 +301,101 @@ void EquipmentWindow::RenderEquippedItems()
         {
             Vec2 slotPos = m_slotPositions[slotType];
             Vec2 slotSize = m_slotSizes[slotType];
+            D2D1_RECT_F destRect = { slotPos.x, slotPos.y, slotPos.x + slotSize.x, slotPos.y + slotSize.y };
 
-            // 아이템 이미지 렌더링
-            // Renderer::Get().DrawImage(item->GetImagePath(), slotPos, slotSize);
+            ID2D1Bitmap1* itemBitmap = ResourceManager::Get().GetTexture(item->GetImagePath()).Get();
+
+            if (itemBitmap)
+            {
+                D2D1_RECT_F srcRect = { 0, 0, (float)itemBitmap->GetSize().width, (float)itemBitmap->GetSize().height };
+                D2DRenderer::Get().DrawBitmap(itemBitmap, destRect, srcRect);
+            }
+            else
+            {
+                D2DRenderer::Get().DrawCircle(slotPos.x + slotSize.x / 2, slotPos.y + slotSize.y / 2, slotSize.x / 3, D2D1::ColorF(D2D1::ColorF::Green));
+            }
 
             // 아이템 강화 수치 표시 (+1, +2 등)
-            if (item->GetEnhanceLevel() > 0)
-            {
-                Vec2 enhanceTextPos = slotPos + Vec2(slotSize.x - 20, 5);
-                std::string enhanceText = "+" + std::to_string(item->GetEnhanceLevel());
-                // Renderer::Get().DrawText(enhanceText, enhanceTextPos, Color::Yellow, FontSize::Small);
-            }
+            // if (item->GetEnhanceLevel() > 0)
+            // {
+            //     Vec2 enhanceTextPos = slotPos + Vec2(slotSize.x - 20, 5);
+            //     std::string enhanceText = "+" + std::to_string(item->GetEnhanceLevel());
+            //     D2DRenderer::Get().DrawMessage(std::wstring(enhanceText.begin(), enhanceText.end()).c_str(), enhanceTextPos.x, enhanceTextPos.y, 20, 15, D2D1::ColorF(D2D1::ColorF::Yellow));
+            // }
         }
     }
 }
 
 void EquipmentWindow::RenderCloseButton()
 {
-    // 닫기 버튼 위치 계산 (UIWindow의 IsInCloseButton과 동일한 로직)
+    UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
+
     float rightMargin = 47.0f;
     Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
     Vec2 closeButtonSize = { 27.0f, 27.0f };
+    D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 
-    // 닫기 버튼 이미지
-    // Renderer::Get().DrawImage("close_button.png", closeButtonPos, closeButtonSize);
-
-    // 마우스 오버 효과
-    Vec2 mousePos = InputManager::Get().GetMousePosition();
-    if (mousePos.x >= closeButtonPos.x && mousePos.x <= closeButtonPos.x + closeButtonSize.x &&
-        mousePos.y >= closeButtonPos.y && mousePos.y <= closeButtonPos.y + closeButtonSize.y)
+    if (uiRenderer)
     {
-        // 호버 효과
-        // Renderer::Get().DrawImage("close_button_hover.png", closeButtonPos, closeButtonSize);
+        ID2D1Bitmap1* closeButtonBitmap = uiRenderer->GetBitmap("close_button").Get();
+        if (closeButtonBitmap)
+        {
+            D2DRenderer::Get().DrawBitmap(closeButtonBitmap, destRect);
+        }
+        else
+        {
+            D2DRenderer::Get().DrawRectangle(closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y, D2D1::ColorF(D2D1::ColorF::Red));
+        }
+
+        Vec2 mousePos = InputManager::Get().GetMousePosition();
+        if (mousePos.x >= closeButtonPos.x && mousePos.x <= closeButtonPos.x + closeButtonSize.x &&
+            mousePos.y >= closeButtonPos.y && mousePos.y <= closeButtonPos.y + closeButtonSize.y)
+        {
+            ID2D1Bitmap1* closeButtonHoverBitmap = uiRenderer->GetBitmap("close_button_hover").Get();
+            if (closeButtonHoverBitmap)
+            {
+                D2DRenderer::Get().DrawBitmap(closeButtonHoverBitmap, destRect);
+            }
+            else
+            {
+                D2DRenderer::Get().DrawRectangle(closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y, D2D1::ColorF(D2D1::ColorF::Blue, 0.5f));
+            }
+        }
     }
+    else
+    {
+        D2DRenderer::Get().DrawRectangle(closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y, D2D1::ColorF(D2D1::ColorF::Red));
+        Vec2 mousePos = InputManager::Get().GetMousePosition();
+        if (mousePos.x >= closeButtonPos.x && mousePos.x <= closeButtonPos.x + closeButtonSize.x &&
+            mousePos.y >= closeButtonPos.y && mousePos.y <= closeButtonPos.y + closeButtonSize.y)
+        {
+            D2DRenderer::Get().DrawRectangle(closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y, D2D1::ColorF(D2D1::ColorF::Blue, 0.5f));
+        }
+    }
+}
+
+Item* EquipmentWindow::UnequipItem(Wearable_part slotType)
+{
+    auto it = m_equippedItems.find(slotType);
+    if (it != m_equippedItems.end() && it->second != nullptr)
+    {
+        Item* item = it->second;
+        m_equippedItems[slotType] = nullptr; // 슬롯 비우기
+
+        // 스탯 업데이트
+        // GameManager::Get().UpdateStats();
+
+        OutputDebugStringA(("Unequipped item from slot: " + std::to_string(static_cast<int>(slotType)) + "\n").c_str());
+        return item;
+    }
+
+    return nullptr;
+}
+
+Item* EquipmentWindow::GetEquippedItem(Wearable_part slotType) const
+{
+    auto it = m_equippedItems.find(slotType);
+    return (it != m_equippedItems.end()) ? it->second : nullptr;
 }
 
 Wearable_part EquipmentWindow::GetSlotTypeAt(Vec2 mousePos) const
@@ -315,7 +420,17 @@ bool EquipmentWindow::CanEquipItem(Item* item, Wearable_part slotType) const
     if (!item) return false;
 
     // 아이템의 착용 부위와 슬롯 타입이 일치하는지 확인
-    return item->GetWearablePart() == slotType;
+    if (item->m_data.name.find("Helmet") != std::string::npos && slotType == Wearable_part::Helmet) return true;
+    else if (item->m_data.name.find("Weapon") != std::string::npos && slotType == Wearable_part::Weapon) return true;
+    else if (item->m_data.name.find("Cape") != std::string::npos && slotType == Wearable_part::Cape) return true;
+    else if (item->m_data.name.find("Upper") != std::string::npos && slotType == Wearable_part::Upper) return true;
+    else if (item->m_data.name.find("Under") != std::string::npos && slotType == Wearable_part::Under) return true;
+    else if (item->m_data.name.find("Glove") != std::string::npos && slotType == Wearable_part::Glove) return true;
+    else if (item->m_data.name.find("Neckless") != std::string::npos && slotType == Wearable_part::Neckless) return true;
+    else if (item->m_data.name.find("EarRing") != std::string::npos && slotType == Wearable_part::EarRing) return true;
+    else if (item->m_data.name.find("Shoes") != std::string::npos && slotType == Wearable_part::Shoes) return true;
+
+    return false;
 }
 
 void EquipmentWindow::UpdateSlotPositions()

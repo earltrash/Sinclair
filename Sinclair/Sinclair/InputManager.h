@@ -41,7 +41,9 @@ public:
         bool IsKeyDown(KeyCode key) const;
         bool IsKeyUp(KeyCode key) const;
 
-        
+
+
+        unique_ptr<EventDispatcher> m_broadcaster = nullptr;
 private:
 	InputManager();
 	~InputManager();
@@ -50,7 +52,7 @@ private:
     InputManager(const InputManager&) = delete;
     InputManager& operator=(const InputManager&) = delete;
 
-    unique_ptr<EventDispatcher> m_broadcaster = nullptr;
+   
 
     // 마우스 상태
     Vec2 m_mousePosition = { 0, 0 };
@@ -65,4 +67,5 @@ private:
     // 더블클릭 타이머
     float m_doubleClickTimer = 0.0f;
     const float DOUBLE_CLICK_TIME = 0.3f;
+
 };
