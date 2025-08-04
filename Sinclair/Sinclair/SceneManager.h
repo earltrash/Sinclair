@@ -30,11 +30,11 @@ public:
 				//m_Scene_map->emplace("End", make_shared<Scene_InGame>("InGame"));
 				//m_Scene_map->emplace("hyoje", make_shared<Scene_hyoje>("hyoje"));
 
-				m_Scene_map->emplace("BJ", make_shared<Scene_hyoje>("BJ"));
+				m_Scene_map->emplace("BJ", make_shared<SceneBj>("BJ"));
 
 
 				//m_currentindex = "Title";
-				m_currentindex = "hyoje";
+				m_currentindex = "BJ";
 
 				Scenes = m_Scene_map;
 

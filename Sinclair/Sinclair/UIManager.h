@@ -312,7 +312,7 @@ public:
 
 private:
     UIManager() = default;
-    ~UIManager();
+    virtual ~UIManager() = default;
 
     // 복사 방지용.
     UIManager(const UIManager&) = delete;

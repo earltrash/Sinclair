@@ -121,11 +121,10 @@ bool M_Core::ModuleInit()
 
    
     ResourceManager::Get().GameAssetLoad();
-    //ResourceManager::Get().AnimatedAssetLoad(D2DRenderer::Get() , "Resource"); //Animated - UI - Item 순으로 Resource 받음.
     m_Scene_map = make_shared<unordered_map<string, shared_ptr<SceneStandard>>>();  //Core가 UPdate로 돌려야 하니
     SceneManager::Get().Initalize(m_Scene_map); //받은 map 멤버로 시작 
 
-    UIManager::Get().Initialize(); //UI 들 생성하기. 
+   // UIManager::Get().Initialize(); //UI 들 생성하기. 
 
 
     m_timer = make_unique<GameTimer>();

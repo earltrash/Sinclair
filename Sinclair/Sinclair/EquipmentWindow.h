@@ -24,8 +24,8 @@ public:
 				m_slotPositions[Wearable_part::Helmet] = { m_position.x + 222, m_position.y + 290 };// 2¹øÄ­
 				m_slotSizes[Wearable_part::Helmet] = { 74, 74 };
 
-				m_slotPositions[Wearable_part::EarRing] = { m_position.x + 222, m_position.y + 442 }; // 3¹øÄ­
-				m_slotSizes[Wearable_part::EarRing] = { 74, 74 };
+				m_slotPositions[Wearable_part::Ring] = { m_position.x + 222, m_position.y + 442 }; // 3¹øÄ­
+				m_slotSizes[Wearable_part::Ring] = { 74, 74 };
 
 				m_slotPositions[Wearable_part::Upper] = { m_position.x + 222, m_position.y + 593 }; // 4¹øÄ­
 				m_slotSizes[Wearable_part::Upper] = { 74, 74 };

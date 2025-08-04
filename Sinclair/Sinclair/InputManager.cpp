@@ -103,7 +103,7 @@ void InputManager::Update()
     }
 
     // UIManager에 입력 전달
-    UIManager::Get().OnInput();
+    //UIManager::Get().OnInput();
 }
 
 // 마우스 클릭

@@ -81,7 +81,7 @@ void SceneBj::Render()
 	//	D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest);
 	//}
 
-	UIManager::Get().Render();
+	// UIManager::Get().Render();
 
 
 	D2DRenderer::Get().RenderEnd();
