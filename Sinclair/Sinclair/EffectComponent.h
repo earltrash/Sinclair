@@ -2,17 +2,29 @@
 #include "pch.h"
 #include "Renderer.h"
 #include "Component.h"
+#include "RenderInfo.h"
 
 #define FPS60 0.0166666666666667f
 
 using namespace Microsoft::WRL;
 
-class GaussianBlur_Effect : Component				// 블러 효과
+class GaussianBlur_Effect;					// 블러 효과
+class Shadow_Effect;						// 그림자 효과
+class Composite_Effect;						// 이미지 합성 효과
+class Crop_Effect;							// 이미지 크롭 효과
+class Contrast_Effect;						// 이미지 대비 강조 효과
+class Vignette_Effect;						// 테두리 음영 적용 효과
+class Scale_Effect;							// 스케일 조정 효과
+class Posterize_Effect;						// 포스터화 효과 : 만화같은 느낌이나 복고풍 느낌을 주는 필터
+class Gray_Effect;							// 무채색화 효과
+class PerspectiveTM_Effect;					// 원근 Transform 변환 효과
+
+class GaussianBlur_Effect : public Component				// 블러 효과
 {
 public:
-	GaussianBlur_Effect(float strength, ID2D1Bitmap1* bitmap);	// 오브젝트의 비트맵에 효과 적용
-	GaussianBlur_Effect(float strength, const wchar_t* path);	// 다른 비트맵 생성하여 효과 적용
-	GaussianBlur_Effect(float strength, ID2D1Effect* pEffect);	// 다른 이펙트가 적용된 비트맵에 효과 적용
+	GaussianBlur_Effect(RenderInfo* renderInfo, float strength, ID2D1Bitmap1* bitmap);	// 오브젝트의 비트맵에 효과 적용
+	GaussianBlur_Effect(RenderInfo* renderInfo, float strength, const wchar_t* path);	// 다른 비트맵 생성하여 효과 적용
+	GaussianBlur_Effect(RenderInfo* renderInfo, float strength, ID2D1Effect* pEffect);	// 다른 이펙트가 적용된 비트맵에 효과 적용
 	~GaussianBlur_Effect() { m_gaussianBlurEffect.Reset(); }
 
 	void Update() override;
@@ -21,20 +33,22 @@ public:
 
 	ID2D1Effect* GetEffect() { return m_gaussianBlurEffect.Get(); }
 private:
-	float m_strength;							// 블러 적용 정도
+	float m_strength;							// 블러 적용 정도 : 1 ~ 6까지 추천
 
 	ID2D1Effect* m_effect = nullptr;			// 블러 효과 적용할 이펙트
 	ComPtr<ID2D1Bitmap1> m_bitmap;				// 블러 효과 적용할 비트맵
 
 	ComPtr<ID2D1Effect> m_gaussianBlurEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
 };
 
 class Shadow_Effect : public Component			// 그림자 효과
 {
 public:
-	Shadow_Effect(float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, ID2D1Bitmap1* bitmap);	// 오브젝트의 비트맵에 효과 적용
-	Shadow_Effect(float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, const wchar_t* path);	// 다른 비트맵 생성하여 효과 적용
-	Shadow_Effect(float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, ID2D1Effect* effect);	// 다른 이펙트가 적용된 비트맵에 효과 적용
+	Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, ID2D1Bitmap1* bitmap);	// 오브젝트의 비트맵에 효과 적용
+	Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, const wchar_t* path);	// 다른 비트맵 생성하여 효과 적용
+	Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, ID2D1Effect* effect);	// 다른 이펙트가 적용된 비트맵에 효과 적용
 	~Shadow_Effect() { m_shadowEffect.Reset(); m_offsetEffect.Reset(); }
 
 	void Update() override;
@@ -56,16 +70,18 @@ private:
 
 	ComPtr<ID2D1Effect> m_shadowEffect;
 	ComPtr<ID2D1Effect> m_offsetEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
 };
 
 class Composite_Effect : public Component		// 이미지 합성 효과
 {
 public:
-	Composite_Effect(ID2D1Effect* top, ID2D1Effect* bottom, D2D1_COMPOSITE_MODE mode);		// 이펙트끼리 합성
-	Composite_Effect(ID2D1Bitmap1* top, ID2D1Effect* bottom, D2D1_COMPOSITE_MODE mode);		// 비트맵(위)과 이펙트(아래) 합성
-	Composite_Effect(ID2D1Effect* top, ID2D1Bitmap1* bottom, D2D1_COMPOSITE_MODE mode);		// 비트맵(아래)과 이펙트(위) 합성
-	Composite_Effect(const wchar_t* top, ID2D1Bitmap1* bottom, D2D1_COMPOSITE_MODE mode);	// 새 이미지(위)와 비트맵(아래) 합성
-	Composite_Effect(ID2D1Bitmap1* top, const wchar_t* bottom, D2D1_COMPOSITE_MODE mode);	// 새 이미지(아래)와 비트맵(위) 합성
+	Composite_Effect(RenderInfo* renderInfo, ID2D1Effect* top, ID2D1Effect* bottom, D2D1_COMPOSITE_MODE mode);		// 이펙트끼리 합성
+	Composite_Effect(RenderInfo* renderInfo, ID2D1Bitmap1* top, ID2D1Effect* bottom, D2D1_COMPOSITE_MODE mode);		// 비트맵(위)과 이펙트(아래) 합성
+	Composite_Effect(RenderInfo* renderInfo, ID2D1Effect* top, ID2D1Bitmap1* bottom, D2D1_COMPOSITE_MODE mode);		// 비트맵(아래)과 이펙트(위) 합성
+	Composite_Effect(RenderInfo* renderInfo, const wchar_t* top, ID2D1Bitmap1* bottom, D2D1_COMPOSITE_MODE mode);	// 새 이미지(위)와 비트맵(아래) 합성
+	Composite_Effect(RenderInfo* renderInfo, ID2D1Bitmap1* top, const wchar_t* bottom, D2D1_COMPOSITE_MODE mode);	// 새 이미지(아래)와 비트맵(위) 합성
 	~Composite_Effect() { m_compositeEffect.Reset(); }
 
 	void Update() override;
@@ -82,14 +98,16 @@ private:
 	ComPtr<ID2D1Bitmap1> m_bitmapB = nullptr;
 
 	ComPtr<ID2D1Effect> m_compositeEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
 };
 
 class Crop_Effect : public Component		// 이미지 크롭 효과
 {
 public:
-	Crop_Effect(float x, float y, float width, float height, ID2D1Effect* effect);
-	Crop_Effect(float x, float y, float width, float height, ID2D1Bitmap1* bitmap);
-	Crop_Effect(float x, float y, float width, float height, const wchar_t* path);
+	Crop_Effect(RenderInfo* renderInfo, float x, float y, float width, float height, ID2D1Effect* effect);
+	Crop_Effect(RenderInfo* renderInfo, float x, float y, float width, float height, ID2D1Bitmap1* bitmap);
+	Crop_Effect(RenderInfo* renderInfo, float x, float y, float width, float height, const wchar_t* path);
 	~Crop_Effect() { m_cropEffect.Reset(); }
 
 	void Update() override;
@@ -109,14 +127,16 @@ private:
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
 
 	ComPtr<ID2D1Effect> m_cropEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
 };
 
 class Contrast_Effect : public Component		// 이미지 대비 강조 효과
 {
 public:
-	Contrast_Effect(float strength, ID2D1Effect* effect);
-	Contrast_Effect(float strength, ID2D1Bitmap1* bitmap);
-	Contrast_Effect(float strength, const wchar_t* path);
+	Contrast_Effect(RenderInfo* renderInfo, float strength, ID2D1Effect* effect);
+	Contrast_Effect(RenderInfo* renderInfo, float strength, ID2D1Bitmap1* bitmap);
+	Contrast_Effect(RenderInfo* renderInfo, float strength, const wchar_t* path);
 	~Contrast_Effect() { m_contrastEffect.Reset(); }
 
 	void Update() override;
@@ -132,14 +152,16 @@ private:
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
 
 	ComPtr<ID2D1Effect> m_contrastEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
 };
 
-class Vignette_Effect : public Component	// 테두리 색 적용 효과
+class Vignette_Effect : public Component	// 테두리 음영 적용 효과
 {
 public:
-	Vignette_Effect(float blurRadius, float strength, float r, float g, float b, float a, ID2D1Effect* effect);
-	Vignette_Effect(float blurRadius, float strength, float r, float g, float b, float a, ID2D1Bitmap1* bitmap);
-	Vignette_Effect(float blurRadius, float strength, float r, float g, float b, float a, const wchar_t* path);
+	Vignette_Effect(RenderInfo* renderInfo, float blurRadius, float strength, float r, float g, float b, float a, ID2D1Effect* effect);
+	Vignette_Effect(RenderInfo* renderInfo, float blurRadius, float strength, float r, float g, float b, float a, ID2D1Bitmap1* bitmap);
+	Vignette_Effect(RenderInfo* renderInfo, float blurRadius, float strength, float r, float g, float b, float a, const wchar_t* path);
 	~Vignette_Effect() { m_vignetteEffect.Reset(); }
 
 	void Update() override;
@@ -159,14 +181,16 @@ private:
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
 
 	ComPtr<ID2D1Effect> m_vignetteEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
 };
 
 class Scale_Effect : public Component		// 스케일 조정 효과
 {
 public:
-	Scale_Effect(float pivotX, float pivotY, float scaleX, float scaleY, ID2D1Effect* effect);
-	Scale_Effect(float pivotX, float pivotY, float scaleX, float scaleY, ID2D1Bitmap1* bitmap);
-	Scale_Effect(float pivotX, float pivotY, float scaleX, float scaleY, const wchar_t* path);
+	Scale_Effect(RenderInfo* renderInfo, float pivotX, float pivotY, float scaleX, float scaleY, ID2D1Effect* effect);
+	Scale_Effect(RenderInfo* renderInfo, float pivotX, float pivotY, float scaleX, float scaleY, ID2D1Bitmap1* bitmap);
+	Scale_Effect(RenderInfo* renderInfo, float pivotX, float pivotY, float scaleX, float scaleY, const wchar_t* path);
 	~Scale_Effect() { m_scaleEffect.Reset(); }
 
 	void Update() override;
@@ -183,6 +207,8 @@ private:
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
 
 	ComPtr<ID2D1Effect> m_scaleEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
 };
 
 // 포스터화 효과 : 원래 부드러운 색상 그라데이션을 인위적으로 단계별 색상 구간으로 나눠서
@@ -190,9 +216,9 @@ private:
 class Posterize_Effect : public Component
 {
 public:
-	Posterize_Effect(int redStep, int greenStep, int blueStep, ID2D1Effect* effect);
-	Posterize_Effect(int redStep, int greenStep, int blueStep, ID2D1Bitmap1* bitmap);
-	Posterize_Effect(int redStep, int greenStep, int blueStep, const wchar_t* path);
+	Posterize_Effect(RenderInfo* renderInfo, int redStep, int greenStep, int blueStep, ID2D1Effect* effect);
+	Posterize_Effect(RenderInfo* renderInfo, int redStep, int greenStep, int blueStep, ID2D1Bitmap1* bitmap);
+	Posterize_Effect(RenderInfo* renderInfo, int redStep, int greenStep, int blueStep, const wchar_t* path);
 	~Posterize_Effect() { m_posterEffect.Reset(); }
 
 	void Update() override;
@@ -213,14 +239,16 @@ private:
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
 
 	ComPtr<ID2D1Effect> m_posterEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
 };
 
 class Gray_Effect : public Component	// 그레이화 효과
 {
 public:
-	Gray_Effect(float strength, ID2D1Effect* effect);
-	Gray_Effect(float strength, ID2D1Bitmap1* bitmap);
-	Gray_Effect(float strength, const wchar_t* path);
+	Gray_Effect(RenderInfo* renderInfo, float strength, ID2D1Effect* effect);
+	Gray_Effect(RenderInfo* renderInfo, float strength, ID2D1Bitmap1* bitmap);
+	Gray_Effect(RenderInfo* renderInfo, float strength, const wchar_t* path);
 	~Gray_Effect() { m_grayEffect.Reset(); }
 
 	void Update() override;
@@ -235,14 +263,16 @@ private:
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
 
 	ComPtr<ID2D1Effect> m_grayEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
 };
 
 class PerspectiveTM_Effect : public Component	// 원근 Transform 변환 효과
 {
 public:
-	PerspectiveTM_Effect(float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect);
-	PerspectiveTM_Effect(float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap);
-	PerspectiveTM_Effect(float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, const wchar_t* path);
+	PerspectiveTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect);
+	PerspectiveTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap);
+	PerspectiveTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, const wchar_t* path);
 	~PerspectiveTM_Effect() { m_perspectiveEffect.Reset(); }
 
 	void Update() override;
@@ -263,8 +293,39 @@ private:
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
 
 	ComPtr<ID2D1Effect> m_perspectiveEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
 };
 
+//class RotateTM_Effect : public Component	// 회전 효과
+//{
+//public:
+//	RotateTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect);
+//	RotateTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap);
+//	RotateTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, const wchar_t* path);
+//	~RotateTM_Effect() { m_perspectiveEffect.Reset(); }
+//
+//	void Update() override;
+//
+//	void SetPerspective(float x, float y) { m_perspective.x = x; m_perspective.y = y; }
+//	void SetPivot(float x, float y) { m_pivot.x = x; m_pivot.y = y; }
+//	void SetRotate(float x, float y, float z) { m_rotate.x = x; m_rotate.y = y; m_rotate.z = z; }
+//
+//	ID2D1Effect* GetEffect() { return m_perspectiveEffect.Get(); }
+//private:
+//	float m_depth;								// 원근감. 값이 작아질 수록 원근감↑, 커질 수록 원근감↓ (보통 100~1000 사이)
+//
+//	D2D1_VECTOR_2F m_perspective{ 0.f, 0.f };	// 이미지에서 시점이 어디 위치에 있는가
+//	D2D1_VECTOR_2F m_pivot;						// 회전 피봇
+//	D2D1_VECTOR_3F m_rotate;					// 회전량
+//
+//	ID2D1Effect* m_effect = nullptr;
+//	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
+//
+//	ComPtr<ID2D1Effect> m_perspectiveEffect;
+//
+//	RenderInfo* m_renderInfo = nullptr;
+//};
 //class Color_Effect : public Component
 //{
 //public:

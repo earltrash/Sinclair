@@ -55,9 +55,9 @@ void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std:
             if (entry.is_regular_file()) {
                 std::cout << "path: " << entry.path().string() << std::endl;
 
-                if (entry.path().extension() == ".json") {
-                    std::string filename = entry.path().stem().string();
-                    std::wstring fullPath = entry.path().wstring();
+                    if (entry.path().extension() == ".json") {
+                        std::string filename = entry.path().stem().string();
+                        std::wstring fullPath = entry.path().wstring();
 
                     std::cout << "name: " << filename << std::endl;
                     wsg name = wsg(filename.begin(), filename.end());
