@@ -67,11 +67,40 @@ enum class Need_Moment //-> 언제 필요하냐?
 		Adv, //모험 후,
 
 		//명성 
-		Fam3, //2세대 엔딩 후, 명성 수치에 따라서 3세대로 들어가는 애들 
-		Fam4, //특정 명성 수치 달성 시,
+		Fam3_a, //2세대 엔딩 후, 명성 수치에 따라서 3세대로 들어가는 애들 
+		Fam4_a, //특정 명성 수치 달성 시,
+		Fam3_b, //2세대 엔딩 후, 명성 수치에 따라서 3세대로 들어가는 애들 
+		Fam4_b, //특정 명성 수치 달성 시,
 		UnKnown
 };
 
+//----------------------------------- ui ----------------------------------------
+enum class UIWindowType
+{
+	SettingsWindow = 0,         // 설정창
+	InventoryWindow,            // 인벤토리
+	InventoryTooltip,           // 인벤토리툴팁
+	EquipmentWindow,            // 장비창
+	StatsWindow,                // 스탯창
+	EnhancementWindow,          // 강화창
+	SynthesisWindow,            // 합성창
+	StatPotionUseWindow         // 스탯 증가 물약 사용창
+};
+
+enum class CursorType
+{
+	Normal,
+	Move,
+	Pointer,
+	Drag
+};
+
+enum class DragSource
+{
+	Inventory,
+	Equipment,
+	None
+};
 
 
 

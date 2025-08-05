@@ -8,4 +8,5 @@ Button::Button(std::string name, Rect rect)
 
 Button::~Button()
 {
+
 }

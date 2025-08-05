@@ -35,10 +35,9 @@ protected:
 
 		std::vector<Clip_Asset> SceneAssets;
 
-
-		std::multimap<std::string, std::unique_ptr<Object>> m_gameObjects; //이번Scene에 사용되는 게임 obj
-		std::multimap<std::string, std::unique_ptr<Object>> m_uiObjects;   //이번Scene에 사용되는 UI obj
-		std::multimap<std::string, std::unique_ptr<Object>> m_itemObjects; //이번Scene에 사용되는 Item obj
+		std::multimap<std::string, std::shared_ptr<Object>> m_gameObjects; //이번Scene에 사용되는 게임 obj
+		std::multimap<std::string, std::shared_ptr<Object>> m_uiObjects;   //이번Scene에 사용되는 UI obj
+		std::multimap<std::string, std::shared_ptr<Object>> m_itemObjects; //이번Scene에 사용되는 Item obj
 
 		bool dirty = false;
 		string m_name;

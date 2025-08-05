@@ -77,6 +77,7 @@ void M_Core::Update()
 void M_Core::Render()
 {
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
+    // 여기서 ui render 불러서 전부 할거고 
 
 }
 
@@ -112,14 +113,15 @@ bool M_Core::ModuleInit()
 
 
     InputManager::Get().m_broadcaster = make_unique<EventDispatcher>(); //이거 디버깅 하나 만들자 
-    if (!InputManager::Get().m_broadcaster)
-    {
-        std::cout << "broadcaster 할당 안됨" << std::endl;
-        return false;
-    }
+    //if (!InputManager::Get().m_broadcaster)
+    //{
+    //    std::cout << "broadcaster 할당 안됨" << std::endl;
+    //    return false;
+    //}
 
    
-    ResourceManager::Get().AssetLoad(D2DRenderer::Get() , "Resource");
+    ResourceManager::Get().GameAssetLoad();
+    //ResourceManager::Get().AnimatedAssetLoad(D2DRenderer::Get() , "Resource"); //Animated - UI - Item 순으로 Resource 받음.
     m_Scene_map = make_shared<unordered_map<string, shared_ptr<SceneStandard>>>();  //Core가 UPdate로 돌려야 하니
     SceneManager::Get().Initalize(m_Scene_map); //받은 map 멤버로 시작 
 

@@ -5,6 +5,8 @@
 //#include "ObjFactory.h"
 //#include "SceneFactory.h"
 
+#include "Scene_MK.h"
+#include "Scene_hyoje.h"
 #include "Scene_Title.h"
 #include "Scene_Outgame.h"
 #include "Scene_InGame.h"
@@ -24,11 +26,14 @@ public:
 				m_Scene_map = make_shared<unordered_map<string, shared_ptr<SceneStandard>>>();
 
 
-				m_Scene_map->emplace("Title", make_shared<Scene_Title>("Title"));
-				m_Scene_map->emplace("Stage", make_shared<Scene_Outgame>("OutGame"));
-				m_Scene_map->emplace("End", make_shared<Scene_InGame>("InGame"));
+				//m_Scene_map->emplace("Title", make_shared<Scene_Title>("Title"));
+				//m_Scene_map->emplace("Stage", make_shared<Scene_Outgame>("OutGame"));
+				//m_Scene_map->emplace("End", make_shared<Scene_InGame>("InGame"));
+				//m_Scene_map->emplace("hyoje", make_shared<Scene_hyoje>("hyoje"));
+				m_Scene_map->emplace("MK", make_shared<Scene_MK>("MK"));
 
-				m_currentindex = "Title";
+				//m_currentindex = "Title";
+				m_currentindex = "MK";
 
 				Scenes = m_Scene_map;
 

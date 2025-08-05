@@ -1,26 +1,30 @@
 #include "UI_Renderer.h"
 
-
-
-UI_Renderer::UI_Renderer(ComPtr<ID2D1Bitmap1> bitmap)
+void UI_Renderer::SetBitmap(const std::string& key, ComPtr<ID2D1Bitmap1> bitmap)
 {
-		m_sheet = std::move(bitmap);
+    m_bitmaps[key] = bitmap;
 }
 
-UI_Renderer::~UI_Renderer()
+ComPtr<ID2D1Bitmap1> UI_Renderer::GetBitmap(const std::string& key) const
 {
-	//bitmap은 알아서 소멸 ㅇㅇ 
+    auto it = m_bitmaps.find(key);
+    if (it != m_bitmaps.end())
+    {
+        return it->second;
+    }
+    return nullptr; // 비트맵을 찾지 못하면 nullptr 반환
 }
 
-void UI_Renderer::SetBitmap(ComPtr<ID2D1Bitmap1> bitmap) 
+
+void UI_Renderer::SetBitmap(ComPtr<ID2D1Bitmap1> bitmap)
 {
-		m_sheet = bitmap;
+    m_bitmap = bitmap;
 }
 
-const ComPtr<ID2D1Bitmap1>& UI_Renderer::GetBitmap() const  
+const ComPtr<ID2D1Bitmap1>& UI_Renderer::GetBitmap() const
 {
-		if(m_sheet != nullptr)
-		return m_sheet;
+    if (m_bitmap != nullptr)
+        return m_bitmap;
 }
 
 

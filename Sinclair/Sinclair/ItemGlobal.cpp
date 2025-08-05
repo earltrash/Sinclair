@@ -37,8 +37,10 @@ Need_Moment StringToNM(std::string& val)
 		else if (val == "Gen_4") return Need_Moment::Gen_4;
 		else if (val == "Syn") return Need_Moment::Syn;
 		else if (val == "Adv") return Need_Moment::Adv;
-		else if (val == "Fam3") return Need_Moment::Fam3;
-		else if (val == "Fam4") return Need_Moment::Fam4;
+		else if (val == "Fam3_a") return Need_Moment::Fam3_a;
+		else if (val == "Fam4_a") return Need_Moment::Fam4_a;
+		else if (val == "Fam3_b") return Need_Moment::Fam3_b;
+		else if (val == "Fam4_b") return Need_Moment::Fam4_b;
 		return Need_Moment::UnKnown;
 
 }

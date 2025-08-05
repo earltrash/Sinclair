@@ -2,7 +2,7 @@
 #include "Renderer.h"
 
 
-  D2DRenderer& D2DRenderer::Get()
+D2DRenderer& D2DRenderer::Get()
 {
     static D2DRenderer renderer;
     return renderer;
@@ -88,6 +88,30 @@ void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RE
         D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
         srcRect
     );
+}
+
+void D2DRenderer::DrawBitmap(const renderInfo& renderInfo)
+{
+    if (renderInfo.activated == false)   return;
+
+    m_d2dContext->SetTransform(renderInfo.mt);
+
+    if (renderInfo.effect != nullptr)
+    {
+        ComPtr<ID2D1Effect> m_opacity;
+        m_d2dContext->CreateEffect(CLSID_D2D1Opacity, &m_opacity);
+        m_opacity->SetInputEffect(0, renderInfo.effect);
+        m_opacity->SetValue(D2D1_COMPOSITE_MODE_SOURCE_OVER, renderInfo.opacity);
+
+        m_d2dContext->DrawImage(m_opacity.Get(),
+            {0.f, 0.f},                                                         // 렌더타겟에서 그려지는 위치. SetTransform 때문에 좌상단 고정
+            renderInfo.srcRect,
+            D2D1_INTERPOLATION_MODE_LINEAR, D2D1_COMPOSITE_MODE_SOURCE_OVER);
+    }
+    else
+    {
+        DrawBitmap(renderInfo.bitmap, renderInfo.destRect , renderInfo.srcRect, renderInfo.opacity);
+    }
 }
 
 
@@ -290,29 +314,32 @@ void D2DRenderer::CreateRenderTargets()
 
 void D2DRenderer::CreateWriteResource()
 {
+    CreateWriteResource(L"맑은 고딕", DWRITE_FONT_WEIGHT_NORMAL, 15.0f);
+}
+
+void D2DRenderer::CreateWriteResource(const wchar_t* fontName, DWRITE_FONT_WEIGHT fontWeight, float fontSize)
+{
     ComPtr<IDWriteFactory> writeFactory = nullptr;
     HRESULT hr = DWriteCreateFactory(
         DWRITE_FACTORY_TYPE_SHARED,
         __uuidof(IDWriteFactory),
         reinterpret_cast<IUnknown**>(writeFactory.GetAddressOf()));
-
     DX::ThrowIfFailed(hr);
 
-    writeFactory->CreateTextFormat(
-        L"", // FontName    제어판-모든제어판-항목-글꼴-클릭 으로 글꼴이름 확인가능
-        NULL,
-        DWRITE_FONT_WEIGHT_NORMAL,
-        DWRITE_FONT_STYLE_NORMAL,
-        DWRITE_FONT_STRETCH_NORMAL,
-        15.0f,   // Font Size
-        L"", //locale
+    hr = writeFactory->CreateTextFormat(
+        fontName,                     // 폰트 이름
+        nullptr,                      // 폰트 컬렉션
+        fontWeight,                   // 굵기
+        DWRITE_FONT_STYLE_NORMAL,     // 스타일
+        DWRITE_FONT_STRETCH_NORMAL,   // 너비
+        fontSize,                     // 글꼴 크기
+        L"ko-kr",                     // 로케일 (한국어)
         &m_textFormat);
-
     DX::ThrowIfFailed(hr);
 
-    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); // 왼쪽 정렬
-    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); // 위쪽 정렬
-    m_textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP); // 줄바꿈 
+    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+    m_textFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
 }
 
 void D2DRenderer::ReleaseRenderTargets()

@@ -23,19 +23,7 @@ Scene_Title::~Scene_Title()
 
 void Scene_Title::Initalize()
 {
-		GetAsset(m_name); //에셋만 받게 함. 
-
-		unique_ptr<Button> button =make_unique<Button>("Start" , Rect(100.f, 100.f, 200.f, 200.f)); //rect는 중괄호임.
-
-		ComPtr<ID2D1Bitmap1> temp;
-		std::wstring imagePath = L"C:\\Users\\User\\Documents\\2q_mini\\_excutable\\Temp_02\\Resource\\Temp.png";
-
-		D2DRenderer::Get().CreateBitmapFromFile(imagePath.c_str(), &temp);
-
-
-		button->AddComponent<UI_Renderer>(temp);
-
-		m_gameObjects.emplace(button->name, std::move(button));
+		
 
 		//얘가 갖고 있는 Obj
 }

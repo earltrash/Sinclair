@@ -1,9 +1,20 @@
 #pragma once
 #include "pch.h"
 
-
-
 using namespace Microsoft::WRL;
+
+struct renderInfo
+{
+    ID2D1Bitmap1* bitmap = nullptr;
+    ID2D1Effect* effect = nullptr;
+    D2D1::Matrix3x2F	mt = D2D1::Matrix3x2F::Identity();
+    D2D1_RECT_F			destRect{ 0.f, 0.f, 0.f, 0.f };
+    D2D1_RECT_F			srcRect{ 0.f, 0.f, 0.f, 0.f };
+
+    float				opacity = 1.f;
+    int					zOrder = 0;
+    bool				activated = true;
+};
 
 class D2DRenderer
 {
@@ -11,7 +22,9 @@ private:
     D2DRenderer() = default;
 
     ~D2DRenderer() = default;
-
+    // 복사 방지용.
+    D2DRenderer(const D2DRenderer&) = delete;
+    D2DRenderer& operator=(const D2DRenderer&) = delete;
 public:
     static D2DRenderer& Get();
 
@@ -31,6 +44,8 @@ public:
 
     void DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RECT_F srcRect, float opacity = 1.0f);
 
+    void DrawBitmap(const renderInfo& renderInfo);
+
     void DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color);
 
     void SetTransform(const D2D1_MATRIX_3X2_F tm);
@@ -47,17 +62,21 @@ public:
 
     ID3D11DeviceContext* GetD3DContext() const { return m_d3dContext.Get(); }
 
+    ID2D1DeviceContext7* GetD2DContext() const { return m_d2dContext.Get(); }
+
     ID3D11RenderTargetView* GetD3DRenderTargetView() const { return m_d3dRenderTV.Get(); }
 
     ID2D1Bitmap1** GetBitmap() { return m_targetBitmap.GetAddressOf(); }
+
+    void CreateWriteResource();
+
+    void CreateWriteResource(const wchar_t* fontName, DWRITE_FONT_WEIGHT fontWeight, float fontSize);
 
 private:
 
     void CreateDeviceAndSwapChain(HWND hwnd);
 
     void CreateRenderTargets();
-
-    void CreateWriteResource();
 
     void ReleaseRenderTargets();
 

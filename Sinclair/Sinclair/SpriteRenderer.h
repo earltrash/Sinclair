@@ -6,8 +6,6 @@
 
 class SpriteRenderer : public Component
 {
-
-
 public:
 		SpriteRenderer() = default;
 		~SpriteRenderer(); //asset 정리는 여기서 함. 
