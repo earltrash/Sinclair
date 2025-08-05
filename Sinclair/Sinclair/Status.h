@@ -90,6 +90,7 @@ enum class UIWindowType
 enum class CursorType
 {
 	Normal,
+	Pressed,
 	Move,
 	Pointer,
 	Drag

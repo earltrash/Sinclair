@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "SpriteRenderer.h"
 #include "UI_Renderer.h"
+#include "CursorManager.h"
 
 
 void SceneStandard::Update()
@@ -37,7 +38,7 @@ using Vec2F = MYHelper::Vector2F;
 
 void SceneStandard::Render() //UI ∑ª¥ı
 {
-		D2DRenderer::Get().RenderBegin();
+		//D2DRenderer::Get().RenderBegin();
 
 		for (const auto& [Name, obj] : m_gameObjects)
 		{
@@ -91,11 +92,12 @@ void SceneStandard::Render() //UI ∑ª¥ı
 								destRect);
 
 				}
-
+			
 
 		}
-
-		D2DRenderer::Get().RenderEnd();
+		// ¿”Ω√.
+		
+		//D2DRenderer::Get().RenderEnd();
 }
 
 void SceneStandard::AssetMapping() 

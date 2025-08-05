@@ -344,7 +344,6 @@ void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1** outBi
 
     DX::ThrowIfFailed(hr);
 
-
     hr = decoder->GetFrame(0, &frame);
 
     DX::ThrowIfFailed(hr);
@@ -352,7 +351,6 @@ void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1** outBi
     hr = m_wicFactory->CreateFormatConverter(&converter);
 
     DX::ThrowIfFailed(hr);
-
 
     hr = converter->Initialize(
         frame.Get(),

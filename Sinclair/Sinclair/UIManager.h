@@ -1,4 +1,6 @@
 #pragma once
+#include "EquipmentWindow.h"
+#include "StatWindow.h"
 #include "pch.h"
 #include "Object.h"
 #include "InputManager.h"
@@ -10,13 +12,17 @@
 
 
 #include "Inventory.h"
-#include "EquipmentWindow.h"
+
+
 //GamerManager
 //SoundManager
 // 각각의 inventory, settingwindow, equipment, enhancement, synthesis, statpotionwindow include 하기. 
 
 class InputManager;
 class CursorManager;
+class EquipmentWindow;
+class StatWindow;
+
 //class EquipmentWindow;
 //class Inventory;
 
@@ -35,7 +41,8 @@ public:
     {
 
         
-        AddComponent<MouseListenerComponent>(
+        AddComponent<MouseListenerComponent>
+            (
             // 여기서 어떻게 입력 처리 하지?
             [this](const MSG& msg) {
                 OnInput(msg);
@@ -46,29 +53,29 @@ public:
         {
             // SettingsWindow
             //m_allWindows.emplace(UIWindowType::SettingsWindow, std::make_unique<SettingsWindow>());
-            if (auto* window = GetWindow(UIWindowType::SettingsWindow))
+            /*if (auto* window = GetWindow(UIWindowType::SettingsWindow))
             {
                 window->SetActivate(false);
-            }
+            }*/
             // InventoryWindow
-            m_allWindows.emplace(UIWindowType::InventoryWindow, std::make_unique<Inventory>());
-            if (auto* window = GetWindow(UIWindowType::InventoryWindow))
-            {
-               // window->SetActivate(false);
+            //m_allWindows.emplace(UIWindowType::InventoryWindow, std::make_unique<Inventory>());
+            //if (auto* window = GetWindow(UIWindowType::InventoryWindow))
+            //{
+            //   // window->SetActivate(false);
 
-                window->SetActivate(true);
+            //    window->SetActivate(true);
 
-            }
-            // InventoryTooltip
-            //m_allWindows.emplace(UIWindowType::InventoryTooltip, std::make_unique<InventoryTooltip>());
-            if (auto* window = GetWindow(UIWindowType::InventoryTooltip))
-            {
-                //window->SetActivate(false);
+            //}
+            //// InventoryTooltip
+            ////m_allWindows.emplace(UIWindowType::InventoryTooltip, std::make_unique<InventoryTooltip>());
+            //if (auto* window = GetWindow(UIWindowType::InventoryTooltip))
+            //{
+            //    //window->SetActivate(false);
 
 
-                window->SetActivate(true);
+            //    window->SetActivate(true);
 
-            }
+            //}
 
             // EquipmentWindow
             m_allWindows.emplace(UIWindowType::EquipmentWindow, std::make_unique<EquipmentWindow>());
@@ -77,33 +84,35 @@ public:
                 window->SetActivate(false);
             }
 
+            EquipmentWindow* equipmentWindow = dynamic_cast<EquipmentWindow*>(GetWindow(UIWindowType::EquipmentWindow));
+
             // StatsWindow
-            //m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatsWindow>());
+            m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>(equipmentWindow));
             if (auto* window = GetWindow(UIWindowType::StatsWindow))
             {
-                window->SetActivate(false);
+                window->SetActivate(true);
             }
-
+            OpenWindow(UIWindowType::StatsWindow);
             // EnhancementWindow
             //m_allWindows.emplace(UIWindowType::EnhancementWindow, std::make_unique<EnhancementWindow>());
-            if (auto* window = GetWindow(UIWindowType::EnhancementWindow))
-            {
-                window->SetActivate(false);
-            }
+            //if (auto* window = GetWindow(UIWindowType::EnhancementWindow))
+            //{
+            //    window->SetActivate(false);
+            //}
 
-            // SynthesisWindow
-            //m_allWindows.emplace(UIWindowType::SynthesisWindow, std::make_unique<SynthesisWindow>());
-            if (auto* window = GetWindow(UIWindowType::SynthesisWindow))
-            {
-                window->SetActivate(false);
-            }
+            //// SynthesisWindow
+            ////m_allWindows.emplace(UIWindowType::SynthesisWindow, std::make_unique<SynthesisWindow>());
+            //if (auto* window = GetWindow(UIWindowType::SynthesisWindow))
+            //{
+            //    window->SetActivate(false);
+            //}
 
-            // StatPotionUseWindow
-            //m_allWindows.emplace(UIWindowType::StatPotionUseWindow, std::make_unique<StatPotionUseWindow>());
-            if (auto* window = GetWindow(UIWindowType::StatPotionUseWindow))
-            {
-                window->SetActivate(false);
-            }
+            //// StatPotionUseWindow
+            ////m_allWindows.emplace(UIWindowType::StatPotionUseWindow, std::make_unique<StatPotionUseWindow>());
+            //if (auto* window = GetWindow(UIWindowType::StatPotionUseWindow))
+            //{
+            //    window->SetActivate(false);
+            //}
 
             OutputDebugStringA("UIManager initialized successfully\n");
         }
@@ -118,11 +127,28 @@ public:
     // m_activeWindowOrder 순서대로 Update 호출.
     void Update()
     {
+        
         for (UIWindowType type : m_activeWindowOrder)
         {
             if (auto* window = GetWindow(type))
             {
                 window->Update();
+                
+                std::string windowName;
+                switch (type)
+                {
+                case UIWindowType::StatsWindow:
+                    windowName = "StatsWindow";
+                    break;
+                case UIWindowType::EquipmentWindow:
+                    windowName = "EquipmentWindow";
+                    break;
+                    // 다른 창들도 추가
+                default:
+                    windowName = "Unknown";
+                    break;
+                }
+                std::cout << windowName << " 업데이트 " << std::endl;
             }
         }
     }

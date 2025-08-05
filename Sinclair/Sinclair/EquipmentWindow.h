@@ -16,7 +16,6 @@ public:
 		EquipmentWindow()
 				: UIWindow(UIWindowType::EquipmentWindow, { 50, 50 }, { 524, 766 })
 		{
-				m_inventory = make_unique<Inventory>();
 				// 장비 슬롯 위치 및 크기 초기화
 				m_slotPositions[Wearable_part::Glove] = { m_position.x + 222, m_position.y + 138 }; // 1번칸
 				m_slotSizes[Wearable_part::Glove] = { 74, 74 };
@@ -108,7 +107,5 @@ private:
 		std::unordered_map<Wearable_part, Item*> m_equippedItems;
 		std::unordered_map<Wearable_part, Vec2> m_slotPositions;
 		std::unordered_map<Wearable_part, Vec2> m_slotSizes;
-
-		unique_ptr<Inventory> m_inventory;
 };
 

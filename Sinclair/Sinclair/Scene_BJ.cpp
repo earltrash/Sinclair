@@ -38,7 +38,7 @@ void SceneBj::Exit()
 
 void SceneBj::Render()
 {
-	D2DRenderer::Get().RenderBegin();
+	//D2DRenderer::Get().RenderBegin();
 
 	//for (const auto& [Name, obj] : m_gameObjects)
 	//{
@@ -84,7 +84,7 @@ void SceneBj::Render()
 	// UIManager::Get().Render();
 
 
-	D2DRenderer::Get().RenderEnd();
+	//D2DRenderer::Get().RenderEnd();
 }
 
 void SceneBj::CreateObj()

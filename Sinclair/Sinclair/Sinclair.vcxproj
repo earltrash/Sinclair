@@ -169,6 +169,7 @@
     <ClInclude Include="SimpleMathHelper.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Status.h" />
+    <ClInclude Include="StatWindow.h" />
     <ClInclude Include="TMHelper.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UIManager.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="StatWindow.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UI_Bank.cpp" />
     <ClCompile Include="UI_Renderer.cpp" />

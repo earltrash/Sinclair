@@ -44,7 +44,11 @@ public:
 
 
     unique_ptr<EventDispatcher> m_broadcaster = nullptr;
+
+    // 임시
+    void SetWindowHandle(HWND hWnd) { m_hWnd = hWnd; }
 private:
+    HWND m_hWnd;    // 임시
     InputManager();
     ~InputManager();
 

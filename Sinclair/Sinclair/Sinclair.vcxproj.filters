@@ -170,6 +170,9 @@
     <ClInclude Include="EquipmentWindow.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="StatWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -257,6 +260,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="EquipmentWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="StatWindow.cpp">
       <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>

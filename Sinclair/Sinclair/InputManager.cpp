@@ -30,7 +30,6 @@ bool InputManager::MsgCheck(MSG& msg)
     case WM_LBUTTONDOWN:
     case WM_LBUTTONUP:
     case WM_RBUTTONDOWN:
-
     case WM_RBUTTONUP:
 
 
@@ -71,36 +70,39 @@ void InputManager::Update()
     // 마우스 위치 업데이트
     POINT cursorPos;
     GetCursorPos(&cursorPos);
-    ScreenToClient(GetActiveWindow(), &cursorPos);
+    ScreenToClient(m_hWnd, &cursorPos); 
     m_mousePosition = { static_cast<float>(cursorPos.x), static_cast<float>(cursorPos.y) };
 
-    // 마우스 버튼 상태
+    //// 마우스 버튼 상태
     m_mouseButtons[0] = GetAsyncKeyState(VK_LBUTTON) & 0x8000;
     m_mouseButtons[1] = GetAsyncKeyState(VK_RBUTTON) & 0x8000;
     m_mouseButtons[2] = GetAsyncKeyState(VK_MBUTTON) & 0x8000;
 
-    // 더블클릭 타이머
-    if (m_doubleClickTimer > 0)
-        m_doubleClickTimer -= 0.016f; // 대략 60fps 기준
+    bool isLeftPressed = IsMousePressed(MouseButton::Left);
+    CursorManager::Get().UpdateMouseState(isLeftPressed);
 
-    // 더블클릭 체크 (왼쪽 버튼만)
-    if (IsMouseClicked(MouseButton::Left))
-    {
-        if (m_doubleClickTimer > 0)
-        {
-            m_isDoubleClicked = true;
-            m_doubleClickTimer = 0;
-        }
-        else
-        {
-            m_isDoubleClicked = false;
-            m_doubleClickTimer = DOUBLE_CLICK_TIME;
-        }
-    }
-    else
-    {
-        m_isDoubleClicked = false;
-    }
+    //// 더블클릭 타이머
+    //if (m_doubleClickTimer > 0)
+    //    m_doubleClickTimer -= 0.016f; // 대략 60fps 기준
+
+    //// 더블클릭 체크 (왼쪽 버튼만)
+    //if (IsMouseClicked(MouseButton::Left))
+    //{
+    //    if (m_doubleClickTimer > 0)
+    //    {
+    //        m_isDoubleClicked = true;
+    //        m_doubleClickTimer = 0;
+    //    }
+    //    else
+    //    {
+    //        m_isDoubleClicked = false;
+    //        m_doubleClickTimer = DOUBLE_CLICK_TIME;
+    //    }
+    //}
+    //else
+    //{
+    //    m_isDoubleClicked = false;
+    //}
 
     // UIManager에 입력 전달
     //UIManager::Get().OnInput();

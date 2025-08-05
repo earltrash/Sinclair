@@ -22,13 +22,17 @@ void M_Core::Init()
     hr = ComInit(); // Com 객체 생성 
     assert(SUCCEEDED(hr));
 
+    InputManager::Get().SetWindowHandle(m_hWnd);
+
     hr = ModuleInit();     // 매니저의 초기화를 이 단계에서 실행 : 리소스 load & 모듈 멤버 초기화 및 생성
     assert(SUCCEEDED(hr));
 
     //etc
-
+    CursorManager::Get().LoadCursorBitmaps();
     std::cout << "Init 성공적" << std::endl;
 
+    // 원래 커서 숨기자.
+    ShowCursor(FALSE);
 }
 
 
@@ -71,14 +75,21 @@ void M_Core::FixedUpdate() //시간 처리
 
 void M_Core::Update()
 {
+    InputManager::Get().Update();
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Update();
+    UIManager::Get().Update();
 
 }
 
 void M_Core::Render()
 {
+    D2DRenderer::Get().RenderBegin();
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
 
+
+    UIManager::Get().Render();
+    CursorManager::Get().RenderCursor();
+    D2DRenderer::Get().RenderEnd();
 }
 
 void M_Core::End()
@@ -124,7 +135,7 @@ bool M_Core::ModuleInit()
     m_Scene_map = make_shared<unordered_map<string, shared_ptr<SceneStandard>>>();  //Core가 UPdate로 돌려야 하니
     SceneManager::Get().Initalize(m_Scene_map); //받은 map 멤버로 시작 
 
-   // UIManager::Get().Initialize(); //UI 들 생성하기. 
+    UIManager::Get().Initialize(); //UI 들 생성하기. 
 
 
     m_timer = make_unique<GameTimer>();
