@@ -1,11 +1,11 @@
-# Visual Studio 관련
+# Visual Studio 관??
 .vs/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
 
-# 빌드 출력물
+# 빌드 출력�?
 *.obj
 *.exe
 *.dll
@@ -18,7 +18,7 @@
 *.tlog
 *.ilk
 
-# 빌드 디렉터리 (예: Debug/Release 폴더)
+# 빌드 ?�렉?�리 (?? Debug/Release ?�더)
 Debug/
 Release/
 x64/Debug/
@@ -26,25 +26,25 @@ x64/Release/
 x86/Debug/
 x86/Release/
 
-# 리소스 폴더
+# 리소???�더
 
-# 서드파티 라이브러리 무시
+# ?�드?�티 ?�이브러�?무시
 ThirdParty/
 
-# 중간 파일
+# 중간 ?�일
 *.tmp
 *.cache
 *.o
 *.gch
 
-# CMake 빌드 폴더 (선택적)
+# CMake 빌드 ?�더 (?�택??
 build/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
 
-# 기타
+# 기�?
 *.opensdf
 *.sdf
 *.VC.db
@@ -52,15 +52,15 @@ Makefile
 *.db
 *.log
 
-# 리소스 자동 생성 디렉터리 (있다면)
+# 리소???�동 ?�성 ?�렉?�리 (?�다�?
 Generated/
 Intermediate/
 
-# 임시 백업 파일
+# ?�시 백업 ?�일
 *~
 *.bak
 *.swp
 
-# 개인 설정 파일
+# 개인 ?�정 ?�일
 *.local
 *.env

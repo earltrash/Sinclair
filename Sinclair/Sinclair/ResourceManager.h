@@ -7,6 +7,7 @@
 
 #include "UI_Bank.h"
 #include "ItemBank.h"
+#include "TextBank.h"
 
 
 using namespace std;
@@ -50,10 +51,11 @@ public:
 public:
     void UI_AssetLoad(const string Path);
     ComPtr<ID2D1Bitmap1> GetTexture(const string& Info);
+    ComPtr<ID2D1Bitmap1> GetTexture(const string& Info, const string& Info2);
     
     UI_Bank& Get_UIBank();
     ItemBank& Get_ItemBank();
-
+    TextBank& Get_TextBank();
    
 public:
     void Clean();
@@ -72,5 +74,6 @@ private:
 
     ItemBank m_ItemBank;
     UI_Bank m_UI_Bank;
+    TextBank m_TextBank;
     // AsepriteParser -> ÆÄ½ÌÇÏ´Â °Ç 
 };

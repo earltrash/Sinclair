@@ -40,11 +40,13 @@ public:
 	// Setter
 	void SetWidth(int w) { width = w; }
 	void SetHeight(int h) { height = h; }
-	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmap;
+	
+	// get set ³ªÁß¿¡ ¸¸µë
+	float m_opacity = 1.0f;
 
+	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmap; 
 private:
 	
-	 
 	ComPtr<ID2D1Bitmap1> m_curbm;
 
 	ButtonState m_currentState = ButtonState::Normal;

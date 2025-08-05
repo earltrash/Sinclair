@@ -176,6 +176,18 @@
     <ClInclude Include="PlayComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="Scene_End.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_History.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TextBank.h">
+      <Filter>Bank</Filter>
+    </ClInclude>
+    <ClInclude Include="TextComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -275,6 +287,18 @@
       <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="PlayComponent.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_End.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_History.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TextBank.cpp">
+      <Filter>Bank</Filter>
+    </ClCompile>
+    <ClCompile Include="TextComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>
