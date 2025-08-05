@@ -66,15 +66,15 @@ void Scene_MK::Initalize()
 	auto rayBitmap = ResourceManager::Get().GetTexture("treasureRay");
 	auto ray = std::make_unique<Object>();
 	auto info_ray = ray->AddComponent<RenderInfo>(rayBitmap.Get());
-	ray->GetTransform().SetPivotPreset(PivotPreset::Center, info_ray->GetSize());
-	ray->GetTransform().SetPosition({ 100.f, 100.f });
+	//ray->GetTransform().SetPivotPreset(PivotPreset::Center, info_ray->GetSize());
+	//ray->GetTransform().SetPosition({ 0.f, 0.f });
 	//auto rotate = ray->AddComponent<Rotate_Effect>(info_ray, ray->GetTransform(), 0.05f);
 	auto blink = ray->AddComponent<Blinking_Effect>(info_ray, 0.85f, 1.f);
-	auto blur_ray = ray->AddComponent<GaussianBlur_Effect>(info_ray, 3.f, rayBitmap.Get());
-	auto blur_ray2 = ray->AddComponent<GaussianBlur_Effect>(info_ray, 3.f, rayBitmap.Get());
-	auto perspect = ray->AddComponent<PerspectiveTM_Effect>(info_ray, 0.f, 0.f, 0.f, 0.05f, 0.f, 0.f, blur_ray->GetEffect());
-	auto perspect2 = ray->AddComponent<PerspectiveTM_Effect>(info_ray, 0.f, 0.f, 0.f, -0.1f, 0.f, 0.f, blur_ray2->GetEffect());
-	auto composite = ray->AddComponent<Composite_Effect>(info_ray, blur_ray->GetEffect(), blur_ray2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+	auto blur_ray = ray->AddComponent<GaussianBlur_Effect>(info_ray, 5.f, rayBitmap.Get());
+	//auto blur_ray2 = ray->AddComponent<GaussianBlur_Effect>(info_ray, 5.f, rayBitmap.Get());
+	auto perspect = ray->AddComponent<Rotate3D_Effect>(info_ray, 0.f, 0.f, 0.f, 0.05f, blur_ray->GetEffect());
+	//auto perspect2 = ray->AddComponent<Rotate3D_Effect>(info_ray, 0.f, 0.f, 0.f, -0.1f, blur_ray2->GetEffect());
+	//auto composite = ray->AddComponent<Composite_Effect>(info_ray, blur_ray->GetEffect(), blur_ray2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
 
 	m_gameObjects.emplace("4Dust", std::move(ray));
 }

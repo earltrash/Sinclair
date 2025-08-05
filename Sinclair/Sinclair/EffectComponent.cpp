@@ -479,3 +479,49 @@ void PerspectiveTM_Effect::Update()
 //		m_Particles.end()
 //	);
 //}
+
+Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_depth(depth), m_rotate{ rotateX, rotateY, rotateZ }, m_effect(effect)
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
+	DX::ThrowIfFailed(hr);
+}
+
+Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_depth(depth), m_rotate{ rotateX, rotateY, rotateZ }, m_bitmap(bitmap)
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
+	DX::ThrowIfFailed(hr);
+}
+
+Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rotateX, float rotateY, float rotateZ, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_depth(depth), m_rotate{ rotateX, rotateY, rotateZ }
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
+	DX::ThrowIfFailed(hr);
+
+	D2DRenderer::Get().CreateBitmapFromFile(path, m_bitmap.GetAddressOf());
+	if (m_bitmap == nullptr)	std::cout << "Rotate3D_Effect : 비트맵 생성 실패\n";
+}
+
+void Rotate3D_Effect::Update()
+{
+	if (m_effect == nullptr)
+		m_perspectiveEffect->SetInput(0, m_bitmap.Get());
+	else
+		m_perspectiveEffect->SetInputEffect(0, m_effect);
+
+	//m_pivot = { m_renderInfo->GetSize().width / 2.f, m_renderInfo->GetSize().height / 2.f };
+	//SetPivot(m_renderInfo->GetSize().width / 2.f, m_renderInfo->GetSize().height / 2.f);
+	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION_ORIGIN, m_pivot);
+
+	m_rotation.x = fmod((m_rotation.x + m_rotate.x), 360.f);	m_rotation.y = fmod((m_rotation.y + m_rotate.y), 360.f);	m_rotation.z = fmod((m_rotation.z + m_rotate.z), 360.f);
+
+	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION, m_rotation);
+
+	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_DEPTH, m_depth);
+
+	m_renderInfo->SetEffect(m_perspectiveEffect.Get());
+
+	std::cout << m_pivot.x << std::endl;
+}

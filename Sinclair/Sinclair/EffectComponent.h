@@ -297,44 +297,43 @@ private:
 	RenderInfo* m_renderInfo = nullptr;
 };
 
-//class RotateTM_Effect : public Component	// 회전 효과
-//{
-//public:
-//	RotateTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect);
-//	RotateTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap);
-//	RotateTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, const wchar_t* path);
-//	~RotateTM_Effect() { m_perspectiveEffect.Reset(); }
-//
-//	void Update() override;
-//
-//	void SetPerspective(float x, float y) { m_perspective.x = x; m_perspective.y = y; }
-//	void SetPivot(float x, float y) { m_pivot.x = x; m_pivot.y = y; }
-//	void SetRotate(float x, float y, float z) { m_rotate.x = x; m_rotate.y = y; m_rotate.z = z; }
-//
-//	ID2D1Effect* GetEffect() { return m_perspectiveEffect.Get(); }
-//private:
-//	float m_depth;								// 원근감. 값이 작아질 수록 원근감↑, 커질 수록 원근감↓ (보통 100~1000 사이)
-//
-//	D2D1_VECTOR_2F m_perspective{ 0.f, 0.f };	// 이미지에서 시점이 어디 위치에 있는가
-//	D2D1_VECTOR_2F m_pivot;						// 회전 피봇
-//	D2D1_VECTOR_3F m_rotate;					// 회전량
-//
-//	ID2D1Effect* m_effect = nullptr;
-//	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
-//
-//	ComPtr<ID2D1Effect> m_perspectiveEffect;
-//
-//	RenderInfo* m_renderInfo = nullptr;
-//};
-//class Color_Effect : public Component
-//{
-//public:
-//private:
-//	ID2D1Effect* m_effect = nullptr;
-//	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
-//
-//	ComPtr<ID2D1Effect> m_colorEffect;
-//};
+class Rotate3D_Effect : public Component	// 회전 효과
+{
+public:
+	Rotate3D_Effect(RenderInfo* renderInfo, float depth,  float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect);
+	Rotate3D_Effect(RenderInfo* renderInfo, float depth,  float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap);
+	Rotate3D_Effect(RenderInfo* renderInfo, float depth,  float rotateX, float rotateY, float rotateZ, const wchar_t* path);
+	~Rotate3D_Effect() { m_perspectiveEffect.Reset(); }
+
+	void Update() override;
+
+	void SetPivot(float x, float y) { m_pivot.x = x; m_pivot.y = y; }
+	void SetRotate(float x, float y, float z) { m_rotate.x = x; m_rotate.y = y; m_rotate.z = z; }
+
+	ID2D1Effect* GetEffect() { return m_perspectiveEffect.Get(); }
+private:
+	float m_depth;								// 원근감. 값이 작아질 수록 원근감↑, 커질 수록 원근감↓ (보통 100~1000 사이)
+
+	D2D1_VECTOR_2F m_pivot;						// 회전 피봇
+	D2D1_VECTOR_3F m_rotate;					// 회전량
+	D2D1_VECTOR_3F m_rotation{0.f, 0.f, 0.f};				// 현재 회전 상태
+
+	ID2D1Effect* m_effect = nullptr;
+	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
+
+	ComPtr<ID2D1Effect> m_perspectiveEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
+};
+class Color_Effect : public Component
+{
+public:
+private:
+	ID2D1Effect* m_effect = nullptr;
+	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
+
+	ComPtr<ID2D1Effect> m_colorEffect;
+};
 //
 //
 //struct Particle
