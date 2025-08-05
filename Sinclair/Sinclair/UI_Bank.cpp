@@ -9,7 +9,7 @@ void UI_Bank::Load_UI_Image(const string& path) // 자동 매핑이긴 함.
     fs::path base = fs::current_path();
     //fs::path resourcePath = base.parent_path() / path;
 
-    fs::path resourcePath = base.parent_path() / path / "시작화면UI"; //path == "UI" -> 
+    fs::path resourcePath = base.parent_path() / path; //path == "UI" -> 
 
 
     for (const auto& entry : fs::directory_iterator(resourcePath))
