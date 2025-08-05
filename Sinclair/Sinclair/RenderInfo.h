@@ -7,6 +7,8 @@
 class RenderInfo : public Component
 {
 public:
+	RenderInfo() = default;
+
 	RenderInfo(ID2D1Bitmap1* bitmap) { SetBitmap(bitmap); }
 
 	void SetBitmap(ID2D1Bitmap1* bitmap)		// 비트맵 변경 시, src와 dest rect에 비트맵 사이즈 들어감

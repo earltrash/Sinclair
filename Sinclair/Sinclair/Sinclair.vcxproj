@@ -156,6 +156,8 @@
     <ClInclude Include="PlayComponent.h" />
     <ClInclude Include="Potion.h" />
     <ClInclude Include="RenderInfo.h" />
+    <ClInclude Include="Scene_End.h" />
+    <ClInclude Include="Scene_History.h" />
     <ClInclude Include="Scene_hyoje.h" />
     <ClInclude Include="Scene_InGame.h" />
     <ClInclude Include="InputManager.h" />
@@ -175,6 +177,8 @@
     <ClInclude Include="SimpleMathHelper.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Status.h" />
+    <ClInclude Include="TextBank.h" />
+    <ClInclude Include="TextComponent.h" />
     <ClInclude Include="TMHelper.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UIManager.h">
@@ -203,6 +207,8 @@
     <ClCompile Include="PlayComponent.cpp" />
     <ClCompile Include="Potion.cpp" />
     <ClCompile Include="RenderInfo.cpp" />
+    <ClCompile Include="Scene_End.cpp" />
+    <ClCompile Include="Scene_History.cpp" />
     <ClCompile Include="Scene_hyoje.cpp" />
     <ClCompile Include="Scene_InGame.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -216,6 +222,8 @@
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="TextBank.cpp" />
+    <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UIManager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
