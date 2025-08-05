@@ -112,7 +112,7 @@ bool M_Core::ModuleInit()
     std::wcout << L"[exe 위치] " << exePath << std::endl;
 
 
-    //InputManager::Get().m_broadcaster = make_unique<EventDispatcher>(); //이거 디버깅 하나 만들자 
+    InputManager::Get().m_broadcaster = make_unique<EventDispatcher>(); //이거 디버깅 하나 만들자 
     //if (!InputManager::Get().m_broadcaster)
     //{
     //    std::cout << "broadcaster 할당 안됨" << std::endl;

@@ -137,11 +137,15 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="CallbackType.h" />
-    <ClInclude Include="CursorManager.h" />
+    <ClInclude Include="CursorManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Dispatcher.h" />
     <ClInclude Include="EffectComponent.h" />
     <ClInclude Include="Enchancer.h" />
-    <ClInclude Include="EquipmentWindow.h" />
+    <ClInclude Include="EquipmentWindow.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="IAssetProvider.h" />
     <ClInclude Include="InvenMem.h" />
     <ClInclude Include="Inventory.h" />
@@ -149,6 +153,7 @@
     <ClInclude Include="ItemBank.h" />
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="PlayComponent.h" />
     <ClInclude Include="Potion.h" />
     <ClInclude Include="RenderInfo.h" />
     <ClInclude Include="Scene_hyoje.h" />
@@ -172,7 +177,9 @@
     <ClInclude Include="Status.h" />
     <ClInclude Include="TMHelper.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="UIManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="UIWindow.h" />
     <ClInclude Include="UI_Bank.h" />
     <ClInclude Include="UI_Renderer.h" />
@@ -185,12 +192,15 @@
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="EffectComponent.cpp" />
     <ClCompile Include="Enchancer.cpp" />
-    <ClCompile Include="EquipmentWindow.cpp" />
+    <ClCompile Include="EquipmentWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="InvenMem.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="ItemBank.cpp" />
     <ClCompile Include="ItemParseing.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="PlayComponent.cpp" />
     <ClCompile Include="Potion.cpp" />
     <ClCompile Include="RenderInfo.cpp" />
     <ClCompile Include="Scene_hyoje.cpp" />
@@ -207,7 +217,9 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="UIManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="UI_Bank.cpp" />
     <ClCompile Include="UI_Renderer.cpp" />
     <ClCompile Include="Wearable.cpp" />

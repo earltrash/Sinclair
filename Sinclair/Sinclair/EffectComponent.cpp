@@ -1,12 +1,12 @@
 #include "EffectComponent.h"
 
-GaussianBlur_Effect::GaussianBlur_Effect(float strength, ID2D1Bitmap1* bitmap) : m_strength(strength), m_bitmap(bitmap)
+GaussianBlur_Effect::GaussianBlur_Effect(RenderInfo* renderInfo, float strength, ID2D1Bitmap1* bitmap) : m_renderInfo(renderInfo), m_strength(strength), m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1GaussianBlur, &m_gaussianBlurEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-GaussianBlur_Effect::GaussianBlur_Effect(float strength, const wchar_t* path) : m_strength(strength)
+GaussianBlur_Effect::GaussianBlur_Effect(RenderInfo* renderInfo, float strength, const wchar_t* path) : m_renderInfo(renderInfo), m_strength(strength)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1GaussianBlur, &m_gaussianBlurEffect);
 	DX::ThrowIfFailed(hr);
@@ -15,7 +15,7 @@ GaussianBlur_Effect::GaussianBlur_Effect(float strength, const wchar_t* path) : 
 	if (m_bitmap == nullptr)	std::cout << "GaussianBlur_Effect : 비트맵 생성 실패\n";
 }
 
-GaussianBlur_Effect::GaussianBlur_Effect(float strength, ID2D1Effect* pEffect) : m_strength(strength), m_effect(pEffect)
+GaussianBlur_Effect::GaussianBlur_Effect(RenderInfo* renderInfo, float strength, ID2D1Effect* pEffect) : m_renderInfo(renderInfo), m_strength(strength), m_effect(pEffect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1GaussianBlur, &m_gaussianBlurEffect);
 	DX::ThrowIfFailed(hr);
@@ -29,10 +29,12 @@ void GaussianBlur_Effect::Update()
 		m_gaussianBlurEffect->SetInputEffect(0, m_effect);
 
 	m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, m_strength);
+
+	m_renderInfo->SetEffect(m_gaussianBlurEffect.Get());
 }
 
-Shadow_Effect::Shadow_Effect(float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, ID2D1Bitmap1* bitmap)
-	: m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_xOffset(xOffset), m_yOffset(yOffset), m_bitmap(bitmap)
+Shadow_Effect::Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_xOffset(xOffset), m_yOffset(yOffset), m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Shadow, &m_shadowEffect);
 	DX::ThrowIfFailed(hr);
@@ -41,8 +43,8 @@ Shadow_Effect::Shadow_Effect(float edgeBlur, float r, float g, float b, float a,
 	DX::ThrowIfFailed(hr);
 }
 
-Shadow_Effect::Shadow_Effect(float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, const wchar_t* path)
-	: m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_xOffset(xOffset), m_yOffset(yOffset)
+Shadow_Effect::Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_xOffset(xOffset), m_yOffset(yOffset)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Shadow, &m_shadowEffect);
 	DX::ThrowIfFailed(hr);
@@ -54,8 +56,8 @@ Shadow_Effect::Shadow_Effect(float edgeBlur, float r, float g, float b, float a,
 	if (m_bitmap == nullptr)	std::cout << "Shadow_Effect : 비트맵 생성 실패\n";
 }
 
-Shadow_Effect::Shadow_Effect(float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, ID2D1Effect* effect)
-	: m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_xOffset(xOffset), m_yOffset(yOffset), m_effect(effect)
+Shadow_Effect::Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_xOffset(xOffset), m_yOffset(yOffset), m_effect(effect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Shadow, &m_shadowEffect);
 	DX::ThrowIfFailed(hr);
@@ -77,31 +79,33 @@ void Shadow_Effect::Update()
 	m_offsetEffect->SetInputEffect(0, m_shadowEffect.Get());
 	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, offsetMT);
 	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_INTERPOLATION_MODE, D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_LINEAR);
+
+	m_renderInfo->SetEffect(m_offsetEffect.Get());
 }
 
-Composite_Effect::Composite_Effect(ID2D1Effect* top, ID2D1Effect* bottom, D2D1_COMPOSITE_MODE mode)
-	: m_EffectT(top), m_EffectB(bottom), m_mode(mode)
+Composite_Effect::Composite_Effect(RenderInfo* renderInfo, ID2D1Effect* top, ID2D1Effect* bottom, D2D1_COMPOSITE_MODE mode)
+	: m_renderInfo(renderInfo), m_EffectT(top), m_EffectB(bottom), m_mode(mode)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Composite, &m_compositeEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Composite_Effect::Composite_Effect(ID2D1Bitmap1* top, ID2D1Effect* bottom, D2D1_COMPOSITE_MODE mode)
-	: m_bitmapT(top), m_EffectB(bottom), m_mode(mode)
+Composite_Effect::Composite_Effect(RenderInfo* renderInfo, ID2D1Bitmap1* top, ID2D1Effect* bottom, D2D1_COMPOSITE_MODE mode)
+	: m_renderInfo(renderInfo), m_bitmapT(top), m_EffectB(bottom), m_mode(mode)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Composite, &m_compositeEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Composite_Effect::Composite_Effect(ID2D1Effect* top, ID2D1Bitmap1* bottom, D2D1_COMPOSITE_MODE mode)
-	: m_EffectT(top), m_bitmapB(bottom), m_mode(mode)
+Composite_Effect::Composite_Effect(RenderInfo* renderInfo, ID2D1Effect* top, ID2D1Bitmap1* bottom, D2D1_COMPOSITE_MODE mode)
+	: m_renderInfo(renderInfo), m_EffectT(top), m_bitmapB(bottom), m_mode(mode)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Composite, &m_compositeEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Composite_Effect::Composite_Effect(const wchar_t* top, ID2D1Bitmap1* bottom, D2D1_COMPOSITE_MODE mode)
-	: m_bitmapB(bottom), m_mode(mode)
+Composite_Effect::Composite_Effect(RenderInfo* renderInfo, const wchar_t* top, ID2D1Bitmap1* bottom, D2D1_COMPOSITE_MODE mode)
+	: m_renderInfo(renderInfo), m_bitmapB(bottom), m_mode(mode)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Composite, &m_compositeEffect);
 	DX::ThrowIfFailed(hr);
@@ -110,8 +114,8 @@ Composite_Effect::Composite_Effect(const wchar_t* top, ID2D1Bitmap1* bottom, D2D
 	if (m_bitmapT == nullptr)	std::cout << "Composite_Effect : 비트맵 생성 실패\n";
 }
 
-Composite_Effect::Composite_Effect(ID2D1Bitmap1* top, const wchar_t* bottom, D2D1_COMPOSITE_MODE mode)
-	: m_bitmapT(top), m_mode(mode)
+Composite_Effect::Composite_Effect(RenderInfo* renderInfo, ID2D1Bitmap1* top, const wchar_t* bottom, D2D1_COMPOSITE_MODE mode)
+	: m_renderInfo(renderInfo), m_bitmapT(top), m_mode(mode)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Composite, &m_compositeEffect);
 	DX::ThrowIfFailed(hr);
@@ -146,24 +150,26 @@ void Composite_Effect::Update()
 		m_compositeEffect->SetInput(1, m_bitmapT.Get());
 		m_compositeEffect->SetValue(D2D1_COMPOSITE_PROP_MODE, m_mode);
 	}
+
+	m_renderInfo->SetEffect(m_compositeEffect.Get());
 }
 
-Crop_Effect::Crop_Effect(float x, float y, float width, float height, ID2D1Effect* effect)
-	: m_rect{ x, y, width, height }, m_effect(effect)
+Crop_Effect::Crop_Effect(RenderInfo* renderInfo, float x, float y, float width, float height, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_rect{ x, y, width, height }, m_effect(effect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Crop, &m_cropEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Crop_Effect::Crop_Effect(float x, float y, float width, float height, ID2D1Bitmap1* bitmap)
-	: m_rect{ x, y, width, height }, m_bitmap(bitmap)
+Crop_Effect::Crop_Effect(RenderInfo* renderInfo, float x, float y, float width, float height, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_rect{ x, y, width, height }, m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Crop, &m_cropEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Crop_Effect::Crop_Effect(float x, float y, float width, float height, const wchar_t* path)
-	:m_rect{ x, y, width, height }
+Crop_Effect::Crop_Effect(RenderInfo* renderInfo, float x, float y, float width, float height, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_rect{ x, y, width, height }
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Crop, &m_cropEffect);
 	DX::ThrowIfFailed(hr);
@@ -179,21 +185,23 @@ void Crop_Effect::Update()
 	else
 		m_cropEffect->SetInputEffect(0, m_effect);
 	m_cropEffect->SetValue(D2D1_CROP_PROP_RECT, m_rect);
+
+	m_renderInfo->SetEffect(m_cropEffect.Get());
 }
 
-Contrast_Effect::Contrast_Effect(float strength, ID2D1Effect* effect) : m_strength(strength), m_effect(effect)
+Contrast_Effect::Contrast_Effect(RenderInfo* renderInfo, float strength, ID2D1Effect* effect) : m_renderInfo(renderInfo), m_strength(strength), m_effect(effect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Contrast, &m_contrastEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Contrast_Effect::Contrast_Effect(float strength, ID2D1Bitmap1* bitmap) : m_strength(strength), m_bitmap(bitmap)
+Contrast_Effect::Contrast_Effect(RenderInfo* renderInfo, float strength, ID2D1Bitmap1* bitmap) : m_renderInfo(renderInfo), m_strength(strength), m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Contrast, &m_contrastEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Contrast_Effect::Contrast_Effect(float strength, const wchar_t* path) : m_strength(strength)
+Contrast_Effect::Contrast_Effect(RenderInfo* renderInfo, float strength, const wchar_t* path) : m_renderInfo(renderInfo), m_strength(strength)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Contrast, &m_contrastEffect);
 	DX::ThrowIfFailed(hr);
@@ -210,24 +218,26 @@ void Contrast_Effect::Update()
 		m_contrastEffect->SetInputEffect(0, m_effect);
 	m_contrastEffect->SetValue(D2D1_CONTRAST_PROP_CONTRAST, m_strength);
 	m_contrastEffect->SetValue(D2D1_CONTRAST_PROP_CLAMP_INPUT, true);
+
+	m_renderInfo->SetEffect(m_contrastEffect.Get());
 }
 
-Vignette_Effect::Vignette_Effect(float blurRadius, float strength, float r, float g, float b, float a, ID2D1Effect* effect)
-	: m_blurRadius(blurRadius), m_strength(strength), m_color{ r, g, b, a }, m_effect(effect)
+Vignette_Effect::Vignette_Effect(RenderInfo* renderInfo, float blurRadius, float strength, float r, float g, float b, float a, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_blurRadius(blurRadius), m_strength(strength), m_color{ r, g, b, a }, m_effect(effect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Vignette, &m_vignetteEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Vignette_Effect::Vignette_Effect(float blurRadius, float strength, float r, float g, float b, float a, ID2D1Bitmap1* bitmap)
-	: m_blurRadius(blurRadius), m_strength(strength), m_color{ r, g, b, a }, m_bitmap(bitmap)
+Vignette_Effect::Vignette_Effect(RenderInfo* renderInfo, float blurRadius, float strength, float r, float g, float b, float a, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_blurRadius(blurRadius), m_strength(strength), m_color{ r, g, b, a }, m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Vignette, &m_vignetteEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Vignette_Effect::Vignette_Effect(float blurRadius, float strength, float r, float g, float b, float a, const wchar_t* path)
-	: m_blurRadius(blurRadius), m_strength(strength), m_color{ r, g, b, a }
+Vignette_Effect::Vignette_Effect(RenderInfo* renderInfo, float blurRadius, float strength, float r, float g, float b, float a, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_blurRadius(blurRadius), m_strength(strength), m_color{ r, g, b, a }
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Vignette, &m_vignetteEffect);
 	DX::ThrowIfFailed(hr);
@@ -245,24 +255,26 @@ void Vignette_Effect::Update()
 	m_vignetteEffect->SetValue(D2D1_VIGNETTE_PROP_COLOR, m_color);
 	m_vignetteEffect->SetValue(D2D1_VIGNETTE_PROP_TRANSITION_SIZE, m_blurRadius);
 	m_vignetteEffect->SetValue(D2D1_VIGNETTE_PROP_STRENGTH, m_strength);
+
+	m_renderInfo->SetEffect(m_vignetteEffect.Get());
 }
 
-Scale_Effect::Scale_Effect(float pivotX, float pivotY, float scaleX, float scaleY, ID2D1Effect* effect)
-	: m_pivot{ pivotX, pivotY }, m_scale{ scaleX, scaleY }, m_effect(effect)
+Scale_Effect::Scale_Effect(RenderInfo* renderInfo, float pivotX, float pivotY, float scaleX, float scaleY, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_pivot{ pivotX, pivotY }, m_scale{ scaleX, scaleY }, m_effect(effect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Scale, &m_scaleEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Scale_Effect::Scale_Effect(float pivotX, float pivotY, float scaleX, float scaleY, ID2D1Bitmap1* bitmap)
-	: m_pivot{ pivotX, pivotY }, m_scale{ scaleX, scaleY }, m_bitmap(bitmap)
+Scale_Effect::Scale_Effect(RenderInfo* renderInfo, float pivotX, float pivotY, float scaleX, float scaleY, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_pivot{ pivotX, pivotY }, m_scale{ scaleX, scaleY }, m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Scale, &m_scaleEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Scale_Effect::Scale_Effect(float pivotX, float pivotY, float scaleX, float scaleY, const wchar_t* path)
-	: m_pivot{ pivotX, pivotY }, m_scale{ scaleX, scaleY }
+Scale_Effect::Scale_Effect(RenderInfo* renderInfo, float pivotX, float pivotY, float scaleX, float scaleY, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_pivot{ pivotX, pivotY }, m_scale{ scaleX, scaleY }
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Scale, &m_scaleEffect);
 	DX::ThrowIfFailed(hr);
@@ -279,24 +291,26 @@ void Scale_Effect::Update()
 		m_scaleEffect->SetInputEffect(0, m_effect);
 	m_scaleEffect->SetValue(D2D1_SCALE_PROP_CENTER_POINT, m_pivot);
 	m_scaleEffect->SetValue(D2D1_SCALE_PROP_SCALE, m_scale);
+
+	m_renderInfo->SetEffect(m_scaleEffect.Get());
 }
 
-Posterize_Effect::Posterize_Effect(int redStep, int greenStep, int blueStep, ID2D1Effect* effect)
-	: m_redStep(redStep), m_greenStep(greenStep), m_blueStep(blueStep), m_effect(effect)
+Posterize_Effect::Posterize_Effect(RenderInfo* renderInfo, int redStep, int greenStep, int blueStep, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_redStep(redStep), m_greenStep(greenStep), m_blueStep(blueStep), m_effect(effect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Posterize, &m_posterEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Posterize_Effect::Posterize_Effect(int redStep, int greenStep, int blueStep, ID2D1Bitmap1* bitmap)
-	: m_redStep(redStep), m_greenStep(greenStep), m_blueStep(blueStep), m_bitmap(bitmap)
+Posterize_Effect::Posterize_Effect(RenderInfo* renderInfo, int redStep, int greenStep, int blueStep, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_redStep(redStep), m_greenStep(greenStep), m_blueStep(blueStep), m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Posterize, &m_posterEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Posterize_Effect::Posterize_Effect(int redStep, int greenStep, int blueStep, const wchar_t* path)
-	: m_redStep(redStep), m_greenStep(greenStep), m_blueStep(blueStep)
+Posterize_Effect::Posterize_Effect(RenderInfo* renderInfo, int redStep, int greenStep, int blueStep, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_redStep(redStep), m_greenStep(greenStep), m_blueStep(blueStep)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Posterize, &m_posterEffect);
 	DX::ThrowIfFailed(hr);
@@ -314,24 +328,26 @@ void Posterize_Effect::Update()
 	m_posterEffect->SetValue(D2D1_POSTERIZE_PROP_RED_VALUE_COUNT, m_redStep);
 	m_posterEffect->SetValue(D2D1_POSTERIZE_PROP_GREEN_VALUE_COUNT, m_greenStep);
 	m_posterEffect->SetValue(D2D1_POSTERIZE_PROP_BLUE_VALUE_COUNT, m_blueStep);
+
+	m_renderInfo->SetEffect(m_posterEffect.Get());
 }
 
-Gray_Effect::Gray_Effect(float strength, ID2D1Effect* effect)
-	: m_strength(strength), m_effect(effect)
+Gray_Effect::Gray_Effect(RenderInfo* renderInfo, float strength, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_strength(strength), m_effect(effect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Saturation, &m_grayEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Gray_Effect::Gray_Effect(float strength, ID2D1Bitmap1* bitmap)
-	: m_strength(strength), m_bitmap(bitmap)
+Gray_Effect::Gray_Effect(RenderInfo* renderInfo, float strength, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_strength(strength), m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Saturation, &m_grayEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Gray_Effect::Gray_Effect(float strength, const wchar_t* path)
-	: m_strength(strength)
+Gray_Effect::Gray_Effect(RenderInfo* renderInfo, float strength, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_strength(strength)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Saturation, &m_grayEffect);
 	DX::ThrowIfFailed(hr);
@@ -347,24 +363,26 @@ void Gray_Effect::Update()
 	else
 		m_grayEffect->SetInputEffect(0, m_effect);
 	m_grayEffect->SetValue(D2D1_SATURATION_PROP_SATURATION, 1.f - m_strength);
+
+	m_renderInfo->SetEffect(m_grayEffect.Get());
 }
 
-PerspectiveTM_Effect::PerspectiveTM_Effect(float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect)
-	: m_depth(depth), m_pivot{ pivotX, pivotY }, m_rotate{ rotateX, rotateY, rotateZ }, m_effect(effect)
+PerspectiveTM_Effect::PerspectiveTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_depth(depth), m_pivot{ pivotX, pivotY }, m_rotate{ rotateX, rotateY, rotateZ }, m_effect(effect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-PerspectiveTM_Effect::PerspectiveTM_Effect(float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap)
-	: m_depth(depth), m_pivot{ pivotX, pivotY }, m_rotate{ rotateX, rotateY, rotateZ }, m_bitmap(bitmap)
+PerspectiveTM_Effect::PerspectiveTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_depth(depth), m_pivot{ pivotX, pivotY }, m_rotate{ rotateX, rotateY, rotateZ }, m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-PerspectiveTM_Effect::PerspectiveTM_Effect(float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, const wchar_t* path)
-	: m_depth(depth), m_pivot{ pivotX, pivotY }, m_rotate{ rotateX, rotateY, rotateZ }
+PerspectiveTM_Effect::PerspectiveTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_depth(depth), m_pivot{ pivotX, pivotY }, m_rotate{ rotateX, rotateY, rotateZ }
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
 	DX::ThrowIfFailed(hr);
@@ -375,6 +393,8 @@ PerspectiveTM_Effect::PerspectiveTM_Effect(float depth, float pivotX, float pivo
 
 void PerspectiveTM_Effect::Update()
 {
+	m_rotate.x += m_rotate.x;
+
 	if (m_effect == nullptr)
 		m_perspectiveEffect->SetInput(0, m_bitmap.Get());
 	else
@@ -383,6 +403,8 @@ void PerspectiveTM_Effect::Update()
 	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION_ORIGIN, m_pivot);
 	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION, m_rotate);
 	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_DEPTH, m_depth);
+
+	m_renderInfo->SetEffect(m_perspectiveEffect.Get());
 }
 
 //Particle_Effect::Particle_Effect(int particle_count)

@@ -7,6 +7,8 @@
 class RenderInfo : public Component
 {
 public:
+	RenderInfo(ID2D1Bitmap1* bitmap) { SetBitmap(bitmap); }
+
 	void SetBitmap(ID2D1Bitmap1* bitmap)		// 비트맵 변경 시, src와 dest rect에 비트맵 사이즈 들어감
 	{
 		m_renderInfo.bitmap = bitmap;
@@ -45,6 +47,8 @@ public:
 	{
 		m_renderInfo.activated = activated;
 	}
+
+	const D2D1_SIZE_F GetSize() { return { m_renderInfo.srcRect.right - m_renderInfo.srcRect.left, m_renderInfo.srcRect.bottom - m_renderInfo.srcRect.top }; }
 
 	//renderInfo& GetReference()								// obj 내 다른 component에서 사용
 	//{ 

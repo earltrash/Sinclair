@@ -173,6 +173,9 @@
     <ClInclude Include="RenderInfo.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="PlayComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -269,6 +272,9 @@
       <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="RenderInfo.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>

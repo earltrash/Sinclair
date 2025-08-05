@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "InputManager.h"
-#include "UIManager.h"
+//#include "UIManager.h"
 
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp)) // 그냥 멋지게 쓰고 싶었다...
@@ -103,7 +103,7 @@ void InputManager::Update()
     }
 
     // UIManager에 입력 전달
-    UIManager::Get().OnInput();
+    //UIManager::Get().OnInput();
 }
 
 // 마우스 클릭

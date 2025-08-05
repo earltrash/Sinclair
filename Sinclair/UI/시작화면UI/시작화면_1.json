@@ -1,0 +1,37 @@
+{
+  "frames": [
+    {
+      "filename": "tmp 0.png",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 702,
+        "h": 83
+      },
+      "rotated": false,
+      "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 702,
+            "h": 83
+        },
+        "sourceSize": {
+            "w": 702,
+            "h": 83
+        },
+      "duration": 100
+    }
+  ],
+  "meta": {
+    "frameTags": [
+      {
+        "name": "Idle",
+        "from": 0,
+        "to": 0,
+        "direction": "forward"
+      }
+    ]
+  },
+  "SceneInfo": "Title"
+}
