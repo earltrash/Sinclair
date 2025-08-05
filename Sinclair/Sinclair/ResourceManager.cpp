@@ -14,9 +14,9 @@ ResourceManager& ResourceManager::Get()
 void ResourceManager::GameAssetLoad()
 {
     //AnimatedAssetLoad(D2DRenderer::Get(), "Resource");
-    m_ItemBank.LoadItemStatus("Item"); //Status Only
+    m_ItemBank.LoadItemStatus("Resource/Item"); //Status Only
     //m_ItemBank.LoadItemBitmap("") //얘는 Atlas 위치긴 한데 이거 얘기좀 해봐야 할 듯 . 
-    m_UI_Bank.Load_UI_Image("UI"); // Single / Multi Bitmap
+    m_UI_Bank.Load_UI_Image("Resource/UI"); // Single / Multi Bitmap
 
 }
 
