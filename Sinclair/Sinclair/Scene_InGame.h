@@ -16,5 +16,7 @@ public:
 		virtual void Enter() override;
 		virtual void Exit() override; //하위 클래스에서 처리 
 		virtual void Render()override;
+
+		void CreateObj();
 };
 

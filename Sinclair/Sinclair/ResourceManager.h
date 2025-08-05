@@ -7,6 +7,7 @@
 
 #include "UI_Bank.h"
 #include "ItemBank.h"
+#include "TextBank.h"
 
 
 using namespace std;
@@ -54,7 +55,7 @@ public:
     
     UI_Bank& Get_UIBank();
     ItemBank& Get_ItemBank();
-
+    TextBank& Get_TextBank();
    
 public:
     void Clean();
@@ -73,5 +74,6 @@ private:
 
     ItemBank m_ItemBank;
     UI_Bank m_UI_Bank;
+    TextBank m_TextBank;
     // AsepriteParser -> ÆÄ½ÌÇÏ´Â °Ç 
 };
