@@ -20,8 +20,6 @@ void UpDown_Effect::Update()
 		m_transform.Translate(0.f, m_downSpeed);
 		if ((m_position.y + m_moveAmount) <= m_transform.GetPosition().y)	isUp = true;
 	}
-
-	m_renderInfo->SetWorldTM(m_transform.GetWorldMatrix());
 }
 
 void UpDown_Effect::OnEvent(const std::string& ev)
@@ -64,14 +62,15 @@ void UpDown_Effect::OnEvent(const std::string& ev)
 //	}
 //}
 
-Bounce_Effect::Bounce_Effect(RenderInfo* renderInfo, Transform& transform, float x_maxScale, float y_maxScale, float totalSecond)
+Explode_Effect::Explode_Effect(RenderInfo* renderInfo, Transform& transform, float x_maxScale, float y_maxScale, float totalSecond)
 	: m_renderInfo(renderInfo), m_transform(transform), mx_maxScale(x_maxScale), my_maxScale(y_maxScale), m_totalSecond(totalSecond)
 {
 	m_scale = m_transform.GetScale();
 }
 
-void Bounce_Effect::FixedUpdate(float dt)
+void Explode_Effect::FixedUpdate(float dt)
 {
+	if (isStop)	return;
 	static float time = 0;
 	static float x = 0;
 
@@ -86,19 +85,32 @@ void Bounce_Effect::FixedUpdate(float dt)
 		}
 	}
 
-	D2D1_VECTOR_2F scale{ Graph(x, mx_maxScale), Graph(x, my_maxScale) };
+	D2D1_VECTOR_2F scale{ m_scale.x + Graph(x, mx_maxScale), m_scale.y + Graph(x, my_maxScale) };
 	m_transform.SetScale(scale);
 
 	if (m_transform.GetScale().x < 0.f && m_transform.GetScale().y < 0.f)
 	{
 		x = 0.f;
-		// m_renderInfo->SetisActive(false);
+		m_renderInfo->SetisActive(false);
+		m_transform.SetScale(m_scale);
+
+		isStop = true;
+	}
+}
+
+void Explode_Effect::OnEvent(const std::string& ev)
+{
+	if (ev == "PLAY")
+	{
+		isStop = false;
+		m_renderInfo->SetisActive(true);
 	}
 }
 
 Blinking_Effect::Blinking_Effect(RenderInfo* renderInfo, float minOpacity, float totalSecond)
 	: m_renderInfo(renderInfo), m_minOpacity(minOpacity), m_totalSecond(totalSecond)
 {
+	//std::cout << m_totalSecond << std::endl;
 }
 
 void Blinking_Effect::FixedUpdate(float dt)
@@ -111,7 +123,7 @@ void Blinking_Effect::FixedUpdate(float dt)
 	time += dt;
 	if (time >= FPS60)
 	{
-		if (time >= 5.f)	time = 0.f;		// 처음 dt가 5이상 큰 수가 들어옴
+		if (time >= 100.f)	time = 0.f;		// 처음 dt가 5이상 큰 수가 들어옴
 		else
 		{
 			time -= FPS60;
@@ -157,8 +169,6 @@ void Slide_Effect::Update()
 		m_transform.Translate(m_speed, 0.f);
 		if (m_screenWidth <= m_transform.GetPosition().x)	m_transform.SetPosition({ -m_bitmapWidth, m_transform.GetPosition().y });
 	}
-
-	m_renderInfo->SetWorldTM(m_transform.GetWorldMatrix());
 }
 
 void Slide_Effect::OnEvent(const std::string& ev)
