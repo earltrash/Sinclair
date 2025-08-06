@@ -67,21 +67,50 @@ void Scene_MK::Initalize()
 
 	m_gameObjects.emplace("3Dust", std::move(Dust2));
 
-	auto rayBitmap = ResourceManager::Get().GetTexture("treasureRay");
+	auto rayBitmap = ResourceManager::Get().GetTexture("portalRays");
 	auto ray = std::make_unique<Object>();
 	auto rayInfo = ray->GetRenderInfo();
 	rayInfo->SetBitmap(rayBitmap.Get());
-	//ray->GetTransform().SetPivotPreset(PivotPreset::Center, rayInfo->GetSize());
-	ray->GetTransform().SetPosition({ 0.f, 0.f });
-	//auto rotate = ray->AddComponent<Rotate_Effect>(rayInfo, ray->GetTransform(), 0.05f);
-	auto blink = ray->AddComponent<Blinking_Effect>(rayInfo, 0.85f, 1.f);
-	auto blur_ray = ray->AddComponent<GaussianBlur_Effect>(rayInfo, 5.f, rayBitmap.Get());
-	auto blur_ray2 = ray->AddComponent<GaussianBlur_Effect>(rayInfo, 5.f, rayBitmap.Get());
-	auto perspect = ray->AddComponent<Rotate3D_Effect>(rayInfo, 0.f, 0.f, 0.f, 0.5f, blur_ray->GetEffect());
-	auto perspect2 = ray->AddComponent<Rotate3D_Effect>(rayInfo, 0.f, 0.f, 0.f, -0.1f, blur_ray2->GetEffect());
-	auto composite = ray->AddComponent<Composite_Effect>(rayInfo, perspect->GetEffect(), perspect2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_COPY);
+	ray->GetTransform().SetPosition({ 200.f, 200.f });
+	ray->GetTransform().SetPivotPreset(PivotPreset::Center, { rayBitmap.Get()->GetSize().width, rayBitmap.Get()->GetSize().height });
+	auto blink = ray->AddComponent<Blinking_Effect>(rayInfo, 0.85f, 5.f);
+	auto perspect = ray->AddComponent<Rotate3D_Effect>(rayInfo, 0.f, rayBitmap.Get()->GetSize().width / 2.f, rayBitmap.Get()->GetSize().height / 2.f, 0.f, 0.f, 0.2f, rayBitmap.Get());
+	auto perspect2 = ray->AddComponent<Rotate3D_Effect>(rayInfo, 0.f, rayBitmap.Get()->GetSize().width / 2.f, rayBitmap.Get()->GetSize().height / 2.f, 0.f, 0.f, -0.2f, rayBitmap.Get());
+	auto composite = ray->AddComponent<Composite_Effect>(rayInfo, perspect->GetEffect(), perspect2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+	//auto colorRay = ray->AddComponent<Color_Effect>(rayInfo, 255.f / 256.f, 192.f / 256.f, 203.f / 256.f, 1.f, composite->GetEffect());
+	//auto explodeRay = ray->AddComponent<Explode_Effect>(rayInfo, ray->GetTransform(), 3.f, 3.f, 0.5f);
 
 	m_gameObjects.emplace("4Dust", std::move(ray));
+
+	auto YrayBitmap = ResourceManager::Get().GetTexture("treasureRay");
+	auto Yray = std::make_unique<Object>();
+	auto YrayInfo = Yray->GetRenderInfo();
+	YrayInfo->SetBitmap(YrayBitmap.Get());
+	Yray->GetTransform().SetPosition({ 500.f, 200.f });
+	Yray->GetTransform().SetPivotPreset(PivotPreset::Center, { YrayBitmap.Get()->GetSize().width, YrayBitmap.Get()->GetSize().height });
+	auto Yblink = Yray->AddComponent<Blinking_Effect>(YrayInfo, 0.95f, 1.f);
+	auto Yperspect = Yray->AddComponent<Rotate3D_Effect>(YrayInfo, 0.f, YrayBitmap.Get()->GetSize().width / 2.f, YrayBitmap.Get()->GetSize().height / 2.f, 0.f, 0.f, 0.15f, YrayBitmap.Get());
+	auto Yperspect2 = Yray->AddComponent<Rotate3D_Effect>(YrayInfo, 0.f, YrayBitmap.Get()->GetSize().width / 2.f, YrayBitmap.Get()->GetSize().height / 2.f, 0.f, 0.f, -0.15f, YrayBitmap.Get());
+	auto Ycomposite = Yray->AddComponent<Composite_Effect>(YrayInfo, Yperspect->GetEffect(), Yperspect2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+	m_gameObjects.emplace("5Dust", std::move(Yray));
+
+	//auto runeBitmap = ResourceManager::Get().GetTexture("runeword05");
+	//auto glowBitmap = ResourceManager::Get().GetTexture("basicglow");
+	//auto glow = std::make_unique<Object>();
+	//auto glowInfo = glow->GetRenderInfo();
+	//glowInfo->SetBitmap(glowBitmap.Get());
+	//glow->GetTransform().SetPosition({ 500.f, 600.f });
+	//auto blinkGlow = glow->AddComponent<Blinking_Effect>(glowInfo, 0.9f, 5.f);
+	//auto colorGlow = glow->AddComponent<Color_Effect>(glowInfo, 51.f / 256.f, 51.f / 256.f, 255.f / 256.f, 1.f, glowBitmap.Get());
+	//auto compoGlow = glow->AddComponent<Composite_Effect>(glowInfo, runeBitmap.Get(), colorGlow->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+	//m_gameObjects.emplace("6Dust", std::move(glow));
+	
+	//auto rune = std::make_unique<Object>();
+	//auto runeInfo = rune->GetRenderInfo();
+	//runeInfo->SetBitmap(runeBitmap.Get());
+	//rune->GetTransform().SetPosition({ 500.f, 600.f });
+	//rune->AddComponent<Composite_Effect>(runeInfo, runeBitmap.Get(), glowBitmap.Get(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+	
 }
 
 void Scene_MK::Clean()

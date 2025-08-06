@@ -33,36 +33,27 @@ void GaussianBlur_Effect::Update()
 	m_renderInfo->SetEffect(m_gaussianBlurEffect.Get());
 }
 
-Shadow_Effect::Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, ID2D1Bitmap1* bitmap)
-	: m_renderInfo(renderInfo), m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_xOffset(xOffset), m_yOffset(yOffset), m_bitmap(bitmap)
+Shadow_Effect::Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Shadow, &m_shadowEffect);
-	DX::ThrowIfFailed(hr);
-
-	hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D12DAffineTransform, &m_offsetEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Shadow_Effect::Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, const wchar_t* path)
-	: m_renderInfo(renderInfo), m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_xOffset(xOffset), m_yOffset(yOffset)
+Shadow_Effect::Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a,  const wchar_t* path)
+	: m_renderInfo(renderInfo), m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Shadow, &m_shadowEffect);
-	DX::ThrowIfFailed(hr);
-
-	hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D12DAffineTransform, &m_offsetEffect);
 	DX::ThrowIfFailed(hr);
 
 	D2DRenderer::Get().CreateBitmapFromFile(path, m_bitmap.GetAddressOf());
 	if (m_bitmap == nullptr)	std::cout << "Shadow_Effect : 비트맵 생성 실패\n";
 }
 
-Shadow_Effect::Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, float xOffset, float yOffset, ID2D1Effect* effect)
-	: m_renderInfo(renderInfo), m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_xOffset(xOffset), m_yOffset(yOffset), m_effect(effect)
+Shadow_Effect::Shadow_Effect(RenderInfo* renderInfo, float edgeBlur, float r, float g, float b, float a, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_edgeBlur(edgeBlur), m_shadowColor{ r, g, b, a }, m_effect(effect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Shadow, &m_shadowEffect);
-	DX::ThrowIfFailed(hr);
-
-	hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D12DAffineTransform, &m_offsetEffect);
 	DX::ThrowIfFailed(hr);
 }
 
@@ -75,12 +66,7 @@ void Shadow_Effect::Update()
 	m_shadowEffect->SetValue(D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION, m_edgeBlur);
 	m_shadowEffect->SetValue(D2D1_SHADOW_PROP_COLOR, m_shadowColor);
 
-	D2D1_MATRIX_3X2_F offsetMT = D2D1::Matrix3x2F::Translation(m_xOffset, m_yOffset);
-	m_offsetEffect->SetInputEffect(0, m_shadowEffect.Get());
-	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, offsetMT);
-	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_INTERPOLATION_MODE, D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_LINEAR);
-
-	m_renderInfo->SetEffect(m_offsetEffect.Get());
+	m_renderInfo->SetEffect(m_shadowEffect.Get());
 }
 
 Composite_Effect::Composite_Effect(RenderInfo* renderInfo, ID2D1Effect* top, ID2D1Effect* bottom, D2D1_COMPOSITE_MODE mode)
@@ -122,6 +108,13 @@ Composite_Effect::Composite_Effect(RenderInfo* renderInfo, ID2D1Bitmap1* top, co
 
 	D2DRenderer::Get().CreateBitmapFromFile(bottom, m_bitmapB.GetAddressOf());
 	if (m_bitmapB == nullptr)	std::cout << "Composite_Effect : 비트맵 생성 실패\n";
+}
+
+Composite_Effect::Composite_Effect(RenderInfo* renderInfo, ID2D1Bitmap1* top, ID2D1Bitmap1* bottom, D2D1_COMPOSITE_MODE mode)
+	: m_renderInfo(renderInfo), m_bitmapT(top), m_bitmapB(bottom), m_mode(mode)
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Composite, &m_compositeEffect);
+	DX::ThrowIfFailed(hr);
 }
 
 void Composite_Effect::Update()
@@ -367,44 +360,87 @@ void Gray_Effect::Update()
 	m_renderInfo->SetEffect(m_grayEffect.Get());
 }
 
-PerspectiveTM_Effect::PerspectiveTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect)
-	: m_renderInfo(renderInfo), m_depth(depth), m_pivot{ pivotX, pivotY }, m_rotate{ rotateX, rotateY, rotateZ }, m_effect(effect)
+Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_depth(depth), m_pivot{ pivotX, pivotY, 0.f }, m_rotate{ rotateX, rotateY, rotateZ }, m_effect(effect)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-PerspectiveTM_Effect::PerspectiveTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap)
-	: m_renderInfo(renderInfo), m_depth(depth), m_pivot{ pivotX, pivotY }, m_rotate{ rotateX, rotateY, rotateZ }, m_bitmap(bitmap)
+Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_depth(depth), m_pivot{ pivotX, pivotY, 0.f }, m_rotate{ rotateX, rotateY, rotateZ }, m_bitmap(bitmap)
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-PerspectiveTM_Effect::PerspectiveTM_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, const wchar_t* path)
-	: m_renderInfo(renderInfo), m_depth(depth), m_pivot{ pivotX, pivotY }, m_rotate{ rotateX, rotateY, rotateZ }
+Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_depth(depth), m_pivot{ pivotX, pivotY, 0.f }, m_rotate { rotateX, rotateY, rotateZ }
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
 	DX::ThrowIfFailed(hr);
 
 	D2DRenderer::Get().CreateBitmapFromFile(path, m_bitmap.GetAddressOf());
-	if (m_bitmap == nullptr)	std::cout << "PerspectiveTM_Effect : 비트맵 생성 실패\n";
+	if (m_bitmap == nullptr)	std::cout << "Rotate3D_Effect : 비트맵 생성 실패\n";
 }
 
-void PerspectiveTM_Effect::Update()
+void Rotate3D_Effect::Update()
 {
-	m_rotate.x += m_rotate.x;
-
 	if (m_effect == nullptr)
+	{
 		m_perspectiveEffect->SetInput(0, m_bitmap.Get());
+	}
 	else
+	{
 		m_perspectiveEffect->SetInputEffect(0, m_effect);
-	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_PERSPECTIVE_ORIGIN, m_perspective);
+	}
+	
 	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION_ORIGIN, m_pivot);
-	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION, m_rotate);
+
+	m_rotation.x = fmod((m_rotation.x + m_rotate.x), 360.f);	m_rotation.y = fmod((m_rotation.y + m_rotate.y), 360.f);	m_rotation.z = fmod((m_rotation.z + m_rotate.z), 360.f);
+
+	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION, m_rotation);
+
 	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_DEPTH, m_depth);
 
 	m_renderInfo->SetEffect(m_perspectiveEffect.Get());
+}
+
+Offset_Effect::Offset_Effect(RenderInfo* renderInfo, float xOffset, float yOffset, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_xOffset(xOffset), m_yOffset(yOffset), m_bitmap(bitmap)
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D12DAffineTransform, &m_offsetEffect);
+	DX::ThrowIfFailed(hr);
+}
+
+Offset_Effect::Offset_Effect(RenderInfo* renderInfo, float xOffset, float yOffset, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_xOffset(xOffset), m_yOffset(yOffset)
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D12DAffineTransform, &m_offsetEffect);
+	DX::ThrowIfFailed(hr);
+
+	D2DRenderer::Get().CreateBitmapFromFile(path, m_bitmap.GetAddressOf());
+	if (m_bitmap == nullptr)	std::cout << "Offset_Effect : 비트맵 생성 실패\n";
+}
+
+Offset_Effect::Offset_Effect(RenderInfo* renderInfo, float xOffset, float yOffset, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_xOffset(xOffset), m_yOffset(yOffset), m_effect(effect)
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D12DAffineTransform, &m_offsetEffect);
+	DX::ThrowIfFailed(hr);
+}
+
+void Offset_Effect::Update()
+{
+	if (m_effect == nullptr)
+		m_offsetEffect->SetInput(0, m_bitmap.Get());
+	else
+		m_offsetEffect->SetInputEffect(0, m_effect);
+	D2D1_MATRIX_3X2_F offsetMT = D2D1::Matrix3x2F::Translation(m_xOffset, m_yOffset);
+	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, offsetMT);
+	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_INTERPOLATION_MODE, D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_LINEAR);
+
+	m_renderInfo->SetEffect(m_offsetEffect.Get());
 }
 
 //Particle_Effect::Particle_Effect(int particle_count)
@@ -480,50 +516,43 @@ void PerspectiveTM_Effect::Update()
 //	);
 //}
 
-Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect)
-	: m_renderInfo(renderInfo), m_depth(depth), m_rotate{ rotateX, rotateY, rotateZ }, m_effect(effect)
+Color_Effect::Color_Effect(RenderInfo* renderInfo, float r, float g, float b, float a, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_r(r), m_g(g), m_b(b), m_a(a), m_effect(effect)
 {
-	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1ColorMatrix, &m_colorEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap)
-	: m_renderInfo(renderInfo), m_depth(depth), m_rotate{ rotateX, rotateY, rotateZ }, m_bitmap(bitmap)
+Color_Effect::Color_Effect(RenderInfo* renderInfo, float r, float g, float b, float a, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_r(r), m_g(g), m_b(b), m_a(a), m_bitmap(bitmap)
 {
-	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1ColorMatrix, &m_colorEffect);
 	DX::ThrowIfFailed(hr);
 }
 
-Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rotateX, float rotateY, float rotateZ, const wchar_t* path)
-	: m_renderInfo(renderInfo), m_depth(depth), m_rotate{ rotateX, rotateY, rotateZ }
+Color_Effect::Color_Effect(RenderInfo* renderInfo, float r, float g, float b, float a, const wchar_t* path)
+	: m_renderInfo(renderInfo), m_r(r), m_g(g), m_b(b), m_a(a)
 {
-	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1ColorMatrix, &m_colorEffect);
 	DX::ThrowIfFailed(hr);
 
 	D2DRenderer::Get().CreateBitmapFromFile(path, m_bitmap.GetAddressOf());
-	if (m_bitmap == nullptr)	std::cout << "Rotate3D_Effect : 비트맵 생성 실패\n";
+	if (m_bitmap == nullptr)	std::cout << "Offset_Effect : 비트맵 생성 실패\n";
 }
 
-void Rotate3D_Effect::Update()
+void Color_Effect::Update()
 {
 	if (m_effect == nullptr)
-	{
-		m_perspectiveEffect->SetInput(0, m_bitmap.Get());
-		SetPivot(m_bitmap->GetSize().width / 2.f, m_bitmap->GetSize().height / 2.f);
-	}
+		m_colorEffect->SetInput(0, m_bitmap.Get());
 	else
-	{
-		m_perspectiveEffect->SetInputEffect(0, m_effect);
-		SetPivot(m_renderInfo->GetSize().width / 2.f, m_renderInfo->GetSize().height / 2.f);	// 수정 필요
-	}
-	
-	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION_ORIGIN, m_pivot);
+		m_colorEffect->SetInputEffect(0, m_effect);
+	D2D1_MATRIX_5X4_F matrix = D2D1::Matrix5x4F
+	(	m_r, 0, 0, 0,
+		0, m_g, 0, 0,
+		0, 0, m_b, 0,
+		0, 0, 0, m_a,
+		0, 0, 0, 0	);
+	m_colorEffect->SetValue(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, matrix);
 
-	m_rotation.x = fmod((m_rotation.x + m_rotate.x), 360.f);	m_rotation.y = fmod((m_rotation.y + m_rotate.y), 360.f);	m_rotation.z = fmod((m_rotation.z + m_rotate.z), 360.f);
-
-	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION, m_rotation);
-
-	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_DEPTH, m_depth);
-
-	m_renderInfo->SetEffect(m_perspectiveEffect.Get());
+	m_renderInfo->SetEffect(m_colorEffect.Get());
 }

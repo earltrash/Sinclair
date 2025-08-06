@@ -9,7 +9,7 @@ using namespace Microsoft::WRL;
 
 class UpDown_Effect;	// 위아래 왔다갔다 연출
 //class Rotate_Effect;	// 회전 연출
-class Bounce_Effect;
+class Explode_Effect;
 class Blinking_Effect;
 
 class Slide_Effect : public Component
@@ -78,13 +78,14 @@ private:
 
 // scale이 0에서 max까지 커졌다가 사라지는 효과
 // x와 y의 최대 scale 별개 적용 가능
-class Bounce_Effect : public Component
+class Explode_Effect : public Component
 {
 public:
-	Bounce_Effect(RenderInfo* renderInfo, Transform& transform, float x_maxScale, float y_maxScale, float totalSecond);
+	Explode_Effect(RenderInfo* renderInfo, Transform& transform, float x_maxScale, float y_maxScale, float totalSecond);
 
 private:
 	void FixedUpdate(float dt) override;
+	void OnEvent(const std::string& ev) override;
 
 	float Graph(float x, float maxScale)
 	{
@@ -95,8 +96,10 @@ private:
 	D2D1_VECTOR_2F m_scale;
 
 	float m_totalSecond = 0.f;		// 스케일 애니메이션 총 시간
-	float mx_maxScale = 0.f;		// 최대 스케일
-	float my_maxScale = 0.f;		// 최대 스케일
+	float mx_maxScale = 0.f;		// x 최대 스케일
+	float my_maxScale = 0.f;		// y 최대 스케일
+
+	bool isStop = false;			// 초기값이 true로 되어 있어야함.	false ev가 들어왔을 때 효과주고 비활성화
 
 	Transform& m_transform;
 	RenderInfo* m_renderInfo = nullptr;
@@ -115,6 +118,7 @@ private:
 	{
 		float a = 4.f * (1.f - m_minOpacity);
 		float result = (a * x * x) / (m_totalSecond * m_totalSecond) - ((a * x) / m_totalSecond) + 1.f;
+
 		return result;
 	}
 private:
