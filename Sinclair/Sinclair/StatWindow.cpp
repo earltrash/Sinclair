@@ -27,8 +27,8 @@ void StatWindow::Render()
 
     RenderBackground();     // 배경 렌더
     RenderRadarChart();     // 레이더 차트 렌더
-    RenderStatsText();      // 스탯 텍스트 렌더
-    RenderTitleBar();       // 타이틀 바 렌더
+    //RenderStatsText();      // 스탯 텍스트 렌더
+    //RenderTitleBar();       // 타이틀 바 렌더
     RenderCloseButton();    // 닫기 버튼 렌더
 }
 
@@ -87,7 +87,9 @@ void StatWindow::RenderBackground()
     UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
     if (uiRenderer)
     {
-        ID2D1Bitmap1* backgroundBitmap = uiRenderer->GetBitmap("InvenBG").Get();
+        ID2D1Bitmap1* backgroundBitmap = ResourceManager::Get().Get_UIBank().Get_Image("StatBG").Get();
+
+       // ID2D1Bitmap1* backgroundBitmap = uiRenderer->GetBitmap("StatBG").Get();
         if (backgroundBitmap)
         {
             D2D1_RECT_F destRect = { m_position.x, m_position.y, m_position.x + m_size.x, m_position.y + m_size.y };
@@ -133,7 +135,10 @@ void StatWindow::RenderCloseButton()
 
     if (uiRenderer)
     {
-        ID2D1Bitmap1* closeButtonBitmap = uiRenderer->GetBitmap("InvenClose").Get();
+        ID2D1Bitmap1* closeButtonBitmap = ResourceManager::Get().Get_UIBank().Get_Image("CloseButton").Get();
+
+
+       // ID2D1Bitmap1* closeButtonBitmap = uiRenderer->GetBitmap("CloseButton").Get();
         if (closeButtonBitmap)
         {
             D2DRenderer::Get().DrawBitmap(closeButtonBitmap, destRect);
@@ -254,20 +259,20 @@ void StatWindow::RenderRadarChart()
     }
 
     // 1. 외곽 기준선 그리기
-    for (int i = 0; i < 5; ++i)
-    {
-        const Vec2& p1 = maxPoints[i];
-        const Vec2& p2 = maxPoints[(i + 1) % 5];
-        D2DRenderer::Get().DrawLine(p1.x, p1.y, p2.x, p2.y, D2D1::ColorF(D2D1::ColorF::Gray, 0.5f));
+    //for (int i = 0; i < 5; ++i)
+    //{
+    //    const Vec2& p1 = maxPoints[i];
+    //    const Vec2& p2 = maxPoints[(i + 1) % 5];
+    //    D2DRenderer::Get().DrawLine(p1.x, p1.y, p2.x, p2.y, D2D1::ColorF(D2D1::ColorF::Gray, 0.5f));
 
-        m_statPoints[i] = maxPoints[i];
-    }
+    //    m_statPoints[i] = maxPoints[i];
+    //}
 
-    // 2. 중심점에서 각 최대 포인트로 선 그리기
-    for (int i = 0; i < 5; ++i)
-    {
-        D2DRenderer::Get().DrawLine(center.x, center.y, maxPoints[i].x, maxPoints[i].y, D2D1::ColorF(D2D1::ColorF::LightGray, 0.3f));
-    }
+    //// 2. 중심점에서 각 최대 포인트로 선 그리기
+    //for (int i = 0; i < 5; ++i)
+    //{
+    //    D2DRenderer::Get().DrawLine(center.x, center.y, maxPoints[i].x, maxPoints[i].y, D2D1::ColorF(D2D1::ColorF::LightGray, 0.3f));
+    //}
 
     // 3. 채우기 효과 - 중심에서 각 스탯 포인트로 방사형 선 그리기
     for (int i = 0; i < 5; ++i)
@@ -284,7 +289,7 @@ void StatWindow::RenderRadarChart()
             D2DRenderer::Get().DrawLine(
                 center.x, center.y,
                 x, y,
-                D2D1::ColorF(D2D1::ColorF::DimGray, 1.0f) // 반투명 원하면 0.1~0.5정도로 줄이기
+                D2D1::ColorF(D2D1::ColorF::SaddleBrown, 1.0f) // 반투명 원하면 0.1~0.5정도로 줄이기
             );
         }
     }

@@ -5,6 +5,7 @@
 
 void UI_Bank::Load_UI_Image(const string& path) // 자동 매핑이긴 함. 
 {
+    int times =0;
 
     fs::path base = fs::current_path();
     fs::path resourcePath = base.parent_path() / path;
@@ -15,6 +16,8 @@ void UI_Bank::Load_UI_Image(const string& path) // 자동 매핑이긴 함.
             continue;
 
         std::string filename = entry.path().filename().string();
+        times++;
+
 
         // 확장자 체크 (lowercase 비교)
         if (entry.path().extension() != ".png")
@@ -52,6 +55,11 @@ void UI_Bank::Load_UI_Image(const string& path) // 자동 매핑이긴 함.
             }
         }
     }
+
+    std::cout << times << endl;
+    std::cout << "Singlebitmap" << " " << UI_SingleBitmaps.size() << endl;
+    std::cout << "UI_MultiBitmaps" <<" "<< UI_MultiBitmaps.size() << endl;
+
 }
 
 
@@ -87,4 +95,10 @@ ComPtr<ID2D1Bitmap1> UI_Bank::Get_Image(const string& Nm)
 
     else
         return nullptr;
+}
+
+void UI_Bank::clean()
+{
+    UI_MultiBitmaps.clear();
+    UI_SingleBitmaps.clear();
 }

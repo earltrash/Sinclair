@@ -80,7 +80,8 @@ public:
     {
         if (!m_cursorNormal)
         {
-            D2DRenderer::Get().CreateBitmapFromFile(L"UI\\CursorDefault.png", m_cursorNormal.GetAddressOf());
+            m_cursorNormal = ResourceManager::Get().Get_UIBank().Get_Image("커서0");
+            m_cursorDown = ResourceManager::Get().Get_UIBank().Get_Image("커서1");
             // 비트맵 로드 후 포인터가 유효한지 확인
             if (m_cursorNormal == nullptr) 
             {

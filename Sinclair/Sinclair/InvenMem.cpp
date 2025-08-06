@@ -66,6 +66,7 @@ void InventorySlot::SetBounds(const Rect& rect)
 
 void InventorySlot::UpdateItemBitmap(SlotBitmapController* controller, ItemDatabase* itemDB)
 {
+   
     if (!item.IsEmpty())
     {
         Item* data = itemDB->GetItemData(item.id);
@@ -74,6 +75,10 @@ void InventorySlot::UpdateItemBitmap(SlotBitmapController* controller, ItemDatab
             itemBitmap.bitmap = ResourceManager::Get().Get_ItemBank().GetItemClip(item.id).atlas.Get();
             itemBitmap.srcRect = ResourceManager::Get().Get_ItemBank().GetItemClip(item.id).srcRect;
             itemBitmap.opacity = 1.0f;
+
+
+            std::cout << &itemBitmap.bitmap << endl;
+
         }
         else
         {
@@ -106,7 +111,7 @@ void InventorySlot::UpdateBackgroundBitmap(SlotBitmapController* bitmapManager)
         bgKey = "slot_normal";
     }
 
-    std::cout << "½½·Ô ¹è°æ Å°: " << bgKey << std::endl;
+   // std::cout << "½½·Ô ¹è°æ Å°: " << bgKey << std::endl;
 
     backgroundBitmap.bitmap = bitmapManager->GetBitmap(bgKey);
     D2D1_SIZE_F size = backgroundBitmap.bitmap->GetSize();

@@ -35,13 +35,14 @@ public:
 				m_slotPositions[Wearable_part::Shoes] = { m_position.x + 74, m_position.y + 365 }; // 6¹øÄ­
 				m_slotSizes[Wearable_part::Shoes] = { 74, 74 };
 
-				m_slotPositions[Wearable_part::Weapon] = { m_position.x + 74, m_position.y + 214 };	// 7¹øÄ­
+				m_slotPositions[Wearable_part::Weapon] = { m_position.x + 370, m_position.y + 214 };	// 7¹øÄ­
 				m_slotSizes[Wearable_part::Weapon] = { 74, 74 };
 
-				m_slotPositions[Wearable_part::Neckless] = { m_position.x + 370, m_position.y + 214 }; // 8¹øÄ­
+				m_slotPositions[Wearable_part::Neckless] = { m_position.x + 370, m_position.y + 365 }; // 8¹øÄ­
 				m_slotSizes[Wearable_part::Neckless] = { 74, 74 };
 
-				m_slotPositions[Wearable_part::Cape] = { m_position.x + 370, m_position.y + 365 }; // 9¹øÄ­
+				m_slotPositions[Wearable_part::Cape] = { m_position.x + 370, m_position.y + 593 }; // 9¹øÄ­
+
 				m_slotSizes[Wearable_part::Cape] = { 74, 74 };
 
 				UI_Renderer* uiRenderer = AddComponent<UI_Renderer>();
@@ -49,22 +50,23 @@ public:
 				{
 						// ÇÊ¿äÇÑ UI ºñÆ®¸ÊµéÀ» ResourceManager¿¡¼­ ·ÎµåÇÏ¿© UI_Renderer¿¡ ¼³Á¤
 						// ResourceManager°¡ ÇØ´ç Å°·Î ºñÆ®¸ÊÀ» ·Îµå
-						uiRenderer->SetBitmap("equipment_window_bg", ResourceManager::Get().GetTexture("equipment_window_bg"));
-						uiRenderer->SetBitmap("title_bar_bg", ResourceManager::Get().GetTexture("title_bar_bg"));
-						uiRenderer->SetBitmap("close_button", ResourceManager::Get().GetTexture("close_button"));
-						uiRenderer->SetBitmap("close_button_hover", ResourceManager::Get().GetTexture("close_button_hover"));
-						uiRenderer->SetBitmap("empty_slot", ResourceManager::Get().GetTexture("empty_slot"));
+						uiRenderer->SetBitmap("equipment_window_bg", ResourceManager::Get().GetTexture("EquipmentWindowBg"));
+						//uiRenderer->SetBitmap("title_bar_bg", ResourceManager::Get().GetTexture("titlebarbg"));
+						uiRenderer->SetBitmap("close_button", ResourceManager::Get().GetTexture("CloseButton"));
+						uiRenderer->SetBitmap("close_button_hover", ResourceManager::Get().GetTexture("CloseButton"));
+						uiRenderer->SetBitmap("empty_slot", ResourceManager::Get().GetTexture("SlotNormal"));
 
 						// ½½·Ô ¾ÆÀÌÄÜ ºñÆ®¸Ê ·Îµå
-						uiRenderer->SetBitmap("icon_helmet_slot", ResourceManager::Get().GetTexture("icon_helmet_slot"));
-						uiRenderer->SetBitmap("icon_weapon_slot", ResourceManager::Get().GetTexture("icon_weapon_slot"));
-						uiRenderer->SetBitmap("icon_armor_slot", ResourceManager::Get().GetTexture("icon_armor_slot"));
-						uiRenderer->SetBitmap("icon_pants_slot", ResourceManager::Get().GetTexture("icon_pants_slot"));
-						uiRenderer->SetBitmap("icon_glove_slot", ResourceManager::Get().GetTexture("icon_glove_slot"));
-						uiRenderer->SetBitmap("icon_shoes_slot", ResourceManager::Get().GetTexture("icon_shoes_slot"));
-						uiRenderer->SetBitmap("icon_necklace_slot", ResourceManager::Get().GetTexture("icon_necklace_slot"));
-						uiRenderer->SetBitmap("icon_earring_slot", ResourceManager::Get().GetTexture("icon_earring_slot"));
-						uiRenderer->SetBitmap("icon_cape_slot", ResourceManager::Get().GetTexture("icon_cape_slot"));
+						uiRenderer->SetBitmap("icon_helmet_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_weapon_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_armor_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_pants_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_glove_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_shoes_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_necklace_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_earring_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_cape_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+
 				}
 		}
 
