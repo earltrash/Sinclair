@@ -110,7 +110,6 @@ void Explode_Effect::OnEvent(const std::string& ev)
 Blinking_Effect::Blinking_Effect(RenderInfo* renderInfo, float minOpacity, float totalSecond)
 	: m_renderInfo(renderInfo), m_minOpacity(minOpacity), m_totalSecond(totalSecond)
 {
-	//std::cout << m_totalSecond << std::endl;
 }
 
 void Blinking_Effect::FixedUpdate(float dt)
@@ -123,7 +122,7 @@ void Blinking_Effect::FixedUpdate(float dt)
 	time += dt;
 	if (time >= FPS60)
 	{
-		if (time >= 100.f)	time = 0.f;		// 처음 dt가 5이상 큰 수가 들어옴
+		if (time >= 5.f)	time = 0.f;		// 처음 dt가 5이상 큰 수가 들어옴
 		else
 		{
 			time -= FPS60;
@@ -136,6 +135,7 @@ void Blinking_Effect::FixedUpdate(float dt)
 	{
 		x = 0.f;
 	}
+	std::cout << Graph(x) << std::endl;
 }
 
 void Blinking_Effect::OnEvent(const std::string& ev)

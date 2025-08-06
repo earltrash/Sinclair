@@ -103,7 +103,8 @@ void D2DRenderer::DrawBitmap(const renderInfo& renderInfo)
         m_opacity->SetInputEffect(0, renderInfo.effect);
         m_opacity->SetValue(D2D1_COMPOSITE_MODE_SOURCE_OVER, renderInfo.opacity);
 
-        m_d2dContext->DrawImage(m_opacity.Get(),
+        m_d2dContext->DrawImage(
+            m_opacity.Get(),
             {0.f, 0.f},                                                         // 렌더타겟에서 그려지는 위치. SetTransform 때문에 좌상단 고정
             renderInfo.srcRect,
             D2D1_INTERPOLATION_MODE_LINEAR, D2D1_COMPOSITE_MODE_SOURCE_OVER);

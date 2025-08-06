@@ -73,7 +73,7 @@ void Scene_MK::Initalize()
 	rayInfo->SetBitmap(rayBitmap.Get());
 	ray->GetTransform().SetPosition({ 200.f, 200.f });
 	ray->GetTransform().SetPivotPreset(PivotPreset::Center, { rayBitmap.Get()->GetSize().width, rayBitmap.Get()->GetSize().height });
-	auto blink = ray->AddComponent<Blinking_Effect>(rayInfo, 0.85f, 5.f);
+	auto blink = ray->AddComponent<Blinking_Effect>(rayInfo, 0.8f, 2.f);
 	auto perspect = ray->AddComponent<Rotate3D_Effect>(rayInfo, 0.f, rayBitmap.Get()->GetSize().width / 2.f, rayBitmap.Get()->GetSize().height / 2.f, 0.f, 0.f, 0.2f, rayBitmap.Get());
 	auto perspect2 = ray->AddComponent<Rotate3D_Effect>(rayInfo, 0.f, rayBitmap.Get()->GetSize().width / 2.f, rayBitmap.Get()->GetSize().height / 2.f, 0.f, 0.f, -0.2f, rayBitmap.Get());
 	auto composite = ray->AddComponent<Composite_Effect>(rayInfo, perspect->GetEffect(), perspect2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
@@ -88,7 +88,7 @@ void Scene_MK::Initalize()
 	YrayInfo->SetBitmap(YrayBitmap.Get());
 	Yray->GetTransform().SetPosition({ 500.f, 200.f });
 	Yray->GetTransform().SetPivotPreset(PivotPreset::Center, { YrayBitmap.Get()->GetSize().width, YrayBitmap.Get()->GetSize().height });
-	auto Yblink = Yray->AddComponent<Blinking_Effect>(YrayInfo, 0.95f, 1.f);
+	//auto Yblink = Yray->AddComponent<Blinking_Effect>(YrayInfo, 0.95f, 1.5f);
 	auto Yperspect = Yray->AddComponent<Rotate3D_Effect>(YrayInfo, 0.f, YrayBitmap.Get()->GetSize().width / 2.f, YrayBitmap.Get()->GetSize().height / 2.f, 0.f, 0.f, 0.15f, YrayBitmap.Get());
 	auto Yperspect2 = Yray->AddComponent<Rotate3D_Effect>(YrayInfo, 0.f, YrayBitmap.Get()->GetSize().width / 2.f, YrayBitmap.Get()->GetSize().height / 2.f, 0.f, 0.f, -0.15f, YrayBitmap.Get());
 	auto Ycomposite = Yray->AddComponent<Composite_Effect>(YrayInfo, Yperspect->GetEffect(), Yperspect2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
