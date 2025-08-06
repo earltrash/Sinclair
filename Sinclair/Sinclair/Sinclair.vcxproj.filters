@@ -158,9 +158,6 @@
     <ClInclude Include="InvenMem.h">
       <Filter>Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="Scene_hyoje.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="BackgroundComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
@@ -270,9 +267,6 @@
     </ClCompile>
     <ClCompile Include="InvenMem.cpp">
       <Filter>Inventory</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene_hyoje.cpp">
-      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="BackgroundComponent.cpp">
       <Filter>Component</Filter>

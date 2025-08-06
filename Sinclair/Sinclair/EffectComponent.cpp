@@ -507,12 +507,16 @@ Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rota
 void Rotate3D_Effect::Update()
 {
 	if (m_effect == nullptr)
+	{
 		m_perspectiveEffect->SetInput(0, m_bitmap.Get());
+		SetPivot(m_bitmap->GetSize().width / 2.f, m_bitmap->GetSize().height / 2.f);
+	}
 	else
+	{
 		m_perspectiveEffect->SetInputEffect(0, m_effect);
-
-	//m_pivot = { m_renderInfo->GetSize().width / 2.f, m_renderInfo->GetSize().height / 2.f };
-	//SetPivot(m_renderInfo->GetSize().width / 2.f, m_renderInfo->GetSize().height / 2.f);
+		SetPivot(m_renderInfo->GetSize().width / 2.f, m_renderInfo->GetSize().height / 2.f);	// 수정 필요
+	}
+	
 	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION_ORIGIN, m_pivot);
 
 	m_rotation.x = fmod((m_rotation.x + m_rotate.x), 360.f);	m_rotation.y = fmod((m_rotation.y + m_rotate.y), 360.f);	m_rotation.z = fmod((m_rotation.z + m_rotate.z), 360.f);
@@ -522,6 +526,4 @@ void Rotate3D_Effect::Update()
 	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_DEPTH, m_depth);
 
 	m_renderInfo->SetEffect(m_perspectiveEffect.Get());
-
-	std::cout << m_pivot.x << std::endl;
 }

@@ -34,8 +34,6 @@ void BackgroundComponent::SetCurrentBitmap(string Nm)
     //혹은 Find로 설정하는 게 필요하긴 함. 
 
     m_renderInfo->SetBitmap(m_currentBitmap.Get());  // 렌더 인포 update. by MK
-    
-
 }
 
 

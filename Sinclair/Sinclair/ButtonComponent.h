@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "Component.h"
 #include "Object.h"
+#include "RenderInfo.h"
 
 using namespace Microsoft::WRL;
 using namespace std;
@@ -12,8 +13,9 @@ using namespace std;
 class ButtonComponent : public Component
 {
 public:
-	ButtonComponent() = default;
-	~ButtonComponent() = default;
+	//ButtonComponent() = default;
+	ButtonComponent(RenderInfo* renderInfo) : m_renderInfo(renderInfo) {}
+	~ButtonComponent() { m_Bitmap.clear(); }
 	
 	void BitmapPush(string NM, ComPtr<ID2D1Bitmap1> Bitmap);
 
@@ -24,7 +26,12 @@ public:
 public:
 	enum class ButtonState { Normal, Hover, Pressed, Disabled };
 
-	void SetState(ButtonState state) { m_currentState = state; };
+	void SetState(ButtonState state) 
+	{
+		m_currentState = state;
+		if (m_Bitmap.size() > 100) return;
+		m_renderInfo->SetBitmap(GetBitmap().Get());
+	};
 	ButtonState GetState() const { return m_currentState; }
 
 	// 콜백 함수 등록
@@ -38,8 +45,8 @@ public:
 	int GetHeight() const { return height; }
 
 	// Setter
-	void SetWidth(int w) { width = w; }
-	void SetHeight(int h) { height = h; }
+	void SetWidth(int w) { width = w; m_renderInfo->SetDestRight(width); }
+	void SetHeight(int h) { height = h; m_renderInfo->SetDestBottom(height); }
 	
 	// get set 나중에 만듬
 	float m_opacity = 1.0f;
@@ -54,4 +61,6 @@ private:
 	std::function<void()> m_onClick;
 
 	int width, height;
+
+	RenderInfo* m_renderInfo;
 };

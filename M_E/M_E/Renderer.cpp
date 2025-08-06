@@ -95,11 +95,10 @@ void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RE
 void D2DRenderer::DrawBitmap(const renderInfo& renderInfo)
 {
     if (renderInfo.activated == false)   return;
-
-    m_d2dContext->SetTransform(renderInfo.mt);
-
+    
     if (renderInfo.effect != nullptr)
     {
+        m_d2dContext->SetTransform(renderInfo.mt);
         ComPtr<ID2D1Effect> m_opacity;
         m_d2dContext->CreateEffect(CLSID_D2D1Opacity, &m_opacity);
         m_opacity->SetInputEffect(0, renderInfo.effect);

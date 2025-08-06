@@ -314,9 +314,9 @@ public:
 private:
 	float m_depth;								// 원근감. 값이 작아질 수록 원근감↑, 커질 수록 원근감↓ (보통 100~1000 사이)
 
-	D2D1_VECTOR_2F m_pivot;						// 회전 피봇
-	D2D1_VECTOR_3F m_rotate;					// 회전량
-	D2D1_VECTOR_3F m_rotation{0.f, 0.f, 0.f};				// 현재 회전 상태
+	D2D1_VECTOR_3F m_pivot{ 0.f, 0.f, 0.f };						// 회전 피봇
+	D2D1_VECTOR_3F m_rotate{ 0.f, 0.f, 0.f };					// 회전량
+	D2D1_VECTOR_3F m_rotation{ 0.f, 0.f, 0.f };				// 현재 회전 상태
 
 	ID2D1Effect* m_effect = nullptr;
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
