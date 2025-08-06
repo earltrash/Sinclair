@@ -10,7 +10,7 @@ void EquipmentWindow::Update()
     if (m_isDragging)
     {
         Vec2 mousePos = InputManager::Get().GetMousePosition();
-        m_position = mousePos - m_dragOffset;
+        m_position = mousePos;
 
         // 창 위치가 바뀌면 슬롯 위치들도 다시 계산
         UpdateSlotPositions();
@@ -42,7 +42,6 @@ bool EquipmentWindow::HandleMouseDown(Vec2 mousePos)
     if (IsInTitleBar(mousePos))
     {
         m_isDragging = true;
-        m_dragOffset = mousePos - m_position;
         return true; // 처리 완료
     }
 

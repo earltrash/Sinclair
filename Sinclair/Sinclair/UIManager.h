@@ -48,7 +48,6 @@ public:
                 OnInput(msg);
             }
         );
-
         try
         {
             // SettingsWindow
@@ -78,16 +77,14 @@ public:
             //}
 
             // EquipmentWindow
-            m_allWindows.emplace(UIWindowType::EquipmentWindow, std::make_unique<EquipmentWindow>());
+            /*m_allWindows.emplace(UIWindowType::EquipmentWindow, std::make_unique<EquipmentWindow>());
             if (auto* window = GetWindow(UIWindowType::EquipmentWindow))
             {
                 window->SetActivate(false);
-            }
-
-            EquipmentWindow* equipmentWindow = dynamic_cast<EquipmentWindow*>(GetWindow(UIWindowType::EquipmentWindow));
+            }*/
 
             // StatsWindow
-            m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>(equipmentWindow));
+            m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>());
             if (auto* window = GetWindow(UIWindowType::StatsWindow))
             {
                 window->SetActivate(true);
@@ -133,22 +130,6 @@ public:
             if (auto* window = GetWindow(type))
             {
                 window->Update();
-                
-                std::string windowName;
-                switch (type)
-                {
-                case UIWindowType::StatsWindow:
-                    windowName = "StatsWindow";
-                    break;
-                case UIWindowType::EquipmentWindow:
-                    windowName = "EquipmentWindow";
-                    break;
-                    // 다른 창들도 추가
-                default:
-                    windowName = "Unknown";
-                    break;
-                }
-                std::cout << windowName << " 업데이트 " << std::endl;
             }
         }
     }
@@ -164,7 +145,29 @@ public:
         }
     }
     // InputManager 이벤트 받아서 젤 위의 창부터 순서대로 이벤트 전달하고 성공 실패 여부를 통해서 계속 메세지 전달해보기.
-
+    // 디버깅용임.
+    const char* UIWindowTypeToString(UIWindowType type)
+    {
+        switch (type)
+        {
+        case UIWindowType::SettingsWindow:
+            return "SettingsWindow";
+        case UIWindowType::InventoryWindow:
+            return "InventoryWindow";
+        case UIWindowType::EquipmentWindow:
+            return "EquipmentWindow";
+        case UIWindowType::StatsWindow:
+            return "StatsWindow";
+        case UIWindowType::EnhancementWindow:
+            return "EnhancementWindow";
+        case UIWindowType::SynthesisWindow:
+            return "SynthesisWindow";
+        case UIWindowType::StatPotionUseWindow:
+            return "StatPotionUseWindow";
+        default:
+            return "Unknown";
+        }
+    }
     void OnInput(const MSG& msg) //MSG -> CLICK DOUBCLICK UP DOWN 
     {
         // 1. 모든 창이 꺼져있는지 먼저 체크
@@ -182,6 +185,8 @@ public:
             {
                 if (window->HandleInput(msg))
                 {
+                    //std::cout << "창 켜져있는거 있음. 창 종류는 : ";
+                    //std::cout << UIWindowTypeToString(window->GetType()) << std::endl;
                     return; // 입력이 처리되면 종료
                 }
             }

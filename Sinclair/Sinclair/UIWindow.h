@@ -6,8 +6,8 @@
 #include "Inputmanager.h"
 #include "MouseInput.h"
 
-
-
+#define F_GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
+#define F_GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
 
 using namespace D2DTM;
 
@@ -71,39 +71,8 @@ public:
 		}
 
 
-		 bool HandleInput(const MSG& msg)
-		{
-			 Vec2 CORD = { F_GET_X_LPARAM(msg.lParam), F_GET_X_LPARAM(msg.lParam) };
-
-			// 창이 비활성화되어 있으면 처리 안함
-			if (!m_isActive)
-				return false;
-
-			// 마우스가 창 영역 밖이면 처리 안함
-			if (!IsInBounds(CORD))
-				return false;
-
-			// 각종 마우스 이벤트 처리
-		/*	if (InputManager::Get().IsDoubleClicked())
-			{
-				return HandleDoubleClick(mousePos);
-			}*/
-
-			if (msg.message == WM_LBUTTONDOWN)
-			{
-				return HandleMouseDown(CORD);
-			}
-
-			if (msg.message == WM_LBUTTONUP)
-			{
-				return HandleMouseUp(CORD);
-			}
-
-			// 호버는 항상 처리 (툴팁 등을 위해) -> 난 잘 모르겠디..
-			HandleMouseHover(CORD);
-
-			return true; // 창 영역 안의 입력은 모두 "처리됨"으로 간주
-		}
+		bool HandleInput(const MSG& msg);
+		 
 
 
 
@@ -111,10 +80,10 @@ protected:
 	UIWindowType m_windowType;
 	Vec2 m_position;
 	Vec2 m_size;
+	Vec2 m_dragOffset;
 	bool m_isActive = false;
 	bool m_isDragging = false;
-	Vec2 m_dragOffset;
-
+	
 private:
 };
 

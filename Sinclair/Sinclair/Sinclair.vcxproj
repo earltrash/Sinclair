@@ -140,6 +140,7 @@
     <ClInclude Include="CursorManager.h" />
     <ClInclude Include="Dispatcher.h" />
     <ClInclude Include="Enchancer.h" />
+    <ClInclude Include="EnhancementWindow.h" />
     <ClInclude Include="EquipmentWindow.h" />
     <ClInclude Include="IAssetProvider.h" />
     <ClInclude Include="InvenMem.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="Enchancer.cpp" />
+    <ClCompile Include="EnhancementWindow.cpp" />
     <ClCompile Include="EquipmentWindow.cpp" />
     <ClCompile Include="InvenMem.cpp" />
     <ClCompile Include="Inventory.cpp" />
@@ -206,6 +208,7 @@
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StatWindow.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="UIWindow.cpp" />
     <ClCompile Include="UI_Bank.cpp" />
     <ClCompile Include="UI_Renderer.cpp" />
     <ClCompile Include="Wearable.cpp" />

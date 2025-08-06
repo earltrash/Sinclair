@@ -12,8 +12,7 @@
 class StatWindow : public UIWindow
 {
 public:
-		StatWindow(EquipmentWindow* equipmentWindow)
-				: UIWindow(UIWindowType::StatsWindow, { 100, 100 }, { 554, 766 })
+		StatWindow() : UIWindow(UIWindowType::StatsWindow, { 50, 50 }, { 554, 766 })
 		{
 				AddComponent<UI_Renderer>();
 
@@ -34,10 +33,10 @@ public:
 		void Update() override;
 		void Render() override;
 
-		// 마우스 인풋 관련 함수들.
-		bool HandleMouseDown(Vec2 mousePos) override;
+		// 마우스 인풋 관련 함수들. 근데 메세지 입력 처리만 하고 따른거 할거 없음. UIWindow에서 처리함.
+		bool HandleMouseDown(Vec2 mousePos) override { return true; }
 
-		bool HandleMouseUp(Vec2 mousePos) override;
+		bool HandleMouseUp(Vec2 mousePos) override { return true; }
 
 		// 호버도 뭐 없음.
 		bool HandleMouseHover(Vec2 mousePos) override { return true; }

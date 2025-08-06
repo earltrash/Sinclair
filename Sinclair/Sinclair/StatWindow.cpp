@@ -17,12 +17,6 @@ using namespace DirectX;
 void StatWindow::Update()
 {
     if (!m_isActive) return;
-    // 드래그중이면 위치 update
-    if (m_isDragging)
-    {
-        Vec2 mousePos = InputManager::Get().GetMousePosition();
-        m_position = mousePos - m_dragOffset;
-    }
     
     CalculateStats();
 }
@@ -36,37 +30,6 @@ void StatWindow::Render()
     RenderStatsText();      // 스탯 텍스트 렌더
     RenderTitleBar();       // 타이틀 바 렌더
     RenderCloseButton();    // 닫기 버튼 렌더
-}
-
-bool StatWindow::HandleMouseDown(Vec2 mousePos)
-{
-    // 닫기 버튼 클릭
-    if (IsInCloseButton(mousePos))
-    {
-        UIManager::Get().CloseWindow(UIWindowType::StatsWindow);
-        return true;
-    }
-    // 타이틀바 클릭 시 드래그 시작
-    if (IsInTitleBar(mousePos))
-    {
-        m_isDragging = true;
-        m_dragOffset = mousePos - m_position;
-        return true;
-    }
-    return false;
-
-		return false;
-}
-
-bool StatWindow::HandleMouseUp(Vec2 mousePos)
-{
-    // 드래그 끝내기. 위치 이동 더이상 안함. 다시 제자리에서 render.
-    if (m_isDragging)
-    {
-        m_isDragging = false;
-        return true;
-    }
-    return false;
 }
 
 void StatWindow::CalculateStats()
@@ -321,7 +284,7 @@ void StatWindow::RenderRadarChart()
             D2DRenderer::Get().DrawLine(
                 center.x, center.y,
                 x, y,
-                D2D1::ColorF(D2D1::ColorF::CornflowerBlue, 1.0f) // 반투명 원하면 0.1~0.5정도로 줄이기
+                D2D1::ColorF(D2D1::ColorF::DimGray, 1.0f) // 반투명 원하면 0.1~0.5정도로 줄이기
             );
         }
     }
@@ -331,7 +294,7 @@ void StatWindow::RenderRadarChart()
     {
         const Vec2& p1 = points[i];
         const Vec2& p2 = points[(i + 1) % 5];
-        D2DRenderer::Get().DrawLine(p1.x, p1.y, p2.x, p2.y, D2D1::ColorF(D2D1::ColorF::CornflowerBlue, 1.0f));
+        D2DRenderer::Get().DrawLine(p1.x, p1.y, p2.x, p2.y, D2D1::ColorF(D2D1::ColorF::SaddleBrown, 1.0f));
     }
 }
 

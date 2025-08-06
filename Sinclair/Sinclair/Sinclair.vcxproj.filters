@@ -173,6 +173,9 @@
     <ClInclude Include="StatWindow.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="EnhancementWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -263,6 +266,12 @@
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="StatWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="EnhancementWindow.cpp">
       <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>

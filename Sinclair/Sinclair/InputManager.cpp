@@ -33,10 +33,10 @@ bool InputManager::MsgCheck(MSG& msg)
     case WM_RBUTTONUP:
 
 
-        m_broadcaster->Broadcast(msg);
+        //m_broadcaster->Broadcast(msg);
 
 
-
+        UIManager::Get().OnInput(msg);
         return true;
         break;
 
@@ -105,7 +105,7 @@ void InputManager::Update()
     //}
 
     // UIManager에 입력 전달
-    //UIManager::Get().OnInput();
+    
 }
 
 // 마우스 클릭
