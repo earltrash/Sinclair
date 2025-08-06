@@ -15,7 +15,7 @@ class ButtonComponent : public Component
 public:
 	//ButtonComponent() = default;
 	ButtonComponent(RenderInfo* renderInfo) : m_renderInfo(renderInfo) {}
-	~ButtonComponent() { m_Bitmap.clear(); }
+	~ButtonComponent() { m_Bitmaps.clear(); }
 	
 	void BitmapPush(string NM, ComPtr<ID2D1Bitmap1> Bitmap);
 
@@ -29,7 +29,7 @@ public:
 	void SetState(ButtonState state) 
 	{
 		m_currentState = state;
-		if (m_Bitmap.size() > 100) return;
+		if (m_Bitmaps.size() > 100) return;
 		m_renderInfo->SetBitmap(GetBitmap().Get());
 	};
 	ButtonState GetState() const { return m_currentState; }
@@ -40,30 +40,27 @@ public:
 
 	void Worked(const MSG& MSG);
 
-	// Getter
-	int GetWidth() const { return width; }
-	int GetHeight() const { return height; }
+	void SetWidth(int w)  { m_renderInfo->SetDestRight (w); }
+	void SetHeight(int h) { m_renderInfo->SetDestBottom(h); }
 
-	// Setter
-	void SetWidth(int w) { width = w; m_renderInfo->SetDestRight(width); }
-	void SetHeight(int h) { height = h; m_renderInfo->SetDestBottom(height); }
-	
-	// get set 나중에 만듬
-	float m_opacity = 1.0f;
+	void SetOpacity(float o) { m_renderInfo->SetOpacity(o); }
 
-	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmap; 
 
-	void SetInvisibleButton(int width, int height);
-private:
+	// [ ] 투명 버튼 구현
+	// 투명 버튼을 구현할 방법 
+	// 1. 투명도 0.f
+	// 2. 리스너만 주는 거임!
 	bool m_isInvisible = false;
+
+private:
+	// 버튼을 갈아끼우는 용도
+	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmaps;
+
 	
-	ComPtr<ID2D1Bitmap1> m_curbm;
 
 	ButtonState m_currentState = ButtonState::Normal;
 
 	std::function<void()> m_onClick;
-
-	int width, height;
 
 	RenderInfo* m_renderInfo;
 };

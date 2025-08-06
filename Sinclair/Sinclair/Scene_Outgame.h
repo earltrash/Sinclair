@@ -32,11 +32,10 @@ private:
 	
 
 	enum State {
-		처음아웃게임 = 80001,
-		선택지 = 80002,
-		창고에들어갈때 = 80003,
-		모험떠나기클릭시 = 80004
-
+		FIRST_ENTER = 80001,
+		CHOICE_MENU = 80002,
+		ENTER_OUTGAME = 80003,
+		ENTER_END = 80004
 	};
 
 	void ChangeState(State newState);
@@ -57,16 +56,16 @@ private:
 	
 private:
 
-	State m_id = 처음아웃게임;
+	State m_state = FIRST_ENTER;
 	bool wasInGame = false;
 
 	std::multimap<State, std::string> outGameTextTable = {
-	{처음아웃게임, "늘 나도 언젠가는 아버지처럼\n모험을 떠나고 싶다고 생각해왔어."},
-	{처음아웃게임, "이제는 때가 된 것 같아.\n하지만… 장비는 어떡하지 ?"},
-	{처음아웃게임, "분명 아버지도 이해해주실거야.\n아버지의 창고에 들어가볼까 ?"},
-	{선택지, "> 창고로 이동한다.\n> 모험을 떠난다."},
-	{창고에들어갈때, "창고에 들어가시겠습니까?"},
-	{모험떠나기클릭시, "여행을 떠나시겠습니까?\n(주의.한번 모험을 떠나면 되돌릴 수 없습니다)"}
+	{FIRST_ENTER , "늘 나도 언젠가는 아버지처럼\n모험을 떠나고 싶다고 생각해왔어."},
+	{FIRST_ENTER , "이제는 때가 된 것 같아.\n하지만… 장비는 어떡하지 ?"},
+	{FIRST_ENTER , "분명 아버지도 이해해주실거야.\n아버지의 창고에 들어가볼까 ?"},
+	{CHOICE_MENU, "> 창고로 이동한다.\n> 모험을 떠난다."},
+	{ENTER_OUTGAME, "창고에 들어가시겠습니까?"},
+	{ENTER_END, "여행을 떠나시겠습니까?\n(주의.한번 모험을 떠나면 되돌릴 수 없습니다)"}
 	};
 
 	std::string curText;
