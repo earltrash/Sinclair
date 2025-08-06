@@ -1,4 +1,4 @@
-ï»¿#include "Scene_Outgame.h"
+#include "Scene_Outgame.h"
 #include "Object.h"
 #include "ButtonComponent.h"
 #include "BackgroundComponent.h"
@@ -8,7 +8,7 @@
 #include "GameManager.h"
 #include "Renderer.h"
 
-// ëœë¤
+// ·£´ı
 #include <random>
 #include <iterator>
 
@@ -26,16 +26,16 @@ Scene_Outgame::~Scene_Outgame()
 
 void Scene_Outgame::Initalize()
 {
-	if (dirty) return; // ì´ë¯¸ ì´ˆê¸°í™”ë˜ì—ˆìœ¼ë©´ ìŠ¤í‚µ
+	if (dirty) return; // ÀÌ¹Ì ÃÊ±âÈ­µÇ¾úÀ¸¸é ½ºÅµ
 
-	CreateObj(); // ì˜¤ë¸Œì íŠ¸ ìƒì„± (í•œ ë²ˆë§Œ)
+	CreateObj(); // ¿ÀºêÁ§Æ® »ı¼º (ÇÑ ¹ø¸¸)
 	dirty = true;
 }
 
 void Scene_Outgame::Clean()
 {
 	m_gameObjects.clear();
-	//SceneAssets.clear(); // í´ë¦½ì—ì…‹ì„ ì“°ê³  ìˆì§€ ì•ŠìŒ
+	//SceneAssets.clear(); // Å¬¸³¿¡¼ÂÀ» ¾²°í ÀÖÁö ¾ÊÀ½
 	dirty = false;
 }
 
@@ -52,22 +52,22 @@ void Scene_Outgame::Enter()
 	Initalize();
 	SetupCharacterAndBackground();
 
-	// InGame ì”¬ì— ìˆë‹¤ê°€ ëŒì•„ì˜¨ ê²½ìš°, ë°”ë¡œ ì„ íƒì§€(80002) ìƒíƒœë¡œ ê°‘ë‹ˆë‹¤.
-	// GameManagerì— í”Œë˜ê·¸ë¥¼ í•˜ë‚˜ ë§Œë“¤ì–´ ê´€ë¦¬í•˜ë©´ ì¢‹ìŠµë‹ˆë‹¤.
+	// InGame ¾À¿¡ ÀÖ´Ù°¡ µ¹¾Æ¿Â °æ¿ì, ¹Ù·Î ¼±ÅÃÁö(80002) »óÅÂ·Î °©´Ï´Ù.
+	// GameManager¿¡ ÇÃ·¡±×¸¦ ÇÏ³ª ¸¸µé¾î °ü¸®ÇÏ¸é ÁÁ½À´Ï´Ù.
 	// if (GameManager::Get().WasInGame()) {
-	//     ChangeState(ì„ íƒì§€);
+	//     ChangeState(¼±ÅÃÁö);
 	// } else {
-	//     ChangeState(ì²˜ìŒì•„ì›ƒê²Œì„);
+	//     ChangeState(Ã³À½¾Æ¿ô°ÔÀÓ);
 	// }
 
 
-	//// ê°ì²´ ë­ìˆë‚˜, ë””ë²„ê¸°ìš©
+	//// °´Ã¼ ¹¹ÀÖ³ª, µğ¹ö±â¿ë
 	//for (const auto& [Name, obj] : m_gameObjects)
 	//{
 	//	cout << Name << endl;
 	//}
 
-	// ìš°ì„  ì´ˆê¸° ìƒíƒœë¡œ ì§„ì…
+	// ¿ì¼± ÃÊ±â »óÅÂ·Î ÁøÀÔ
 	ChangeState(m_id);
 }
 
@@ -78,8 +78,8 @@ void Scene_Outgame::Exit()
 
 void Scene_Outgame::Render()
 {
-	// ë©€í‹°ë§µì€ í‚¤(Name)ê¸°ì¤€ìœ¼ë¡œ ì •ë ¬ ëœë‹¤. 
-	// ì¦‰ background ë°°ê²½ì„ ë¨¼ì € ê·¸ë¦¬ê²Œ ë¨
+	// ¸ÖÆ¼¸ÊÀº Å°(Name)±âÁØÀ¸·Î Á¤·Ä µÈ´Ù. 
+	// Áï background ¹è°æÀ» ¸ÕÀú ±×¸®°Ô µÊ
 	
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
@@ -90,10 +90,10 @@ void Scene_Outgame::Render()
 		dest.top = 0;
 		dest.right = 0;
 		dest.bottom = 0;
-		// íˆ¬ëª… êµ¬í˜„í•œë‹¤ë©´...
+		// Åõ¸í ±¸ÇöÇÑ´Ù¸é...
 		float opacity = 1.0f;
 
-		// ButtonComponent ìš°ì„  í™•ì¸
+		// ButtonComponent ¿ì¼± È®ÀÎ
 		auto buttonComp = obj->GetComponent<ButtonComponent>();
 		if (buttonComp != nullptr) {
 			bitmap = buttonComp->GetBitmap();
@@ -102,7 +102,7 @@ void Scene_Outgame::Render()
 			opacity = buttonComp->m_opacity;
 		}
 		else {
-			// ButtonComponentê°€ ì—†ìœ¼ë©´ BackgroundComponent í™•ì¸
+			// ButtonComponent°¡ ¾øÀ¸¸é BackgroundComponent È®ÀÎ
 			auto bgComp = obj->GetComponent<BackgroundComponent>();
 			if (bgComp != nullptr) {
 				bitmap = bgComp->GetCurrentBitmap();
@@ -122,19 +122,19 @@ void Scene_Outgame::Render()
 		dest.right += dest.left;
 		dest.bottom += dest.top;
 
-		// íˆ¬ëª…ë„ ì ìš© x
+		// Åõ¸íµµ Àû¿ë x
 		//D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest);
-		// íˆ¬ëª…ë„ ì ìš© o
+		// Åõ¸íµµ Àû¿ë o
 		D2D1_RECT_F srcRect = D2D1::RectF(0, 0, bitmap->GetSize().width, bitmap->GetSize().height); ;
 
 		D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest, srcRect, opacity);
 	}
 
 	D2DRenderer::Get().CreateWriteRegularResource();
-	std::wstring characterName = L"ì‹±í´ë ˆì–´ " + std::to_wstring(GameManager::Get().curGen) + L"ì„¸";
+	std::wstring characterName = L"½ÌÅ¬·¹¾î " + std::to_wstring(GameManager::Get().curGen) + L"¼¼";
 	D2DRenderer::Get().DrawMessage(characterName.c_str(), 503.f, 805.f, 1300.f, 1000.f, D2D1::ColorF::BlueViolet);
 
-	// ìƒíƒœì— ë”°ë¥¸ ë©”ì¸ í…ìŠ¤íŠ¸ ë Œë”ë§
+	// »óÅÂ¿¡ µû¸¥ ¸ŞÀÎ ÅØ½ºÆ® ·»´õ¸µ
 	if (!curText.empty())
 	{
 		std::wstring wCurText = StrToWstr(curText);
@@ -151,99 +151,99 @@ void Scene_Outgame::CreateObj()
 	//////////////////////
 	// Background 
 
-	// 1. ì´ë¯¸ì§€ ê°–ê³  ì˜¤ê¸°
-	auto outGameBackground = ResourceManager::Get().GetTexture("ì•„ì›ƒê²Œì„");
-	// 2. ì˜¤ë¸Œì íŠ¸ ë§Œë“¤ê¸°
+	// 1. ÀÌ¹ÌÁö °®°í ¿À±â
+	auto outGameBackground = ResourceManager::Get().GetTexture("¾Æ¿ô°ÔÀÓ");
+	// 2. ¿ÀºêÁ§Æ® ¸¸µé±â
 	auto Background = std::make_unique<Object>();
 	Background->SetPosition(Vec2(0, 0));
 
-	// 3.0. ëœë” ì¸í¬ ì»´í¬ë„ŒíŠ¸
+	// 3.0. ·£´õ ÀÎÆ÷ ÄÄÆ÷³ÍÆ®
 	auto bgInfo = Background->AddComponent<RenderInfo>(outGameBackground.Get());
 
-	// 3. ë°°ê²½ ì»´í¬ë„ŒíŠ¸ ë§Œë“¤ê¸°
+	// 3. ¹è°æ ÄÄÆ÷³ÍÆ® ¸¸µé±â
 	auto bgComp = Background->AddComponent<BackgroundComponent>(bgInfo);
-	// 3.1.1 ì‚¬ì´ì¦ˆ ë‹¤ë¥´ë©´ 
+	// 3.1.1 »çÀÌÁî ´Ù¸£¸é 
 	bgComp->SetWidth(1920); bgComp->SetHeight(1080);
 	bgComp->BitmapPush("Background", outGameBackground);
-	// 9. ê²Œì„ ì˜¤ë¸Œì íŠ¸ë“¤ì— ì§‘ì–´ë„£ê¸°
+	// 9. °ÔÀÓ ¿ÀºêÁ§Æ®µé¿¡ Áı¾î³Ö±â
 	m_gameObjects.emplace("Background", std::move(Background));
 
 
 
 	//////////////////////
 	//////////////////////
-	// ìºë¦­í„° ì´ë¯¸ì§€ : ë°°ê²½ ì»´í¬ë„ŒíŠ¸ë¼ê³  ëª…ëª… í–ˆì§€ë§Œ -> ì´ë¯¸ì§€ ì»´í¬ë„ŒíŠ¸ë¼ê³  ë°”ê¿”ì•¼ í•´. 
-	// ë‚˜ëŠ” ì—¬ê¸°ë‹¤ê°€ ì…°ì´ë”? ë„£ì–´ì•¼ ëœë‹¤ê³  ìƒê°í•´. 
-	// ìºë¦­í„°ì— ì˜¬ë ¤ ë†“ìœ¼ë©´ ë°”ë€Œì–´ì•¼ì§€. -> ê·¸ëŸ¼ ë²„íŠ¼ ì»´í¬ë„ŒíŠ¸ë¡œ ë°”ê¿”ì•¼ í•˜ëŠ” ê±° ì•„ë‹Œê°€?
+	// Ä³¸¯ÅÍ ÀÌ¹ÌÁö : ¹è°æ ÄÄÆ÷³ÍÆ®¶ó°í ¸í¸í ÇßÁö¸¸ -> ÀÌ¹ÌÁö ÄÄÆ÷³ÍÆ®¶ó°í ¹Ù²ã¾ß ÇØ. 
+	// ³ª´Â ¿©±â´Ù°¡ ¼ÎÀÌ´õ? ³Ö¾î¾ß µÈ´Ù°í »ı°¢ÇØ. 
+	// Ä³¸¯ÅÍ¿¡ ¿Ã·Á ³õÀ¸¸é ¹Ù²î¾î¾ßÁö. -> ±×·³ ¹öÆ° ÄÄÆ÷³ÍÆ®·Î ¹Ù²ã¾ß ÇÏ´Â °Å ¾Æ´Ñ°¡?
 
-	// 1. ì´ë¯¸ì§€ ê°–ê³  ì˜¤ê¸°
-	auto Sinclair2 = ResourceManager::Get().GetTexture("ì‹±í´ë ˆì–´", "2ì„¸");
-	auto Sinclair3 = ResourceManager::Get().GetTexture("ì‹±í´ë ˆì–´", "3ì„¸");
-	auto Sinclair4 = ResourceManager::Get().GetTexture("ì‹±í´ë ˆì–´", "4ì„¸");
-	// 2. ì˜¤ë¸Œì íŠ¸ ë§Œë“¤ê¸°
+	// 1. ÀÌ¹ÌÁö °®°í ¿À±â
+	auto Sinclair2 = ResourceManager::Get().GetTexture("½ÌÅ¬·¹¾î", "2¼¼");
+	auto Sinclair3 = ResourceManager::Get().GetTexture("½ÌÅ¬·¹¾î", "3¼¼");
+	auto Sinclair4 = ResourceManager::Get().GetTexture("½ÌÅ¬·¹¾î", "4¼¼");
+	// 2. ¿ÀºêÁ§Æ® ¸¸µé±â
 	auto Character = std::make_unique<Object>();
 	Character->SetPosition(Vec2(0, 0));
 
-	// 3.0. ëœë” ì¸í¬ ì»´í¬ë„ŒíŠ¸
+	// 3.0. ·£´õ ÀÎÆ÷ ÄÄÆ÷³ÍÆ®
 	auto chInfo = Character->AddComponent<RenderInfo>(Sinclair2.Get());
-	// 3. ë°°ê²½ ì»´í¬ë„ŒíŠ¸ ë§Œë“¤ê¸°
+	// 3. ¹è°æ ÄÄÆ÷³ÍÆ® ¸¸µé±â
 	auto chComp = Character->AddComponent<BackgroundComponent>(chInfo);
 
-	// 3.1.1 ì‚¬ì´ì¦ˆ ë‹¤ë¥´ë©´ 
+	// 3.1.1 »çÀÌÁî ´Ù¸£¸é 
 	chComp->SetWidth(1920); chComp->SetHeight(1080);
 	chComp->BitmapPush("Sinclair2", Sinclair2);
 	chComp->BitmapPush("Sinclair3", Sinclair3);
 	chComp->BitmapPush("Sinclair4", Sinclair4);
-	// 9. ê²Œì„ ì˜¤ë¸Œì íŠ¸ë“¤ì— ì§‘ì–´ë„£ê¸° 
+	// 9. °ÔÀÓ ¿ÀºêÁ§Æ®µé¿¡ Áı¾î³Ö±â 
 	m_gameObjects.emplace("Character", std::move(Character));
 	
 
 	//////////////////////
 	//////////////////////
-	// í…ìŠ¤íŠ¸ ë°•ìŠ¤ 
+	// ÅØ½ºÆ® ¹Ú½º 
 	
-	// 1. ì´ë¯¸ì§€ ê°–ê³  ì˜¤ê¸°
-	auto ì•„ì›ƒê²Œì„1 = ResourceManager::Get().GetTexture("ì•„ì›ƒê²Œì„", "1");
-	// 2. ì˜¤ë¸Œì íŠ¸ ë§Œë“¤ê¸°
-	auto í…ìŠ¤íŠ¸ë°•ìŠ¤ = std::make_unique<Object>();
-	     í…ìŠ¤íŠ¸ë°•ìŠ¤->SetPosition(Vec2(455, 772));
+	// 1. ÀÌ¹ÌÁö °®°í ¿À±â
+	auto ¾Æ¿ô°ÔÀÓ1 = ResourceManager::Get().GetTexture("¾Æ¿ô°ÔÀÓ", "1");
+	// 2. ¿ÀºêÁ§Æ® ¸¸µé±â
+	auto ÅØ½ºÆ®¹Ú½º = std::make_unique<Object>();
+	     ÅØ½ºÆ®¹Ú½º->SetPosition(Vec2(455, 772));
 
-	// 3.0. ëœë” ì¸í¬ ì»´í¬ë„ŒíŠ¸
-	auto outgame1Info = í…ìŠ¤íŠ¸ë°•ìŠ¤->AddComponent<RenderInfo>(ì•„ì›ƒê²Œì„1.Get());
-	// 3. ë°°ê²½ ì»´í¬ë„ŒíŠ¸ ë§Œë“¤ê¸°
-	auto í…ìŠ¤íŠ¸ë°•ìŠ¤Comp = í…ìŠ¤íŠ¸ë°•ìŠ¤->AddComponent<BackgroundComponent>(outgame1Info);
-	// 3.1.1 ì‚¬ì´ì¦ˆ ë‹¤ë¥´ë©´ 
-	í…ìŠ¤íŠ¸ë°•ìŠ¤Comp->SetWidth(1010); í…ìŠ¤íŠ¸ë°•ìŠ¤Comp->SetHeight(207);
-	í…ìŠ¤íŠ¸ë°•ìŠ¤Comp->BitmapPush("ì•„ì›ƒê²Œì„1", ì•„ì›ƒê²Œì„1);
-	í…ìŠ¤íŠ¸ë°•ìŠ¤Comp->SetCurrentBitmap("ì•„ì›ƒê²Œì„1");
-	// 9. ê²Œì„ ì˜¤ë¸Œì íŠ¸ë“¤ì— ì§‘ì–´ë„£ê¸° 
-	m_gameObjects.emplace("ì•„ì›ƒê²Œì„1", std::move(í…ìŠ¤íŠ¸ë°•ìŠ¤));
+	// 3.0. ·£´õ ÀÎÆ÷ ÄÄÆ÷³ÍÆ®
+	auto outgame1Info = ÅØ½ºÆ®¹Ú½º->AddComponent<RenderInfo>(¾Æ¿ô°ÔÀÓ1.Get());
+	// 3. ¹è°æ ÄÄÆ÷³ÍÆ® ¸¸µé±â
+	auto ÅØ½ºÆ®¹Ú½ºComp = ÅØ½ºÆ®¹Ú½º->AddComponent<BackgroundComponent>(outgame1Info);
+	// 3.1.1 »çÀÌÁî ´Ù¸£¸é 
+	ÅØ½ºÆ®¹Ú½ºComp->SetWidth(1010); ÅØ½ºÆ®¹Ú½ºComp->SetHeight(207);
+	ÅØ½ºÆ®¹Ú½ºComp->BitmapPush("¾Æ¿ô°ÔÀÓ1", ¾Æ¿ô°ÔÀÓ1);
+	ÅØ½ºÆ®¹Ú½ºComp->SetCurrentBitmap("¾Æ¿ô°ÔÀÓ1");
+	// 9. °ÔÀÓ ¿ÀºêÁ§Æ®µé¿¡ Áı¾î³Ö±â 
+	m_gameObjects.emplace("¾Æ¿ô°ÔÀÓ1", std::move(ÅØ½ºÆ®¹Ú½º));
 
 
 	/////////////////////
 	/////////////////////
 	/////////////////////
-	// ì˜ˆ (ìˆ˜ë½ ë²„íŠ¼)
+	// ¿¹ (¼ö¶ô ¹öÆ°)
 
-	// 1. ì´ë¯¸ì§€ ê°–ê³  ì˜¤ê¸°
-	auto ì•„ì›ƒê²Œì„4 = ResourceManager::Get().GetTexture("ì•„ì›ƒê²Œì„", "4");
-	// 2. ì˜¤ë¸Œì íŠ¸ ë§Œë“¤ê¸°
-	auto ì˜ˆ = std::make_unique<Object>();
-	ì˜ˆ->SetPosition(Vec2(1087, 921));
-	// 3. ë²„íŠ¼ ì»´í¬ë„ŒíŠ¸ ë§Œë“¤ê¸°
-	auto YesComp = ì˜ˆ->AddComponent<ButtonComponent>();
+	// 1. ÀÌ¹ÌÁö °®°í ¿À±â
+	auto ¾Æ¿ô°ÔÀÓ4 = ResourceManager::Get().GetTexture("¾Æ¿ô°ÔÀÓ", "4");
+	// 2. ¿ÀºêÁ§Æ® ¸¸µé±â
+	auto ¿¹ = std::make_unique<Object>();
+	¿¹->SetPosition(Vec2(1087, 921));
+	// 3. ¹öÆ° ÄÄÆ÷³ÍÆ® ¸¸µé±â
+	auto YesComp = ¿¹->AddComponent<ButtonComponent>();
 	YesComp->SetWidth(140); YesComp->SetHeight(40);
 
-	//  4. ë²„íŠ¼ ë¹„íŠ¸ë§µ ì„¤ì •
-	// íˆ¬ëª…ë„ ê¸°ì¤€ì´ë©´ êµ³ì´ ì´ë ‡ê²Œ í•  í•„ìš” ì—†ê¸´ í•´. 
-	YesComp->BitmapPush("normal",  ì•„ì›ƒê²Œì„4);
-	YesComp->BitmapPush("hover",   ì•„ì›ƒê²Œì„4);
-	YesComp->BitmapPush("pressed", ì•„ì›ƒê²Œì„4);
+	//  4. ¹öÆ° ºñÆ®¸Ê ¼³Á¤
+	// Åõ¸íµµ ±âÁØÀÌ¸é ±»ÀÌ ÀÌ·¸°Ô ÇÒ ÇÊ¿ä ¾ø±ä ÇØ. 
+	YesComp->BitmapPush("normal",  ¾Æ¿ô°ÔÀÓ4);
+	YesComp->BitmapPush("hover",   ¾Æ¿ô°ÔÀÓ4);
+	YesComp->BitmapPush("pressed", ¾Æ¿ô°ÔÀÓ4);
 
 	YesComp->SetCurrentBitmap("normal");
 
-	// 5. ë§ˆìš°ìŠ¤ ë¦¬ìŠ¤ë„ˆ ì»´í¬ë„ŒíŠ¸ (ë²„íŠ¼ ì»´í¬ë„ŒíŠ¸ë¥¼ ìº¡ì²˜ë¡œ ì „ë‹¬)
-	auto Yes_mouseListener = ì˜ˆ->AddComponent<MouseListenerComponent>(
+	// 5. ¸¶¿ì½º ¸®½º³Ê ÄÄÆ÷³ÍÆ® (¹öÆ° ÄÄÆ÷³ÍÆ®¸¦ Ä¸Ã³·Î Àü´Ş)
+	auto Yes_mouseListener = ¿¹->AddComponent<MouseListenerComponent>(
 		[YesComp](const MSG& msg) {
 			YesComp->Worked(msg);
 		}
@@ -255,33 +255,33 @@ void Scene_Outgame::CreateObj()
 		});
 
 	/// 9
-	m_gameObjects.emplace("ì•„ì›ƒê²Œì„4", std::move(ì˜ˆ));
+	m_gameObjects.emplace("¾Æ¿ô°ÔÀÓ4", std::move(¿¹));
 
 
 	/////////////////////
 	/////////////////////
 	/////////////////////
-	// ì•„ë‹ˆì˜¤ (ìˆ˜ë½ ë²„íŠ¼)
+	// ¾Æ´Ï¿À (¼ö¶ô ¹öÆ°)
 
-	// 1. ì´ë¯¸ì§€ ê°–ê³  ì˜¤ê¸°
-	auto ì•„ì›ƒê²Œì„5 = ResourceManager::Get().GetTexture("ì•„ì›ƒê²Œì„", "5");
-	// 2. ì˜¤ë¸Œì íŠ¸ ë§Œë“¤ê¸°
-	auto ì•„ë‹ˆì˜¤ = std::make_unique<Object>();
-	ì•„ë‹ˆì˜¤->SetPosition(Vec2(1280, 921));
-	// 3. ë²„íŠ¼ ì»´í¬ë„ŒíŠ¸ ë§Œë“¤ê¸°
-	auto NoComp = ì•„ë‹ˆì˜¤->AddComponent<ButtonComponent>();
+	// 1. ÀÌ¹ÌÁö °®°í ¿À±â
+	auto ¾Æ¿ô°ÔÀÓ5 = ResourceManager::Get().GetTexture("¾Æ¿ô°ÔÀÓ", "5");
+	// 2. ¿ÀºêÁ§Æ® ¸¸µé±â
+	auto ¾Æ´Ï¿À = std::make_unique<Object>();
+	¾Æ´Ï¿À->SetPosition(Vec2(1280, 921));
+	// 3. ¹öÆ° ÄÄÆ÷³ÍÆ® ¸¸µé±â
+	auto NoComp = ¾Æ´Ï¿À->AddComponent<ButtonComponent>();
 	NoComp->SetWidth(140); NoComp->SetHeight(40);
 
-	//  4. ë²„íŠ¼ ë¹„íŠ¸ë§µ ì„¤ì •
-	// íˆ¬ëª…ë„ ê¸°ì¤€ì´ë©´ êµ³ì´ ì´ë ‡ê²Œ í•  í•„ìš” ì—†ê¸´ í•´. 
-	NoComp->BitmapPush("normal",  ì•„ì›ƒê²Œì„5);
-	NoComp->BitmapPush("hover",   ì•„ì›ƒê²Œì„5);
-	NoComp->BitmapPush("pressed", ì•„ì›ƒê²Œì„5);
+	//  4. ¹öÆ° ºñÆ®¸Ê ¼³Á¤
+	// Åõ¸íµµ ±âÁØÀÌ¸é ±»ÀÌ ÀÌ·¸°Ô ÇÒ ÇÊ¿ä ¾ø±ä ÇØ. 
+	NoComp->BitmapPush("normal",  ¾Æ¿ô°ÔÀÓ5);
+	NoComp->BitmapPush("hover",   ¾Æ¿ô°ÔÀÓ5);
+	NoComp->BitmapPush("pressed", ¾Æ¿ô°ÔÀÓ5);
 
 	NoComp->SetCurrentBitmap("normal");
 
-	// 5. ë§ˆìš°ìŠ¤ ë¦¬ìŠ¤ë„ˆ ì»´í¬ë„ŒíŠ¸ (ë²„íŠ¼ ì»´í¬ë„ŒíŠ¸ë¥¼ ìº¡ì²˜ë¡œ ì „ë‹¬)
-	auto No_mouseListener = ì•„ë‹ˆì˜¤->AddComponent<MouseListenerComponent>(
+	// 5. ¸¶¿ì½º ¸®½º³Ê ÄÄÆ÷³ÍÆ® (¹öÆ° ÄÄÆ÷³ÍÆ®¸¦ Ä¸Ã³·Î Àü´Ş)
+	auto No_mouseListener = ¾Æ´Ï¿À->AddComponent<MouseListenerComponent>(
 		[NoComp](const MSG& msg) {
 			NoComp->Worked(msg);
 		}
@@ -289,49 +289,49 @@ void Scene_Outgame::CreateObj()
 
 	NoComp->SetOnClickCallback([this]() {
 		//SceneManager::Get().ChangeScene("InGame");
-		std::cout << "ì•„ë‹ˆì˜¤ (ìˆ˜ë½ ë²„íŠ¼)" << std::endl;
+		std::cout << "¾Æ´Ï¿À (¼ö¶ô ¹öÆ°)" << std::endl;
 		});
 
 	/// 9
-	m_gameObjects.emplace("ì•„ì›ƒê²Œì„5", std::move(ì•„ë‹ˆì˜¤));
+	m_gameObjects.emplace("¾Æ¿ô°ÔÀÓ5", std::move(¾Æ´Ï¿À));
 
 
 	/////////////////////
 	/////////////////////
-	// ë’¤ë¡œê°€ê¸° (ì‹œì‘í™”ë©´ìœ¼ë¡œ)
+	// µÚ·Î°¡±â (½ÃÀÛÈ­¸éÀ¸·Î)
 
-	// 1. ì´ë¯¸ì§€ ê°–ê³  ì˜¤ê¸°
-	auto ë’¤ë¡œê°€ê¸° = ResourceManager::Get().GetTexture("ë’¤ë¡œê°€ê¸°");
-	// 2. ì˜¤ë¸Œì íŠ¸ ë§Œë“¤ê¸°
-	auto ë’¤ë¡œ = std::make_unique<Object>();
-	ë’¤ë¡œ->SetPosition(Vec2(64 , 57));
-	// 3. ë²„íŠ¼ ì»´í¬ë„ŒíŠ¸ ë§Œë“¤ê¸°
-	auto backComp = ë’¤ë¡œ->AddComponent<ButtonComponent>();
+	// 1. ÀÌ¹ÌÁö °®°í ¿À±â
+	auto µÚ·Î°¡±â = ResourceManager::Get().GetTexture("µÚ·Î°¡±â");
+	// 2. ¿ÀºêÁ§Æ® ¸¸µé±â
+	auto µÚ·Î = std::make_unique<Object>();
+	µÚ·Î->SetPosition(Vec2(64 , 57));
+	// 3. ¹öÆ° ÄÄÆ÷³ÍÆ® ¸¸µé±â
+	auto backComp = µÚ·Î->AddComponent<ButtonComponent>();
 	backComp->SetWidth(37); backComp->SetHeight(37);
 	
-	//  4. ë²„íŠ¼ ë¹„íŠ¸ë§µ ì„¤ì •
-	// íˆ¬ëª…ë„ ê¸°ì¤€ì´ë©´ êµ³ì´ ì´ë ‡ê²Œ í•  í•„ìš” ì—†ê¸´ í•´. 
-	backComp->BitmapPush("normal", ë’¤ë¡œê°€ê¸°);
-	backComp->BitmapPush("hover", ë’¤ë¡œê°€ê¸°);
-	backComp->BitmapPush("pressed", ë’¤ë¡œê°€ê¸°);
+	//  4. ¹öÆ° ºñÆ®¸Ê ¼³Á¤
+	// Åõ¸íµµ ±âÁØÀÌ¸é ±»ÀÌ ÀÌ·¸°Ô ÇÒ ÇÊ¿ä ¾ø±ä ÇØ. 
+	backComp->BitmapPush("normal", µÚ·Î°¡±â);
+	backComp->BitmapPush("hover", µÚ·Î°¡±â);
+	backComp->BitmapPush("pressed", µÚ·Î°¡±â);
 
 	backComp->SetCurrentBitmap("normal");
 
-	// 5. ë§ˆìš°ìŠ¤ ë¦¬ìŠ¤ë„ˆ ì»´í¬ë„ŒíŠ¸ (ë²„íŠ¼ ì»´í¬ë„ŒíŠ¸ë¥¼ ìº¡ì²˜ë¡œ ì „ë‹¬)
-	auto Back_mouseListener = ë’¤ë¡œ->AddComponent<MouseListenerComponent>(
+	// 5. ¸¶¿ì½º ¸®½º³Ê ÄÄÆ÷³ÍÆ® (¹öÆ° ÄÄÆ÷³ÍÆ®¸¦ Ä¸Ã³·Î Àü´Ş)
+	auto Back_mouseListener = µÚ·Î->AddComponent<MouseListenerComponent>(
 		[backComp](const MSG& msg) {
 			backComp->Worked(msg);
 		}
 	);
 
 	backComp->SetOnClickCallback([this]() {
-		std::cout << "ë²„íŠ¼ í´ë¦­ë¨ - í˜„ì¬ ì”¬: " << typeid(*this).name() << std::endl;
+		std::cout << "¹öÆ° Å¬¸¯µÊ - ÇöÀç ¾À: " << typeid(*this).name() << std::endl;
 		SceneManager::Get().ChangeScene("Title");
-		//std::cout << "ë’¤ë¡œê°€ê¸° (ì‹œì‘í™”ë©´ìœ¼ë¡œ)" << std::endl;
+		//std::cout << "µÚ·Î°¡±â (½ÃÀÛÈ­¸éÀ¸·Î)" << std::endl;
 		});
 
 	/// 9
-	m_gameObjects.emplace("ë’¤ë¡œê°€ê¸°", std::move(ë’¤ë¡œ));
+	m_gameObjects.emplace("µÚ·Î°¡±â", std::move(µÚ·Î));
 
 }
 
@@ -340,16 +340,16 @@ std::string Scene_Outgame::getRandomText()
 	auto range = outGameTextTable.equal_range(m_id);
 
 	if (range.first == range.second) {
-		return "í…ìŠ¤íŠ¸ ì—†ìŒ"; // IDê°€ ì—†ëŠ” ê²½ìš°
+		return "ÅØ½ºÆ® ¾øÀ½"; // ID°¡ ¾ø´Â °æ¿ì
 	}
 
-	// í•´ë‹¹ IDì˜ ëª¨ë“  í…ìŠ¤íŠ¸ë¥¼ ë²¡í„°ë¡œ ë³µì‚¬
+	// ÇØ´ç IDÀÇ ¸ğµç ÅØ½ºÆ®¸¦ º¤ÅÍ·Î º¹»ç
 	std::vector<std::string> texts;
 	for (auto it = range.first; it != range.second; ++it) {
 		texts.push_back(it->second);
 	}
 
-	// ëœë¤ ì„ íƒ
+	// ·£´ı ¼±ÅÃ
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dist(0, texts.size() - 1);
@@ -358,14 +358,14 @@ std::string Scene_Outgame::getRandomText()
 }
 
 void Scene_Outgame::SetupCharacterAndBackground()
-{	// ë°°ê²½ì€ ì•ˆë°”ë€œ
+{	// ¹è°æÀº ¾È¹Ù²ñ
 	auto bg = m_gameObjects["Background"s]->GetComponent<BackgroundComponent>();
 	bg->SetCurrentBitmap("Background");
 
-	// í‚¤ë¡œ ì´ë¯¸ì§€ ì„¤ì • í•˜ëŠ” ê³¼ì • "Sinclair + GameManager::Get().curGen" = Sinclair3? 2? 4?
+	// Å°·Î ÀÌ¹ÌÁö ¼³Á¤ ÇÏ´Â °úÁ¤ "Sinclair + GameManager::Get().curGen" = Sinclair3? 2? 4?
 	auto ch = m_gameObjects["Character"s]->GetComponent<BackgroundComponent>();
 	std::string result = "Sinclair";
-	result += std::to_string(GameManager::Get().curGen/*ì–˜ê°€ ì„¸ëŒ€ë¥¼ ë‚˜íƒ€ë‚´ëŠ” ìˆ«ìì„*/);
+	result += std::to_string(GameManager::Get().curGen/*¾ê°¡ ¼¼´ë¸¦ ³ªÅ¸³»´Â ¼ıÀÚÀÓ*/);
 	ch->SetCurrentBitmap(result);
 }
 
@@ -373,85 +373,85 @@ void Scene_Outgame::ChangeState(State newState)
 {
 	m_id = newState;
 
-	// ëª¨ë“  ë²„íŠ¼ì„ ì¼ë‹¨ ìˆ¨ê¹ë‹ˆë‹¤.
-	// (ì´ ê¸°ëŠ¥ì„ êµ¬í˜„í•˜ë ¤ë©´ ButtonComponentì— Show/Hide ê¸°ëŠ¥ì´ í•„ìš”í•©ë‹ˆë‹¤)
-	// ì˜ˆ: m_gameObjects["ì˜ˆ"]->GetComponent<ButtonComponent>()->Hide();
-	// ì˜ˆ: m_gameObjects["ì•„ë‹ˆì˜¤"]->GetComponent<ButtonComponent>()->Hide();
-	// ì˜ˆ: m_gameObjects["ë‹¤ìŒë²„íŠ¼"]->GetComponent<ButtonComponent>()->Hide(); // 'ë‹¤ìŒ' ë²„íŠ¼ ì¶”ê°€ í•„ìš”
+	// ¸ğµç ¹öÆ°À» ÀÏ´Ü ¼û±é´Ï´Ù.
+	// (ÀÌ ±â´ÉÀ» ±¸ÇöÇÏ·Á¸é ButtonComponent¿¡ Show/Hide ±â´ÉÀÌ ÇÊ¿äÇÕ´Ï´Ù)
+	// ¿¹: m_gameObjects["¿¹"]->GetComponent<ButtonComponent>()->Hide();
+	// ¿¹: m_gameObjects["¾Æ´Ï¿À"]->GetComponent<ButtonComponent>()->Hide();
+	// ¿¹: m_gameObjects["´ÙÀ½¹öÆ°"]->GetComponent<ButtonComponent>()->Hide(); // '´ÙÀ½' ¹öÆ° Ãß°¡ ÇÊ¿ä
 
-	// ë²„íŠ¼ ì½œë°±ì„ ê°€ì ¸ì˜¤ê¸° ìœ„í•œ ì¤€ë¹„
-	auto yesButton = m_gameObjects["ì•„ì›ƒê²Œì„4"]->GetComponent<ButtonComponent>();
-	auto noButton = m_gameObjects["ì•„ì›ƒê²Œì„5"]->GetComponent<ButtonComponent>();
-	// 'ë‹¤ìŒ' ë˜ëŠ” ì„ íƒì§€ ë²„íŠ¼ë“¤ë„ ë§ˆì°¬ê°€ì§€ë¡œ ê°€ì ¸ì˜µë‹ˆë‹¤.
+	// ¹öÆ° Äİ¹éÀ» °¡Á®¿À±â À§ÇÑ ÁØºñ
+	auto yesButton = m_gameObjects["¾Æ¿ô°ÔÀÓ4"]->GetComponent<ButtonComponent>();
+	auto noButton = m_gameObjects["¾Æ¿ô°ÔÀÓ5"]->GetComponent<ButtonComponent>();
+	// '´ÙÀ½' ¶Ç´Â ¼±ÅÃÁö ¹öÆ°µéµµ ¸¶Âù°¡Áö·Î °¡Á®¿É´Ï´Ù.
 
 	switch (m_id)
 	{
-	case ì²˜ìŒì•„ì›ƒê²Œì„:
+	case Ã³À½¾Æ¿ô°ÔÀÓ:
 	{
-		// í…ìŠ¤íŠ¸ ì„¤ì • (80001 ìƒíƒœì—ëŠ” í…ìŠ¤íŠ¸ê°€ ì—¬ëŸ¬ ê°œì´ë¯€ë¡œ, ìˆœì°¨ì ìœ¼ë¡œ ë³´ì—¬ì¤„ ì¥ì¹˜ê°€ í•„ìš”)
-		// ì˜ˆë¥¼ ë“¤ì–´, m_dialogueIndex ê°™ì€ ë©¤ë²„ ë³€ìˆ˜ë¥¼ ì¶”ê°€í•˜ì—¬ ê´€ë¦¬í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+		// ÅØ½ºÆ® ¼³Á¤ (80001 »óÅÂ¿¡´Â ÅØ½ºÆ®°¡ ¿©·¯ °³ÀÌ¹Ç·Î, ¼øÂ÷ÀûÀ¸·Î º¸¿©ÁÙ ÀåÄ¡°¡ ÇÊ¿ä)
+		// ¿¹¸¦ µé¾î, m_dialogueIndex °°Àº ¸â¹ö º¯¼ö¸¦ Ãß°¡ÇÏ¿© °ü¸®ÇÒ ¼ö ÀÖ½À´Ï´Ù.
 		curText = getRandomText();
 
-		// 'ë‹¤ìŒ' ë²„íŠ¼ì„ ë³´ì—¬ì£¼ê³  'ì˜ˆ/ì•„ë‹ˆì˜¤' ë²„íŠ¼ì€ ìˆ¨ê¹ë‹ˆë‹¤.
-		// 'ë‹¤ìŒ' ë²„íŠ¼ì˜ ì½œë°±ì„ ì„¤ì •í•˜ì—¬, ë‹¤ìŒ í…ìŠ¤íŠ¸ë¥¼ ë³´ì—¬ì£¼ê±°ë‚˜ ìƒíƒœë¥¼ 80002ë¡œ ë³€ê²½í•˜ë„ë¡ í•©ë‹ˆë‹¤.
+		// '´ÙÀ½' ¹öÆ°À» º¸¿©ÁÖ°í '¿¹/¾Æ´Ï¿À' ¹öÆ°Àº ¼û±é´Ï´Ù.
+		// '´ÙÀ½' ¹öÆ°ÀÇ Äİ¹éÀ» ¼³Á¤ÇÏ¿©, ´ÙÀ½ ÅØ½ºÆ®¸¦ º¸¿©ÁÖ°Å³ª »óÅÂ¸¦ 80002·Î º¯°æÇÏµµ·Ï ÇÕ´Ï´Ù.
 		// nextButton->SetOnClickCallback([this]() {
-		//      // ë‹¤ìŒ í…ìŠ¤íŠ¸ ë¡œì§ or ChangeState(ì„ íƒì§€);
+		//      // ´ÙÀ½ ÅØ½ºÆ® ·ÎÁ÷ or ChangeState(¼±ÅÃÁö);
 		// });
 		break;
 	}
 
-	case ì„ íƒì§€:
+	case ¼±ÅÃÁö:
 	{
-		curText = outGameTextTable.find(m_id)->second; // "> ì°½ê³ ë¡œ ì´ë™í•œë‹¤.\n> ëª¨í—˜ì„ ë– ë‚œë‹¤."
+		curText = outGameTextTable.find(m_id)->second; // "> Ã¢°í·Î ÀÌµ¿ÇÑ´Ù.\n> ¸ğÇèÀ» ¶°³­´Ù."
 
-		// 'ì°½ê³ ', 'ëª¨í—˜' ë²„íŠ¼ì„ ë³´ì—¬ì£¼ê³  ì½œë°±ì„ ì„¤ì •í•´ì•¼ í•©ë‹ˆë‹¤.
-		// í˜„ì¬ëŠ” 'ì˜ˆ/ì•„ë‹ˆì˜¤' ë²„íŠ¼ë§Œ ìˆìœ¼ë¯€ë¡œ, ì´ë“¤ì„ ì¬í™œìš©í•˜ê±°ë‚˜ ìƒˆë¡œ ë§Œë“¤ì–´ì•¼ í•©ë‹ˆë‹¤.
-		// ì˜ˆì‹œ: 'ì˜ˆ' ë²„íŠ¼ì„ 'ì°½ê³ ' ë²„íŠ¼ìœ¼ë¡œ ì‚¬ìš©
+		// 'Ã¢°í', '¸ğÇè' ¹öÆ°À» º¸¿©ÁÖ°í Äİ¹éÀ» ¼³Á¤ÇØ¾ß ÇÕ´Ï´Ù.
+		// ÇöÀç´Â '¿¹/¾Æ´Ï¿À' ¹öÆ°¸¸ ÀÖÀ¸¹Ç·Î, ÀÌµéÀ» ÀçÈ°¿ëÇÏ°Å³ª »õ·Î ¸¸µé¾î¾ß ÇÕ´Ï´Ù.
+		// ¿¹½Ã: '¿¹' ¹öÆ°À» 'Ã¢°í' ¹öÆ°À¸·Î »ç¿ë
 		yesButton->SetOnClickCallback([this]() {
-			// 3, 4ì„¸ëŒ€ëŠ” ëª¨í—˜ì„ ë– ë‚  ìˆ˜ ì—†ë‹¤ëŠ” ë“±ì˜ ì¡°ê±´ì€ ì—¬ê¸°ì„œ GameManager::Get().curGenìœ¼ë¡œ í™•ì¸ ê°€ëŠ¥
-			ChangeState(ì°½ê³ ì—ë“¤ì–´ê°ˆë•Œ);
+			// 3, 4¼¼´ë´Â ¸ğÇèÀ» ¶°³¯ ¼ö ¾ø´Ù´Â µîÀÇ Á¶°ÇÀº ¿©±â¼­ GameManager::Get().curGenÀ¸·Î È®ÀÎ °¡´É
+			ChangeState(Ã¢°í¿¡µé¾î°¥¶§);
 			});
 
-		// ì˜ˆì‹œ: 'ì•„ë‹ˆì˜¤' ë²„íŠ¼ì„ 'ëª¨í—˜' ë²„íŠ¼ìœ¼ë¡œ ì‚¬ìš©
+		// ¿¹½Ã: '¾Æ´Ï¿À' ¹öÆ°À» '¸ğÇè' ¹öÆ°À¸·Î »ç¿ë
 		noButton->SetOnClickCallback([this]() {
-			ChangeState(ëª¨í—˜ë– ë‚˜ê¸°í´ë¦­ì‹œ);
+			ChangeState(¸ğÇè¶°³ª±âÅ¬¸¯½Ã);
 			});
 		break;
 	}
 
-	case ì°½ê³ ì—ë“¤ì–´ê°ˆë•Œ:
+	case Ã¢°í¿¡µé¾î°¥¶§:
 	{
-		curText = outGameTextTable.find(m_id)->second; // "ì°½ê³ ì— ë“¤ì–´ê°€ì‹œê² ìŠµë‹ˆê¹Œ?..."
+		curText = outGameTextTable.find(m_id)->second; // "Ã¢°í¿¡ µé¾î°¡½Ã°Ú½À´Ï±î?..."
 
-		// 'ì˜ˆ', 'ì•„ë‹ˆì˜¤' ë²„íŠ¼ì„ ë³´ì—¬ì¤ë‹ˆë‹¤.
-		// m_gameObjects["ì•„ì›ƒê²Œì„4"]->GetComponent<ButtonComponent>()->Show();
-		// m_gameObjects["ì•„ì›ƒê²Œì„5"]->GetComponent<ButtonComponent>()->Show();
+		// '¿¹', '¾Æ´Ï¿À' ¹öÆ°À» º¸¿©Áİ´Ï´Ù.
+		// m_gameObjects["¾Æ¿ô°ÔÀÓ4"]->GetComponent<ButtonComponent>()->Show();
+		// m_gameObjects["¾Æ¿ô°ÔÀÓ5"]->GetComponent<ButtonComponent>()->Show();
 
 		yesButton->SetOnClickCallback([this]() {
 			SceneManager::Get().ChangeScene("InGame");
 			});
 
 		noButton->SetOnClickCallback([this]() {
-			ChangeState(ì„ íƒì§€); // ì„ íƒì§€ë¡œ ëŒì•„ê°€ê¸°
+			ChangeState(¼±ÅÃÁö); // ¼±ÅÃÁö·Î µ¹¾Æ°¡±â
 			});
 		break;
 	}
 
-	case ëª¨í—˜ë– ë‚˜ê¸°í´ë¦­ì‹œ:
+	case ¸ğÇè¶°³ª±âÅ¬¸¯½Ã:
 	{
-		curText = outGameTextTable.find(m_id)->second; // "ì—¬í–‰ì„ ë– ë‚˜ì‹œê² ìŠµë‹ˆê¹Œ?..."
+		curText = outGameTextTable.find(m_id)->second; // "¿©ÇàÀ» ¶°³ª½Ã°Ú½À´Ï±î?..."
 
-		// 'ì˜ˆ', 'ì•„ë‹ˆì˜¤' ë²„íŠ¼ì„ ë³´ì—¬ì¤ë‹ˆë‹¤.
-		 // m_gameObjects["ì•„ì›ƒê²Œì„4"]->GetComponent<ButtonComponent>()->Show();
-		 // m_gameObjects["ì•„ì›ƒê²Œì„5"]->GetComponent<ButtonComponent>()->Show();
+		// '¿¹', '¾Æ´Ï¿À' ¹öÆ°À» º¸¿©Áİ´Ï´Ù.
+		 // m_gameObjects["¾Æ¿ô°ÔÀÓ4"]->GetComponent<ButtonComponent>()->Show();
+		 // m_gameObjects["¾Æ¿ô°ÔÀÓ5"]->GetComponent<ButtonComponent>()->Show();
 
 		yesButton->SetOnClickCallback([this]() {
-			// ì—”ë”© ì”¬ìœ¼ë¡œ ì „í™˜
-			SceneManager::Get().ChangeScene("Ending"); // "Ending" ì”¬ì´ ìˆë‹¤ê³  ê°€ì •
+			// ¿£µù ¾ÀÀ¸·Î ÀüÈ¯
+			SceneManager::Get().ChangeScene("Ending"); // "Ending" ¾ÀÀÌ ÀÖ´Ù°í °¡Á¤
 			});
 
 		noButton->SetOnClickCallback([this]() {
-			ChangeState(ì„ íƒì§€); // ì„ íƒì§€ë¡œ ëŒì•„ê°€ê¸°
+			ChangeState(¼±ÅÃÁö); // ¼±ÅÃÁö·Î µ¹¾Æ°¡±â
 			});
 		break;
 	}
