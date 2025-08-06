@@ -30,6 +30,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{2370e0cf-166a-4cb0-8322-de791ca209e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NewFilter1">
+      <UniqueIdentifier>{3f02cb16-bf71-4876-b582-20d3f8ab963e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputManager.h">
@@ -167,14 +170,13 @@
     <ClInclude Include="EquipmentWindow.h">
       <Filter>UI</Filter>
     </ClInclude>
-<<<<<<< HEAD
+    <ClInclude Include="Inventory.h">
+      <Filter>UI</Filter>
+    </ClInclude>
     <ClInclude Include="StatWindow.h">
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="EnhancementWindow.h">
-=======
-    <ClInclude Include="Inventory.h">
->>>>>>> dev5
       <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -263,7 +265,9 @@
     <ClCompile Include="EquipmentWindow.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-<<<<<<< HEAD
+    <ClCompile Include="Inventory.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
     <ClCompile Include="StatWindow.cpp">
       <Filter>UI</Filter>
     </ClCompile>
@@ -272,13 +276,6 @@
     </ClCompile>
     <ClCompile Include="EnhancementWindow.cpp">
       <Filter>UI</Filter>
-=======
-    <ClCompile Include="Inventory.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
-    <ClCompile Include="UIWindow.cpp">
-      <Filter>소스 파일</Filter>
->>>>>>> dev5
     </ClCompile>
   </ItemGroup>
 </Project>
