@@ -9,7 +9,7 @@
 #include "Scene_Title.h"
 #include "Scene_Outgame.h"
 #include "Scene_InGame.h"
-//#include "Scene_End.h"
+#include "Scene_End.h"
 //#include "Scene_History.h"
 
 
@@ -21,22 +21,22 @@ private:
 		~SceneManager() = default;
 public:
 
-		void Initalize(shared_ptr<unordered_map<string, shared_ptr<SceneStandard>>>& Scenes) //자료구조는 깔끔한데, 확장성은 떨어지는 거 같아...
+		void Initalize(shared_ptr<unordered_map<string, shared_ptr<SceneStandard>>>& Scenes)
 		{
 
 				m_Scene_map = make_shared<unordered_map<string, shared_ptr<SceneStandard>>>();
 
 
-				//m_Scene_map->emplace("Title", make_shared<Scene_Title>("Title"));
-				//m_Scene_map->emplace("OutGame", make_shared<Scene_Outgame>("OutGame"));
-				//m_Scene_map->emplace("InGame", make_shared<Scene_InGame>("InGame"));
-				//m_Scene_map->emplace("End", make_shared<Scene_End>("End"));
+				m_Scene_map->emplace("Title", make_shared<Scene_Title>("Title"));
+				m_Scene_map->emplace("OutGame", make_shared<Scene_Outgame>("OutGame"));
+				m_Scene_map->emplace("InGame", make_shared<Scene_InGame>("InGame"));
+				m_Scene_map->emplace("End", make_shared<Scene_End>("End"));
 				//m_Scene_map->emplace("History", make_shared<Scene_History>("History"));
 
 				m_Scene_map->emplace("MK", make_shared<Scene_MK>("MK"));
 
-				//m_currentindex = "Title";
-				m_currentindex = "MK";
+				m_currentindex = "Title";
+				//m_currentindex = "MK";
 
 				Scenes = m_Scene_map;
 

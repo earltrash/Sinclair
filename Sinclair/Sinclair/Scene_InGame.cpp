@@ -26,6 +26,16 @@ void Scene_InGame::Initalize()
 	dirty = true;
 }
 
+void Scene_InGame::Enter()
+{
+	Initalize();
+}
+
+void Scene_InGame::Exit()
+{
+	Clean();
+}
+
 void Scene_InGame::Clean()
 {
 	m_gameObjects.clear();
@@ -41,80 +51,22 @@ void Scene_InGame::LogicUpdate(float delta)
 {
 }
 
-void Scene_InGame::Enter()
-{
-	Initalize();
-}
-
-void Scene_InGame::Exit()
-{
-	Clean();
-}
-
 void Scene_InGame::Render()
 {
 
-	
-	//for (const auto& [Name, obj] : m_gameObjects)
-	//{
-
-	//	ComPtr<ID2D1Bitmap1> bitmap = nullptr;
-	//	D2D1_RECT_F dest;
-	//	dest.left = 0;
-	//	dest.top = 0;
-	//	dest.right = 0;
-	//	dest.bottom = 0;
-	//	// 투명 구현한다면...
-	//	float opacity = 1.0f;
-
-	//	// ButtonComponent 우선 확인
-	//	auto buttonComp = obj->GetComponent<ButtonComponent>();
-	//	if (buttonComp != nullptr) {
-	//		bitmap = buttonComp->GetBitmap();
-	//		dest.right += buttonComp->GetWidth();
-	//		dest.bottom += buttonComp->GetHeight();
-	//		opacity = buttonComp->m_opacity;
-	//	}
-	//	else {
-	//		// ButtonComponent가 없으면 BackgroundComponent 확인
-	//		auto bgComp = obj->GetComponent<BackgroundComponent>();
-	//		if (bgComp != nullptr) {
-	//			bitmap = bgComp->GetCurrentBitmap();
-	//			dest.right += bgComp->GetWidth();
-	//			dest.bottom += bgComp->GetHeight();
-	//		}
-	//	}
-
-	//	if (!bitmap) {
-	//		continue;
-	//	}
-
-	//	dest.left += obj->GetTransform().GetPosition().x;
-	//	dest.top += obj->GetTransform().GetPosition().y;
-	//	dest.right += dest.left;
-	//	dest.bottom += dest.top;
-
-	//	// 투명도 적용 x
-	//	//D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest);
-	//	// 투명도 적용 o
-	//	D2D1_RECT_F srcRect = D2D1::RectF(0, 0, bitmap->GetSize().width, bitmap->GetSize().height); ;
-
-	//	D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest, srcRect, opacity);
-	//}
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
 	}
-
-	//D2DRenderer::Get().CreateWriteRegularResource();
-
 	
 }
 
 void Scene_InGame::CreateObj()
 {
 	//////////////////////
-	// Background 
+	//////////////////////
+	//////////////////////
+	// [0] Background 
 
 	// 1. 이미지 갖고 오기
 	auto inGameBackground = ResourceManager::Get().GetTexture("인게임");
@@ -137,32 +89,72 @@ void Scene_InGame::CreateObj()
 	m_gameObjects.emplace("Background", std::move(Background));
 
 
-
-
 	/////////////////////
 	/////////////////////
-	// 창고
+	/////////////////////
+	// [1] 뒤로가기 버튼
 
 	// 1. 이미지 갖고 오기
-	auto 인게임2 = ResourceManager::Get().GetTexture("인게임", "2");
+	auto 뒤로가기 = ResourceManager::Get().GetTexture("뒤로가기");
+	// 2. 오브젝트 만들기
+	auto 뒤로 = std::make_unique<Object>();
+	뒤로->SetPosition(Vec2(41, 31));
+
+	auto 뒤로info = 뒤로->GetRenderInfo();
+	뒤로info->SetBitmap(뒤로가기.Get());
+	// 3. 버튼 컴포넌트 만들기
+	auto backComp = 뒤로->AddComponent<ButtonComponent>(뒤로info);
+	backComp->SetWidth(뒤로가기->GetSize().width);
+	backComp->SetHeight(뒤로가기->GetSize().height);
+
+	//  4. 버튼 비트맵 설정
+	backComp->BitmapPush("back", 뒤로가기);
+
+	backComp->SetCurrentBitmap("back");
+
+	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
+	auto Back_mouseListener = 뒤로->AddComponent<MouseListenerComponent>(
+		[backComp](const MSG& msg) {
+			backComp->Worked(msg);
+		}
+	);
+
+	backComp->SetOnClickCallback([this]() {
+		std::cout << "뒤로가기 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
+		SceneManager::Get().ChangeScene("OutGame");
+		});
+
+	/// 9
+	m_gameObjects.emplace("뒤로가기", std::move(뒤로));
+
+
+
+
+	/////////////////////
+	/////////////////////
+	/////////////////////
+	// [2] 창고
+
+	// 1. 이미지 갖고 오기
+	auto 인게임2 = ResourceManager::Get().GetTexture("인게임", "02");
 	// 2. 오브젝트 만들기
 	auto 창고 = std::make_unique<Object>();
-	창고->SetPosition(Vec2(147, 570));
+	창고->SetPosition(Vec2(64, 570));
 
 	auto 창고info = 창고->GetRenderInfo();
 	창고info->SetBitmap(인게임2.Get());
 
 	// 3. 버튼 컴포넌트 만들기
 	auto 창고버튼 = 창고->AddComponent<ButtonComponent>(창고info);
-	창고버튼->SetWidth(310); 창고버튼->SetHeight(64);
+
+	창고버튼->SetWidth(인게임2->GetSize().width);
+	창고버튼->SetHeight(인게임2->GetSize().height);
 
 	//  4. 버튼 비트맵 설정
 	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
-	창고버튼->BitmapPush("normal",  인게임2  );
-	창고버튼->BitmapPush("hover",   인게임2  );
-	창고버튼->BitmapPush("pressed", 인게임2);
+	창고버튼->BitmapPush("창고",  인게임2  );
 
-	창고버튼->SetCurrentBitmap("normal");
+	창고버튼->SetCurrentBitmap("창고");
 
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 창고리스너 = 창고->AddComponent<MouseListenerComponent>(
@@ -176,33 +168,32 @@ void Scene_InGame::CreateObj()
 		});
 
 	/// 9
-	m_gameObjects.emplace("인게임2", std::move(창고));
+	m_gameObjects.emplace("창고", std::move(창고));
 
 
 
 	/////////////////////
 	/////////////////////
-	// 장비
+	/////////////////////
+	// [3] 장비
 
 	// 1. 이미지 갖고 오기
-	auto 인게임3 = ResourceManager::Get().GetTexture("인게임", "3");
+	auto 인게임3 = ResourceManager::Get().GetTexture("인게임", "03");
 	// 2. 오브젝트 만들기
 	auto 장비 = std::make_unique<Object>();
-	장비->SetPosition(Vec2(147, 703));
+	장비->SetPosition(Vec2(64, 703));
 
 	auto 장비info = 장비->GetRenderInfo();
 	장비info->SetBitmap(인게임3.Get());
 	// 3. 버튼 컴포넌트 만들기
 	auto 장비버튼 = 장비->AddComponent<ButtonComponent>(장비info);
-	장비버튼->SetWidth(310); 장비버튼->SetHeight(64);
+	장비버튼->SetWidth(인게임3->GetSize().width);
+	장비버튼->SetHeight(인게임3->GetSize().height);
 
 	//  4. 버튼 비트맵 설정
 	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
-	장비버튼->BitmapPush("normal",  인게임3);
-	장비버튼->BitmapPush("hover",   인게임3);
-	장비버튼->BitmapPush("pressed", 인게임3);
-
-	장비버튼->SetCurrentBitmap("normal");
+	장비버튼->BitmapPush("장비버튼",  인게임3);
+	장비버튼->SetCurrentBitmap("장비버튼");
 
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 장비리스너 = 장비->AddComponent<MouseListenerComponent>(
@@ -216,33 +207,32 @@ void Scene_InGame::CreateObj()
 		});
 
 	/// 9
-	m_gameObjects.emplace("인게임3", std::move(장비));
+	m_gameObjects.emplace("장비", std::move(장비));
 
 
 
 	/////////////////////
 	/////////////////////
-	// 스테이터스
+	/////////////////////
+	// [4] 스테이터스
 
 	// 1. 이미지 갖고 오기
-	auto 인게임4 = ResourceManager::Get().GetTexture("인게임", "4");
+	auto 인게임4 = ResourceManager::Get().GetTexture("인게임", "04");
 	// 2. 오브젝트 만들기
 	auto 스테이터스 = std::make_unique<Object>();
-	스테이터스->SetPosition(Vec2(147, 836));
+	스테이터스->SetPosition(Vec2(64, 836));
 
 	auto 스테이터스info = 스테이터스->GetRenderInfo();
 	스테이터스info->SetBitmap(인게임4.Get());
 	// 3. 버튼 컴포넌트 만들기
 	auto 스테이터스버튼 = 스테이터스->AddComponent<ButtonComponent>(스테이터스info);
-	스테이터스버튼->SetWidth(310); 스테이터스버튼->SetHeight(64);
+	스테이터스버튼->SetWidth(인게임4->GetSize().width);
+	스테이터스버튼->SetHeight(인게임4->GetSize().height);
 
 	//  4. 버튼 비트맵 설정
-	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
-	스테이터스버튼->BitmapPush("normal", 인게임4);
-	스테이터스버튼->BitmapPush("hover",  인게임4);
-	스테이터스버튼->BitmapPush("pressed",인게임4);
+	스테이터스버튼->BitmapPush("스테이터스", 인게임4);
 
-	스테이터스버튼->SetCurrentBitmap("normal");
+	스테이터스버튼->SetCurrentBitmap("스테이터스");
 
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 스테이터스리스너 = 스테이터스->AddComponent<MouseListenerComponent>(
@@ -252,52 +242,85 @@ void Scene_InGame::CreateObj()
 	);
 
 	스테이터스버튼->SetOnClickCallback([this]() {
-		std::cout << "스테이터스버튼이지만 엔딩으로" << std::endl;
-		SceneManager::Get().ChangeScene("End");
+		std::cout << "스테이터스" << std::endl;
 		});
 
 	/// 9
-	m_gameObjects.emplace("인게임4", std::move(스테이터스));
-
+	m_gameObjects.emplace("스테이터스", std::move(스테이터스));
 
 
 	/////////////////////
 	/////////////////////
-	// 뒤로가기 (아웃게임으로)
+	/////////////////////
+	// [5] 강화
 
 	// 1. 이미지 갖고 오기
-	auto 뒤로가기 = ResourceManager::Get().GetTexture("뒤로가기");
+	auto 인게임5 = ResourceManager::Get().GetTexture("인게임", "05");
 	// 2. 오브젝트 만들기
-	auto 뒤로 = std::make_unique<Object>();
-	뒤로->SetPosition(Vec2(64, 57));
+	auto 강화 = std::make_unique<Object>();
+	강화->SetPosition(Vec2(589, 537));
 
-	auto 뒤로info = 뒤로->GetRenderInfo();
-	뒤로info->SetBitmap(뒤로가기.Get());
+	auto 강화info = 강화->GetRenderInfo();
+	강화info->SetBitmap(인게임5.Get());
 	// 3. 버튼 컴포넌트 만들기
-	auto backComp = 뒤로->AddComponent<ButtonComponent>(뒤로info);
-	backComp->SetWidth(37); backComp->SetHeight(37);
+	auto 강화버튼 = 강화->AddComponent<ButtonComponent>(강화info);
+	강화버튼->SetWidth(인게임5->GetSize().width);
+	강화버튼->SetHeight(인게임5->GetSize().height);
 
 	//  4. 버튼 비트맵 설정
-	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
-	backComp->BitmapPush("normal", 뒤로가기);
-	backComp->BitmapPush("hover", 뒤로가기);
-	backComp->BitmapPush("pressed", 뒤로가기);
+	강화버튼->BitmapPush("강화", 인게임5);
 
-	backComp->SetCurrentBitmap("normal");
+	강화버튼->SetCurrentBitmap("강화");
 
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
-	auto Back_mouseListener = 뒤로->AddComponent<MouseListenerComponent>(
-		[backComp](const MSG& msg) {
-			backComp->Worked(msg);
+	auto 강화리스너 = 강화->AddComponent<MouseListenerComponent>(
+		[강화버튼](const MSG& msg) {
+		 강화버튼->Worked(msg);
 		}
 	);
 
-	backComp->SetOnClickCallback([this]() {
-		std::cout << "버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
-		SceneManager::Get().ChangeScene("OutGame");
-		//std::cout << "뒤로가기 (아웃게임으로 )" << std::endl;
+	강화버튼->SetOnClickCallback([this]() {
+		std::cout << "강화" << std::endl;
 		});
 
 	/// 9
-	m_gameObjects.emplace("뒤로가기", std::move(뒤로));
+	m_gameObjects.emplace("강화", std::move(강화));
+
+
+	/////////////////////
+	/////////////////////
+	/////////////////////
+	// [6] 합성
+
+	// 1. 이미지 갖고 오기
+	auto 인게임6 = ResourceManager::Get().GetTexture("인게임", "06");
+	// 2. 오브젝트 만들기
+	auto 합성 = std::make_unique<Object>();
+	합성->SetPosition(Vec2(889, 608));
+
+	auto 합성info = 합성->GetRenderInfo();
+	합성info->SetBitmap(인게임6.Get());
+	// 3. 버튼 컴포넌트 만들기
+	auto 합성버튼 = 합성->AddComponent<ButtonComponent>(합성info);
+	합성버튼->SetWidth(인게임6->GetSize().width);
+	합성버튼->SetHeight(인게임6->GetSize().height);
+
+	//  4. 버튼 비트맵 설정
+	합성버튼->BitmapPush("합성", 인게임6);
+
+	합성버튼->SetCurrentBitmap("합성");
+
+	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
+	auto 합성리스너 = 합성->AddComponent<MouseListenerComponent>(
+		[합성버튼](const MSG& msg) {
+			합성버튼->Worked(msg);
+		}
+	);
+
+	합성버튼->SetOnClickCallback([this]() {
+		std::cout << "합성" << std::endl;
+		});
+
+	/// 9
+	m_gameObjects.emplace("합성", std::move(합성));
 }
