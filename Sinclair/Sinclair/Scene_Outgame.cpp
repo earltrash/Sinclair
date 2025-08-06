@@ -14,14 +14,12 @@
 
 Scene_Outgame::Scene_Outgame(string name)
 {
-		m_name = name;
-
+	m_name = name;
 }
 
 Scene_Outgame::~Scene_Outgame()
 {
-
-	
+	Clean();
 }
 
 void Scene_Outgame::Initalize()
@@ -81,55 +79,59 @@ void Scene_Outgame::Render()
 	// 멀티맵은 키(Name)기준으로 정렬 된다. 
 	// 즉 background 배경을 먼저 그리게 됨
 	
+	//D2DRenderer::Get().RenderBegin();
+	//for (const auto& [Name, obj] : m_gameObjects)
+	//{
+
+	//	ComPtr<ID2D1Bitmap1> bitmap = nullptr;
+	//	D2D1_RECT_F dest;
+	//	dest.left = 0;
+	//	dest.top = 0;
+	//	dest.right = 0;
+	//	dest.bottom = 0;
+	//	// 투명 구현한다면...
+	//	float opacity = 1.0f;
+
+	//	// ButtonComponent 우선 확인
+	//	auto buttonComp = obj->GetComponent<ButtonComponent>();
+	//	if (buttonComp != nullptr) {
+	//		bitmap = buttonComp->GetBitmap();
+	//		dest.right += buttonComp->GetWidth();
+	//		dest.bottom += buttonComp->GetHeight();
+	//		opacity = buttonComp->m_opacity;
+	//	}
+	//	else {
+	//		// ButtonComponent가 없으면 BackgroundComponent 확인
+	//		auto bgComp = obj->GetComponent<BackgroundComponent>();
+	//		if (bgComp != nullptr) {
+	//			bitmap = bgComp->GetCurrentBitmap();
+	//			dest.right += bgComp->GetWidth();
+	//			dest.bottom += bgComp->GetHeight();
+	//		}
+	//	}
+
+	//	if (!bitmap) {
+	//		continue;
+	//	}
+
+	//	//dest.left += obj->GetTransform().m_position.x;
+	//	//dest.top += obj->GetTransform().m_position.y;
+	//	dest.left += obj->GetTransform().GetPosition().x;
+	//	dest.top += obj->GetTransform().GetPosition().y;
+	//	dest.right += dest.left;
+	//	dest.bottom += dest.top;
+
+	//	// 투명도 적용 x
+	//	//D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest);
+	//	// 투명도 적용 o
+	//	D2D1_RECT_F srcRect = D2D1::RectF(0, 0, bitmap->GetSize().width, bitmap->GetSize().height); ;
+
+	//	D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest, srcRect, opacity);
+	//}
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
-
-		ComPtr<ID2D1Bitmap1> bitmap = nullptr;
-		D2D1_RECT_F dest;
-		dest.left = 0;
-		dest.top = 0;
-		dest.right = 0;
-		dest.bottom = 0;
-		// 투명 구현한다면...
-		float opacity = 1.0f;
-
-		// ButtonComponent 우선 확인
-		auto buttonComp = obj->GetComponent<ButtonComponent>();
-		if (buttonComp != nullptr) {
-			bitmap = buttonComp->GetBitmap();
-			dest.right += buttonComp->GetWidth();
-			dest.bottom += buttonComp->GetHeight();
-			opacity = buttonComp->m_opacity;
-		}
-		else {
-			// ButtonComponent가 없으면 BackgroundComponent 확인
-			auto bgComp = obj->GetComponent<BackgroundComponent>();
-			if (bgComp != nullptr) {
-				bitmap = bgComp->GetCurrentBitmap();
-				dest.right += bgComp->GetWidth();
-				dest.bottom += bgComp->GetHeight();
-			}
-		}
-
-		if (!bitmap) {
-			continue;
-		}
-
-		//dest.left += obj->GetTransform().m_position.x;
-		//dest.top += obj->GetTransform().m_position.y;
-		dest.left += obj->GetTransform().GetPosition().x;
-		dest.top += obj->GetTransform().GetPosition().y;
-		dest.right += dest.left;
-		dest.bottom += dest.top;
-
-		// 투명도 적용 x
-		//D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest);
-		// 투명도 적용 o
-		D2D1_RECT_F srcRect = D2D1::RectF(0, 0, bitmap->GetSize().width, bitmap->GetSize().height); ;
-
-		D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest, srcRect, opacity);
+		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
 	}
-
 	D2DRenderer::Get().CreateWriteRegularResource();
 	std::wstring characterName = L"싱클레어 " + std::to_wstring(GameManager::Get().curGen) + L"세";
 	D2DRenderer::Get().DrawMessage(characterName.c_str(), 503.f, 805.f, 1300.f, 1000.f, D2D1::ColorF::BlueViolet);
@@ -158,7 +160,8 @@ void Scene_Outgame::CreateObj()
 	Background->SetPosition(Vec2(0, 0));
 
 	// 3.0. 랜더 인포 컴포넌트
-	auto bgInfo = Background->AddComponent<RenderInfo>(outGameBackground.Get());
+	auto bgInfo = Background->GetRenderInfo();
+	bgInfo->SetBitmap(outGameBackground.Get());
 
 	// 3. 배경 컴포넌트 만들기
 	auto bgComp = Background->AddComponent<BackgroundComponent>(bgInfo);
@@ -185,7 +188,8 @@ void Scene_Outgame::CreateObj()
 	Character->SetPosition(Vec2(0, 0));
 
 	// 3.0. 랜더 인포 컴포넌트
-	auto chInfo = Character->AddComponent<RenderInfo>(Sinclair2.Get());
+	auto chInfo = Character->GetRenderInfo();
+	chInfo->SetBitmap(Sinclair2.Get());
 	// 3. 배경 컴포넌트 만들기
 	auto chComp = Character->AddComponent<BackgroundComponent>(chInfo);
 
@@ -209,7 +213,8 @@ void Scene_Outgame::CreateObj()
 	     텍스트박스->SetPosition(Vec2(455, 772));
 
 	// 3.0. 랜더 인포 컴포넌트
-	auto outgame1Info = 텍스트박스->AddComponent<RenderInfo>(아웃게임1.Get());
+		 auto outgame1Info = 텍스트박스->GetRenderInfo();
+		 outgame1Info->SetBitmap(아웃게임1.Get());
 	// 3. 배경 컴포넌트 만들기
 	auto 텍스트박스Comp = 텍스트박스->AddComponent<BackgroundComponent>(outgame1Info);
 	// 3.1.1 사이즈 다르면 
@@ -230,8 +235,11 @@ void Scene_Outgame::CreateObj()
 	// 2. 오브젝트 만들기
 	auto 예 = std::make_unique<Object>();
 	예->SetPosition(Vec2(1087, 921));
+
+	auto 예info = 예->GetRenderInfo();
+	예info->SetBitmap(아웃게임4.Get());
 	// 3. 버튼 컴포넌트 만들기
-	auto YesComp = 예->AddComponent<ButtonComponent>();
+	auto YesComp = 예->AddComponent<ButtonComponent>(예info);
 	YesComp->SetWidth(140); YesComp->SetHeight(40);
 
 	//  4. 버튼 비트맵 설정
@@ -268,8 +276,11 @@ void Scene_Outgame::CreateObj()
 	// 2. 오브젝트 만들기
 	auto 아니오 = std::make_unique<Object>();
 	아니오->SetPosition(Vec2(1280, 921));
+
+	auto 아니오info = 아니오->GetRenderInfo();
+	아니오info->SetBitmap(아웃게임5.Get());
 	// 3. 버튼 컴포넌트 만들기
-	auto NoComp = 아니오->AddComponent<ButtonComponent>();
+	auto NoComp = 아니오->AddComponent<ButtonComponent>(아니오info);
 	NoComp->SetWidth(140); NoComp->SetHeight(40);
 
 	//  4. 버튼 비트맵 설정
@@ -304,9 +315,12 @@ void Scene_Outgame::CreateObj()
 	auto 뒤로가기 = ResourceManager::Get().GetTexture("뒤로가기");
 	// 2. 오브젝트 만들기
 	auto 뒤로 = std::make_unique<Object>();
-	뒤로->SetPosition(Vec2(64 , 57));
+	뒤로->SetPosition(Vec2(64, 57));
+
+	auto 뒤로info = 뒤로->GetRenderInfo();
+	뒤로info->SetBitmap(뒤로가기.Get());
 	// 3. 버튼 컴포넌트 만들기
-	auto backComp = 뒤로->AddComponent<ButtonComponent>();
+	auto backComp = 뒤로->AddComponent<ButtonComponent>(뒤로info);
 	backComp->SetWidth(37); backComp->SetHeight(37);
 	
 	//  4. 버튼 비트맵 설정

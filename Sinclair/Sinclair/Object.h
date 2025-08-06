@@ -3,12 +3,14 @@
 #include "Component.h"
 #include "Transform.h"
 #include "SimpleMathHelper.h"
+#include "RenderInfo.h"
+
 using namespace D2DTM;
 
 class Object //발사되는 투사체도 되겠는데
 {
 public:
-		Object() = default;
+	Object() : m_renderInfo{}, m_transform(&m_renderInfo) {}
 		virtual ~Object();
 		
 
@@ -34,12 +36,17 @@ public:
 		
 		void SetPosition(Vec2 position)
 		{
-				m_transform.SetPosition(position);
+			m_transform.SetPosition(position);
 		} 
 
 		Transform& GetTransform()
 		{
-				return m_transform;
+			return m_transform;
+		}
+
+		RenderInfo* GetRenderInfo()
+		{
+			return &m_renderInfo;
 		}
 
 public:
@@ -58,7 +65,9 @@ protected:
 
 		std::vector<std::unique_ptr<Component>> m_Components;
 
+		RenderInfo m_renderInfo;
 		Transform m_transform;
+
 		bool activated = true;
 };
 

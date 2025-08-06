@@ -9,8 +9,7 @@
 
 Scene_Title::Scene_Title(string name)
 {
-		m_name = name;
-		
+	m_name = name;
 }
 
 Scene_Title::~Scene_Title()
@@ -27,6 +26,7 @@ void Scene_Title::Initalize()
 
 void Scene_Title::Enter()
 {
+	Initalize();
 	// 씬 진입 시마다 실행할 것들
 	// 오브젝트 생성, 오브젝트 상태 초기화, 사운드 재생 등
 	// ResetObjectStates();
@@ -67,51 +67,7 @@ void Scene_Title::Render()
 		
 		for (const auto& [Name, obj] : m_gameObjects)
 		{
-
-			ComPtr<ID2D1Bitmap1> bitmap = nullptr;
-			D2D1_RECT_F dest;
-			dest.left = 0;
-			dest.top = 0;
-			dest.right = 0;
-			dest.bottom = 0;
-			// 투명 구현한다면...
-			float opacity = 1.0f;
-
-			// ButtonComponent 우선 확인
-			auto buttonComp = obj->GetComponent<ButtonComponent>();
-			if (buttonComp != nullptr) {
-				bitmap = buttonComp->GetBitmap();
-				dest.right += buttonComp->GetWidth();
-				dest.bottom += buttonComp->GetHeight();
-				opacity = buttonComp->m_opacity;
-			}
-			else {
-				// ButtonComponent가 없으면 BackgroundComponent 확인
-				auto bgComp = obj->GetComponent<BackgroundComponent>();
-				if (bgComp != nullptr) {
-					bitmap = bgComp->GetBitmap();
-					dest.right += bgComp->GetWidth();
-					dest.bottom += bgComp->GetHeight();
-				}
-			}
-
-			if (!bitmap) {
-				continue;
-			}
-
-			//dest.left += obj->GetTransform().m_position.x;
-			//dest.top += obj->GetTransform().m_position.y;
-			dest.left += obj->GetTransform().GetPosition().x;
-			dest.top += obj->GetTransform().GetPosition().y;
-			dest.right += dest.left;
-			dest.bottom += dest.top;
-
-			// 투명도 적용 x
-			//D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest);
-			// 투명도 적용 o
-			D2D1_RECT_F srcRect = D2D1::RectF(0, 0, bitmap->GetSize().width, bitmap->GetSize().height); ;
-
-			D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest, srcRect, opacity);
+			D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
 		}
 
 		D2DRenderer::Get().DrawMessage(L"싱클레어 가 히스토리", 147.f, 254.f, 1300.f, 1000.f, D2D1::ColorF::LightPink);		
@@ -130,10 +86,13 @@ void Scene_Title::CreateObj()
 	auto Background = std::make_unique<Object>();
 	Background->SetPosition(Vec2(0, 0));
 
+	auto bgInfo = Background->GetRenderInfo();
+	bgInfo->SetBitmap(gameStartBackground.Get());
+
 	// 3. 배경 컴포넌트 만들기
-	auto bgComp = Background->AddComponent<BackgroundComponent>();
+	auto bgComp = Background->AddComponent<BackgroundComponent>(bgInfo);
 	// 3.1.1 사이즈 다르면 
-	bgComp->SetWidth(1920); bgComp->SetHeight(1080);
+	bgComp->SetWidth(1920.f); bgComp->SetHeight(1080.f);
 	bgComp->BitmapPush("Background", gameStartBackground);
 	// 9. 게임 오브젝트들에 집어넣기
 	m_gameObjects.emplace("Background", std::move(Background));
@@ -156,8 +115,11 @@ void Scene_Title::CreateObj()
 	auto gameStartButton = std::make_unique<Object>();
 	gameStartButton->SetPosition(Vec2(147, 564));
 
+	auto gstartInfo = gameStartButton->GetRenderInfo();
+	gstartInfo->SetBitmap(gameStartButton_texture_normal.Get());
+
 	// 3. 버튼 컴포넌트 만들기
-	auto gameStartButton_buttonComp = gameStartButton->AddComponent<ButtonComponent>();
+	auto gameStartButton_buttonComp = gameStartButton->AddComponent<ButtonComponent>(gstartInfo);
 	// 3.1.2 사이즈 같으면
 	gameStartButton_buttonComp->SetWidth(gameStartButton_texture_normal->GetSize().width);
 	gameStartButton_buttonComp->SetHeight(gameStartButton_texture_normal->GetSize().height);
@@ -185,7 +147,6 @@ void Scene_Title::CreateObj()
 
 	m_gameObjects.emplace("gameStartButton", std::move(gameStartButton));
 
-
 	//////////////////////
 	// gameSettingButton
 
@@ -198,7 +159,10 @@ void Scene_Title::CreateObj()
 		gameSettingButton = std::make_unique<Object>();
 	gameSettingButton->SetPosition(Vec2(147, 697));
 
-	auto gameSettingButton_buttonComp = gameSettingButton->AddComponent<ButtonComponent>();
+	auto gsettingInfo = gameSettingButton->GetRenderInfo();
+	gsettingInfo->SetBitmap(gameSettingButton_texture_normal.Get());
+
+	auto gameSettingButton_buttonComp = gameSettingButton->AddComponent<ButtonComponent>(gsettingInfo);
 	// 3.1.2 사이즈 같으면
 	gameSettingButton_buttonComp->SetWidth(gameStartButton_texture_normal->GetSize().width);
 	gameSettingButton_buttonComp->SetHeight(gameStartButton_texture_normal->GetSize().height);
@@ -214,7 +178,7 @@ void Scene_Title::CreateObj()
 	gameSettingButton_buttonComp->BitmapPush("hover", gameSettingButton_texture_hover);
 	gameSettingButton_buttonComp->BitmapPush("pressed", gameSettingButton_texture_pressed);
 	gameSettingButton_buttonComp->SetOnClickCallback([this]() {
-		SceneManager::Get().ChangeScene("Title");
+		//SceneManager::Get().ChangeScene("OutGame");
 		std::cout << "The button is pressed." << std::endl;
 		});
 
@@ -232,7 +196,10 @@ void Scene_Title::CreateObj()
 		creditButton = std::make_unique<Object>();
 	creditButton->SetPosition(Vec2(147, 830));
 
-	auto creditButton_buttonComp = creditButton->AddComponent<ButtonComponent>();
+	auto creditInfo = creditButton->GetRenderInfo();
+	creditInfo->SetBitmap(creditButton_texture_normal.Get());
+
+	auto creditButton_buttonComp = creditButton->AddComponent<ButtonComponent>(creditInfo);
 	// 3.1.2 사이즈 같으면
 	creditButton_buttonComp->SetWidth(gameStartButton_texture_normal->GetSize().width);
 	creditButton_buttonComp->SetHeight(gameStartButton_texture_normal->GetSize().height);

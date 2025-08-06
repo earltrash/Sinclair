@@ -94,6 +94,7 @@ void ButtonComponent::Worked(const MSG& msg)
         {
             // 버튼이 눌린 상태에서 마우스를 뗐을 때만 클릭으로 처리
             if (m_onClick) m_onClick();
+
             SetState(ButtonState::Hover);
         }
         else if (msg.message == WM_MOUSEMOVE && m_currentState != ButtonState::Pressed)
@@ -122,5 +123,7 @@ void ButtonComponent::SetCurrentBitmap(string Nm)
 {
 	m_curbm = m_Bitmap[Nm];
 	//혹은 Find로 설정하는 게 필요하긴 함. 
+
+    m_renderInfo->SetBitmap(m_curbm.Get());
 }
 

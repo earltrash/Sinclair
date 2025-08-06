@@ -10,7 +10,7 @@ using namespace std;
 class BackgroundComponent :public Component
 {
 public:
-	BackgroundComponent()  = default;
+	//BackgroundComponent()  = default;
 	BackgroundComponent(RenderInfo* renderInfo) : m_renderInfo(renderInfo) {}
 	~BackgroundComponent() = default;
 
@@ -26,17 +26,17 @@ public:
 	ComPtr<ID2D1Bitmap1> GetBitmap(std::string);
 
 	// Getter
-	int GetWidth() const { return width; }
-	int GetHeight() const { return height; }
+	float GetWidth() const { return width; }
+	float GetHeight() const { return height; }
 
 	// Setter
-	void SetWidth(int w) { width = w; }
-	void SetHeight(int h) { height = h; }
+	void SetWidth(float w) { width = w; m_renderInfo->SetDestRight(width); }
+	void SetHeight(float h) { height = h; m_renderInfo->SetDestBottom(height); }
 
 private:
 	RenderInfo* m_renderInfo;
 	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmaps;
 	ComPtr<ID2D1Bitmap1> m_currentBitmap;
 	string m_currentName;
-	int width, height;
+	float width, height;
 };
