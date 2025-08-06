@@ -9,13 +9,18 @@ void ButtonComponent::BitmapPush(string NM, ComPtr<ID2D1Bitmap1> Bitmap)
 
 ComPtr<ID2D1Bitmap1> ButtonComponent::GetBitmap()
 {
+    if (m_isInvisible)
+    {
+        return nullptr;
+    }
+
     string key;
     switch (m_currentState)
     {
     case ButtonState::Normal:   key = "normal";  m_opacity = 1.0f; break;
-    case ButtonState::Hover:    key = "hover";   m_opacity = 0.8f; break;
-    case ButtonState::Pressed:  key = "pressed"; m_opacity = 0.6f; break;
-    case ButtonState::Disabled: key = "disabled";m_opacity = 0.3f; break;
+    case ButtonState::Hover:    key = "hover";   m_opacity = 0.5f; break;
+    case ButtonState::Pressed:  key = "pressed"; m_opacity = 0.0f; break;
+    case ButtonState::Disabled: key = "disabled";m_opacity = 0.0f; break;
     default: key = "normal"; break;
     }
 
@@ -26,14 +31,49 @@ ComPtr<ID2D1Bitmap1> ButtonComponent::GetBitmap()
     return nullptr;
 }
 
-//Object 활성화 비활성화에 따른 조건이 사전에 있을 수도 있음 -> 경석이형이랑 얘기해 봄.
+
 void ButtonComponent::Worked(const MSG& msg)
 {
-    // 비트맵이 설정되지 않았다면 리턴
-    if (!GetBitmap()) return;
 
     POINT CORD = { GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam) };
     Vec2 pos = m_Owner->GetTransform().GetPosition();
+    
+
+    // 투명 버튼인 경우 설정된 크기 사용
+    if (m_isInvisible)
+    {
+        Rect rect(pos.x, pos.y, width, height);
+        bool isInside = InRect(rect, CORD);
+
+        if (isInside)
+        {
+            if (msg.message == WM_LBUTTONDOWN)
+            {
+                SetState(ButtonState::Pressed);
+            }
+            else if (msg.message == WM_LBUTTONUP && m_currentState == ButtonState::Pressed)
+            {
+                if (m_onClick) 
+                {
+                    m_onClick();
+                    return;
+                }
+                SetState(ButtonState::Normal);
+            }
+            else if (msg.message == WM_MOUSEMOVE && m_currentState != ButtonState::Pressed)
+            {
+                SetState(ButtonState::Hover);
+            }
+        }
+        else
+        {
+            SetState(ButtonState::Normal);
+        }
+        return;
+    }
+
+    // 투명버튼이 아닌데 비트맵이 설정되지 않았다면 리턴
+    if (!GetBitmap()) return;
 
     // 현재 상태에 맞는 비트맵 크기 사용
     auto currentBitmap = GetBitmap();
@@ -69,34 +109,13 @@ void ButtonComponent::Worked(const MSG& msg)
             SetState(ButtonState::Normal);
         }
     }
+}
 
-   ///* if (!activated || !m_curbm) 
-   // return; */
-   //
-   //
-   // POINT CORD = { GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam) }; //msg -> 마우스 클릭 좌표 
-   // Vec2 pos = m_Owner->GetTransform().GetPosition(); //현 Obj 좌표
-   // D2D1_SIZE_F size = m_curbm->GetSize(); //Bitmap 의 너비와 height -> float rect를 만들어서 범위 측정 
-   // Rect rect(pos.x, pos.y, size.width, size.height); //Float type Rect임 
-
-
-
-   // if (InRect(rect, CORD)) //마우스 좌표값이 Object 내부인 경우 
-   // {
-   //     if (msg.message == WM_LBUTTONDOWN) //그게 클릭이면
-   //     {
-   //         if (m_onClick)
-   //             m_onClick();
-   //         SetState(ButtonState::Pressed);
-   //     }
-   //     else if (msg.message == WM_MOUSEMOVE) //hovered 면 
-   //     {
-   //         SetState(ButtonState::Hover); //이에 대한 Bitmap 변경도 여기에 넣어도 될듯? 일단 냅둠 
-   //     }
-   // }
-
-   // else
-   // SetState(ButtonState::Normal); //범위 내에 없다면 Normal로 
+void ButtonComponent::SetInvisibleButton(int width, int height)
+{
+    m_isInvisible = true;
+    SetWidth(width);
+    SetHeight(height);
 }
 
 void ButtonComponent::SetCurrentBitmap(string Nm)

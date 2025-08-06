@@ -45,7 +45,10 @@ public:
 	float m_opacity = 1.0f;
 
 	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmap; 
+
+	void SetInvisibleButton(int width, int height);
 private:
+	bool m_isInvisible = false;
 	
 	ComPtr<ID2D1Bitmap1> m_curbm;
 

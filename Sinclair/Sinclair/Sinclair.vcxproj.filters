@@ -182,9 +182,6 @@
     <ClInclude Include="TextBank.h">
       <Filter>Bank</Filter>
     </ClInclude>
-    <ClInclude Include="TextComponent.h">
-      <Filter>Component</Filter>
-    </ClInclude>
     <ClInclude Include="GameManager.h">
       <Filter>Module</Filter>
     </ClInclude>
@@ -294,9 +291,6 @@
     </ClCompile>
     <ClCompile Include="TextBank.cpp">
       <Filter>Bank</Filter>
-    </ClCompile>
-    <ClCompile Include="TextComponent.cpp">
-      <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="GameManager.cpp">
       <Filter>Module</Filter>

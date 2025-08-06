@@ -1,8 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "Scene.h"
 #include <iostream>
 #include <map>
 #include <string>
+#include <Windows.h>
+
 class Scene_Outgame : public SceneStandard
 {
 		
@@ -11,32 +13,63 @@ public:
 		~Scene_Outgame();
 
 public:
-		virtual void Initalize()override; //SpriteAnimator ¸¦ ¿©±â¼­ ¸¸µé¾îµµ µÇÁö ¾ÊÀ»±î. ¸¸µé¾îÁö´Â ½ÃÁ¡Àº 
+		virtual void Initalize()override; //SpriteAnimator ë¥¼ ì—¬ê¸°ì„œ ë§Œë“¤ì–´ë„ ë˜ì§€ ì•Šì„ê¹Œ. ë§Œë“¤ì–´ì§€ëŠ” ì‹œì ì€ 
 		virtual void Clean()override;
-		//À§ µÑÀ» ÀÎÅÍÆäÀÌ½º·Î ³Ö´Â°Å´Â ÃëÇâ ¿µ¿ªÀÎµíÇÔ. 
+		//ìœ„ ë‘˜ì„ ì¸í„°í˜ì´ìŠ¤ë¡œ ë„£ëŠ”ê±°ëŠ” ì·¨í–¥ ì˜ì—­ì¸ë“¯í•¨. 
 
 		virtual void Update()override;
 		virtual void LogicUpdate(float delta)override;
 		virtual void Enter()override;
 
-		virtual void Exit() override; //ÇÏÀ§ Å¬·¡½º¿¡¼­ Ã³¸® 
+		virtual void Exit() override; //í•˜ìœ„ í´ë˜ìŠ¤ì—ì„œ ì²˜ë¦¬ 
 		virtual void Render()override;
-public:
+private:
 	void CreateObj();
 	std::string getRandomText();
 
+
+	void SetupCharacterAndBackground();
+	
+
+	enum State {
+		ì²˜ìŒì•„ì›ƒê²Œì„ = 80001,
+		ì„ íƒì§€ = 80002,
+		ì°½ê³ ì—ë“¤ì–´ê°ˆë•Œ = 80003,
+		ëª¨í—˜ë– ë‚˜ê¸°í´ë¦­ì‹œ = 80004
+
+	};
+
+	void ChangeState(State newState);
+
+
+	std::wstring StrToWstr(const std::string& source)
+	{
+		if (source.empty()) return std::wstring();
+
+		// CP_ACP: ì‹œìŠ¤í…œ ê¸°ë³¸ ì½”ë“œ í˜ì´ì§€ (í•œêµ­ì–´ Windows = CP949)
+		int size = MultiByteToWideChar(CP_ACP, 0, source.c_str(), -1, nullptr, 0);
+		if (size <= 0) return std::wstring();
+
+		std::wstring result(size - 1, 0);
+		MultiByteToWideChar(CP_ACP, 0, source.c_str(), -1, &result[0], size);
+		return result;
+	}
+	
 private:
 
-	int m_id;
+	State m_id = ì²˜ìŒì•„ì›ƒê²Œì„;
+	bool wasInGame = false;
 
-	std::multimap<int, std::string> outGameTextTable = {
-	{1, "´Ã ³ªµµ ¾ğÁ¨°¡´Â ¾Æ¹öÁöÃ³·³\n¸ğÇèÀ» ¶°³ª°í ½Í´Ù°í »ı°¢ÇØ¿Ô¾î."},
-	{1, "ÀÌÁ¦´Â ¶§°¡ µÈ °Í °°¾Æ.\nÇÏÁö¸¸¡¦ Àåºñ´Â ¾î¶±ÇÏÁö ?"},
-	{1, "ºĞ¸í ¾Æ¹öÁöµµ ÀÌÇØÇØÁÖ½Ç°Å¾ß.\n¾Æ¹öÁöÀÇ Ã¢°í¿¡ µé¾î°¡º¼±î ?"},
-	{2, "> Ã¢°í·Î ÀÌµ¿ÇÑ´Ù.\n> ¸ğÇèÀ» ¶°³­´Ù."},
-	{3, "Ã¢°í¿¡ µé¾î°¡½Ã°Ú½À´Ï±î?"},
-	{4, "¿©ÇàÀ» ¶°³ª½Ã°Ú½À´Ï±î?\n(ÁÖÀÇ.ÇÑ¹ø ¸ğÇèÀ» ¶°³ª¸é µÇµ¹¸± ¼ö ¾ø½À´Ï´Ù)"}
+	std::multimap<State, std::string> outGameTextTable = {
+	{ì²˜ìŒì•„ì›ƒê²Œì„, "ëŠ˜ ë‚˜ë„ ì–¸ì  ê°€ëŠ” ì•„ë²„ì§€ì²˜ëŸ¼\nëª¨í—˜ì„ ë– ë‚˜ê³  ì‹¶ë‹¤ê³  ìƒê°í•´ì™”ì–´."},
+	{ì²˜ìŒì•„ì›ƒê²Œì„, "ì´ì œëŠ” ë•Œê°€ ëœ ê²ƒ ê°™ì•„.\ní•˜ì§€ë§Œâ€¦ ì¥ë¹„ëŠ” ì–´ë–¡í•˜ì§€ ?"},
+	{ì²˜ìŒì•„ì›ƒê²Œì„, "ë¶„ëª… ì•„ë²„ì§€ë„ ì´í•´í•´ì£¼ì‹¤ê±°ì•¼.\nì•„ë²„ì§€ì˜ ì°½ê³ ì— ë“¤ì–´ê°€ë³¼ê¹Œ ?"},
+	{ì„ íƒì§€, "> ì°½ê³ ë¡œ ì´ë™í•œë‹¤.\n> ëª¨í—˜ì„ ë– ë‚œë‹¤."},
+	{ì°½ê³ ì—ë“¤ì–´ê°ˆë•Œ, "ì°½ê³ ì— ë“¤ì–´ê°€ì‹œê² ìŠµë‹ˆê¹Œ?"},
+	{ëª¨í—˜ë– ë‚˜ê¸°í´ë¦­ì‹œ, "ì—¬í–‰ì„ ë– ë‚˜ì‹œê² ìŠµë‹ˆê¹Œ?\n(ì£¼ì˜.í•œë²ˆ ëª¨í—˜ì„ ë– ë‚˜ë©´ ë˜ëŒë¦´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤)"}
 	};
+
+	std::string curText;
 
 };
 
