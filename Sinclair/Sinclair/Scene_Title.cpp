@@ -32,13 +32,6 @@ void Scene_Title::Enter()
 	// ResetObjectStates();
 	// PlayBGM();
 	Initalize();
-
-	//// °´Ã¼ ¹¹ÀÖ³ª, µð¹ö±â¿ë
-	//for (const auto& [Name, obj] : m_gameObjects)
-	//{
-	//	cout << Name << endl;
-	//}
-
 }
 
 void Scene_Title::Exit()

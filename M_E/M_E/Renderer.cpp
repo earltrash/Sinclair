@@ -137,6 +137,35 @@ void D2DRenderer::DrawMessage(const wchar_t* text, float left, float top, float 
         DWRITE_MEASURING_MODE_NATURAL);
 }
 
+void D2DRenderer::DrawMessageCenter(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color)
+{
+    if (nullptr == m_textBrush)
+    {
+        m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(color), &m_textBrush);
+    }
+
+    m_textBrush->SetColor(color);
+
+    // 가운데 정렬로 변경 
+    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+
+    D2D1_RECT_F layoutRect = D2D1::RectF(left, top, left + width, top + height);
+
+    m_d2dContext->DrawTextW(
+        text,
+        static_cast<UINT32>(wcslen(text)),
+        m_textFormat.Get(),
+        layoutRect,
+        m_textBrush.Get(),
+        D2D1_DRAW_TEXT_OPTIONS_NONE,
+        DWRITE_MEASURING_MODE_NATURAL);
+
+    // 다시 좌상단 정렬로 변경
+    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+}
+
 void D2DRenderer::SetTransform(const D2D1_MATRIX_3X2_F tm)
 {
     if (m_d2dContext) m_d2dContext->SetTransform(tm);
