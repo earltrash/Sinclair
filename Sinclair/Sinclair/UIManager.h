@@ -66,7 +66,7 @@ public:
                 //window->SetActivate(false);
 
 
-                window->SetActivate(true);
+               // window->SetActivate(true);
 
             }
 
@@ -74,7 +74,7 @@ public:
             m_allWindows.emplace(UIWindowType::EquipmentWindow, std::make_unique<EquipmentWindow>());
             if (auto* window = GetWindow(UIWindowType::EquipmentWindow))
             {
-                window->SetActivate(false);
+                window->SetActivate(true);
             }
 
             // StatsWindow
@@ -129,40 +129,56 @@ public:
     // m_activeWindowOrder 순서대로 Render 호출.
     void Render()
     {
-        for (UIWindowType type : m_activeWindowOrder)
+        /*for (UIWindowType type : m_activeWindowOrder)
         {
             if (auto* window = GetWindow(type))
             {
                 window->Render();
             }
-        }
+        }*/
+
+        m_allWindows.find(UIWindowType::InventoryWindow)->second->Render();
+      m_allWindows.find(UIWindowType::EquipmentWindow)->second->Render();
+
+
     }
     // InputManager 이벤트 받아서 젤 위의 창부터 순서대로 이벤트 전달하고 성공 실패 여부를 통해서 계속 메세지 전달해보기.
 
     void OnInput(const MSG& msg) //MSG -> CLICK DOUBCLICK UP DOWN 
     {
-        // 1. 모든 창이 꺼져있는지 먼저 체크
-        if (m_activeWindowOrder.empty())
-        {
-            // 바로 씬 오브젝트들에게 입력 전달
-            HandleSceneObjectInput(msg);
-            return;
-        }
+        //// 1. 모든 창이 꺼져있는지 먼저 체크
+        //if (m_activeWindowOrder.empty())
+        //{
+        //    // 바로 씬 오브젝트들에게 입력 전달
+        //    HandleSceneObjectInput(msg);
+        //    return;
+        //}
 
-        // 2. 창이 있으면 역순으로 순회 (최상단부터)
-        for (auto it = m_activeWindowOrder.rbegin(); it != m_activeWindowOrder.rend(); ++it)
-        {
-            if (auto* window = GetWindow(*it))
-            {
-                if (window->HandleInput(msg))
-                {
-                    return; // 입력이 처리되면 종료
-                }
-            }
-        }
+        //// 2. 창이 있으면 역순으로 순회 (최상단부터)
+        //for (auto it = m_activeWindowOrder.rbegin(); it != m_activeWindowOrder.rend(); ++it)
+        //{
+        //    if (auto* window = GetWindow(*it))
+        //    {
+        //        if (window->HandleInput(msg))
+        //        {
+        //            return; // 입력이 처리되면 종료
+        //        }
+        //    }
+        //}
+
+
+       /* Vec2 CORD = { F_GET_X_LPARAM(msg.lParam), F_GET_X_LPARAM(msg.lParam) };
+        std::cout << "최초의 X" << CORD.x << "최초의 Y" << CORD.y << endl;*/
+
+       
+        
+
+        m_allWindows.find(UIWindowType::InventoryWindow)->second->HandleInput(msg);
+        m_allWindows.find(UIWindowType::EquipmentWindow)->second->HandleInput(msg);
+
 
         // 3. 모든 창이 처리 안했으면 씬 오브젝트에 전달
-        HandleSceneObjectInput(msg);
+       // HandleSceneObjectInput(msg);
     }
 
     // 윈도우타입의 창을 키거나 끌거임.

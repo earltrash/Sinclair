@@ -16,7 +16,7 @@ public:
 		EquipmentWindow()
 				: UIWindow(UIWindowType::EquipmentWindow, { 50, 50 }, { 524, 766 })
 		{
-				m_inventory = make_unique<Inventory>();
+				//m_inventory = make_unique<Inventory>();
 				// 장비 슬롯 위치 및 크기 초기화
 				m_slotPositions[Wearable_part::Glove] = { m_position.x + 222, m_position.y + 138 }; // 1번칸
 				m_slotSizes[Wearable_part::Glove] = { 74, 74 };
@@ -36,13 +36,14 @@ public:
 				m_slotPositions[Wearable_part::Shoes] = { m_position.x + 74, m_position.y + 365 }; // 6번칸
 				m_slotSizes[Wearable_part::Shoes] = { 74, 74 };
 
-				m_slotPositions[Wearable_part::Weapon] = { m_position.x + 74, m_position.y + 214 };	// 7번칸
+				m_slotPositions[Wearable_part::Weapon] = { m_position.x + 370, m_position.y + 214 };	// 7번칸
 				m_slotSizes[Wearable_part::Weapon] = { 74, 74 };
 
-				m_slotPositions[Wearable_part::Neckless] = { m_position.x + 370, m_position.y + 214 }; // 8번칸
+				m_slotPositions[Wearable_part::Neckless] = { m_position.x + 370, m_position.y + 365 }; // 8번칸
 				m_slotSizes[Wearable_part::Neckless] = { 74, 74 };
 
-				m_slotPositions[Wearable_part::Cape] = { m_position.x + 370, m_position.y + 365 }; // 9번칸
+				m_slotPositions[Wearable_part::Cape] = { m_position.x + 370, m_position.y + 593 }; // 9번칸
+
 				m_slotSizes[Wearable_part::Cape] = { 74, 74 };
 
 				UI_Renderer* uiRenderer = AddComponent<UI_Renderer>();
@@ -50,22 +51,23 @@ public:
 				{
 						// 필요한 UI 비트맵들을 ResourceManager에서 로드하여 UI_Renderer에 설정
 						// ResourceManager가 해당 키로 비트맵을 로드
-						uiRenderer->SetBitmap("equipment_window_bg", ResourceManager::Get().GetTexture("equipment_window_bg"));
-						uiRenderer->SetBitmap("title_bar_bg", ResourceManager::Get().GetTexture("title_bar_bg"));
-						uiRenderer->SetBitmap("close_button", ResourceManager::Get().GetTexture("close_button"));
-						uiRenderer->SetBitmap("close_button_hover", ResourceManager::Get().GetTexture("close_button_hover"));
-						uiRenderer->SetBitmap("empty_slot", ResourceManager::Get().GetTexture("empty_slot"));
+						uiRenderer->SetBitmap("equipment_window_bg", ResourceManager::Get().GetTexture("EquipmentWindowBg"));
+						//uiRenderer->SetBitmap("title_bar_bg", ResourceManager::Get().GetTexture("titlebarbg"));
+						uiRenderer->SetBitmap("close_button", ResourceManager::Get().GetTexture("CloseButton"));
+						uiRenderer->SetBitmap("close_button_hover", ResourceManager::Get().GetTexture("CloseButton"));
+						uiRenderer->SetBitmap("empty_slot", ResourceManager::Get().GetTexture("SlotNormal"));
 
 						// 슬롯 아이콘 비트맵 로드
-						uiRenderer->SetBitmap("icon_helmet_slot", ResourceManager::Get().GetTexture("icon_helmet_slot"));
-						uiRenderer->SetBitmap("icon_weapon_slot", ResourceManager::Get().GetTexture("icon_weapon_slot"));
-						uiRenderer->SetBitmap("icon_armor_slot", ResourceManager::Get().GetTexture("icon_armor_slot"));
-						uiRenderer->SetBitmap("icon_pants_slot", ResourceManager::Get().GetTexture("icon_pants_slot"));
-						uiRenderer->SetBitmap("icon_glove_slot", ResourceManager::Get().GetTexture("icon_glove_slot"));
-						uiRenderer->SetBitmap("icon_shoes_slot", ResourceManager::Get().GetTexture("icon_shoes_slot"));
-						uiRenderer->SetBitmap("icon_necklace_slot", ResourceManager::Get().GetTexture("icon_necklace_slot"));
-						uiRenderer->SetBitmap("icon_earring_slot", ResourceManager::Get().GetTexture("icon_earring_slot"));
-						uiRenderer->SetBitmap("icon_cape_slot", ResourceManager::Get().GetTexture("icon_cape_slot"));
+						uiRenderer->SetBitmap("icon_helmet_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_weapon_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_armor_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_pants_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_glove_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_shoes_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_necklace_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_earring_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+						uiRenderer->SetBitmap("icon_cape_slot", ResourceManager::Get().GetTexture("SlotNormal"));
+
 				}
 		}
 
@@ -109,6 +111,6 @@ private:
 		std::unordered_map<Wearable_part, Vec2> m_slotPositions;
 		std::unordered_map<Wearable_part, Vec2> m_slotSizes;
 
-		unique_ptr<Inventory> m_inventory;
+		//unique_ptr<Inventory> m_inventory;
 };
 

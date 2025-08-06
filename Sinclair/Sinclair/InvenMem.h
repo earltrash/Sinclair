@@ -4,6 +4,8 @@
 #include "SimpleMathHelper.h"
 #include "Item.h"
 
+#include "Renderer.h"
+
 class ResourceManager;
 
 using Vec2 = MYHelper::Vector2F;
@@ -26,7 +28,12 @@ struct UIBitmap
     Vec2 size;
     float opacity;
 
-    UIBitmap() : bitmap(nullptr), opacity(1.0f) {}
+    UIBitmap() : bitmap(nullptr),
+        srcRect{ 0,0,0,0 },
+        position{ 0,0 },
+        size{ 0,0 },
+        opacity(1.0f) {}
+
 };
 
 template <class T>
@@ -67,7 +74,7 @@ struct ItemInstance
     std::string id;
     int count;
 
-    ItemInstance(std::string id = 0, int cnt = 0);
+    ItemInstance(std::string id = "", int cnt = 0);
     bool IsEmpty() const;
 };
 

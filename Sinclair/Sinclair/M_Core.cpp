@@ -77,7 +77,10 @@ void M_Core::Update()
 
 void M_Core::Render()
 {
-    m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
+   // m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
+    D2DRenderer::Get().RenderBegin();
+    UIManager::Get().Render();
+    D2DRenderer::Get().RenderEnd();
 
 }
 
@@ -93,6 +96,7 @@ void M_Core::ModuleClean()
     SceneManager::Get().Clean();
     InputManager::Get().Clean();
     ResourceManager::Get().Clean();
+
 }
 
 bool M_Core::ComInit()  //DX11 기준 
@@ -124,7 +128,7 @@ bool M_Core::ModuleInit()
     m_Scene_map = make_shared<unordered_map<string, shared_ptr<SceneStandard>>>();  //Core가 UPdate로 돌려야 하니
     SceneManager::Get().Initalize(m_Scene_map); //받은 map 멤버로 시작 
 
-   // UIManager::Get().Initialize(); //UI 들 생성하기. 
+    UIManager::Get().Initialize(); //UI 들 생성하기. 
 
 
     m_timer = make_unique<GameTimer>();

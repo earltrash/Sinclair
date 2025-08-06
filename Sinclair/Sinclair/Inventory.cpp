@@ -4,16 +4,20 @@
 #
 
 //: UI_Object(MWP) //생성자로 영역은 일단 설정함 (Inven 자기 영역 말임)
-Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 0,0 }, Vec2{ 1097,766 }) 
+Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 0,0 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
 {
 
-    m_bound = { 0,0,1097,766 }; // 고정 
+    m_bound = { 0,0,1208,825 }; // 초기 위치  
 
     windowPosition = { m_bound.x,m_bound.y };
 
     InitializeRegions();
+    std::cout << "[Inventory] Regions 초기화 완료" << std::endl;
     LoadUIBitmaps(); //멤버로 갖고 있는 닫기랑 윗 부분 (이건 Inven이랑 같이할 가능성도 있음) 
+    std::cout << "[Inventory] UI 비트맵 로딩 완료" << std::endl;
+
     InitializeSlots();
+    std::cout << "[Inventory] 슬롯 초기화 완료" << std::endl; // ← 여기 안 나오면 그 안에서 터진 거
 
     LoadItemDatabase(Need_Moment::Gen_2);
     PackItem();
@@ -34,13 +38,13 @@ void Inventory::InitializeRegions()
 {
     regions.resize(3); // 3개의 영역 (4x8, 4x8, 4x8)
 
-    //타이틀 바 영역
-    titleBarBounds = Rect(m_bound.x, m_bound.y, m_bound.width, 42.0f);
+    //타이틀 바 영역, 위치만 존재한다고 생각하셈 
+    titleBarBounds = Rect(m_bound.x, m_bound.y, m_bound.width, 42.0f); //7+35
 
-    //닫기 버튼 영역
-    float closeButtonSize = 27.0f;
+    //닫기 버튼 영역 //86
+    float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
-        windowPosition.x + m_bound.width - (closeButtonSize +14),
+        windowPosition.x + m_bound.width - (closeButtonSize + 59), //14
         windowPosition.y + 7,
         closeButtonSize,
         closeButtonSize);
@@ -59,6 +63,8 @@ void Inventory::InitializeRegions()
     closeButton.size = Vec2(closeButtonBounds.width, closeButtonBounds.height);
     closeButton.srcRect = D2D1::RectF(0, 0, 27, 27); // 닫기 버튼 이미지 크기
 
+    TitleBar.srcRect = D2D1::RectF(m_bound.x, m_bound.y, m_bound.width, 42.0f);
+
     float slotSize = 74.0f;
     float padding_x = 13.0f;
     float padding_y = 12.0f;
@@ -67,8 +73,8 @@ void Inventory::InitializeRegions()
     float totalSlotDimension_y = slotSize + padding_y;
 
     // windowBounds의 내부 영역을 기준으로 배치
-    float currentRegionX = m_bound.x + 23.0f; // 윈도우 좌측 여백
-
+    float currentRegionX = m_bound.x + 68.0f; // 윈도우 좌측 여백
+    RegionOffset.push_back({ currentRegionX , m_bound.y});
     // Region 0: 기본 해금 영역 (4x8)
     regions[0].id = 0;
     regions[0].isEnabled = true;
@@ -79,7 +85,8 @@ void Inventory::InitializeRegions()
         regions[0].gridSize.x * totalSlotDimension_x,
         regions[0].gridSize.y * totalSlotDimension_y
     );
-    currentRegionX += (regions[0].bounds.width) + 23.0f; // 다음 영역 시작 X
+    currentRegionX += (regions[0].bounds.width) + 24.0f ; // 다음 영역 시작 X
+    RegionOffset.push_back({ currentRegionX, m_bound.y });
 
     // Region 1: 중간 잠금 영역 (4x8)
     regions[1].id = 1;
@@ -91,7 +98,8 @@ void Inventory::InitializeRegions()
         regions[1].gridSize.x * totalSlotDimension_x,
         regions[1].gridSize.y * totalSlotDimension_y
     );
-    currentRegionX += regions[1].bounds.width + 15.0f;
+    currentRegionX += regions[1].bounds.width + 24.0f ;
+    RegionOffset.push_back({ currentRegionX, m_bound.y });
 
     // Region 2: 오른쪽 잠금 영역 (4x8)
     regions[2].id = 2;
@@ -211,9 +219,11 @@ void Inventory::Render()
             srcRect,
             windowBackground.opacity);
     }
+    //std::cout << " slot.windowBackground:Opacity" << windowBackground.opacity << endl;
+
 
     // 2. 타이틀바 및 닫기 버튼 렌더링
-    RenderTitleBar();
+   // RenderTitleBar();
     RenderCloseButton();
 
     // 3. 모든 슬롯 렌더링
@@ -232,7 +242,7 @@ void Inventory::Render()
         );
 
         D2DRenderer::Get().DrawBitmap(static_cast<ID2D1Bitmap1*>(dragState.dragBitmap.bitmap),
-            dragDestRect, dragState.dragBitmap.srcRect, 0.8f);
+            dragDestRect, dragState.dragBitmap.srcRect, 1.0f);
     }
 
     // 5. 툴팁 렌더링 (가장 마지막에 렌더링하여 다른 UI 위에 표시)
@@ -257,7 +267,10 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
     {
         float deltaX = mousePos.x - dragStartMousePos.x;
         float deltaY = mousePos.y - dragStartMousePos.y;
+
         windowPosition = Vec2(dragStartWindowPos.x + deltaX, dragStartWindowPos.y + deltaY);
+
+        m_position = Vec2(dragStartWindowPos.x + deltaX, dragStartWindowPos.y + deltaY); //부모한테 넘겨줄 값. -> 사실 
 
         // 윈도우 바운드, 타이틀바, 닫기 버튼 바운드 업데이트
         m_bound.x = windowPosition.x;
@@ -320,7 +333,7 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
     }
 }
 
-bool Inventory::HandleMouseDown(Vec2 mousePos)
+bool Inventory::HandleMouseDown(Vec2 mousePos) //어차피 Inven 위치 내에 있어야 이게 처리가 되는 거니깐 
 {
     if (!m_isActive) return false;
 
@@ -329,6 +342,9 @@ bool Inventory::HandleMouseDown(Vec2 mousePos)
     {
         m_isActive = false; // 창 비활성화
        // showTooltip = false; // 툴팁 숨김
+        std::cout << "닫기 버튼 눌렸음" << isWindowDragging << endl;
+
+
         return true;
     }
 
@@ -337,35 +353,54 @@ bool Inventory::HandleMouseDown(Vec2 mousePos)
     {
         isWindowDragging = true;
         dragStartMousePos = mousePos;
-        dragStartWindowPos = windowPosition;
+
+        std::cout<<"타이틀 바 잡고 있음" << isWindowDragging << endl;
+
+        dragStartWindowPos = windowPosition; //이 경우에 밑에 있는 애들도 업데이트 되어야 함 
+
         return true; // 타이틀바 드래그 시작 시 다른 클릭 이벤트는 무시
     }
 
     // 슬롯 드래그 시작 (기존 로직)
     InventorySlot* slot = GetSlotAt(mousePos); // 현재 창 위치를 고려하여 슬롯 가져오기
-    if (slot && !slot->IsEmpty() && slot->isEnabled)
+    if (slot != nullptr)
     {
-       dragState.isDragging = true;
-        dragState.sourceSlot = slot;
-        dragState.draggedItem = slot->item;
-        dragState.mousePos = mousePos;
-
-        const Item* itemData = m_itemDatabase.GetItemData(slot->item.id); //
-        if (itemData)
+        if (slot && !slot->IsEmpty() && slot->isEnabled)
         {
-            //Itembank로부터 Item id를 받아서 해당 item에 해당하는 atlas의 영역을 보내 줘야 함. 
-            dragState.dragBitmap.bitmap = ResourceManager::Get().Get_ItemBank().GetItemClip(slot->item.id).atlas.Get(); //id -> database에서 / Itembank에서 아틀라스 받아와야 함. 
-            dragState.dragBitmap.srcRect = ResourceManager::Get().Get_ItemBank().GetItemClip(slot->item.id).srcRect;
-            dragState.dragBitmap.size = Vec2(48, 48);
-        }
+            dragState.isDragging = true;
+            dragState.sourceSlot = slot;
 
-        slot->Clear();
-        slot->UpdateItemBitmap(&controller, &m_itemDatabase);
+
+            dragState.draggedItem = slot->item;
+            dragState.mousePos = mousePos;
+
+
+            // std::cout<< "x: " << dragState.mousePos.x  << "y: " << dragState.mousePos.y << endl;
+
+            std::cout << "아이템 id 가져오기: " << slot->item.id << "아이템 갯수도 가져올 수 있음: " << slot->item.count << endl;
+
+
+            const Item* itemData = m_itemDatabase.GetItemData(slot->item.id); //
+            if (itemData)
+            {
+                //Itembank로부터 Item id를 받아서 해당 item에 해당하는 atlas의 영역을 보내 줘야 함. 
+                dragState.dragBitmap.bitmap = ResourceManager::Get().Get_ItemBank().GetItemClip(slot->item.id).atlas.Get(); //id -> database에서 / Itembank에서 아틀라스 받아와야 함. 
+                dragState.dragBitmap.srcRect = ResourceManager::Get().Get_ItemBank().GetItemClip(slot->item.id).srcRect;
+                dragState.dragBitmap.size = Vec2(48, 48);
+            }
+
+            slot->Clear();
+
+            slot->UpdateItemBitmap(&controller, &m_itemDatabase);
+        }
     }
+   
+
+
     return true;
 }
 
-bool Inventory::HandleMouseUp(Vec2 mousePos)
+bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해야 함. 누가 시작 했는지 알아야 할 듯 
 {
     if (!m_isActive) return false;
 
@@ -385,7 +420,8 @@ bool Inventory::HandleMouseUp(Vec2 mousePos)
     if (targetSlot && targetSlot->isEnabled)
     {
         // 스택 가능한 아이템이라면 합치기 시도
-        const Item* draggedItemData = m_itemDatabase.GetItemData(dragState.draggedItem.id);
+         Item* draggedItemData = m_itemDatabase.GetItemData(dragState.draggedItem.id);
+
         if (draggedItemData && draggedItemData->IsStackable() &&
             targetSlot->item.id == dragState.draggedItem.id &&
             (targetSlot->item.count + dragState.draggedItem.count) <= draggedItemData->maxCount)
@@ -394,6 +430,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos)
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
             placed = true;
         }
+
         else if (targetSlot->IsEmpty())
         {
             // 빈 슬롯에 드롭
@@ -401,10 +438,60 @@ bool Inventory::HandleMouseUp(Vec2 mousePos)
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
             placed = true;
         }
-        else
+
+        else if (targetSlot->isEnabled && !targetSlot->IsEmpty()) //swap -> bitmap / bound / item 
         {
-            // 다른 아이템이 있는 슬롯에 드롭 (교환 로직 추가 가능)
-            // 현재는 그냥 원래 위치로 되돌림
+#pragma region Temp
+            // ItemInstance tempItem = targetSlot->item;
+           // UIBitmap tempBitmap = targetSlot->itemBitmap;
+           // Rect tempRect = targetSlot->bounds;
+
+           ///* targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
+           // dragState.sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);*/
+
+           // targetSlot->item = dragState.draggedItem;
+           // targetSlot->itemBitmap = dragState.dragBitmap;
+
+           // dragState.sourceSlot->item = tempItem;
+           // dragState.sourceSlot->itemBitmap = tempBitmap;
+
+           // targetSlot->bounds = dragState.sourceSlot->bounds;
+           // dragState.sourceSlot->bounds = tempRect;
+
+
+           // Rect tempBounds = targetSlot->bounds;
+
+           // // bounds swap
+           // targetSlot->bounds = dragState.sourceSlot->bounds;
+           // dragState.sourceSlot->bounds = tempBounds;
+
+           // // 이후 itemBitmap 위치 재설정
+           // targetSlot->itemBitmap.position = {
+           //     targetSlot->bounds.x + SLOT_PADDING,
+           //     targetSlot->bounds.y + SLOT_PADDING
+           // };
+           // targetSlot->itemBitmap.size = {
+           //     targetSlot->bounds.width - SLOT_PADDING * 2,
+           //     targetSlot->bounds.height - SLOT_PADDING * 2
+           // };
+
+           // dragState.sourceSlot->itemBitmap.position = {
+           //     dragState.sourceSlot->bounds.x + SLOT_PADDING,
+           //     dragState.sourceSlot->bounds.y + SLOT_PADDING
+           // };
+           // dragState.sourceSlot->itemBitmap.size = {
+           //     dragState.sourceSlot->bounds.width - SLOT_PADDING * 2,
+           //     dragState.sourceSlot->bounds.height - SLOT_PADDING * 2
+           // };
+#pragma endregion
+            ItemInstance tempItem = targetSlot->item;
+
+            targetSlot->item = dragState.draggedItem;
+            dragState.sourceSlot->item = tempItem;
+
+            targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
+            dragState.sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
+            placed = true;
         }
     }
 
@@ -457,8 +544,11 @@ void Inventory::RenderTitleBar()
 
         D2D1_RECT_F rect = titleBarBounds.ToD2DRect();
         context->FillRectangle(rect, darkBrush.Get());
-    }
 
+
+        D2DRenderer::Get().DrawBitmap(static_cast<ID2D1Bitmap1*>(TitleBar.bitmap), rect, TitleBar.srcRect, 1.0f);
+
+    }
     // 2. 텍스트 출력
     auto textBrush = renderer.GetTBrush();
     auto textFormat = renderer.GetTFormat();
@@ -485,13 +575,14 @@ void Inventory::RenderCloseButton()
     D2D1_RECT_F destRect = closeButtonBounds.ToD2DRect();
     D2D1_RECT_F srcRect = closeButton.srcRect;
     D2DRenderer::Get().DrawBitmap(static_cast<ID2D1Bitmap1*>(closeButton.bitmap), destRect, srcRect, closeButton.opacity);
+   // std::cout << "closeButton:Opacity" << closeButton.opacity << endl;
 }
 
 void Inventory::RenderSlot(const InventorySlot& slot)
 {
     if (slot.backgroundBitmap.bitmap)
     {
-        std::cout << "배경 비트맵 렌더링 시도" << std::endl;
+        //std::cout << "배경 비트맵 렌더링 시도" << std::endl;
 
         D2D1_RECT_F destRect = slot.bounds.ToD2DRect();
         D2D1_RECT_F srcRect = slot.backgroundBitmap.srcRect;
@@ -501,14 +592,13 @@ void Inventory::RenderSlot(const InventorySlot& slot)
             destRect,
             srcRect,
             slot.backgroundBitmap.opacity);
-
-        std::cout << "배경 비트맵 렌더링 완료" << std::endl;
+     
     }
 
     // 비활성화된 슬롯은 빈slot이미지 그림.
     if (!slot.isEnabled)
     {
-        std::cout << "비활성화된 슬롯이므로 배경만 렌더링하고 종료" << std::endl;
+        //std::cout << "비활성화된 슬롯이므로 배경만 렌더링하고 종료" << std::endl;
         return;
     }
 
@@ -528,7 +618,10 @@ void Inventory::RenderSlot(const InventorySlot& slot)
             itemDestRect,
             itemSrcRect,
             slot.itemBitmap.opacity
+
         );
+      //  std::cout << " slot.itemBitmap:Opacity" << slot.itemBitmap.opacity << endl;
+
 
         // 3. 아이템 개수 텍스트
         if (slot.item.count >1)
@@ -552,14 +645,19 @@ void Inventory::RenderSlot(const InventorySlot& slot)
     }
 }
 
-void Inventory::UpdateSlotPositions()
+void Inventory::UpdateSlotPositions() // -> widndow 기준으로 되고 있지 않아요 
 {
     float slotSize = 74.0f;
     float padding_x = 13.0f;
     float padding_y = 12.0f;
 
-    float totalSlotDimension_x = slotSize + padding_x;
-    float totalSlotDimension_y = slotSize + padding_y;
+   /* float totalSlotDimension_x = windowPosition.x + slotSize + padding_x;
+    float totalSlotDimension_y = windowPosition.y+ slotSize + padding_y;*/
+
+    float totalSlotDimension_x =   slotSize + padding_x;
+    float totalSlotDimension_y =  slotSize + padding_y;
+
+
 
     for (int regionId = 0; regionId < regions.size(); ++regionId)
     {
@@ -577,8 +675,14 @@ void Inventory::UpdateSlotPositions()
                     InventorySlot& slot = slots[key];
 
                     // 슬롯 위치는 해당 Region의 bounds를 기준으로 계산 (regions.bounds는 InitializeRegions에서 windowPosition에 따라 이미 결정됨)
-                    float slotX = region.bounds.x + x * totalSlotDimension_x;
-                    float slotY = region.bounds.y + y * totalSlotDimension_y;
+                    //float slotX = region.bounds.x + x * totalSlotDimension_x;
+                    //float slotY = region.bounds.y + y * totalSlotDimension_y;
+
+                    float slotX = m_bound.x + RegionOffset[regionId].x + x * totalSlotDimension_x;
+                    float slotY = m_bound.y + RegionOffset[regionId].y + y * totalSlotDimension_y+ 64.0f;
+
+                    
+
 
                     slot.SetBounds(Rect(slotX, slotY, slotSize, slotSize));
                 }
@@ -592,6 +696,7 @@ void Inventory::PackItem() //현재 database에 있는 모든 Item을 Slot에 넣어줌
 
     for (const auto& [Id, Item] : m_itemDatabase.GetMap())
     {
+        //std::cout << Item->m_data.id << endl;
         AddItem(Item->m_data.id, 1);
     }
 
@@ -610,20 +715,21 @@ void Inventory::LoadUIBitmaps()
 {
     
 
-    windowBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("InvenBG").Get();
-    tooltipBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("Slotdisabled").Get(); //임의
+    windowBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("InvenBg").Get();
+    tooltipBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("SlotDisabled").Get(); //임의
     tooltipBackground.srcRect = D2D1::RectF(0, 0, 234, 345); // 예시. -> Tooltip 
-    closeButton.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("InvenClose").Get();
-    
+
+    closeButton.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("CloseButton").Get();
+    //TitleBar.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("TitleBar").Get();
 
     controller.bitmaps.emplace("slot_disabled",
-        ResourceManager::Get().Get_UIBank().Get_Image("Slotdisabled").Get());
+        ResourceManager::Get().Get_UIBank().Get_Image("SlotDisabled").Get());
     controller.bitmaps.emplace("slot_hover",
-        ResourceManager::Get().Get_UIBank().Get_Image("slothover").Get());
+        ResourceManager::Get().Get_UIBank().Get_Image("SlotNormal").Get());
     controller.bitmaps.emplace("slot_selected",
-        ResourceManager::Get().Get_UIBank().Get_Image("slotselected").Get());
+        ResourceManager::Get().Get_UIBank().Get_Image("SlotNormal").Get());
     controller.bitmaps.emplace("slot_normal",
-        ResourceManager::Get().Get_UIBank().Get_Image("slotnormal").Get());
+        ResourceManager::Get().Get_UIBank().Get_Image("SlotNormal").Get());
 
 }
 

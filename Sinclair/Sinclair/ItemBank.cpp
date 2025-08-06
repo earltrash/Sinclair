@@ -10,11 +10,12 @@ namespace fs = std::filesystem;
 using json = nlohmann::json;
 
 
-void ItemBank::LoadItemStatus(const string& path) {
+void ItemBank::LoadItemStatus(const string& path) { //½ºÅÝ JSON - Item_S
 
     namespace fs = std::filesystem;
     fs::path base = fs::current_path();
-    fs::path resourceFolder = base.parent_path() / path;
+    fs::path resourceFolder = base.parent_path() / "Item" / path;
+    int times = 0;
 
     for (const auto& entry : fs::recursive_directory_iterator(resourceFolder, fs::directory_options::skip_permission_denied)) {
         if (!entry.is_regular_file() || entry.path().extension() != ".json")
@@ -53,8 +54,9 @@ void ItemBank::LoadItemStatus(const string& path) {
                 StringToNM(moment)
             };
 
-            std::unique_ptr<Item> item;
 
+            std::unique_ptr<Item> item;
+            times++;
             if (type == "Potion")
                 item = std::make_unique<Potion>(common, itemData);
             else if (type == "Wearable")
@@ -70,13 +72,16 @@ void ItemBank::LoadItemStatus(const string& path) {
             m_S_Item.emplace(item->m_data.Momnet, std::move(item));
         }
     }
+
+  //  std::cout << "¾ÆÀÌÅÛ Å©±â´Â?" << " " << m_S_Item.size() << std::endl;
 }
 
-void ItemBank::LoadItemRect(const string& path) //Á¤È®È÷´Â Rect¸¦ ÀúÀåÇÑ °ÍÀÓ. //Atlas °æ·Î¸¦ ¾î¶»°Ô ÇØ¾ß ÇÒ±î ÀÌ°Ç °í¹ÎÁ» ÇØºÁ¾ß ÇÒ µí.
+void ItemBank::LoadItemRect(const string& path) //Json°ú Png´Â ÀÌ¸§ÀÌ °°°í °°Àº °æ·Î¿¡ µÎ¾î¾ß ÇÔ.
 {
     namespace fs = std::filesystem;
     fs::path base = fs::current_path();
-    fs::path resourceFolder = base.parent_path() / path;
+    fs::path resourceFolder = base.parent_path() /"Item" / path;
+    int times = 0;
 
     for (const auto& entry : fs::recursive_directory_iterator(resourceFolder, fs::directory_options::skip_permission_denied)) {
         if (!entry.is_regular_file() || entry.path().extension() != ".json")
@@ -117,11 +122,20 @@ void ItemBank::LoadItemRect(const string& path) //Á¤È®È÷´Â Rect¸¦ ÀúÀåÇÑ °ÍÀÓ. /
 
             D2D_RECT_F srcRect = D2D1::RectF(x, y, x + w, y + h);
 
-            std::string atlasName = entry.path().stem().string();
+
+
+            std::filesystem::path atlasPath = entry.path();
+            atlasPath.replace_extension(".png");
            
-            m_Atlas.emplace(name, ItemBitmapClip{ GetItemAtlas(atlasName) ,srcRect}); // name ¡æ rect ÀúÀå
+            m_Atlas.emplace(name, ItemBitmapClip{ GetItemAtlas(atlasPath.string()) ,srcRect}); // name ¡æ rect ÀúÀå
+            //std::cout << name << endl;
+            times++;
         }
     }
+
+  //  std::cout << "¸ÅÇÎµÈ ¿ÀºêÁ§Æ® °¹¼ö"<<" " << m_Atlas.size() << endl;
+   // std::cout << "¾ÆÆ²¶ó½º Á¾·ùÀÇ °³¼ö" << " " << m_LoadedAtlases.size() << endl;
+   // std::cout << times << endl;;
 }
 
 ComPtr<ID2D1Bitmap1> ItemBank::GetItemAtlas(const string& path)
@@ -180,6 +194,13 @@ unique_ptr<Item> ItemBank::Get_Item_Status(string id) //ÇÕ¼º¿¡¼­ ¾µ °Å¸é ÇÊ¿ä. È
         return result;
     }
 
+}
+
+void ItemBank::clean()
+{
+    m_S_Item.clear();
+    m_Atlas.clear();
+    m_LoadedAtlases.clear();
 }
 
 

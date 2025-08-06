@@ -11,7 +11,7 @@ using Vec2 = MYHelper::Vector2F;
 
 //얘 어따가 옮길까 
 
-
+constexpr float SLOT_PADDING = 4.0f;
 
 
 class Inventory : public UIWindow
@@ -48,7 +48,7 @@ public:
 
 
 
-     InventorySlot* GetSlotAt(const Vec2& pos);
+    InventorySlot* GetSlotAt(const Vec2& pos);
     void RenderTitleBar();
     void RenderCloseButton();
     void RenderSlot(const InventorySlot& slot);
@@ -68,23 +68,26 @@ private:
     UIBitmap windowBackground;//Window Bitmap;
     UIBitmap tooltipBackground;//tooltip image;
     UIBitmap closeButton;
+    UIBitmap TitleBar;
 
 
     Rect titleBarBounds; // 타이틀바 영역
     Rect closeButtonBounds; // 닫기 버튼 영역
 
     Vec2 windowPosition{ 0,0 };
-    bool isWindowDragging;
-    Vec2 dragStartMousePos;
-    Vec2 dragStartWindowPos;
+    bool isWindowDragging = false;
+    Vec2 dragStartMousePos{ 0,0 };
+    Vec2 dragStartWindowPos{ 0,0 };
 
 
 
     std::string currentHoveredItemName; //HoveredItemName
     std::string currentHoveredItemDescription; //현 아이템 설명글.
-    Vec2 tooltipPosition;
+    Vec2 tooltipPosition{ 0,0 };
     DragState dragState;
     int currentHoveredItemCount;
+
+    vector<Vec2>RegionOffset;
    
 };
 
