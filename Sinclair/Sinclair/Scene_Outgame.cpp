@@ -5,20 +5,22 @@
 #include "MouseListenerComponent.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
+#include "GameManager.h"
 #include "Renderer.h"
 
 // 랜덤
 #include <random>
+#include <iterator>
 
 Scene_Outgame::Scene_Outgame(string name)
 {
 		m_name = name;
-		Initalize();
+
 }
 
 Scene_Outgame::~Scene_Outgame()
 {
-	Clean();
+
 	
 }
 
@@ -47,33 +49,28 @@ void Scene_Outgame::LogicUpdate(float delta)
 
 void Scene_Outgame::Enter()
 {
+	Initalize();
+
 	auto bg = m_gameObjects["Background"s]->GetComponent<BackgroundComponent>();
 	bg->SetCurrentBitmap("Background");
 
-	// 게임매니저가 아직 없으므로 임시로 싱클레어 n세 랜덤
+	// 키로 이미지 설정 하는 과정 "Sinclair + GameManager::Get().curGen" = Sinclair3? 2? 4?
 	auto ch = m_gameObjects["Character"s]->GetComponent<BackgroundComponent>();
-	
-	std::vector<int> numbers = { 2, 3, 4 };
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dis(0, numbers.size() - 1);
-
 	std::string result = "Sinclair";
-	result += std::to_string(numbers[dis(gen)]);
-	//ch->SetCurrentBitmap("Sinclair3");
+	result += std::to_string(GameManager::Get().curGen);
 	ch->SetCurrentBitmap(result);
 }
 
 void Scene_Outgame::Exit()
 {
-		
+	Clean();
 }
 
 void Scene_Outgame::Render()
 {
 	// 멀티맵은 키(Name)기준으로 정렬 된다. 
 	// 즉 background 배경을 먼저 그리게 됨
-	D2DRenderer::Get().RenderBegin();
+	
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
 
@@ -127,7 +124,7 @@ void Scene_Outgame::Render()
 	D2DRenderer::Get().DrawMessage(L"싱클레어 N세 ", 503.f, 805.f, 1300.f, 1000.f, D2D1::ColorF::BlueViolet);
 	D2DRenderer::Get().DrawMessage(L"창고로 이동할까?\n(수락 시 창고로 이동합니다.)", 503.f, 869.f, 1300.f, 1000.f, D2D1::ColorF::BlueViolet);
 
-	D2DRenderer::Get().RenderEnd();
+	
 }
 
 void Scene_Outgame::CreateObj()
@@ -284,7 +281,7 @@ void Scene_Outgame::CreateObj()
 	auto 뒤로가기 = ResourceManager::Get().GetTexture("뒤로가기");
 	// 2. 오브젝트 만들기
 	auto 뒤로 = std::make_unique<Object>();
-	뒤로->SetPosition(Vec2(64, 57));
+	뒤로->SetPosition(Vec2(64 , 57));
 	// 3. 버튼 컴포넌트 만들기
 	auto backComp = 뒤로->AddComponent<ButtonComponent>();
 	backComp->SetWidth(37); backComp->SetHeight(37);
@@ -305,11 +302,34 @@ void Scene_Outgame::CreateObj()
 	);
 
 	backComp->SetOnClickCallback([this]() {
+		std::cout << "버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
 		SceneManager::Get().ChangeScene("Title");
-		std::cout << "뒤로가기 (시작화면으로)" << std::endl;
+		//std::cout << "뒤로가기 (시작화면으로)" << std::endl;
 		});
 
 	/// 9
 	m_gameObjects.emplace("뒤로가기", std::move(뒤로));
 
+}
+
+std::string Scene_Outgame::getRandomText()
+{
+	auto range = outGameTextTable.equal_range(m_id);
+
+	if (range.first == range.second) {
+		return "텍스트 없음"; // ID가 없는 경우
+	}
+
+	// 해당 ID의 모든 텍스트를 벡터로 복사
+	std::vector<std::string> texts;
+	for (auto it = range.first; it != range.second; ++it) {
+		texts.push_back(it->second);
+	}
+
+	// 랜덤 선택
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dist(0, texts.size() - 1);
+
+	return texts[dist(gen)];
 }

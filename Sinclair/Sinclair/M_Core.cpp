@@ -76,8 +76,12 @@ void M_Core::Update()
 
 void M_Core::Render()
 {
+    D2DRenderer::Get().RenderBegin();
+
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
     // 여기서 ui render 불러서 전부 할거고 
+
+    D2DRenderer::Get().RenderEnd();
 
 }
 

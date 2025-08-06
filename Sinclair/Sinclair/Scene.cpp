@@ -37,7 +37,7 @@ using Vec2F = MYHelper::Vector2F;
 
 void SceneStandard::Render() //UI ·»´õ
 {
-		D2DRenderer::Get().RenderBegin();
+		
 
 		for (const auto& [Name, obj] : m_gameObjects)
 		{
@@ -95,7 +95,7 @@ void SceneStandard::Render() //UI ·»´õ
 
 		}
 
-		D2DRenderer::Get().RenderEnd();
+
 }
 
 void SceneStandard::AssetMapping() 

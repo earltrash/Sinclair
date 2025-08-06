@@ -113,12 +113,12 @@ using Vec2F = MYHelper::Vector2F;
 
 void Scene_MK::Render()
 {
-	D2DRenderer::Get().RenderBegin();
+	
 
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetComponent<RenderInfo>()->GetRenderInfo());
 	}
 
-	D2DRenderer::Get().RenderEnd();
+	
 }

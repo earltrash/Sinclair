@@ -146,6 +146,7 @@
     <ClInclude Include="EquipmentWindow.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="IAssetProvider.h" />
     <ClInclude Include="InvenMem.h" />
     <ClInclude Include="Inventory.h" />
@@ -158,7 +159,6 @@
     <ClInclude Include="RenderInfo.h" />
     <ClInclude Include="Scene_End.h" />
     <ClInclude Include="Scene_History.h" />
-    <ClInclude Include="Scene_hyoje.h" />
     <ClInclude Include="Scene_InGame.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ItemGlobal.h" />
@@ -199,6 +199,7 @@
     <ClCompile Include="EquipmentWindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="InvenMem.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="ItemBank.cpp" />
@@ -209,7 +210,6 @@
     <ClCompile Include="RenderInfo.cpp" />
     <ClCompile Include="Scene_End.cpp" />
     <ClCompile Include="Scene_History.cpp" />
-    <ClCompile Include="Scene_hyoje.cpp" />
     <ClCompile Include="Scene_InGame.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ItemGlobal.cpp" />

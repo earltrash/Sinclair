@@ -10,7 +10,7 @@
 Scene_Title::Scene_Title(string name)
 {
 		m_name = name;
-		Initalize();
+		
 }
 
 Scene_Title::~Scene_Title()
@@ -28,9 +28,10 @@ void Scene_Title::Initalize()
 void Scene_Title::Enter()
 {
 	// 씬 진입 시마다 실행할 것들
-	// 오브젝트 상태 초기화, 사운드 재생 등
+	// 오브젝트 생성, 오브젝트 상태 초기화, 사운드 재생 등
 	// ResetObjectStates();
 	// PlayBGM();
+	Initalize();
 }
 
 void Scene_Title::Exit()
@@ -39,6 +40,7 @@ void Scene_Title::Exit()
 	// 사운드 정지, 상태 저장 등
 	//StopBGM();
 	//PauseAnimations();
+	Clean();
 }
 
 void Scene_Title::Clean()
@@ -61,7 +63,7 @@ void Scene_Title::LogicUpdate(float delta)
 
 void Scene_Title::Render()
 {
-		D2DRenderer::Get().RenderBegin();
+		
 		for (const auto& [Name, obj] : m_gameObjects)
 		{
 
@@ -113,7 +115,6 @@ void Scene_Title::Render()
 
 		D2DRenderer::Get().DrawMessage(L"싱클레어 가 히스토리", 147.f, 254.f, 1300.f, 1000.f, D2D1::ColorF::LightPink);		
 
-		D2DRenderer::Get().RenderEnd();
 }
 
 

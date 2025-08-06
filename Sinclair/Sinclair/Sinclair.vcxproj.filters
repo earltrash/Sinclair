@@ -158,9 +158,6 @@
     <ClInclude Include="InvenMem.h">
       <Filter>Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="Scene_hyoje.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="BackgroundComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
@@ -187,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="TextComponent.h">
       <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>Module</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -271,9 +271,6 @@
     <ClCompile Include="InvenMem.cpp">
       <Filter>Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="Scene_hyoje.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="BackgroundComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
@@ -300,6 +297,9 @@
     </ClCompile>
     <ClCompile Include="TextComponent.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>Module</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

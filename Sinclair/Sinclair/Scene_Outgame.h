@@ -1,5 +1,8 @@
 #pragma once
 #include "Scene.h"
+#include <iostream>
+#include <map>
+#include <string>
 class Scene_Outgame : public SceneStandard
 {
 		
@@ -20,6 +23,20 @@ public:
 		virtual void Render()override;
 public:
 	void CreateObj();
+	std::string getRandomText();
+
+private:
+
+	int m_id;
+
+	std::multimap<int, std::string> outGameTextTable = {
+	{1, "늘 나도 언젠가는 아버지처럼\n모험을 떠나고 싶다고 생각해왔어."},
+	{1, "이제는 때가 된 것 같아.\n하지만… 장비는 어떡하지 ?"},
+	{1, "분명 아버지도 이해해주실거야.\n아버지의 창고에 들어가볼까 ?"},
+	{2, "> 창고로 이동한다.\n> 모험을 떠난다."},
+	{3, "창고에 들어가시겠습니까?"},
+	{4, "여행을 떠나시겠습니까?\n(주의.한번 모험을 떠나면 되돌릴 수 없습니다)"}
+	};
 
 };
 

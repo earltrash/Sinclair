@@ -11,12 +11,12 @@
 Scene_InGame::Scene_InGame(string name)
 {
 	m_name = name;
-	Initalize();
+	
 }
 
 Scene_InGame::~Scene_InGame()
 {
-	Clean();
+
 }
 
 void Scene_InGame::Initalize()
@@ -44,15 +44,17 @@ void Scene_InGame::LogicUpdate(float delta)
 
 void Scene_InGame::Enter()
 {
+	Initalize();
 }
 
 void Scene_InGame::Exit()
 {
+	Clean();
 }
 
 void Scene_InGame::Render()
 {
-	D2DRenderer::Get().RenderBegin();
+
 	
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
@@ -101,9 +103,9 @@ void Scene_InGame::Render()
 		D2DRenderer::Get().DrawBitmap(bitmap.Get(), dest, srcRect, opacity);
 	}
 
-	D2DRenderer::Get().CreateWriteRegularResource();
+	//D2DRenderer::Get().CreateWriteRegularResource();
 
-	D2DRenderer::Get().RenderEnd();
+	
 }
 
 void Scene_InGame::CreateObj()
@@ -236,7 +238,8 @@ void Scene_InGame::CreateObj()
 	);
 
 	스테이터스버튼->SetOnClickCallback([this]() {
-		std::cout << "스테이터스버튼" << std::endl;
+		std::cout << "스테이터스버튼이지만 엔딩으로" << std::endl;
+		SceneManager::Get().ChangeScene("End");
 		});
 
 	/// 9
@@ -273,8 +276,9 @@ void Scene_InGame::CreateObj()
 	);
 
 	backComp->SetOnClickCallback([this]() {
+		std::cout << "버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
 		SceneManager::Get().ChangeScene("OutGame");
-		std::cout << "뒤로가기 (아웃게임으로 )" << std::endl;
+		//std::cout << "뒤로가기 (아웃게임으로 )" << std::endl;
 		});
 
 	/// 9
