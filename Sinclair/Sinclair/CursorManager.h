@@ -5,6 +5,7 @@
 #include "Item.h"
 #include "ResourceManager.h"
 #include "UI_Renderer.h"
+#include "InvenMem.h"
 
 class UIManager;
 
@@ -26,7 +27,7 @@ public:
     void Update();
 
     void Render();
-  
+
     void RenderCursor();
     void LoadCursorBitmaps();
 
@@ -34,7 +35,7 @@ public:
     void UpdateMouseState(bool isPressed);
 
     // 드래그 시작
-    void StartItemDrag(std::string itemid, DragSource source);
+    void StartItemDrag(std::string itemid, DragSource source, InventorySlot* sourceSlot = nullptr);
 
     // 드래그 종료
     void EndItemDrag();
@@ -54,6 +55,9 @@ public:
     // 커서 타입 설정
     void SetCursor(CursorType type) { m_currentCursor = type; }
 
+    // 원본 슬롯 정보 가져오기
+    InventorySlot* GetSourceSlot() const { return m_sourceSlot; }
+
 private:
     CursorManager() = default;
     ~CursorManager() = default;
@@ -67,10 +71,12 @@ private:
     Item* m_draggedItem = nullptr;
     DragSource m_dragSource = DragSource::None;
     CursorType m_currentCursor = CursorType::Normal;
-    Vec2 m_ghostImagePos;
+    InventorySlot* m_sourceSlot = nullptr;
 
+    Vec2 m_ghostImagePos;
+    ComPtr<ID2D1Bitmap1> m_ghostImage = nullptr;
 
     // 임시
     ComPtr<ID2D1Bitmap1> m_cursorNormal = nullptr;
-    ComPtr<ID2D1Bitmap1> m_cursorDown= nullptr;
+    ComPtr<ID2D1Bitmap1> m_cursorDown = nullptr;
 };

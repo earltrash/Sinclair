@@ -31,7 +31,7 @@ public:
     void LoadItemDatabase(Need_Moment Moment);
 
     void PackItem();
-    void SetDatabase(unique_ptr<ItemDatabase> database); 
+    void SetDatabase(unique_ptr<ItemDatabase> database);
 
     // Scene 넘어갈 때 
     void UnlockRegion(int regionId);
@@ -39,13 +39,13 @@ public:
     void Update() override;
     void Render() override;
 
-     bool HandleMouseHover(Vec2 mousePos) override;
-     bool HandleMouseDown(Vec2 mousePos) override;
-     bool HandleMouseUp(Vec2 mousePos) override;
-     bool HandleDoubleClick(Vec2 mousePos) override;
+    bool HandleMouseHover(Vec2 mousePos) override;
+    bool HandleMouseDown(Vec2 mousePos) override;
+    bool HandleMouseUp(Vec2 mousePos) override;
+    bool HandleDoubleClick(Vec2 mousePos) override;
 
-     virtual void SetActivate(bool active) { m_isActive = active; }
-     UIWindowType GetType() override;
+    virtual void SetActivate(bool active) { m_isActive = active; }
+    UIWindowType GetType() override;
 
     InventorySlot* GetSlotAt(const Vec2& pos);
     void RenderTitleBar();
@@ -53,6 +53,8 @@ public:
     void RenderSlot(const InventorySlot& slot);
 
     void UpdateSlotPositions();
+
+    bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source);
 
 private:
     std::vector<Region> regions;
@@ -84,6 +86,5 @@ private:
     int currentHoveredItemCount;
 
     vector<Vec2>RegionOffset;
-   
-};
 
+};

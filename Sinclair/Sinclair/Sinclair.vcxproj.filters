@@ -30,9 +30,6 @@
     <Filter Include="UI">
       <UniqueIdentifier>{2370e0cf-166a-4cb0-8322-de791ca209e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NewFilter1">
-      <UniqueIdentifier>{3f02cb16-bf71-4876-b582-20d3f8ab963e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputManager.h">

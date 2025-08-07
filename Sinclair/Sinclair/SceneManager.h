@@ -6,6 +6,7 @@
 //#include "SceneFactory.h"
 
 #include "Scene_MK.h"
+#include "Scene_BJ.h"
 #include "Scene_Title.h"
 #include "Scene_Outgame.h"
 #include "Scene_InGame.h"
@@ -32,10 +33,13 @@ public:
 				m_Scene_map->emplace("InGame", make_shared<Scene_InGame>("InGame"));
 				m_Scene_map->emplace("End", make_shared<Scene_End>("End"));
 				//m_Scene_map->emplace("History", make_shared<Scene_History>("History"));
+				
+				m_Scene_map->emplace("SceneBj", make_shared<SceneBj>("SceneBj"));
 
 				m_Scene_map->emplace("MK", make_shared<Scene_MK>("MK"));
 
-				m_currentindex = "End";
+			  m_currentindex = "SceneBj";
+				//m_currentindex = "End";
 				//m_currentindex = "MK";
 
 				Scenes = m_Scene_map;

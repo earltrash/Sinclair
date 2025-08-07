@@ -15,22 +15,31 @@ void CursorManager::Update()
 
 void CursorManager::Render()
 {
-      // 드래그 중인 아이템 렌더링
+    // 드래그 중인 아이템 렌더링
     if (m_isDragging && m_draggedItem)
     {
+        Vec2 mousePos = InputManager::Get().GetMousePosition();
         // 아이템 이미지 가져오고
-        ID2D1Bitmap1* itemBitmap = ResourceManager::Get().Get_ItemBank().GetItemClip(m_draggedItem->m_data.id).atlas.Get();
-
-        // 크기 계산
+        const auto& itemClip = ResourceManager::Get().Get_ItemBank().GetItemClip(m_draggedItem->m_data.id);
+        // 아틀라스에서 해당아이템 가져오기.
+        ID2D1Bitmap1* itemBitmap = itemClip.atlas.Get();
+        // 소스 크기 가져옴.
+        D2D1_RECT_F srcRect = itemClip.srcRect;
+        // 크기 계산 
         D2D1_RECT_F destRect = D2D1::RectF(
-            m_ghostImagePos.x - 16, m_ghostImagePos.y - 16,
-            m_ghostImagePos.x + 16, m_ghostImagePos.y + 16
+            m_ghostImagePos.x - 28, m_ghostImagePos.y - 28,
+            m_ghostImagePos.x + 28, m_ghostImagePos.y + 28
         );
         // 그리기.
-        D2DRenderer::Get().DrawBitmap(itemBitmap, destRect);
+        D2DRenderer::Get().DrawBitmap(
+            static_cast<ID2D1Bitmap1*>(itemBitmap),
+            destRect,
+            srcRect, // 소스 사각형을 사용하여 아틀라스의 특정 부분만 그리는거.
+            0.8f
+        );
     }
     RenderCursor();
-  }
+}
 
 void CursorManager::RenderCursor()
 {
@@ -98,10 +107,11 @@ void CursorManager::UpdateMouseState(bool isPressed)
     SetCursor(isPressed ? CursorType::Pressed : CursorType::Normal);
 }
 
-void CursorManager::StartItemDrag(std::string itemID, DragSource source)
+void CursorManager::StartItemDrag(std::string itemID, DragSource source, InventorySlot* sourceSlot)
 {
     m_isDragging = true;
     m_dragSource = source;
+    m_sourceSlot = sourceSlot;
     SetCursor(CursorType::Drag);
 }
 
@@ -110,6 +120,6 @@ void CursorManager::EndItemDrag()
     m_isDragging = false;
     m_draggedItem = nullptr;
     m_dragSource = DragSource::None;
+    m_sourceSlot = nullptr;
     SetCursor(CursorType::Normal);
 }
-

@@ -76,24 +76,21 @@ void M_Core::FixedUpdate() //시간 처리
 void M_Core::Update()
 {
     InputManager::Get().Update();
+    CursorManager::Get().Update();
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Update();
     UIManager::Get().Update();
+
 
 }
 
 void M_Core::Render()
 {
-   // m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
+    // m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
 
     D2DRenderer::Get().RenderBegin();
-
-    m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
-    // 여기서 ui render 불러서 전부 할거고 
-
     UIManager::Get().Render();
     CursorManager::Get().Render();
     D2DRenderer::Get().RenderEnd();
-
 }
 
 void M_Core::End()
@@ -135,7 +132,7 @@ bool M_Core::ModuleInit()
         return false;
     }
 
-   
+
     ResourceManager::Get().GameAssetLoad();
     m_Scene_map = make_shared<unordered_map<string, shared_ptr<SceneStandard>>>();  //Core가 UPdate로 돌려야 하니
     SceneManager::Get().Initalize(m_Scene_map); //받은 map 멤버로 시작 
@@ -147,10 +144,3 @@ bool M_Core::ModuleInit()
     m_timer->Start();
     return true;
 }
-
-
-
-
-
-
-
