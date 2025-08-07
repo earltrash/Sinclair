@@ -276,6 +276,22 @@ Scale_Effect::Scale_Effect(RenderInfo* renderInfo, float pivotX, float pivotY, f
 	if (m_bitmap == nullptr)	std::cout << "Scale_Effect : 비트맵 생성 실패\n";
 }
 
+Scale_Effect::Scale_Effect(RenderInfo* renderInfo, float scaleX, float scaleY, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_scale{ scaleX, scaleY }, m_effect(effect)
+{
+	m_pivot = { renderInfo->GetSize().width / 2.f, renderInfo->GetSize().height / 2.f };
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Scale, &m_scaleEffect);
+	DX::ThrowIfFailed(hr);
+}
+
+Scale_Effect::Scale_Effect(RenderInfo* renderInfo, float scaleX, float scaleY, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_scale{ scaleX, scaleY }, m_bitmap(bitmap)
+{
+	m_pivot = { renderInfo->GetSize().width / 2.f, renderInfo->GetSize().height / 2.f };
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Scale, &m_scaleEffect);
+	DX::ThrowIfFailed(hr);
+}
+
 void Scale_Effect::Update()
 {
 	if (m_effect == nullptr)
@@ -555,4 +571,111 @@ void Color_Effect::Update()
 	m_colorEffect->SetValue(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, matrix);
 
 	m_renderInfo->SetEffect(m_colorEffect.Get());
+}
+
+Blink_Effect::Blink_Effect(RenderInfo* renderInfo, float minOpacity, float totalSecond, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_minOpacity(minOpacity), m_totalSecond(totalSecond), m_effect(effect)
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Opacity, &m_opacityEffect);
+	DX::ThrowIfFailed(hr);
+}
+
+Blink_Effect::Blink_Effect(RenderInfo* renderInfo, float minOpacity, float totalSecond, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_minOpacity(minOpacity), m_totalSecond(totalSecond), m_bitmap(bitmap)
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Opacity, &m_opacityEffect);
+	DX::ThrowIfFailed(hr);
+}
+
+void Blink_Effect::FixedUpdate(float dt)
+{
+	if (isStop) return;
+
+	if (m_effect == nullptr)
+		m_opacityEffect->SetInput(0, m_bitmap.Get());
+	else
+		m_opacityEffect->SetInputEffect(0, m_effect);
+
+	time += dt;
+	if (time >= FPS60)
+	{
+		if (time >= 5.f)	time = 0.f;		// 처음 dt가 5이상 큰 수가 들어옴
+		else
+		{
+			time -= FPS60;
+			x += FPS60;
+		}
+	}
+
+	if (x >= m_totalSecond)
+	{
+		x = 0.f;
+	}
+
+	m_opacityEffect->SetValue(D2D1_COMPOSITE_MODE_SOURCE_OVER, Graph(x));
+}
+
+
+Explode_Effect::Explode_Effect(RenderInfo* renderInfo, float x_currentScale, float y_currentScale, float x_addScale, float y_addScale, float totalSecond, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_currentScale{ x_currentScale, y_currentScale }, mx_addScale(x_addScale), my_addScale(y_addScale), m_totalSecond(totalSecond), m_effect(effect)
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D12DAffineTransform, &m_offsetEffect);
+	DX::ThrowIfFailed(hr);
+}
+
+Explode_Effect::Explode_Effect(RenderInfo* renderInfo, float x_currentScale, float y_currentScale, float x_addScale, float y_addScale, float totalSecond, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_currentScale{ x_currentScale, y_currentScale }, mx_addScale(x_addScale), my_addScale(y_addScale), m_totalSecond(totalSecond), m_bitmap(bitmap)
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D12DAffineTransform, &m_offsetEffect);
+	DX::ThrowIfFailed(hr);
+}
+
+void Explode_Effect::FixedUpdate(float dt)
+{
+	if (isStop)	return;
+
+	if (m_effect == nullptr)
+		m_offsetEffect->SetInput(0, m_bitmap.Get());
+	else
+		m_offsetEffect->SetInputEffect(0, m_effect);
+
+	time += dt;
+	if (time >= FPS60)
+	{
+		if (time >= 5.f)	time = 0.f;		// 처음 dt가 5이상 큰 수가 들어옴
+		else
+		{
+			time -= FPS60;
+			x += FPS60;
+		}
+	}
+
+	D2D1_VECTOR_2F scale;
+
+	scale = { Graph(x, mx_addScale), Graph(x, my_addScale) };
+
+	D2D1_MATRIX_3X2_F offsetMT = D2D1::Matrix3x2F::Scale(scale.x, scale.y, { m_renderInfo->GetSize().width / 2.f, m_renderInfo->GetSize().height / 2.f });
+	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, offsetMT);
+
+	if (scale.x < 0.f && scale.y < 0.f)
+	{
+		x = 0;
+		m_renderInfo->SetisActive(false);
+		//isFirst = false;
+		isStop = true;
+	}
+
+	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_INTERPOLATION_MODE, D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_LINEAR);
+	m_renderInfo->SetEffect(m_offsetEffect.Get());
+}
+
+void Explode_Effect::OnEvent(const std::string& ev)
+{
+	if (ev == "PLAY")
+	{
+		isStop = false;
+		m_renderInfo->SetisActive(true);
+		//D2D1_MATRIX_3X2_F offsetMT = D2D1::Matrix3x2F::Scale(m_currentScale.x, m_currentScale.y, { m_renderInfo->GetSize().width / 2.f, m_renderInfo->GetSize().height / 2.f });
+		//m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, offsetMT);
+	}
 }

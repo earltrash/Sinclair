@@ -61,7 +61,7 @@ public:
 
 	ID2D1Effect* GetEffect() { return m_shadowEffect.Get(); }
 private:
-	float m_edgeBlur;
+	float m_edgeBlur;							// 0 < m_edgeBlur <= 10
 
 	D2D1_VECTOR_4F m_shadowColor;
 
@@ -216,6 +216,8 @@ public:
 	Scale_Effect(RenderInfo* renderInfo, float pivotX, float pivotY, float scaleX, float scaleY, ID2D1Effect* effect);
 	Scale_Effect(RenderInfo* renderInfo, float pivotX, float pivotY, float scaleX, float scaleY, ID2D1Bitmap1* bitmap);
 	Scale_Effect(RenderInfo* renderInfo, float pivotX, float pivotY, float scaleX, float scaleY, const wchar_t* path);
+	Scale_Effect(RenderInfo* renderInfo, float scaleX, float scaleY, ID2D1Effect* effect);
+	Scale_Effect(RenderInfo* renderInfo, float scaleX, float scaleY, ID2D1Bitmap1* bitmap);
 	~Scale_Effect() { m_scaleEffect.Reset(); }
 
 	void Update() override;
@@ -375,3 +377,84 @@ private:
 //
 //	std::vector<Particle> m_Particles;
 //};
+
+class Blink_Effect : public Component
+{
+public:
+	Blink_Effect(RenderInfo* renderInfo, float minOpacity, float totalSecond, ID2D1Effect* effect);
+	Blink_Effect(RenderInfo* renderInfo, float minOpacity, float totalSecond, ID2D1Bitmap1* bitmap);
+
+	void FixedUpdate(float dt) override;
+
+	float Graph(float x)
+	{
+		float a = 4.f * (1.f - m_minOpacity);
+		float result = (a * x * x) / (m_totalSecond * m_totalSecond) - ((a * x) / m_totalSecond) + 1.f;
+
+		return result;
+	}
+
+	ID2D1Effect* GetEffect() { return m_opacityEffect.Get(); }
+private:
+	float time = 0.f;
+	float x = 0.f;
+
+	float m_totalSecond = 0.f;	// 애니메이션 총 시간
+	float m_minOpacity = 0.f;	// 최소밝기
+
+	bool isStop = false;
+
+	ID2D1Effect* m_effect = nullptr;
+	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
+
+	ComPtr<ID2D1Effect> m_opacityEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
+};
+
+class Explode_Effect : public Component
+{
+public:
+	Explode_Effect(RenderInfo* renderInfo, float x_currentScale, float y_currentScale, float x_addScale, float y_addScale, float totalSecond, ID2D1Effect* effect);
+	Explode_Effect(RenderInfo* renderInfo, float x_currentScale, float y_currentScale, float x_addScale, float y_addScale, float totalSecond, ID2D1Bitmap1* bitmap);
+
+	void FixedUpdate(float dt) override;
+	void OnEvent(const std::string& ev) override;
+
+	float GraphA(float x, float addScale)
+	{
+		float a = -(4.f * addScale) / (m_totalSecond * m_totalSecond); // 포물선 계수
+		float shiftX = m_totalSecond / 2.f; // x축 이동량 (원래 중심)
+		float yOffset = m_currentScale.y - a * (-shiftX) * (m_totalSecond - shiftX); // y축 이동량
+
+		float result = a * (x - shiftX) * (x - m_totalSecond + shiftX) + yOffset;
+		return result;
+	}
+
+	float Graph(float x, float addScale)
+	{
+		float result = (-(4.f * addScale) / (m_totalSecond * m_totalSecond)) * x * (x - m_totalSecond);
+		return result;
+	}
+
+	ID2D1Effect* GetEffect() { return m_offsetEffect.Get(); }
+private:
+	float time = 0.f;
+	float x = 0.f;
+
+	D2D1_VECTOR_2F m_currentScale;
+
+	float m_totalSecond = 0.f;		// 스케일 애니메이션 총 시간
+	float mx_addScale = 0.f;		// x 최대 스케일
+	float my_addScale = 0.f;		// y 최대 스케일
+
+	bool isFirst = true;
+	bool isStop = false;			// 초기값이 true로 되어 있어야함.	false ev가 들어왔을 때 효과주고 비활성화
+
+	ID2D1Effect* m_effect = nullptr;
+	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
+
+	ComPtr<ID2D1Effect> m_offsetEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
+};
