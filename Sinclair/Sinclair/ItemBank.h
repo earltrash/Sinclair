@@ -29,6 +29,7 @@ public:
 	const ItemBitmapClip& GetItemClip(string name);
 	void GiveItem(Need_Moment Moment, ItemDatabase& InvenDatabase);
 	unique_ptr<Item> Get_Item_Status(string name);
+	void clean();
 
 private:
 	//실제 사용 Map 

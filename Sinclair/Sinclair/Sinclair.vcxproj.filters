@@ -27,8 +27,11 @@
     <Filter Include="Bank">
       <UniqueIdentifier>{d2f89555-7c54-4380-b0a7-5026decec4fe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Inventory">
+    <Filter Include="UI">
       <UniqueIdentifier>{2370e0cf-166a-4cb0-8322-de791ca209e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NewFilter1">
+      <UniqueIdentifier>{3f02cb16-bf71-4876-b582-20d3f8ab963e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -131,22 +134,10 @@
     <ClInclude Include="Wearable.h">
       <Filter>Item</Filter>
     </ClInclude>
-    <ClInclude Include="Inventory.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ButtonComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
     <ClInclude Include="CursorManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="EquipmentWindow.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UIManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UIWindow.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="UI_Bank.h">
@@ -156,7 +147,7 @@
       <Filter>Bank</Filter>
     </ClInclude>
     <ClInclude Include="InvenMem.h">
-      <Filter>Inventory</Filter>
+      <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="BackgroundComponent.h">
       <Filter>Component</Filter>
@@ -167,14 +158,38 @@
     <ClInclude Include="EffectComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="UIWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
     <ClInclude Include="RenderInfo.h">
       <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseInput.h">
+      <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="PlayComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="Scene_BJ.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
     <ClInclude Include="Scene_End.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="StatWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="EnhancementWindow.h">
+      <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="Scene_History.h">
       <Filter>Scene</Filter>
@@ -244,17 +259,8 @@
     <ClCompile Include="ItemParseing.cpp">
       <Filter>Item</Filter>
     </ClCompile>
-    <ClCompile Include="Inventory.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="ButtonComponent.cpp">
       <Filter>Component</Filter>
-    </ClCompile>
-    <ClCompile Include="EquipmentWindow.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="UIManager.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="UI_Bank.cpp">
       <Filter>Bank</Filter>
@@ -266,7 +272,7 @@
       <Filter>Module</Filter>
     </ClCompile>
     <ClCompile Include="InvenMem.cpp">
-      <Filter>Inventory</Filter>
+      <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="BackgroundComponent.cpp">
       <Filter>Component</Filter>
@@ -294,6 +300,30 @@
     </ClCompile>
     <ClCompile Include="GameManager.cpp">
       <Filter>Module</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_BJ.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="StatWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="EnhancementWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CursorManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

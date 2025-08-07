@@ -1,0 +1,124 @@
+{
+    "items": [
+        {
+            "type": "Potion",
+            "id": "I013",
+            "name": "희석된 능력의 물약",
+            "description": "플레이어가 원하는 능력치를 강화한다.",
+            "enchantable": false,
+            "synthesizable": false,
+            "Moment": "Adv",
+            "much": 1
+        },
+        {
+            "type": "Potion",
+            "id": "I014",
+            "name": "향상된 능력의 물약",
+            "description": "플레이어가 원하는 능력치를 강화한다.",
+            "enchantable": false,
+            "synthesizable": false,
+            "Moment": "Adv",
+            "much": 2
+        },
+        {
+            "type": "Potion",
+            "id": "I015",
+            "name": "굉장한 능력의 물약",
+            "description": "플레이어가 원하는 능력치를 강화한다.",
+            "enchantable": false,
+            "synthesizable": false,
+            "Moment": "Adv",
+            "much": 3
+        },
+        {
+            "type": "Material",
+            "id": "I016",
+            "name": "영웅의 유산",
+            "description": "합성 재료. 대상 아이템과 합성할 시 파괴되며, 새로운 아이템이 생성된다.",
+            "enchantable": false,
+            "synthesizable": true,
+            "Moment": "Syn"
+        },
+        {
+            "type": "Material",
+            "id": "I017",
+            "name": "사수의 룬",
+            "description": "합성 재료. 대상 아이템과 합성할 시 파괴되며, 새로운 아이템이 생성된다.",
+            "enchantable": false,
+            "synthesizable": true,
+            "Moment": "Syn"
+        },
+        {
+            "type": "Material",
+            "id": "I018",
+            "name": "마력의 보석",
+            "description": "합성 재료. 대상 아이템과 합성할 시 파괴되며, 새로운 아이템이 생성된다.",
+            "enchantable": false,
+            "synthesizable": true,
+            "Moment": "Syn"
+        },
+        {
+            "type": "Material",
+            "id": "I019",
+            "name": "고대어 해독서",
+            "description": "합성 재료. 대상 아이템과 합성할 시 파괴되며, 새로운 아이템이 생성된다.",
+            "enchantable": false,
+            "synthesizable": true,
+            "Moment": "Syn"
+        },
+        {
+            "type": "Material",
+            "id": "I020",
+            "name": "사막의 눈물",
+            "description": "합성 재료. 대상 아이템과 합성할 시 파괴되며, 새로운 아이템이 생성된다.",
+            "enchantable": false,
+            "synthesizable": true,
+            "Moment": "Syn"
+        },
+        {
+            "type": "Material",
+            "id": "I021",
+            "name": "영웅의 신념",
+            "description": "합성 재료. 대상 아이템과 합성할 시 파괴되며, 새로운 아이템이 생성된다.",
+            "enchantable": false,
+            "synthesizable": true,
+            "Moment": "Syn"
+        },
+        {
+            "type": "Material",
+            "id": "I022",
+            "name": "명사수의 혼",
+            "description": "합성 재료. 대상 아이템과 합성할 시 파괴되며, 새로운 아이템이 생성된다.",
+            "enchantable": false,
+            "synthesizable": true,
+            "Moment": "Syn"
+        },
+        {
+            "type": "Material",
+            "id": "I023",
+            "name": "태양의 정수",
+            "description": "합성 재료. 대상 아이템과 합성할 시 파괴되며, 새로운 아이템이 생성된다.",
+            "enchantable": false,
+            "synthesizable": true,
+            "Moment": "Syn"
+        },
+        {
+            "type": "Material",
+            "id": "I024",
+            "name": "고대 지식의 정수",
+            "description": "합성 재료. 대상 아이템과 합성할 시 파괴되며, 새로운 아이템이 생성된다.",
+            "enchantable": false,
+            "synthesizable": true,
+            "Moment": "Syn"
+        },
+        {
+            "type": "Material",
+            "id": "I025",
+            "name": "독사의 혼",
+            "description": "합성 재료. 대상 아이템과 합성할 시 파괴되며, 새로운 아이템이 생성된다.",
+            "enchantable": false,
+            "synthesizable": true,
+            "Moment": "Syn"
+        }
+    ]
+}

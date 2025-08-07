@@ -36,12 +36,12 @@ public:
 		
 		void SetPosition(Vec2 position)
 		{
-			m_transform.SetPosition(position);
+				m_transform.SetPosition(position);
 		} 
 
 		Transform& GetTransform()
 		{
-			return m_transform;
+				return m_transform;
 		}
 
 		RenderInfo* GetRenderInfo()

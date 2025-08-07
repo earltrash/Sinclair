@@ -3,7 +3,7 @@
 #include "Component.h"
 #include "Object.h"
 #include "RenderInfo.h"
-
+#include "MouseInput.h"
 using namespace Microsoft::WRL;
 using namespace std;
 
@@ -45,7 +45,7 @@ public:
 
 	void SetOpacity(float o) { m_renderInfo->SetOpacity(o); }
 
-
+	
 	// [ ] 투명 버튼 구현
 	// 투명 버튼을 구현할 방법 
 	// 1. 투명도 0.f
@@ -57,6 +57,8 @@ private:
 	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmaps;
 
 	
+	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmap; 
+	ComPtr<ID2D1Bitmap1> m_curbm;
 
 	ButtonState m_currentState = ButtonState::Normal;
 

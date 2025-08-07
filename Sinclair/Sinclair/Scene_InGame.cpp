@@ -10,7 +10,7 @@
 
 Scene_InGame::Scene_InGame(string name)
 {
-	m_name = name;
+		m_name = name;
 }
 
 Scene_InGame::~Scene_InGame()
@@ -57,8 +57,8 @@ void Scene_InGame::Render()
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
-	}
-	
+}
+
 }
 
 void Scene_InGame::CreateObj()
@@ -314,7 +314,7 @@ void Scene_InGame::CreateObj()
 	auto 합성리스너 = 합성->AddComponent<MouseListenerComponent>(
 		[합성버튼](const MSG& msg) {
 			합성버튼->Worked(msg);
-		}
+}
 	);
 
 	합성버튼->SetOnClickCallback([this]() {

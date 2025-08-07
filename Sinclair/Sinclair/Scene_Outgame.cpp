@@ -14,7 +14,7 @@
 
 Scene_Outgame::Scene_Outgame(string name)
 {
-	m_name = name;
+		m_name = name;
 }
 
 Scene_Outgame::~Scene_Outgame()
@@ -32,7 +32,7 @@ void Scene_Outgame::Initalize()
 
 void Scene_Outgame::Clean()
 {
-	m_gameObjects.clear();
+		m_gameObjects.clear();
 	dirty = false;
 }
 
@@ -46,7 +46,7 @@ void Scene_Outgame::LogicUpdate(float delta)
 
 void Scene_Outgame::Enter()
 {
-	Initalize();
+		Initalize();
 	SetupCharacterAndBackground();
 
 
@@ -55,7 +55,7 @@ void Scene_Outgame::Enter()
 	 } else {
 		 m_state = State::FIRST_ENTER;
 		 GameManager::Get().WasInGame = true;
-	 }
+}
 
 
 	// 우선 초기 상태로 진입
@@ -64,7 +64,7 @@ void Scene_Outgame::Enter()
 
 void Scene_Outgame::Exit()
 {
-	Clean();
+		Clean();
 }
 
 void Scene_Outgame::Render()
@@ -373,7 +373,7 @@ void Scene_Outgame::ChangeState(State newState)
 			ChangeState(CHOICE_MENU);
 		});
 		break;
-	}
+}
 
 	case CHOICE_MENU: // 분리할 수도 있음
 	{

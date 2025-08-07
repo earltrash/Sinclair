@@ -4,26 +4,19 @@
 #include "UIManager.h"
 #include "Renderer.h"
 
-void EquipmentWindow::Update()
-{
-    // 드래그 중이면 창 위치 업데이트
-    if (m_isDragging)
-    {
-        Vec2 mousePos = InputManager::Get().GetMousePosition();
-        m_position = mousePos - m_dragOffset;
+#include "Wearable.h"
 
-        // 창 위치가 바뀌면 슬롯 위치들도 다시 계산
-        UpdateSlotPositions();
-    }
+void EquipmentWindow::Update() // 이거는 Inven 때처럼 Update 말고 메시지 받을 때 하면 될 듯 
+{
 }
 
-void EquipmentWindow::Render()
+void EquipmentWindow::Render() 
 {
     if (!m_isActive) return;
 
     // 렌더링 순서: 배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → 닫기 버튼
     RenderBackground();
-    RenderTitleBar();
+   // RenderTitleBar();
     RenderSlots();
     RenderEquippedItems();
     RenderCloseButton();
@@ -31,95 +24,89 @@ void EquipmentWindow::Render()
 
 bool EquipmentWindow::HandleMouseDown(Vec2 mousePos)
 {
-    // 1. 닫기 버튼 클릭 체크
-    if (IsInCloseButton(mousePos))
-    {
-        UIManager::Get().CloseWindow(UIWindowType::EquipmentWindow);
-        return true; // 처리 완료
-    }
+    if (!m_isActive) return false;
 
-    // 2. 타이틀바 클릭 - 창 드래그 시작
-    if (IsInTitleBar(mousePos))
-    {
-        m_isDragging = true;
-        m_dragOffset = mousePos - m_position;
-        return true; // 처리 완료
-    }
-
-    // 3. 슬롯 영역 클릭 체크
+    // 2. 슬롯 영역 클릭 체크
     Wearable_part clickedSlot = GetSlotTypeAt(mousePos);
     if (clickedSlot != Wearable_part::UnKnown)
     {
-        // 현재 커서가 아이템을 드래그 중인지 체크.
-        if (CursorManager::Get().IsDragging())
+        auto it = m_equippedItems.find(clickedSlot);
+        if (it != m_equippedItems.end() && it->second != nullptr)
         {
-            // 드래그 중인 아이템 가져오기
-            Item* draggedItem = CursorManager::Get().GetDraggedItem();
-
-            if (draggedItem && CanEquipItem(draggedItem, clickedSlot))
-            {
-                // 장비 착용 가능
-                EquipItem(draggedItem);
-                CursorManager::Get().EndItemDrag();
-                return true;
-            }
-            else
-            {
-                // 착용 불가능한 슬롯에 드롭 시도 - 드래그 취소
-                CursorManager::Get().EndItemDrag();
-                return true;
-            }
+            Item* equippedItem = it->second;
+            CursorManager::Get().StartItemDrag(equippedItem->m_data.id, DragSource::Equipment);
+            // 드래그 시작 시 아이템을 임시로 제거
+            m_equippedItems[clickedSlot] = nullptr;
+            return true;
         }
-        else
-        {
-            // 드래그 중이 아닌 경우 - 해당 슬롯의 아이템을 드래그 시작
-            Item* equippedItem = GetEquippedItem(clickedSlot);
-            if (equippedItem)
-            {
-                CursorManager::Get().StartItemDrag(*equippedItem, DragSource::Equipment);
-                // 실제 장비 해제는 마우스업에서 처리 
-                return true;
-            }
-        }
+        return true;
+    }
+    // 창 내부 클릭 이벤트 처리 완료. 그래서 화면 최상단으로 올리기.
+    if (IsInBounds(mousePos))
+    {
+        UIManager::Get().OpenWindow(m_windowType);
+        return true; 
     }
 
-    // 4. 창 영역 내의 다른 곳 클릭. 그냥 끝내기.
-    return true;
+    // 영역 밖이면 체크안함.
+    return false;
 }
 
 bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
 {
-    // 창 드래그 종료
+    // 꺼져있으면 체크 x 
+    if (!m_isActive) return false;
+
+    // 영역 안 클릭 시 최상단으로.
+    if (IsInBounds(mousePos))
+    {
+        UIManager::Get().OpenWindow(m_windowType);
+        return true;
+    }
+
+    // 드래그 중 아니면 처리 안할거임.
+    if (!CursorManager::Get().IsDragging()) return false;
+   /* if (m_isDragging)
+    {
+        m_isDragging = false;
+        return true;
+    }*/
+
     if (m_isDragging)
     {
         m_isDragging = false;
         return true;
     }
 
-    // 아이템 드래그가 진행 중이고, 장비창 밖에서 마우스업 했다면
-    if (CursorManager::Get().IsDragging() &&
-        CursorManager::Get().GetDragSource() == DragSource::Equipment)
+    if (CursorManager::Get().IsDragging())
     {
-        // 장비창 영역 밖이면 아이템을 인벤토리로 이동
-        if (!IsInBounds(mousePos))
-        {
-            Item* draggedItem = CursorManager::Get().GetDraggedItem();
-            if (draggedItem)
-            {
-                // 드래그된 아이템의 슬롯 타입 찾아서 해제
-                for (auto& [slotType, item] : m_equippedItems)
-                {
-                    if (item == draggedItem)
-                    {
-                        UnequipItem(slotType);
-                        break;
-                    }
-                }
+        Wearable_part slotType = GetSlotTypeAt(mousePos);
+        Item* draggedItem = CursorManager::Get().GetDraggedItem();
+        DragSource dragSource = CursorManager::Get().GetDragSource();
 
-                // UIManager를 통해 인벤토리에 아이템 추가
-                if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
+        Wearable* wearableItem = dynamic_cast<Wearable*>(draggedItem);
+
+        if (slotType != Wearable_part::UnKnown && draggedItem && IsItemTypeMatch(wearableItem->Getpart(), slotType))
+        {
+            // 장비 착용 성공
+            EquipItem(draggedItem);
+            CursorManager::Get().EndItemDrag();
+            return true;
+        }
+        else
+        {
+            // 장비 착용 실패: 아이템을 원래 위치로 되돌림
+            if (dragSource == DragSource::Equipment)
+            {
+                // 원래 슬롯에 아이템 복구
+                EquipItem(draggedItem); // 원래 아이템을 다시 장착
+            }
+            else if (dragSource == DragSource::Inventory)
+            {
+                // 인벤토리로 복구 로직.
+                if (auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
                 {
-                    inventory->AddItem(draggedItem->m_data.name, 1);
+                    inventoryWindow->AddItem(draggedItem->m_data.id, 1);
                 }
             }
 
@@ -153,6 +140,20 @@ bool EquipmentWindow::HandleDoubleClick(Vec2 mousePos)
 
 bool EquipmentWindow::HandleMouseHover(Vec2 mousePos)
 {
+
+    if (!m_isActive) return false;
+
+
+    // 드래그 중이면 창 위치 업데이트
+    if (m_isDragging)
+    {
+        m_position = mousePos - m_dragOffset;
+
+        // 창 위치가 바뀌면 슬롯 위치들도 다시 계산
+        UpdateSlotPositions();
+    }
+
+
     // 슬롯에 마우스 오버 시 툴팁 표시
     Wearable_part hoveredSlot = GetSlotTypeAt(mousePos);
 
@@ -176,21 +177,34 @@ bool EquipmentWindow::HandleMouseHover(Vec2 mousePos)
     return false;
 }
 
-void EquipmentWindow::EquipItem(Item* item)
+void EquipmentWindow::EquipItem(Item* item) //Item 이름이 아니라, 타입을 비교해서 해야 함요 
 {
-    if (!item) return;
+    Wearable* t_item = dynamic_cast<Wearable*>(item);
+    if (item == nullptr ) return; 
+
 
     Wearable_part slotType = Wearable_part::UnKnown;
-    if (item->m_data.name.find("Helmet") != std::string::npos) slotType = Wearable_part::Helmet;
+
+    if(t_item->Getpart() == Wearable_part::Helmet) slotType = Wearable_part::Helmet;
+    else if (t_item->Getpart() == Wearable_part::Weapon) slotType = Wearable_part::Weapon;
+    else if (t_item->Getpart() == Wearable_part::Cape) slotType = Wearable_part::Cape;
+    else if (t_item->Getpart() == Wearable_part::Upper) slotType = Wearable_part::Upper;
+    else if (t_item->Getpart() == Wearable_part::Under) slotType = Wearable_part::Under;
+    else if (t_item->Getpart() == Wearable_part::Glove) slotType = Wearable_part::Glove;
+    else if (t_item->Getpart() == Wearable_part::Neckless) slotType = Wearable_part::Neckless;
+    else if (t_item->Getpart() == Wearable_part::Ring) slotType = Wearable_part::Ring;
+    else if (t_item->Getpart() == Wearable_part::Shoes) slotType = Wearable_part::Shoes;
+
+   /* if (item->m_data.name.find("Helmet") != std::string::npos) slotType = Wearable_part::Helmet;
     else if (item->m_data.name.find("Weapon") != std::string::npos) slotType = Wearable_part::Weapon;
     else if (item->m_data.name.find("Cape") != std::string::npos) slotType = Wearable_part::Cape;
     else if (item->m_data.name.find("Upper") != std::string::npos) slotType = Wearable_part::Upper;
     else if (item->m_data.name.find("Under") != std::string::npos) slotType = Wearable_part::Under;
     else if (item->m_data.name.find("Glove") != std::string::npos) slotType = Wearable_part::Glove;
     else if (item->m_data.name.find("Neckless") != std::string::npos) slotType = Wearable_part::Neckless;
-    else if (item->m_data.name.find("EarRing") != std::string::npos) slotType = Wearable_part::EarRing;
-    else if (item->m_data.name.find("Shoes") != std::string::npos) slotType = Wearable_part::Shoes;
-    
+    else if (item->m_data.name.find("EarRing") != std::string::npos) slotType = Wearable_part::Ring;
+    else if (item->m_data.name.find("Shoes") != std::string::npos) slotType = Wearable_part::Shoes;*/
+
     if (slotType != Wearable_part::UnKnown)
     {
         // 기존에 착용 중인 아이템이 있으면 인벤토리로 반환
@@ -199,7 +213,7 @@ void EquipmentWindow::EquipItem(Item* item)
         {
             if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
             {
-                inventory->AddItem(previousItem->m_data.name, 1);
+                inventory->AddItem(previousItem->m_data.id, 1);
             }
         }
 
@@ -266,29 +280,25 @@ void EquipmentWindow::RenderSlots()
 
     for (const auto& [slotType, position] : m_slotPositions)
     {
+        Vec2 screenPos = m_position + position; // 창 위치를 더한 최종 화면 좌표
+
         Vec2 slotSize = m_slotSizes[slotType];
-        D2D1_RECT_F destRect = { position.x, position.y, position.x + slotSize.x, position.y + slotSize.y };
+        D2D1_RECT_F destRect = { screenPos.x, screenPos.y, screenPos.x + slotSize.x, screenPos.y + slotSize.y };
 
         if (uiRenderer)
         {
-            ID2D1Bitmap1* slotBackgroundBitmap = uiRenderer->GetBitmap("empty_slot").Get(); // .Get() 추가
+            ID2D1Bitmap1* slotBackgroundBitmap = uiRenderer->GetBitmap("empty_slot").Get();
             if (slotBackgroundBitmap)
             {
                 D2DRenderer::Get().DrawBitmap(slotBackgroundBitmap, destRect);
             }
-            else
-            {
-                D2DRenderer::Get().DrawRectangle(position.x, position.y, position.x + slotSize.x, position.y + slotSize.y, D2D1::ColorF(D2D1::ColorF::LightGray, 0.5f));
-            }
-        }
-        else
-        {
-            D2DRenderer::Get().DrawRectangle(position.x, position.y, position.x + slotSize.x, position.y + slotSize.y, D2D1::ColorF(D2D1::ColorF::LightGray, 0.5f));
         }
 
-        D2DRenderer::Get().DrawRectangle(position.x, position.y, position.x + slotSize.x, position.y + slotSize.y, D2D1::ColorF(D2D1::ColorF::Black));
+        // screenPos 기준
+        D2DRenderer::Get().DrawRectangle(screenPos.x, screenPos.y, screenPos.x + slotSize.x, screenPos.y + slotSize.y, D2D1::ColorF(D2D1::ColorF::Black));
 
-        RenderSlotIcon(slotType, position);
+        // screenPos 기준
+        RenderSlotIcon(slotType, screenPos);
     }
 }
 
@@ -299,29 +309,27 @@ void EquipmentWindow::RenderEquippedItems()
     {
         if (item != nullptr)
         {
-            Vec2 slotPos = m_slotPositions[slotType];
+            Vec2 slotPos = m_slotPositions[slotType] + m_position;
             Vec2 slotSize = m_slotSizes[slotType];
             D2D1_RECT_F destRect = { slotPos.x, slotPos.y, slotPos.x + slotSize.x, slotPos.y + slotSize.y };
 
-            ID2D1Bitmap1* itemBitmap = ResourceManager::Get().GetTexture(item->GetImagePath()).Get();
+            ID2D1Bitmap1* itemBitmap = ResourceManager::Get().Get_ItemBank().GetItemAtlas(item->m_data.id).Get();
+               // GetTexture(item->GetImagePath()).Get(); // 나중에 처리.
 
             if (itemBitmap)
             {
-                D2D1_RECT_F srcRect = { 0, 0, (float)itemBitmap->GetSize().width, (float)itemBitmap->GetSize().height };
-                D2DRenderer::Get().DrawBitmap(itemBitmap, destRect, srcRect);
-            }
-            else
-            {
-                D2DRenderer::Get().DrawCircle(slotPos.x + slotSize.x / 2, slotPos.y + slotSize.y / 2, slotSize.x / 3, D2D1::ColorF(D2D1::ColorF::Green));
+                D2D_RECT_F SR = ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).srcRect;
+                //D2D1_RECT_F srcRect = { 0, 0, (float)itemBitmap->GetSize().width, (float)itemBitmap->GetSize().height };
+                D2DRenderer::Get().DrawBitmap(itemBitmap, destRect, SR);
             }
 
-            // 아이템 강화 수치 표시 (+1, +2 등)
-            // if (item->GetEnhanceLevel() > 0)
-            // {
-            //     Vec2 enhanceTextPos = slotPos + Vec2(slotSize.x - 20, 5);
-            //     std::string enhanceText = "+" + std::to_string(item->GetEnhanceLevel());
-            //     D2DRenderer::Get().DrawMessage(std::wstring(enhanceText.begin(), enhanceText.end()).c_str(), enhanceTextPos.x, enhanceTextPos.y, 20, 15, D2D1::ColorF(D2D1::ColorF::Yellow));
-            // }
+             ////아이템 강화 수치 표시 (+1, +2 등)
+             //if (item->GetEnhanceLevel() > 0) //이것도 추가 합세 
+             //{
+             //    Vec2 enhanceTextPos = slotPos + Vec2(slotSize.x - 20, 5);
+             //    std::string enhanceText = "+" + std::to_string(item->GetEnhanceLevel());
+             //    D2DRenderer::Get().DrawMessage(std::wstring(enhanceText.begin(), enhanceText.end()).c_str(), enhanceTextPos.x, enhanceTextPos.y, 20, 15, D2D1::ColorF(D2D1::ColorF::Yellow));
+             //}
         }
     }
 }
@@ -417,18 +425,20 @@ Wearable_part EquipmentWindow::GetSlotTypeAt(Vec2 mousePos) const
 
 bool EquipmentWindow::CanEquipItem(Item* item, Wearable_part slotType) const
 {
+
+    Wearable* t_item = dynamic_cast<Wearable*>(item);
     if (!item) return false;
 
     // 아이템의 착용 부위와 슬롯 타입이 일치하는지 확인
-    if (item->m_data.name.find("Helmet") != std::string::npos && slotType == Wearable_part::Helmet) return true;
-    else if (item->m_data.name.find("Weapon") != std::string::npos && slotType == Wearable_part::Weapon) return true;
-    else if (item->m_data.name.find("Cape") != std::string::npos && slotType == Wearable_part::Cape) return true;
-    else if (item->m_data.name.find("Upper") != std::string::npos && slotType == Wearable_part::Upper) return true;
-    else if (item->m_data.name.find("Under") != std::string::npos && slotType == Wearable_part::Under) return true;
-    else if (item->m_data.name.find("Glove") != std::string::npos && slotType == Wearable_part::Glove) return true;
-    else if (item->m_data.name.find("Neckless") != std::string::npos && slotType == Wearable_part::Neckless) return true;
-    else if (item->m_data.name.find("EarRing") != std::string::npos && slotType == Wearable_part::EarRing) return true;
-    else if (item->m_data.name.find("Shoes") != std::string::npos && slotType == Wearable_part::Shoes) return true;
+    if (t_item->Getpart() == Wearable_part::Helmet) return true;
+    else if (t_item->Getpart() == Wearable_part::Weapon) return true;
+    else if (t_item->Getpart() == Wearable_part::Cape) return true;
+    else if (t_item->Getpart() == Wearable_part::Upper)return true;
+    else if (t_item->Getpart() == Wearable_part::Under) return true;
+    else if (t_item->Getpart() == Wearable_part::Glove) return true;
+    else if (t_item->Getpart() == Wearable_part::Neckless) return true;
+    else if (t_item->Getpart() == Wearable_part::Ring) return true;
+    else if (t_item->Getpart() == Wearable_part::Shoes) return true;
 
     return false;
 }
@@ -438,7 +448,7 @@ void EquipmentWindow::UpdateSlotPositions()
     // 창 위치가 바뀌면 슬롯 위치들도 상대적으로 업데이트
     m_slotPositions[Wearable_part::Glove] = m_position + Vec2(222, 138);
     m_slotPositions[Wearable_part::Helmet] = m_position + Vec2(222, 290);
-    m_slotPositions[Wearable_part::EarRing] = m_position + Vec2(222, 442);
+    m_slotPositions[Wearable_part::Ring] = m_position + Vec2(222, 442);
     m_slotPositions[Wearable_part::Upper] = m_position + Vec2(222, 593);
     m_slotPositions[Wearable_part::Under] = m_position + Vec2(74, 214);
     m_slotPositions[Wearable_part::Shoes] = m_position + Vec2(74, 365);
@@ -447,44 +457,84 @@ void EquipmentWindow::UpdateSlotPositions()
     m_slotPositions[Wearable_part::Cape] = m_position + Vec2(370, 365);
 }
 
+
 void EquipmentWindow::RenderSlotIcon(Wearable_part slotType, Vec2 position)
 {
     // 슬롯별 아이콘 렌더링 (어떤 장비가 들어가는지 표시)
-    std::string iconPath;
+    std::string kEY;
 
     switch (slotType)
     {
     case Wearable_part::Helmet:
-        iconPath = "icon_helmet_slot.png";
+        kEY = "icon_helmet_slot";
         break;
     case Wearable_part::Weapon:
-        iconPath = "icon_weapon_slot.png";
+        kEY = "icon_weapon_slot";
         break;
     case Wearable_part::Upper:
-        iconPath = "icon_armor_slot.png";
+        kEY = "icon_armor_slot";
         break;
     case Wearable_part::Under:
-        iconPath = "icon_pants_slot.png";
+        kEY = "icon_pants_slot";
         break;
     case Wearable_part::Glove:
-        iconPath = "icon_glove_slot.png";
+        kEY = "icon_glove_slot";
         break;
     case Wearable_part::Shoes:
-        iconPath = "icon_shoes_slot.png";
+        kEY = "icon_shoes_slot";
         break;
     case Wearable_part::Neckless:
-        iconPath = "icon_necklace_slot.png";
+        kEY = "icon_necklace_slot";
         break;
-    case Wearable_part::EarRing:
-        iconPath = "icon_earring_slot.png";
+    case Wearable_part::Ring:
+        kEY = "icon_earring_slot";
         break;
     case Wearable_part::Cape:
-        iconPath = "icon_cape_slot.png";
+        kEY = "icon_cape_slot";
         break;
     }
 
-    if (!iconPath.empty())
+    if (!kEY.empty())
     {
-        // Renderer::Get().DrawImage(iconPath, position, m_slotSizes.at(slotType));
+
+        D2D1_SIZE_F  size = GetComponent<UI_Renderer>()->GetBitmap(kEY).Get()->GetSize();
+
+        D2D1_RECT_F rect = {
+      0.0f,           // left
+      0.0f,           // top
+      size.width,     // right
+      size.height     // bottom
+        };
+
+
+      
+        float x = m_slotSizes.at(slotType).x;
+        float y = m_slotSizes.at(slotType).y;
+
+        D2D1_RECT_F desrect = { x, y, x + size.width, y + size.height };
+          
+        // D2DRenderer::Get().DrawImage(iconPath, position, m_slotSizes.at(slotType));
+        D2DRenderer::Get().DrawBitmap(GetComponent<UI_Renderer>()->GetBitmap(kEY).Get(), desrect, rect, 1.0f);
     }
+}
+
+bool EquipmentWindow::IsItemTypeMatch(Wearable_part itemType, Wearable_part slotType)
+{
+    return itemType == slotType;
+}
+
+bool EquipmentWindow::IsItemTypeMatch(const std::string& itemId, Wearable_part slotType) const
+{
+    Item* itemData = m_itemDatabase->GetItemData(itemId);
+
+    m_itemBank.get()->GiveItem(itemData->Momnet, *m_itemDatabase);
+    
+    Wearable* wearableItem = dynamic_cast<Wearable*>(itemData);
+
+    if (itemData && wearableItem->Getpart() == slotType)
+    {
+        return true;
+    }
+
+    return false;
 }

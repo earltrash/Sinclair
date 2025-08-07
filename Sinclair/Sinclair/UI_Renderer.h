@@ -11,7 +11,7 @@ public:
 		~UI_Renderer() = default; //Raii
 
 		// 인수 한개짜리 추가로 만들어두자 일단. 임시로
-		void SetBitmap(ComPtr<ID2D1Bitmap1> bitmap); 
+		void SetBitmap(ComPtr<ID2D1Bitmap1> bitmap);
 		const ComPtr<ID2D1Bitmap1>& GetBitmap() const;
 
 		// 특정 키에 해당하는 비트맵을 설정.

@@ -20,7 +20,7 @@ Wearable_part StringToWP(std::string& val) //¹«±â ENUM
 {
 		if (val == "Weapon") return Wearable_part::Weapon;
 		else if (val == "Shoes") return Wearable_part::Shoes;
-		else if (val == "EarRing") return Wearable_part::EarRing;
+		else if (val == "Ring") return Wearable_part::Ring;
 		else if (val == "Neckless") return Wearable_part::Neckless;
 		else if (val == "Glove") return Wearable_part::Glove;
 		else if (val == "Under") return Wearable_part::Under;

@@ -32,7 +32,7 @@ void ButtonComponent::Worked(const MSG& msg)
 
     POINT CORD = { GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam) };
     Vec2 pos = m_Owner->GetTransform().GetPosition();
-    
+
     //// 투명 버튼 구현 미루자.
     //// 투명 버튼인 경우 설정된 크기 사용
     //if (m_isInvisible)
@@ -89,7 +89,6 @@ void ButtonComponent::Worked(const MSG& msg)
         {
             // 버튼이 눌린 상태에서 마우스를 뗐을 때만 클릭으로 처리
             if (m_onClick) m_onClick();
-
             SetState(ButtonState::Hover);
         }
         else if (msg.message == WM_MOUSEMOVE && m_currentState != ButtonState::Pressed)

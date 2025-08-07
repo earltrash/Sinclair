@@ -14,9 +14,12 @@ ResourceManager& ResourceManager::Get()
 void ResourceManager::GameAssetLoad()
 {
     //AnimatedAssetLoad(D2DRenderer::Get(), "Resource");
-    m_ItemBank.LoadItemStatus("Resource/Item"); //Status Only
+    //m_ItemBank.LoadItemStatus("Resource/Item"); //Status Only
     //m_ItemBank.LoadItemBitmap("") //얘는 Atlas 위치긴 한데 이거 얘기좀 해봐야 할 듯 . 
+    m_UI_Bank.Load_UI_Image("UI"); // Single / Multi Bitmap
     m_UI_Bank.Load_UI_Image("Resource/UI"); // Single / Multi Bitmap
+    m_ItemBank.LoadItemStatus("Item_S"); //Status Only
+    m_ItemBank.LoadItemRect("Item_A"); //Atlas랑 정확히는 Item 별 srect 
 
     // 효제: 현재는 한 파일이지만 결국 위처럼 로드 함수를 만들어야 함.
     m_TextBank.parseTSV_Ending("Resource/text/싱클레어가히스토리_ver2.6.txt");
@@ -222,6 +225,8 @@ std::vector<Clip_Asset> ResourceManager::GetClips(const string& Info)
 void ResourceManager::Clean()
 {
     //일단 만들어는 둠... 혹여나 모르니깐 
+    //m_ItemBank.clean();
+    //m_UI_Bank.clean();
 
 }
 

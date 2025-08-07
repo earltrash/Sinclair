@@ -14,6 +14,7 @@ Wearable::Wearable(const ItemCommonData& data, const json& j) : Item(data)
         std::string part = j["part"];
         m_part = StringToWP(part);
         Enchan_Count = (m_part == Wearable_part::Weapon) ? 5 : 3; //깔끔하다
+        //BOOL 값 
     }
     else
         std::cout << "장비 파트 부분에서 문제 발생함" << endl;
@@ -70,8 +71,8 @@ void Wearable::SetPart(const Wearable_part& Part)
     case Wearable_part::Shoes:
         m_part = Wearable_part::Shoes;
         break;
-    case Wearable_part::EarRing:
-        m_part = Wearable_part::EarRing;
+    case Wearable_part::Ring:
+        m_part = Wearable_part::Ring;
         break;
     case Wearable_part::Neckless:
         m_part = Wearable_part::Neckless;
@@ -92,5 +93,10 @@ void Wearable::SetPart(const Wearable_part& Part)
         std::cout << "너는 어디 장비임??" << endl;
    
     }
+}
+
+Wearable_part Wearable::Getpart()
+{
+    return m_part;
 }
 

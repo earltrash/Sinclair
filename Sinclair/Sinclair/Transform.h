@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "RenderInfo.h"
 
+
 using Vec2 = MYHelper::Vector2F;
 using Mat3x2 = D2D1::Matrix3x2F;
 namespace D2DTM
@@ -206,6 +207,7 @@ namespace D2DTM
         Vec2     m_position = { 0.f, 0.f }; // translation position
         float    m_rotation = 0.f;          // in degrees
         Vec2     m_scale = { 1.f, 1.f };
+
 
         Transform* m_parent;
         std::vector<Transform*> m_children;

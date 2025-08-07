@@ -1,7 +1,6 @@
 #pragma once
 
-//2차 스테이터스임 앞글자 대문자로 표기 , 플레이어가 가져야 할 구조체임 -> 게임매니저
-struct TotalStatus 
+struct TotalStatus //2차 스테이터스임 앞글자 대문자로 표기 , 플레이어가 가져야 할 구조체임 ->
 {
 		int Strength;
 		int Magic_Power;
@@ -45,7 +44,7 @@ enum class Wearable_part //-> Wearable 분류
 {
 		Weapon,
 		Shoes,
-		EarRing,
+		Ring,
 		Neckless,
 		Glove,
 		Under,
@@ -91,6 +90,7 @@ enum class UIWindowType
 enum class CursorType
 {
 	Normal,
+	Pressed,
 	Move,
 	Pointer,
 	Drag

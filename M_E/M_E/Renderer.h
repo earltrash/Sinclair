@@ -74,6 +74,10 @@ public:
 
     void CreateWriteResource(const wchar_t* fontName, DWRITE_FONT_WEIGHT fontWeight, float fontSize);
 
+    ComPtr<ID2D1DeviceContext7> GetContext() { return m_d2dContext; }
+    ComPtr<ID2D1SolidColorBrush> GetTBrush()   {return m_textBrush;}
+    ComPtr <IDWriteTextFormat>   GetTFormat() { return  m_textFormat; }
+
 private:
 
     void CreateDeviceAndSwapChain(HWND hwnd);

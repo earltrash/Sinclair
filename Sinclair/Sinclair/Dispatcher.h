@@ -23,6 +23,7 @@ public:
     }
 
 
+
     void Broadcast(const MSG& msg) {
 
         for (size_t i = 0; i < listeners.size(); ++i) {

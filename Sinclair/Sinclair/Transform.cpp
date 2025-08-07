@@ -33,6 +33,9 @@ void  D2DTM::Transform::UpdateMatrices()
 				D2D1::Matrix3x2F::Rotation(m_rotation, m_pivot) *
 				D2D1::Matrix3x2F::Translation(m_position.x, m_position.y);
 
+		std::cout << "오브젝트 로컬 matrix x 값" << (m_position.x) << "오브젝트 로컬 matrix y값" << m_position.y << std::endl;
+
+
 		if (m_parent)
 				m_matrixWorld = m_matrixLocal * m_parent->GetWorldMatrix();
 		else

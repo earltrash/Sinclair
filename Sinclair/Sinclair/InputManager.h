@@ -20,39 +20,43 @@ enum class KeyCode
     P = 'P'
 };
 
-class InputManager 
+class InputManager
 {
 public:
-		static InputManager& Get();
-		bool MsgCheck(MSG& msg); //InputManager에서 다루는 입력이 아닌 경우는 프로시저로 넘김. 
-		void Clean();
+    static InputManager& Get();
+    bool MsgCheck(MSG& msg); //InputManager에서 다루는 입력이 아닌 경우는 프로시저로 넘김. 
+    void Clean();
 
-        void Update();
+    void Update();
 
-        // 마우스 관련
-        Vec2 GetMousePosition() const { return m_mousePosition; }
-        bool IsMouseClicked(MouseButton button) const;
-        bool IsMousePressed(MouseButton button) const;
-        bool IsMouseReleased(MouseButton button) const;
-        bool IsDoubleClicked() const { return m_isDoubleClicked; }
+    // 마우스 관련
+    Vec2 GetMousePosition() const { return m_mousePosition; }
+    bool IsMouseClicked(MouseButton button) const;
+    bool IsMousePressed(MouseButton button) const;
+    bool IsMouseReleased(MouseButton button) const;
+    bool IsDoubleClicked() const { return m_isDoubleClicked; }
 
-        // 키보드 관련
-        bool IsKeyPressed(KeyCode key) const;
-        bool IsKeyDown(KeyCode key) const;
-        bool IsKeyUp(KeyCode key) const;
+    // 키보드 관련
+    bool IsKeyPressed(KeyCode key) const;
+    bool IsKeyDown(KeyCode key) const;
+    bool IsKeyUp(KeyCode key) const;
 
 
 
-        unique_ptr<EventDispatcher> m_broadcaster = nullptr;
+    unique_ptr<EventDispatcher> m_broadcaster = nullptr;
+
+    // 임시
+    void SetWindowHandle(HWND hWnd) { m_hWnd = hWnd; }
 private:
-	InputManager();
-	~InputManager();
+    HWND m_hWnd;    // 임시
+    InputManager();
+    ~InputManager();
 
     // 복사 방지용.
     InputManager(const InputManager&) = delete;
     InputManager& operator=(const InputManager&) = delete;
 
-   
+
 
     // 마우스 상태
     Vec2 m_mousePosition = { 0, 0 };

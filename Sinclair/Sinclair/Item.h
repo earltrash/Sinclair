@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "Status.h"
 #include "Object.h"
-
+#include "MouseInput.h"
 //밑은 파싱과 클래스 오염을 방지?
 #include "json.hpp"
 #include "ItemGlobal.h"
@@ -10,11 +10,7 @@ using namespace std;
 
 using json = nlohmann::json;
 
-#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
-#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp)) // 그냥 멋지게 쓰고 싶었다...
-
-struct ItemCommonData 
-{
+struct ItemCommonData {
 	std::string id;
 	std::string name;
 	std::string description;
@@ -31,20 +27,7 @@ public:
 	Item(ItemCommonData data) :m_data(data) {}; //stat을 넣어주자, 값 받아오는 거를 어떻게 하면 좋을까
 	virtual ~Item() = default;
 
-	// 착용 부위 가져오기
-	Wearable_part GetWearablePart() const
-	{
-			return m_data.wearablePart;
-	}
-
-	// 이미지 경로 가져오기
-	const std::string& GetImagePath() const
-	{
-			return m_data.id;
-	}
-
-	const bool IsStackable() const 
-	{
+	const bool IsStackable() const {
 		return maxCount > 1;
 	}
 

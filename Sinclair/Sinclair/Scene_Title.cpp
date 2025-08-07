@@ -9,7 +9,7 @@
 
 Scene_Title::Scene_Title(string name)
 {
-	m_name = name;
+		m_name = name;
 }
 
 Scene_Title::~Scene_Title()
@@ -19,7 +19,7 @@ Scene_Title::~Scene_Title()
 void Scene_Title::Initalize()
 {
 	if (dirty) return; // 이미 초기화되었으면 스킵
-
+		
 	CreateObj(); // 오브젝트 생성 (한 번만)
 	dirty = true;
 }
@@ -45,7 +45,7 @@ void Scene_Title::Exit()
 
 void Scene_Title::Clean()
 {
-	m_gameObjects.clear();
+		m_gameObjects.clear();
 	//SceneAssets.clear();
 	dirty = false;
 }
@@ -63,11 +63,11 @@ void Scene_Title::LogicUpdate(float delta)
 
 
 void Scene_Title::Render()
-{	
+{
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
-	}
+}
 
 }
 
@@ -154,7 +154,7 @@ void Scene_Title::CreateObj()
 		[gameStartButton_buttonComp](const MSG& msg) {
 			gameStartButton_buttonComp->Worked(msg);
 		}
-	);
+						);
 
 	gameStartButton_buttonComp->SetOnClickCallback([this]() {
 		SceneManager::Get().ChangeScene("OutGame");
@@ -187,7 +187,7 @@ void Scene_Title::CreateObj()
 		// 여기서 어떻게 입력 처리 하지?
 		[gameSettingButton_buttonComp](const MSG& msg) {
 			gameSettingButton_buttonComp->Worked(msg);
-		}
+				}
 	);
 
 	// 버튼 설정
@@ -224,7 +224,7 @@ void Scene_Title::CreateObj()
 	auto creditButton_mouseListener = creditButton->AddComponent<MouseListenerComponent>(
 		[creditButton_buttonComp](const MSG& msg) {
 			creditButton_buttonComp->Worked(msg);
-		}
+				}
 	);
 
 	// 버튼 설정
