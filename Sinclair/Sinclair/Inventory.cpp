@@ -1,7 +1,9 @@
 #include "InvenTory.h"
 #include "ResourceManager.h"
 #include "ItemBank.h"
-#
+#include "CursorManager.h"
+#include "InvenMem.h"
+
 
 //: UI_Object(MWP) //생성자로 영역은 일단 설정함 (Inven 자기 영역 말임)
 Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 0,0 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
@@ -39,23 +41,23 @@ void Inventory::InitializeRegions()
     regions.resize(3); // 3개의 영역 (4x8, 4x8, 4x8)
 
     //타이틀 바 영역, 위치만 존재한다고 생각하셈 
-    titleBarBounds = Rect(m_bound.x, m_bound.y, m_bound.width, 42.0f); //7+35
+    titleBarBounds = Rect(m_position.x, m_position.y, m_size.x, 42.0f);  //7+35
 
     //닫기 버튼 영역 //86
     float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
-        windowPosition.x + m_bound.width - (closeButtonSize + 59), //14
-        windowPosition.y + 7,
+        m_position.x + m_size.x - (closeButtonSize + 59), //14
+        m_position.y + 7,
         closeButtonSize,
         closeButtonSize);
 
     //Inven 위치 
-    windowBackground.position = windowPosition;
-    windowBackground.size = Vec2(m_bound.width, m_bound.height);
+    windowBackground.position = m_position;
+    windowBackground.size = Vec2(m_size.x, m_size.y);
     windowBackground.srcRect = D2D1::RectF(
         0.0f, 0.0f,
-        static_cast<float>(m_bound.width),
-        static_cast<float>(m_bound.height)
+        static_cast<float>(m_size.x),
+        static_cast<float>(m_size.y)
     );
 
     //닫기 버튼 랜더 위치 
@@ -63,7 +65,7 @@ void Inventory::InitializeRegions()
     closeButton.size = Vec2(closeButtonBounds.width, closeButtonBounds.height);
     closeButton.srcRect = D2D1::RectF(0, 0, 27, 27); // 닫기 버튼 이미지 크기
 
-    TitleBar.srcRect = D2D1::RectF(m_bound.x, m_bound.y, m_bound.width, 42.0f);
+    TitleBar.srcRect = D2D1::RectF(m_position.x, m_position.y, m_size.x, 42.0f);
 
     float slotSize = 74.0f;
     float padding_x = 13.0f;
@@ -73,7 +75,7 @@ void Inventory::InitializeRegions()
     float totalSlotDimension_y = slotSize + padding_y;
 
     // windowBounds의 내부 영역을 기준으로 배치
-    float currentRegionX = m_bound.x + 68.0f; // 윈도우 좌측 여백
+    float currentRegionX = m_position.x + 68.0f; // 윈도우 좌측 여백
     RegionOffset.push_back({ currentRegionX , m_bound.y});
     // Region 0: 기본 해금 영역 (4x8)
     regions[0].id = 0;
@@ -90,7 +92,7 @@ void Inventory::InitializeRegions()
 
     // Region 1: 중간 잠금 영역 (4x8)
     regions[1].id = 1;
-    regions[1].isEnabled = false; // 잠금
+    regions[1].isEnabled = true; // 잠금
     regions[1].gridSize = Vec2{ 4, 8 };
     regions[1].bounds = Rect(
         currentRegionX,
@@ -103,7 +105,7 @@ void Inventory::InitializeRegions()
 
     // Region 2: 오른쪽 잠금 영역 (4x8)
     regions[2].id = 2;
-    regions[2].isEnabled = false; // 잠금
+    regions[2].isEnabled = true; // 잠금
     regions[2].gridSize = Vec2{ 4, 8 };
     regions[2].bounds = Rect(
         currentRegionX,
@@ -145,6 +147,8 @@ void Inventory::InitializeSlots()
             }
         }
     }
+
+    //UpdateSlotPositions();
 }
 
 bool Inventory::AddItem(string itemId, int count)
@@ -198,8 +202,22 @@ void Inventory::UnlockRegion(int regionId)
 void Inventory::Update() //입력처리를 받은 다음에 해야하는 거잖아? //차피 이거는 의미 없을 듯 함? ㅇㅇ 입력 처리 받으면 알아서 변경 될 부분이라. 
 {
    // effect가 필요하다면 여기서 Update 하는 게 맞아. 
+    if (!m_isActive) return;
 
-   
+    
+    // 창 위치가 변경될 때마다 타이틀바 및 닫기 버튼의 위치도 업데이트
+    titleBarBounds = Rect(m_position.x, m_position.y, m_size.x, 42.0f);
+    float closeButtonSize = 35.0f;
+    closeButtonBounds = Rect(
+        m_position.x + m_size.x - (closeButtonSize + 59),
+        m_position.y + 7,
+        closeButtonSize,
+        closeButtonSize);
+
+    UpdateSlotPositions();
+
+    // 윈도우 배경 이미지 위치 업데이트
+    windowBackground.position = m_position;
 }
 
 void Inventory::Render()
@@ -208,8 +226,8 @@ void Inventory::Render()
     if (windowBackground.bitmap)
     {
         D2D1_RECT_F destRect = D2D1::RectF(
-            m_bound.x, m_bound.y,
-            m_bound.x + m_bound.width, m_bound.y + m_bound.height
+            m_position.x, m_position.y,
+            m_position.x + m_size.x, m_position.y + m_size.y
         );
         D2D1_RECT_F srcRect = windowBackground.srcRect;
 
@@ -232,18 +250,18 @@ void Inventory::Render()
         RenderSlot(slot);
     }
 
-    if (dragState.isDragging && dragState.dragBitmap.bitmap)
-    {
-        D2D1_RECT_F dragDestRect = D2D1::RectF(
-            dragState.mousePos.x - dragState.dragBitmap.size.x / 2.0f, // 마우스 중앙에 오도록
-            dragState.mousePos.y - dragState.dragBitmap.size.y / 2.0f,
-            dragState.mousePos.x + dragState.dragBitmap.size.x / 2.0f,
-            dragState.mousePos.y + dragState.dragBitmap.size.y / 2.0f
-        );
+    //if (dragState.isDragging && dragState.dragBitmap.bitmap)
+    //{
+    //    D2D1_RECT_F dragDestRect = D2D1::RectF(
+    //        dragState.mousePos.x - dragState.dragBitmap.size.x / 2.0f, // 마우스 중앙에 오도록
+    //        dragState.mousePos.y - dragState.dragBitmap.size.y / 2.0f,
+    //        dragState.mousePos.x + dragState.dragBitmap.size.x / 2.0f,
+    //        dragState.mousePos.y + dragState.dragBitmap.size.y / 2.0f
+    //    );
 
-        D2DRenderer::Get().DrawBitmap(static_cast<ID2D1Bitmap1*>(dragState.dragBitmap.bitmap),
-            dragDestRect, dragState.dragBitmap.srcRect, 1.0f);
-    }
+    //    D2DRenderer::Get().DrawBitmap(static_cast<ID2D1Bitmap1*>(dragState.dragBitmap.bitmap),
+    //        dragDestRect, dragState.dragBitmap.srcRect, 1.0f);
+    //}
 
     // 5. 툴팁 렌더링 (가장 마지막에 렌더링하여 다른 UI 위에 표시)
    /* if (showTooltip)
@@ -337,173 +355,90 @@ bool Inventory::HandleMouseDown(Vec2 mousePos) //어차피 Inven 위치 내에 있어야 �
 {
     if (!m_isActive) return false;
 
-    // 닫기 버튼 클릭 처리
-    if (closeButtonBounds.Contains(mousePos))
+    InventorySlot* slot = GetSlotAt(mousePos);
+    if (slot && !slot->IsEmpty() && slot->isEnabled)
     {
-        m_isActive = false; // 창 비활성화
-       // showTooltip = false; // 툴팁 숨김
-        std::cout << "닫기 버튼 눌렸음" << isWindowDragging << endl;
+        // CursorManager를 통해 전역적으로 아이템 드래그 시작
+        CursorManager::Get().StartItemDrag(slot->item.id, DragSource::Inventory);
+        CursorManager::Get().SetDraggedItem(m_itemDatabase.GetItemData(slot->item.id)); // 실제 Item* 전달
 
+        // 아이템 정보만 CursorManager에 넘기고 슬롯 비우기.
+        slot->Clear();
+        slot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
+        return true; // 입력 처리 완료
+    }
+    // 영역 안 클릭 시 최상단으로.
+    if (IsInBounds(mousePos))
+    {
+        UIManager::Get().OpenWindow(m_windowType);
         return true;
     }
 
-    // 타이틀바 드래그 시작
-    if (titleBarBounds.Contains(mousePos))
-    {
-        isWindowDragging = true;
-        dragStartMousePos = mousePos;
-
-        std::cout<<"타이틀 바 잡고 있음" << isWindowDragging << endl;
-
-        dragStartWindowPos = windowPosition; //이 경우에 밑에 있는 애들도 업데이트 되어야 함 
-
-        return true; // 타이틀바 드래그 시작 시 다른 클릭 이벤트는 무시
-    }
-
-    // 슬롯 드래그 시작 (기존 로직)
-    InventorySlot* slot = GetSlotAt(mousePos); // 현재 창 위치를 고려하여 슬롯 가져오기
-    if (slot != nullptr)
-    {
-        if (slot && !slot->IsEmpty() && slot->isEnabled)
-        {
-            dragState.isDragging = true;
-            dragState.sourceSlot = slot;
-
-
-            dragState.draggedItem = slot->item;
-            dragState.mousePos = mousePos;
-
-
-            // std::cout<< "x: " << dragState.mousePos.x  << "y: " << dragState.mousePos.y << endl;
-
-            std::cout << "아이템 id 가져오기: " << slot->item.id << "아이템 갯수도 가져올 수 있음: " << slot->item.count << endl;
-
-
-            const Item* itemData = m_itemDatabase.GetItemData(slot->item.id); //
-            if (itemData)
-            {
-                //Itembank로부터 Item id를 받아서 해당 item에 해당하는 atlas의 영역을 보내 줘야 함. 
-                dragState.dragBitmap.bitmap = ResourceManager::Get().Get_ItemBank().GetItemClip(slot->item.id).atlas.Get(); //id -> database에서 / Itembank에서 아틀라스 받아와야 함. 
-                dragState.dragBitmap.srcRect = ResourceManager::Get().Get_ItemBank().GetItemClip(slot->item.id).srcRect;
-                dragState.dragBitmap.size = Vec2(48, 48);
-            }
-
-            slot->Clear();
-
-            slot->UpdateItemBitmap(&controller, &m_itemDatabase);
-        }
-    }
-   
-
-
-    return true;
+    return false;
 }
 
 bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해야 함. 누가 시작 했는지 알아야 할 듯 
 {
     if (!m_isActive) return false;
 
-    // 윈도우 드래그 종료
-    if (isWindowDragging)
+    // 영역 안 클릭 시 최상단으로.
+    if (IsInBounds(mousePos))
     {
-        isWindowDragging = false;
+        UIManager::Get().OpenWindow(m_windowType);
         return true;
     }
 
-    // 아이템 드래그 종료
-    if (!dragState.isDragging)  return true;;
+    // CursorManager에서 드래그 중인 아이템이 있는지 확인
+    if (!CursorManager::Get().IsDragging()) return false;
+
+    InventorySlot* targetSlot = GetSlotAt(mousePos); // 현재 마우스 위치의 슬롯을 다시 찾음
+    Item* draggedItemData = CursorManager::Get().GetDraggedItem(); // CursorManager에서 드래그 중인 아이템 가져오기
 
     bool placed = false;
-    InventorySlot* targetSlot = GetSlotAt(mousePos); // 현재 마우스 위치의 슬롯을 다시 찾음
 
-    if (targetSlot && targetSlot->isEnabled)
+    if (targetSlot && targetSlot->isEnabled && draggedItemData)
     {
         // 스택 가능한 아이템이라면 합치기 시도
-         Item* draggedItemData = m_itemDatabase.GetItemData(dragState.draggedItem.id);
-
-        if (draggedItemData && draggedItemData->IsStackable() &&
-            targetSlot->item.id == dragState.draggedItem.id &&
-            (targetSlot->item.count + dragState.draggedItem.count) <= draggedItemData->maxCount)
+        if (draggedItemData->IsStackable() &&
+            targetSlot->item.id == draggedItemData->m_data.id &&
+            (targetSlot->item.count + 1) <= draggedItemData->maxCount) // count는 CursorManager에서 관리해야 함
         {
-            targetSlot->item.count += dragState.draggedItem.count;
+            targetSlot->item.count += 1; // 드래그된 아이템의 실제 count를 더해야 함
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
             placed = true;
         }
-
         else if (targetSlot->IsEmpty())
         {
             // 빈 슬롯에 드롭
-            targetSlot->item = dragState.draggedItem;
+            targetSlot->SetItem(draggedItemData->m_data.id, 1); // count는 CursorManager에서 관리해야 함
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
             placed = true;
         }
-
-        else if (targetSlot->isEnabled && !targetSlot->IsEmpty()) //swap -> bitmap / bound / item 
+        else // 슬롯이 비어있지 않고 스택 불가능하거나 다른 아이템인 경우 (교환 로직)
         {
-#pragma region Temp
-            // ItemInstance tempItem = targetSlot->item;
-           // UIBitmap tempBitmap = targetSlot->itemBitmap;
-           // Rect tempRect = targetSlot->bounds;
-
-           ///* targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
-           // dragState.sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);*/
-
-           // targetSlot->item = dragState.draggedItem;
-           // targetSlot->itemBitmap = dragState.dragBitmap;
-
-           // dragState.sourceSlot->item = tempItem;
-           // dragState.sourceSlot->itemBitmap = tempBitmap;
-
-           // targetSlot->bounds = dragState.sourceSlot->bounds;
-           // dragState.sourceSlot->bounds = tempRect;
-
-
-           // Rect tempBounds = targetSlot->bounds;
-
-           // // bounds swap
-           // targetSlot->bounds = dragState.sourceSlot->bounds;
-           // dragState.sourceSlot->bounds = tempBounds;
-
-           // // 이후 itemBitmap 위치 재설정
-           // targetSlot->itemBitmap.position = {
-           //     targetSlot->bounds.x + SLOT_PADDING,
-           //     targetSlot->bounds.y + SLOT_PADDING
-           // };
-           // targetSlot->itemBitmap.size = {
-           //     targetSlot->bounds.width - SLOT_PADDING * 2,
-           //     targetSlot->bounds.height - SLOT_PADDING * 2
-           // };
-
-           // dragState.sourceSlot->itemBitmap.position = {
-           //     dragState.sourceSlot->bounds.x + SLOT_PADDING,
-           //     dragState.sourceSlot->bounds.y + SLOT_PADDING
-           // };
-           // dragState.sourceSlot->itemBitmap.size = {
-           //     dragState.sourceSlot->bounds.width - SLOT_PADDING * 2,
-           //     dragState.sourceSlot->bounds.height - SLOT_PADDING * 2
-           // };
-#pragma endregion
+            // 현재 슬롯의 아이템을 다시 CursorManager로 돌려보내고, 드래그된 아이템을 현재 슬롯에 놓기
             ItemInstance tempItem = targetSlot->item;
-
-            targetSlot->item = dragState.draggedItem;
-            dragState.sourceSlot->item = tempItem;
-
+            targetSlot->SetItem(draggedItemData->m_data.id, 1); // 드래그된 아이템 놓기
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
-            dragState.sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
-            placed = true;
+
+            // 원래 슬롯에 있던 아이템을 CursorManager에 다시 설정 (교환)
+            CursorManager::Get().SetDraggedItem(m_itemDatabase.GetItemData(tempItem.id));
+            CursorManager::Get().StartItemDrag(tempItem.id, DragSource::Inventory); // 다시 드래그 상태로
+            placed = true; // 부분적으로 처리되었으므로 true
         }
     }
 
-    // 배치 실패시 원래 위치로 복귀
-    if (!placed)
+    if (placed)
     {
-        dragState.sourceSlot->item = dragState.draggedItem;
-        dragState.sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
+        CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
+    }
+    else
+    {
+        // CursorManager::Get().EndItemDrag(); // 만약 드롭 실패 시 아이템을 완전히 버린다면 이 주석을 해제
     }
 
-    dragState.isDragging = false;
-    return true;
+    return placed;
 }
 
 bool Inventory::HandleDoubleClick(Vec2 mousePos)
@@ -572,27 +507,43 @@ void Inventory::RenderTitleBar()
 
 void Inventory::RenderCloseButton()
 {
-    D2D1_RECT_F destRect = closeButtonBounds.ToD2DRect();
-    D2D1_RECT_F srcRect = closeButton.srcRect;
-    D2DRenderer::Get().DrawBitmap(static_cast<ID2D1Bitmap1*>(closeButton.bitmap), destRect, srcRect, closeButton.opacity);
-   // std::cout << "closeButton:Opacity" << closeButton.opacity << endl;
+    if (closeButton.bitmap)
+    {
+        // 닫기 버튼 위치를 현재 창 위치에 따라 업데이트
+        float rightMargin = 47.0f;
+        Vec2 currentCloseButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
+
+        D2D1_RECT_F destRect = D2D1::RectF(
+            currentCloseButtonPos.x, currentCloseButtonPos.y,
+            currentCloseButtonPos.x + 27.0f, currentCloseButtonPos.y + 27.0f
+        );
+        D2D1_RECT_F srcRect = closeButton.srcRect;
+
+        D2DRenderer::Get().DrawBitmap(
+            static_cast<ID2D1Bitmap1*>(closeButton.bitmap),
+            destRect,
+            srcRect,
+            closeButton.opacity);
+    }
 }
 
 void Inventory::RenderSlot(const InventorySlot& slot)
 {
+    // 슬롯 배경 렌더링
     if (slot.backgroundBitmap.bitmap)
     {
-        //std::cout << "배경 비트맵 렌더링 시도" << std::endl;
-
-        D2D1_RECT_F destRect = slot.bounds.ToD2DRect();
+        D2D1_RECT_F destRect = D2D1::RectF(
+            slot.bounds.x, slot.bounds.y,
+            slot.bounds.x + slot.bounds.width,
+            slot.bounds.y + slot.bounds.height
+        );
         D2D1_RECT_F srcRect = slot.backgroundBitmap.srcRect;
-        D2DRenderer::Get().DrawBitmap
-        (
+
+        D2DRenderer::Get().DrawBitmap(
             static_cast<ID2D1Bitmap1*>(slot.backgroundBitmap.bitmap),
             destRect,
             srcRect,
             slot.backgroundBitmap.opacity);
-     
     }
 
     // 비활성화된 슬롯은 빈slot이미지 그림.
@@ -681,10 +632,10 @@ void Inventory::UpdateSlotPositions() // -> widndow 기준으로 되고 있지 않아요
                     float slotX = m_bound.x + RegionOffset[regionId].x + x * totalSlotDimension_x;
                     float slotY = m_bound.y + RegionOffset[regionId].y + y * totalSlotDimension_y+ 64.0f;
 
-                    
-
-
                     slot.SetBounds(Rect(slotX, slotY, slotSize, slotSize));
+
+                    // 아이템 비트맵 위치도 업데이트
+                    slot.itemBitmap.position = { slot.bounds.x + SLOT_PADDING, slot.bounds.y + SLOT_PADDING };
                 }
             }
         }

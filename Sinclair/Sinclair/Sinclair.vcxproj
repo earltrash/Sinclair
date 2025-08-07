@@ -184,6 +184,7 @@
     <ClCompile Include="BackgroundComponent.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
+    <ClCompile Include="CursorManager.cpp" />
     <ClCompile Include="Enchancer.cpp" />
     <ClCompile Include="EnhancementWindow.cpp" />
     <ClCompile Include="EquipmentWindow.cpp" />
@@ -208,6 +209,7 @@
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StatWindow.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UIWindow.cpp" />
     <ClCompile Include="UI_Bank.cpp" />
     <ClCompile Include="UI_Renderer.cpp" />

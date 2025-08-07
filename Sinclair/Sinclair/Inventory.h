@@ -18,7 +18,8 @@ class Inventory : public UIWindow
 {
 public:
     //크기는 1097 *  766 // Rect {0,0 1097,766}
-    Inventory(); //이 오브젝트의 전체 Rect, Object 형식이 어떻게 될지ㅣ 몰라서 
+    //이 오브젝트의 전체 Rect, Object 형식이 어떻게 될지ㅣ 몰라서 
+    Inventory();
 
     //Initalize
     void InitializeRegions();
@@ -46,15 +47,12 @@ public:
      virtual void SetActivate(bool active) { m_isActive = active; }
      UIWindowType GetType() override;
 
-
-
     InventorySlot* GetSlotAt(const Vec2& pos);
     void RenderTitleBar();
     void RenderCloseButton();
     void RenderSlot(const InventorySlot& slot);
 
     void UpdateSlotPositions();
-
 
 private:
     std::vector<Region> regions;
@@ -78,8 +76,6 @@ private:
     bool isWindowDragging = false;
     Vec2 dragStartMousePos{ 0,0 };
     Vec2 dragStartWindowPos{ 0,0 };
-
-
 
     std::string currentHoveredItemName; //HoveredItemName
     std::string currentHoveredItemDescription; //현 아이템 설명글.

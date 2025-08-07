@@ -27,6 +27,10 @@ public:
 				m_totalStats.Health = 0;
 				m_totalStats.Magic_Power = 0;
 				m_totalStats.Charm = 0;
+
+				m_statBase = ResourceManager::Get().Get_UIBank().Get_Image("StatBase").Get();
+				m_backgroundBitmap = ResourceManager::Get().Get_UIBank().Get_Image("StatBG").Get();
+				m_closeButton = ResourceManager::Get().Get_UIBank().Get_Image("CloseButton").Get();
 		}
 		virtual ~StatWindow() = default;
 
@@ -34,9 +38,9 @@ public:
 		void Render() override;
 
 		// 마우스 인풋 관련 함수들. 근데 메세지 입력 처리만 하고 따른거 할거 없음. UIWindow에서 처리함.
-		bool HandleMouseDown(Vec2 mousePos) override { return true; }
+		bool HandleMouseDown(Vec2 mousePos) override;
 
-		bool HandleMouseUp(Vec2 mousePos) override { return true; }
+		bool HandleMouseUp(Vec2 mousePos) override;
 
 		// 호버도 뭐 없음.
 		bool HandleMouseHover(Vec2 mousePos) override { return true; }
@@ -59,6 +63,12 @@ private:
 		fundamentalStatus m_fundamentalStats; // 1차 스탯을 담을 구조체
 		TotalStatus m_totalStats;						  // 2차 스탯을 담을 구조체
 		Vec2 m_statPoints[5];								  // 오각형 꼭짓점 위치 저장
+
+
+		ComPtr<ID2D1Bitmap1> m_closeButton;
+		ComPtr<ID2D1Bitmap1> m_backgroundBitmap;
+		ComPtr<ID2D1Bitmap1> m_statBase;
 };
+
 
 

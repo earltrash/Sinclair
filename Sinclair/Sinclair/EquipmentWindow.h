@@ -8,6 +8,8 @@
 #include "UI_Renderer.h"
 #include "ResourceManager.h"
 
+#include "ItemManager.h"
+
 class EquipmentWindow : public UIWindow
 {
 public:
@@ -68,6 +70,8 @@ public:
 						uiRenderer->SetBitmap("icon_cape_slot", ResourceManager::Get().GetTexture("SlotNormal"));
 
 				}
+				m_itemDatabase = std::make_unique<ItemDatabase>();
+				m_itemBank = std::make_unique<ItemBank>();
 		}
 
 		void Update() override;
@@ -105,9 +109,16 @@ public:
 		bool CanEquipItem(Item* item, Wearable_part slotType) const;
 		void UpdateSlotPositions();
 		void RenderSlotIcon(Wearable_part slotType, Vec2 position);
+
+		bool IsItemTypeMatch(Wearable_part itemType, Wearable_part slotType);
+		bool IsItemTypeMatch(const std::string& itemId, Wearable_part slotType) const;
+
 private:
 		std::unordered_map<Wearable_part, Item*> m_equippedItems;
 		std::unordered_map<Wearable_part, Vec2> m_slotPositions;
 		std::unordered_map<Wearable_part, Vec2> m_slotSizes;
+
+		std::unique_ptr<ItemDatabase> m_itemDatabase;
+		std::unique_ptr<ItemBank> m_itemBank;
 };
 

@@ -32,14 +32,40 @@ void StatWindow::Render()
     RenderCloseButton();    // 닫기 버튼 렌더
 }
 
+bool StatWindow::HandleMouseDown(Vec2 mousePos)
+{
+    if (!m_isActive) return false;
+
+    // 창 내부 클릭 이벤트 처리 완료. 그래서 화면 최상단으로 올리기.
+    if (IsInBounds(mousePos))
+    {
+        UIManager::Get().OpenWindow(m_windowType);
+        return true;
+    }
+    // 영역 밖이면 체크 안하기
+    return false;
+}
+
+bool StatWindow::HandleMouseUp(Vec2 mousePos)
+{
+    // 창 내부 클릭 이벤트 처리 완료. 그래서 화면 최상단으로 올리기.
+    if (IsInBounds(mousePos))
+    {
+        UIManager::Get().OpenWindow(m_windowType);
+        return true;
+    }
+    // 영역 밖이면 체크 안하기
+    return false;
+}
+
 void StatWindow::CalculateStats()
 {
     m_fundamentalStats = { 43, 51, 25, 41 };
-    m_totalStats.Strength = 48;
-    m_totalStats.Magic_Power = 22;
-    m_totalStats.Health = 30;
-    m_totalStats.Knowledge = 20;
-    m_totalStats.Charm = 30;
+    m_totalStats.Strength = 100;
+    m_totalStats.Magic_Power = 70;
+    m_totalStats.Health = 100;
+    m_totalStats.Knowledge = 100;
+    m_totalStats.Charm = 100;
     // 1. UIManager에서 UIWindow 포인터를 가져오기.
     UIWindow* window = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
     // 2. 포인터 타입 맞는지 체크
@@ -87,17 +113,10 @@ void StatWindow::RenderBackground()
     UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
     if (uiRenderer)
     {
-        ID2D1Bitmap1* backgroundBitmap = ResourceManager::Get().Get_UIBank().Get_Image("StatBG").Get();
-
-       // ID2D1Bitmap1* backgroundBitmap = uiRenderer->GetBitmap("StatBG").Get();
-        if (backgroundBitmap)
+        if (m_backgroundBitmap)
         {
             D2D1_RECT_F destRect = { m_position.x, m_position.y, m_position.x + m_size.x, m_position.y + m_size.y };
-            D2DRenderer::Get().DrawBitmap(backgroundBitmap, destRect);
-        }
-        else
-        {
-            D2DRenderer::Get().DrawRectangle(m_position.x, m_position.y, m_position.x + m_size.x, m_position.y + m_size.y, D2D1::ColorF(D2D1::ColorF::DarkGray, 0.8f));
+            D2DRenderer::Get().DrawBitmap(m_backgroundBitmap.Get(), destRect);
         }
     }
 }
@@ -135,13 +154,9 @@ void StatWindow::RenderCloseButton()
 
     if (uiRenderer)
     {
-        ID2D1Bitmap1* closeButtonBitmap = ResourceManager::Get().Get_UIBank().Get_Image("CloseButton").Get();
-
-
-       // ID2D1Bitmap1* closeButtonBitmap = uiRenderer->GetBitmap("CloseButton").Get();
-        if (closeButtonBitmap)
+        if (m_closeButton)
         {
-            D2DRenderer::Get().DrawBitmap(closeButtonBitmap, destRect);
+            D2DRenderer::Get().DrawBitmap(m_closeButton.Get(), destRect);
         }
     }
 }
@@ -221,9 +236,25 @@ void StatWindow::RenderRadarChart()
     UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
     if (!uiRenderer) return;
 
+    
+    if (m_statBase)
+    {
+        float newWidth = m_size.x / 1.4f;
+        float newHeight = m_size.y / 2.0f;
+
+        D2D1_RECT_F destRect = { 
+            m_position.x + (m_size.x - newWidth) / 2.0f,
+            m_position.y + (m_size.y - newHeight) / 2.0f,
+            m_position.x + (m_size.x - newWidth) / 2.0f + newWidth,
+            m_position.y + (m_size.y - newHeight) / 2.0f + newHeight };
+        D2DRenderer::Get().DrawBitmap(m_statBase.Get(), destRect);
+    }
+
+
     // 레이더 차트 중심점
-    Vec2 center = m_position + Vec2(m_size.x * 0.5f, m_size.y * 0.5f);
-    float maxRadius = 100.0f;
+    float yOffset = 20.0f; // 오프셋으로 아래로 그리게
+    Vec2 center = { m_position.x + m_size.x / 2.0f, m_position.y + m_size.y / 2.0f + yOffset };
+    float maxRadius = 205.0f;
 
     float stats[5] =
     {
@@ -258,29 +289,14 @@ void StatWindow::RenderRadarChart()
         points[i] = Vec2(actualX, actualY);
     }
 
-    // 1. 외곽 기준선 그리기
-    //for (int i = 0; i < 5; ++i)
-    //{
-    //    const Vec2& p1 = maxPoints[i];
-    //    const Vec2& p2 = maxPoints[(i + 1) % 5];
-    //    D2DRenderer::Get().DrawLine(p1.x, p1.y, p2.x, p2.y, D2D1::ColorF(D2D1::ColorF::Gray, 0.5f));
 
-    //    m_statPoints[i] = maxPoints[i];
-    //}
-
-    //// 2. 중심점에서 각 최대 포인트로 선 그리기
-    //for (int i = 0; i < 5; ++i)
-    //{
-    //    D2DRenderer::Get().DrawLine(center.x, center.y, maxPoints[i].x, maxPoints[i].y, D2D1::ColorF(D2D1::ColorF::LightGray, 0.3f));
-    //}
-
-    // 3. 채우기 효과 - 중심에서 각 스탯 포인트로 방사형 선 그리기
+    // 채우기 효과 - 중심에서 각 스탯 포인트로 방사형 선 그리기
     for (int i = 0; i < 5; ++i)
     {
         int next = (i + 1) % 5;
 
         // 현재 변을 여러 선으로 분할
-        for (float t = 0.0f; t <= 1.0f; t += 0.01f) // 0.01f = 선 밀도
+        for (float t = 0.0f; t <= 1.0f; t += 0.003f) // 0.01f = 선 밀도
         {
             float x = points[i].x + (points[next].x - points[i].x) * t;
             float y = points[i].y + (points[next].y - points[i].y) * t;
@@ -294,13 +310,13 @@ void StatWindow::RenderRadarChart()
         }
     }
 
-    // 4. 실제 스탯값에 따른 5각형 외곽선 그리기
-    for (int i = 0; i < 5; ++i)
-    {
-        const Vec2& p1 = points[i];
-        const Vec2& p2 = points[(i + 1) % 5];
-        D2DRenderer::Get().DrawLine(p1.x, p1.y, p2.x, p2.y, D2D1::ColorF(D2D1::ColorF::SaddleBrown, 1.0f));
-    }
+    // 실제 스탯값에 따른 5각형 외곽선 그리기 | 필요없으면 나중에 지울거임.
+    //for (int i = 0; i < 5; ++i)
+    //{
+    //    const Vec2& p1 = points[i];
+    //    const Vec2& p2 = points[(i + 1) % 5];
+    //    D2DRenderer::Get().DrawLine(p1.x, p1.y, p2.x, p2.y, D2D1::ColorF(D2D1::ColorF::SaddleBrown, 1.0f));
+    //}
 }
 
 // 0 ~ 100 사이값으로 스탯 정규화해주기

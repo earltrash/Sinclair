@@ -87,7 +87,7 @@ void M_Core::Render()
 
     D2DRenderer::Get().RenderBegin();
     UIManager::Get().Render();
-    CursorManager::Get().RenderCursor();
+    CursorManager::Get().Render();
     D2DRenderer::Get().RenderEnd();
 }
 

@@ -277,5 +277,11 @@
     <ClCompile Include="EnhancementWindow.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="CursorManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
