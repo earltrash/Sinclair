@@ -3,6 +3,7 @@
 using namespace std;
 #include <fstream>
 #include <sstream>
+#include <optional>
 
 class TextBank
 {
@@ -25,6 +26,13 @@ public:
     
     struct Ending
     {
+        //int ID;
+        //pair<string, optional<string>> positive;
+        //optional<string> negative;
+        //int fame;
+        //string job;
+        //string endingText;
+
         int ID;
         string positive;
         string negative;

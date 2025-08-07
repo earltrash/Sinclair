@@ -18,5 +18,8 @@ public:
 	virtual void Render()override;
 public:
 	void CreateObj();
+
+private:
+	// 엔딩의 텍스트 테이블은 아웃게임의 테이블하고 다르게 
 };
 

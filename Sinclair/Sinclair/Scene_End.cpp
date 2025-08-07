@@ -75,15 +75,16 @@ void Scene_End::CreateObj()
 	auto ¿£µù1 = ResourceManager::Get().GetTexture("¿£µù", "01");
 	// 2. ¿ÀºêÁ§Æ® ¸¸µé±â
 	auto ÁÂÃøÃ¢ = std::make_unique<Object>();
-	ÁÂÃøÃ¢->SetPosition(Vec2(-20, -16));
+	//ÁÂÃøÃ¢->SetPosition(Vec2(-20, -16));
+	ÁÂÃøÃ¢->SetPosition(Vec2(0, 0));
 
 	// 3.0. ·£´õ ÀÎÆ÷ ÄÄÆ÷³ÍÆ®
 	auto ÁÂÃøÃ¢info = ÁÂÃøÃ¢->GetRenderInfo();
 	ÁÂÃøÃ¢info->SetBitmap(¿£µù1.Get());
 	// 3. ¹è°æ ÄÄÆ÷³ÍÆ® ¸¸µé±â
 	auto ÁÂÃøÃ¢Comp = ÁÂÃøÃ¢->AddComponent<BackgroundComponent>(ÁÂÃøÃ¢info);
-	ÁÂÃøÃ¢Comp->SetWidth(¿£µù1->GetSize().width);
-	ÁÂÃøÃ¢Comp->SetHeight(¿£µù1->GetSize().height);
+	ÁÂÃøÃ¢Comp->SetWidth(1118);
+	ÁÂÃøÃ¢Comp->SetHeight(1113);
 	ÁÂÃøÃ¢Comp->BitmapPush("ÁÂÃøÃ¢", ¿£µù1);
 	ÁÂÃøÃ¢Comp->SetCurrentBitmap("ÁÂÃøÃ¢");
 

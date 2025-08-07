@@ -1,6 +1,7 @@
 #pragma once
 
-struct TotalStatus //2차 스테이터스임 앞글자 대문자로 표기 , 플레이어가 가져야 할 구조체임 -> 게임매니저
+//2차 스테이터스임 앞글자 대문자로 표기 , 플레이어가 가져야 할 구조체임 -> 게임매니저
+struct TotalStatus 
 {
 		int Strength;
 		int Magic_Power;

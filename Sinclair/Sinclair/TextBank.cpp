@@ -6,7 +6,7 @@
 string TextBank::replaceGeneration(const string& text, int generation)
 {
     string result = text;
-    string target = " n¼¼";
+    string target = " x¼¼";
     string replacement = " " + to_string(generation) + "¼¼";
 
     size_t pos = 0;
