@@ -83,13 +83,13 @@ void Scene_End::CreateObj()
 	좌측창info->SetBitmap(엔딩1.Get());
 	// 3. 배경 컴포넌트 만들기
 	auto 좌측창Comp = 좌측창->AddComponent<BackgroundComponent>(좌측창info);
-	좌측창Comp->SetWidth(1118);
-	좌측창Comp->SetHeight(1113);
+	좌측창Comp->SetWidth(1098);
+	좌측창Comp->SetHeight(1080);
 	좌측창Comp->BitmapPush("좌측창", 엔딩1);
 	좌측창Comp->SetCurrentBitmap("좌측창");
 
 	/// 9
-	m_gameObjects.emplace("a좌측창", std::move(좌측창));
+	m_gameObjects.emplace("aa좌측창", std::move(좌측창));
 
 	//////////////////////
 	//////////////////////
@@ -107,8 +107,8 @@ void Scene_End::CreateObj()
 	이미지info->SetBitmap(엔딩2.Get());
 	// 3. 배경 컴포넌트 만들기
 	auto 이미지Comp = 이미지->AddComponent<BackgroundComponent>(이미지info);
-	이미지Comp->SetWidth(엔딩2->GetSize().width);
-	이미지Comp->SetHeight(엔딩2->GetSize().height);
+	이미지Comp->SetWidth(1036);
+	이미지Comp->SetHeight(1036);
 	이미지Comp->BitmapPush("이미지", 엔딩2);
 	이미지Comp->SetCurrentBitmap("이미지");
 
@@ -125,15 +125,15 @@ void Scene_End::CreateObj()
 	auto 엔딩3 = ResourceManager::Get().GetTexture("엔딩", "03");
 	// 2. 오브젝트 만들기
 	auto 우측창 = std::make_unique<Object>();
-	우측창->SetPosition(Vec2(1077, -20));
+	우측창->SetPosition(Vec2(1080, 0));
 
 	auto 우측창info = 우측창->GetRenderInfo();
 	우측창info->SetBitmap(엔딩3.Get());
 	// 3. 배경 컴포넌트 만들기
 	auto 우측창Comp = 우측창->AddComponent<BackgroundComponent>(우측창info);
-	우측창Comp->SetWidth(엔딩1->GetSize().width);
-	우측창Comp->SetHeight(엔딩1->GetSize().height);
-	우측창Comp->BitmapPush("우측창", 엔딩1);
+	우측창Comp->SetWidth(843);
+	우측창Comp->SetHeight(1080);
+	우측창Comp->BitmapPush("우측창", 엔딩3);
 	우측창Comp->SetCurrentBitmap("우측창");
 
 	/// 9

@@ -35,7 +35,7 @@ public:
 
 				m_Scene_map->emplace("MK", make_shared<Scene_MK>("MK"));
 
-				m_currentindex = "Title";
+				m_currentindex = "End";
 				//m_currentindex = "MK";
 
 				Scenes = m_Scene_map;
