@@ -31,7 +31,7 @@ public:
         //optional<string> negative;
         //int fame;
         //string job;
-        //string endingText;
+        //vector<string> endingTexts;
 
         int ID;
         string positive;

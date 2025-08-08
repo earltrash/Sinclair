@@ -88,6 +88,14 @@ void TextBank::parseTSV_Ending(const string& filename)
         // 엔딩 텍스트
         getline(ss, ending_data.엔딩텍스트, '\t');
 
+        //cout << "==============" << endl;
+        //cout << "ID" << ending_data.ID << endl;
+        //cout << "positive" << ending_data.positive << endl;
+        //cout << "negative" << ending_data.negative << endl;
+        //cout << "명성치" << ending_data.명성치 << endl;
+        //cout << "직업명" << ending_data.직업명 << endl;
+        //cout << "엔딩텍스트" << ending_data.엔딩텍스트 << endl;
+
         EndingVector.push_back(ending_data);
     }
 

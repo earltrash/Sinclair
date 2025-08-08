@@ -22,9 +22,7 @@ public:
 public:
 	void CreateObj();
 private:
-	//unique_ptr<Object>	Background;
-	//unique_ptr<Object>	TutorialButton1;
-	//unique_ptr<Object>	TutorialButton2;
+
 };
 
 

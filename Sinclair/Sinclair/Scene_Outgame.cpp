@@ -52,12 +52,12 @@ void Scene_Outgame::Enter()
 	SetupCharacterAndBackground();
 
 
-	 if (GameManager::Get().WasInGame) {
-		 m_state = State::CHOICE_MENU;
+	 if (GameManager::Get().isFirst) {
+		 m_state = State::FIRST_ENTER;
+		 GameManager::Get().isFirst = false;
 	 } 
 	 else {
-		 m_state = State::FIRST_ENTER;
-		 GameManager::Get().WasInGame = true;
+		 m_state = State::CHOICE_MENU;
 	 }
 
 
@@ -161,8 +161,6 @@ void Scene_Outgame::Render()
 		//std::wstring wCurText = StrToWstr(curText);
 		//D2DRenderer::Get().DrawMessage(wCurText.c_str(), 768.21f, 828.38f, 1300.f, 1000.f, D2D1::ColorF::White);
 	}
-
-	D2DRenderer::Get().CreateWriteResource();
 
 }
 
@@ -364,8 +362,8 @@ void Scene_Outgame::CreateObj()
 	뒤로info->SetBitmap(뒤로가기.Get());
 	// 3. 버튼 컴포넌트 만들기
 	auto backComp = 뒤로->AddComponent<ButtonComponent>(뒤로info);
-	backComp->SetWidth(뒤로가기->GetSize().width); 
-	backComp->SetHeight(뒤로가기->GetSize().height);
+	backComp->SetWidth(65); 
+	backComp->SetHeight(65);
 	
 	//  4. 버튼 비트맵 설정
 	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
@@ -381,6 +379,12 @@ void Scene_Outgame::CreateObj()
 	);
 
 	backComp->SetOnClickCallback([this]() {
+
+		if(m_state == State::FIRST_ENTER ) 
+		{
+			GameManager::Get().isFirst = true;
+		}
+
 		std::cout << "버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
 		SafeChangeScene("Title");
 
@@ -467,6 +471,44 @@ void Scene_Outgame::CreateObj()
 
 	/// 9
 	m_gameObjects.emplace("Moheom", std::move(Moheom));
+
+	/////////////////////
+	/////////////////////
+	/////////////////////
+	// [10] 설정 버튼
+
+	// 1. 이미지 갖고 오기
+	auto 설정 = ResourceManager::Get().GetTexture("설정");
+	// 2. 오브젝트 만들기
+	auto 설정로 = std::make_unique<Object>();
+	설정로->SetPosition(Vec2(41, 106));
+
+	auto 설정info = 설정로->GetRenderInfo();
+	설정info->SetBitmap(설정.Get());
+	// 3. 버튼 컴포넌트 만들기
+	auto settingComp = 설정로->AddComponent<ButtonComponent>(뒤로info);
+	settingComp->SetWidth (65);
+	settingComp->SetHeight(65);
+
+	//  4. 버튼 비트맵 설정
+	settingComp->BitmapPush("setting", 설정);
+
+	settingComp->SetCurrentBitmap("setting");
+
+	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
+	auto set_mouseListener = 설정로->AddComponent<MouseListenerComponent>(
+		[settingComp](const MSG& msg) {
+			settingComp->Worked(msg);
+		}
+	);
+
+	settingComp->SetOnClickCallback([this]() {
+		std::cout << "설정 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
+		});
+
+	/// 9
+	m_gameObjects.emplace("설정", std::move(설정로));
+
 }
 
 std::string Scene_Outgame::getRandomText()
@@ -508,9 +550,6 @@ void Scene_Outgame::ChangeState(State newState)
 {
 	m_state = newState;
 
-	isChango = false;
-	isMoheom = false;
-	 
 	// 버튼 콜백을 가져오기 위한 준비
 	auto yesButton = m_gameObjects["아웃게임4"]->GetComponent<ButtonComponent>();
 	auto noButton = m_gameObjects["아웃게임5"]->GetComponent<ButtonComponent>();
@@ -530,7 +569,8 @@ void Scene_Outgame::ChangeState(State newState)
 
 		// '다음' 버튼의 콜백을 설정하여, 다음 텍스트를 보여주거나 상태를 80002로 변경하도록 합니다.
 		noButton->SetOnClickCallback([this]() {
-			ChangeState(CHOICE_MENU);
+			m_state = CHOICE_MENU;
+			SafeChangeScene("Tutorial");
 		});
 
 		changoButton->SetOnClickCallback([this]() {
@@ -560,11 +600,9 @@ void Scene_Outgame::ChangeState(State newState)
 			});
 
 		changoButton->SetOnClickCallback([this]() {
-			isChango = true;
 			ChangeState(ENTER_OUTGAME);
 			});
 		moheomButton->SetOnClickCallback([this]() {
-			isMoheom = true;
 			ChangeState(ENTER_END);
 			});
 

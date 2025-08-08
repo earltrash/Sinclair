@@ -57,6 +57,18 @@ void Scene_InGame::Clean()
 
 void Scene_InGame::Update()
 {
+	// 씬 전환 지연 처리
+	if (m_isTransitioning && !m_nextScene.empty())
+	{
+		m_currentDelay += 0.016f;
+		if (m_currentDelay >= m_transitionDelay)
+		{
+			SceneManager::Get().ChangeScene(m_nextScene);
+			m_isTransitioning = false;
+			m_nextScene = "";
+			m_currentDelay = 0.0f;
+		}
+	}
 }
 
 void Scene_InGame::LogicUpdate(float delta)
@@ -104,7 +116,7 @@ void Scene_InGame::CreateObj()
 	/////////////////////
 	/////////////////////
 	/////////////////////
-	// [1] 뒤로가기 버튼
+	// [1] 설정 버튼
 
 	// 1. 이미지 갖고 오기
 	auto 뒤로가기 = ResourceManager::Get().GetTexture("뒤로가기");
@@ -335,4 +347,43 @@ void Scene_InGame::CreateObj()
 
 	/// 9
 	m_gameObjects.emplace("합성", std::move(합성));
+
+
+	/////////////////////
+	/////////////////////
+	/////////////////////
+	// [7] 설정 버튼
+
+	// 1. 이미지 갖고 오기
+	auto 설정 = ResourceManager::Get().GetTexture("설정");
+	// 2. 오브젝트 만들기
+	auto 설정로 = std::make_unique<Object>();
+	설정로->SetPosition(Vec2(41, 106));
+
+	auto 설정info = 설정로->GetRenderInfo();
+	설정info->SetBitmap(설정.Get());
+	// 3. 버튼 컴포넌트 만들기
+	auto settingComp = 설정로->AddComponent<ButtonComponent>(뒤로info);
+	settingComp->SetWidth(설정->GetSize().width);
+	settingComp->SetHeight(설정->GetSize().height);
+
+	//  4. 버튼 비트맵 설정
+	settingComp->BitmapPush("setting", 설정);
+
+	settingComp->SetCurrentBitmap("setting");
+
+	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
+	auto set_mouseListener = 설정로->AddComponent<MouseListenerComponent>(
+		[settingComp](const MSG& msg) {
+			settingComp->Worked(msg);
+		}
+	);
+
+	settingComp->SetOnClickCallback([this]() {
+		std::cout << "설정 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
+		});
+
+	/// 9
+	m_gameObjects.emplace("설정", std::move(설정로));
+
 }

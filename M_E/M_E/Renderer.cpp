@@ -343,10 +343,10 @@ void D2DRenderer::CreateRenderTargets()
 
 void D2DRenderer::CreateWriteResource()
 {
-    CreateWriteResource(L"ºûÀÇ °è½ÂÀÚ Regular", DWRITE_FONT_WEIGHT_NORMAL, 15.0f);
+    CreateWriteResource(L"ºûÀÇ °è½ÂÀÚ Bold", DWRITE_FONT_WEIGHT_BOLD, 100.0f);
 }
 
-//CreateWriteResource(L"ºûÀÇ °è½ÂÀÚ Bold", DWRITE_FONT_WEIGHT_BOLD, 100.0f);
+//CreateWriteResource(L"ºûÀÇ °è½ÂÀÚ Regular", DWRITE_FONT_WEIGHT_NORMAL, 15.0f);
 //CreateWriteResource(L"¸¼Àº °íµñ", DWRITE_FONT_WEIGHT_NORMAL, 15.0f);
 
 void D2DRenderer::CreateWriteResource(const wchar_t* fontName, DWRITE_FONT_WEIGHT fontWeight, float fontSize)

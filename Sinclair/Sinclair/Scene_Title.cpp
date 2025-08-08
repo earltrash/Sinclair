@@ -277,7 +277,7 @@ void Scene_Title::CreateObj()
 
 	creditButton_buttonComp->SetOnClickCallback([this]() {
 		std::cout << "The Å©·¹µ÷ button is pressed." << std::endl;
-		isCredit = true;
+		isCredit = !isCredit;
 		SafeChangeScene("Title");
 		});
 
@@ -380,7 +380,7 @@ void Scene_Title::CreateObj()
 
 		backComp->SetOnClickCallback([this]() {
 			std::cout << "´Ý±â ¹öÆ° Å¬¸¯µÊ - ÇöÀç ¾À: " << typeid(*this).name() << std::endl;
-			isCredit = false;
+			isCredit = !isCredit;
 			SafeChangeScene("Title");
 			});
 

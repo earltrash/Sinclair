@@ -7,6 +7,7 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "UIManager.h"
+#include "GameManager.h"
 
 Scene_End::Scene_End(string name)
 {
@@ -33,6 +34,10 @@ void Scene_End::Initalize()
 void Scene_End::Enter()
 {
 	Initalize();
+
+	// 게임매니저에서 엔딩 잘 갖고 와. 지금은 임시야. 
+	// ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen];
+
 }
 
 void Scene_End::Exit()
@@ -43,6 +48,8 @@ void Scene_End::Exit()
 
 void Scene_End::Clean()
 {
+	if (!dirty) return;
+
 	UIManager::Get().ClearSceneObjects();
 	m_gameObjects.clear();
 	
@@ -51,7 +58,20 @@ void Scene_End::Clean()
 
 void Scene_End::Update()
 {
+	// 씬 전환 지연 처리
+	if (m_isTransitioning && !m_nextScene.empty())
+	{
+		m_currentDelay += 0.016f;
+		if (m_currentDelay >= m_transitionDelay)
+		{
+			SceneManager::Get().ChangeScene(m_nextScene);
+			m_isTransitioning = false;
+			m_nextScene = "";
+			m_currentDelay = 0.0f;
 
+
+		}
+	}
 }
 
 void Scene_End::LogicUpdate(float delta)
@@ -67,6 +87,16 @@ void Scene_End::Render()
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
 	}
+
+	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 90.0f);
+	std::wstring job = StrToWstr(ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen * 10].직업명);
+	D2DRenderer::Get().DrawMessageCenter(job.c_str(),
+		1080.f, 120.f, 1920.f - 1080.f, 255.f - 120.f, D2D1::ColorF::White);
+
+	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
+	std::wstring text = StrToWstr(ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen * 10].엔딩텍스트);
+	D2DRenderer::Get().DrawMessageCenter(text.c_str(),
+		1223.f, 255.f, 564.f, 1080.f - 255.f, D2D1::ColorF::White);
 }
 
 void Scene_End::CreateObj()
@@ -177,27 +207,25 @@ void Scene_End::CreateObj()
 	스킵컴포넌트->SetOnClickCallback([this]() {
 		std::cout << "스킵 버튼 클릭됨" << std::endl;
 		// 엔딩 스킵 로직 추가
+		
+		int temp = GameManager::Get().curGen;
+
+		if (temp == 4)
+		{
+			temp = 2;
+			SafeChangeScene("History" , temp);
+		}
+		else
+		{
+			temp++;
+			SafeChangeScene("OutGame", temp);
+		}
+
 		});
 
 	/// 9
 	m_gameObjects.emplace("스킵버튼", std::move(스킵버튼));
 
-	////////////////////////
-	////////////////////////
-	////////////////////////
-	//// [5] 직업 명칭 (중앙정렬, 90pt)
-
-	//// 1. 텍스트 오브젝트 만들기
-	//auto 직업명칭 = std::make_unique<Object>();
-	//// 중앙정렬을 위한 위치 설정 (화면 너비의 중앙)
-	//직업명칭->SetPosition(Vec2(960, 400)); // 임시 위치, 실제 화면 크기에 맞게 조정
-
-	//auto 직업명칭info = 직업명칭->GetRenderInfo();
-	//// 텍스트 컴포넌트 설정 (90pt 폰트)
-	//// 실제 텍스트 컴포넌트 구현에 따라 수정 필요
-
-	///// 9
-	//m_gameObjects.emplace("직업명칭", std::move(직업명칭));
 
 	//////////////////////
 	//////////////////////
@@ -222,20 +250,19 @@ void Scene_End::CreateObj()
 	/// 9
 	m_gameObjects.emplace("바", std::move(바));
 
-	////////////////////////
-	////////////////////////
-	////////////////////////
-	//// [7] 직업 내용 (중앙정렬, 30pt)
+}
 
-	//// 1. 텍스트 오브젝트 만들기
-	//auto 직업내용 = std::make_unique<Object>();
-	//// 중앙정렬을 위한 위치 설정 (화면 너비의 중앙)
-	//직업내용->SetPosition(Vec2(960, 600)); // 임시 위치, 실제 화면 크기에 맞게 조정
+void Scene_End::SafeChangeScene(const std::string& sceneName, int gen)
+{
+	if (!m_isTransitioning)
+	{
+		m_isTransitioning = true;
+		m_nextScene = sceneName;
+		m_currentDelay = 0.0f;
 
-	//auto 직업내용info = 직업내용->GetRenderInfo();
-	//// 텍스트 컴포넌트 설정 (30pt 폰트)
-	//// 실제 텍스트 컴포넌트 구현에 따라 수정 필요
+		GameManager::Get().curGen = gen;
 
-	///// 9
-	//m_gameObjects.emplace("직업내용", std::move(직업내용));
+		// 디버그 로그
+		std::cout << "씬 전환 예약: " << sceneName << std::endl;
+	}
 }

@@ -12,7 +12,7 @@
 #include "Scene_Outgame.h"
 #include "Scene_InGame.h"
 #include "Scene_End.h"
-//#include "Scene_History.h"
+#include "Scene_History.h"
 
 
 using namespace std;
@@ -29,20 +29,19 @@ public:
 		m_Scene_map = make_shared<unordered_map<string, shared_ptr<SceneStandard>>>();
 
 
-		m_Scene_map->emplace("Tutorial", make_shared<Scene_Tutorial>("Tutorial"));
 		m_Scene_map->emplace("Title", make_shared<Scene_Title>("Title"));
+		m_Scene_map->emplace("Tutorial", make_shared<Scene_Tutorial>("Tutorial"));
 		m_Scene_map->emplace("OutGame", make_shared<Scene_Outgame>("OutGame"));
 		m_Scene_map->emplace("InGame", make_shared<Scene_InGame>("InGame"));
 		m_Scene_map->emplace("End", make_shared<Scene_End>("End"));
-		//m_Scene_map->emplace("History", make_shared<Scene_History>("History"));
+		m_Scene_map->emplace("History", make_shared<Scene_History>("History"));
 
 		m_Scene_map->emplace("SceneBj", make_shared<SceneBj>("SceneBj"));
 
 		m_Scene_map->emplace("MK", make_shared<Scene_MK>("MK"));
 
 		//m_currentindex = "SceneBj";
-		m_currentindex = "Tutorial";
-		//m_currentindex = "End";
+		m_currentindex = "Title";
 		//m_currentindex = "MK";
 
 		Scenes = m_Scene_map;

@@ -197,7 +197,7 @@ void Scene_Tutorial::CreateObj()
 
 	tutorialButton1Comp->SetOnClickCallback([this]() {
 		cout << "°Ç³Ê¶Ù±â" << endl;
-		SafeChangeScene("Title");
+		SafeChangeScene("InGame");
 		});
 
 	tutorialButton2Comp->SetOnClickCallback([this, bgComp]() {
@@ -211,7 +211,7 @@ void Scene_Tutorial::CreateObj()
 		else
 		{
 			cout << "16¹ø °Ç³Ê¶Ù±â" << endl;
-			SafeChangeScene("Title");
+			SafeChangeScene("InGame");
 		}
 
 		});

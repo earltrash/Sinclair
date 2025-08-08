@@ -22,7 +22,7 @@ void ResourceManager::GameAssetLoad()
     m_ItemBank.LoadItemRect("Item_A"); //Atlas랑 정확히는 Item 별 srect 
 
     // 효제: 현재는 한 파일이지만 결국 위처럼 로드 함수를 만들어야 함.
-    m_TextBank.parseTSV_Ending("Resource/text/싱클레어가히스토리_ver2.6.txt");
+    m_TextBank.parseTSV_Ending("../Resource/text/싱클레어가히스토리.txt");
 }
 
 void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std::string& directory)

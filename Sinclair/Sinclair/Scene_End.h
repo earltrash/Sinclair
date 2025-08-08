@@ -19,7 +19,23 @@ public:
 public:
 	void CreateObj();
 
+	std::wstring StrToWstr(const std::string& source)
+	{
+		if (source.empty()) return std::wstring();
+
+		// CP_ACP: 시스템 기본 코드 페이지 (한국어 Windows = CP949)
+		int size = MultiByteToWideChar(CP_ACP, 0, source.c_str(), -1, nullptr, 0);
+		if (size <= 0) return std::wstring();
+
+		std::wstring result(size - 1, 0);
+		MultiByteToWideChar(CP_ACP, 0, source.c_str(), -1, &result[0], size);
+		return result;
+	}
+
+	void SafeChangeScene(const std::string& sceneName, int gen);
+
 private:
 	// 엔딩의 텍스트 테이블은 아웃게임의 테이블하고 다르게 
+
 };
 
