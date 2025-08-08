@@ -110,8 +110,56 @@ void Scene_Outgame::Render()
 	// 상태에 따른 메인 텍스트 렌더링
 	if (!curText.empty())
 	{
-		std::wstring wCurText = StrToWstr(curText);
-		D2DRenderer::Get().DrawMessage(wCurText.c_str(), 768.21f, 828.38f, 1300.f, 1000.f, D2D1::ColorF::White);
+		if (m_state == CHOICE_MENU)
+		{
+			ButtonComponent::ButtonState changoState = m_gameObjects["Chango"]->GetComponent<ButtonComponent>()->GetState();
+			ButtonComponent::ButtonState moheomState = m_gameObjects["Moheom"]->GetComponent<ButtonComponent>()->GetState();
+
+			// 선택 메뉴일 때는 각 옵션을 따로 그리기
+			std::wstring wOption1 = L"> 창고로 이동한다.";
+			std::wstring wOption2 = L"> 모험을 떠난다.";
+
+			// 첫 번째 옵션 색상 결정
+			D2D1::ColorF color1 = D2D1::ColorF::White;
+			switch (changoState)
+			{
+			case ButtonComponent::ButtonState::Normal:
+				color1 = D2D1::ColorF::White;
+				break;
+			case ButtonComponent::ButtonState::Hover:
+				color1 = D2D1::ColorF::Yellow;
+				break;
+			case ButtonComponent::ButtonState::Pressed:
+				color1 = D2D1::ColorF::Red;
+				break;
+			}
+
+			// 두 번째 옵션 색상 결정
+			D2D1::ColorF color2 = D2D1::ColorF::White;
+			switch (moheomState)
+			{
+			case ButtonComponent::ButtonState::Normal:
+				color2 = D2D1::ColorF::White;
+				break;
+			case ButtonComponent::ButtonState::Hover:
+				color2 = D2D1::ColorF::Yellow;
+				break;
+			case ButtonComponent::ButtonState::Pressed:
+				color2 = D2D1::ColorF::Red;
+				break;
+			}
+			// 각각 다른 위치에 다른 색으로 그리기
+			D2DRenderer::Get().DrawMessage(wOption1.c_str(), 768.21f, 828.38f, 1300.f, 50.f, color1);
+			D2DRenderer::Get().DrawMessage(wOption2.c_str(), 768.21f, 878.38f, 1300.f, 50.f, color2);
+		}
+		else
+		{
+			// 일반 텍스트는 기존과 동일하게
+			std::wstring wCurText = StrToWstr(curText);
+			D2DRenderer::Get().DrawMessage(wCurText.c_str(), 768.21f, 828.38f, 1300.f, 1000.f, D2D1::ColorF::White);
+		}
+		//std::wstring wCurText = StrToWstr(curText);
+		//D2DRenderer::Get().DrawMessage(wCurText.c_str(), 768.21f, 828.38f, 1300.f, 1000.f, D2D1::ColorF::White);
 	}
 
 	D2DRenderer::Get().CreateWriteResource();
@@ -460,10 +508,14 @@ void Scene_Outgame::ChangeState(State newState)
 {
 	m_state = newState;
 
-
+	isChango = false;
+	isMoheom = false;
+	 
 	// 버튼 콜백을 가져오기 위한 준비
 	auto yesButton = m_gameObjects["아웃게임4"]->GetComponent<ButtonComponent>();
 	auto noButton = m_gameObjects["아웃게임5"]->GetComponent<ButtonComponent>();
+	auto changoButton = m_gameObjects["Chango"]->GetComponent<ButtonComponent>();
+	auto moheomButton = m_gameObjects["Moheom"]->GetComponent<ButtonComponent>();
 	// '다음' 또는 선택지 버튼들도 마찬가지로 가져옵니다.
 
 	switch (m_state)
@@ -480,6 +532,11 @@ void Scene_Outgame::ChangeState(State newState)
 		noButton->SetOnClickCallback([this]() {
 			ChangeState(CHOICE_MENU);
 		});
+
+		changoButton->SetOnClickCallback([this]() {
+			});
+		moheomButton->SetOnClickCallback([this]() {
+			});
 		break;
 }
 
@@ -497,14 +554,21 @@ void Scene_Outgame::ChangeState(State newState)
 		noButton->SetCurrentBitmap("transparent");
 
 		yesButton->SetOnClickCallback([this]() {
-			// 3, 4세대는 모험을 떠날 수 없다는 등의 조건은 여기서 GameManager::Get().curGen으로 확인 가능
-			ChangeState(ENTER_OUTGAME);
 			});
 
-		// 예시: '아니오' 버튼을 '모험' 버튼으로 사용
 		noButton->SetOnClickCallback([this]() {
+			});
+
+		changoButton->SetOnClickCallback([this]() {
+			isChango = true;
+			ChangeState(ENTER_OUTGAME);
+			});
+		moheomButton->SetOnClickCallback([this]() {
+			isMoheom = true;
 			ChangeState(ENTER_END);
 			});
+
+
 		break;
 	}
 
@@ -512,17 +576,23 @@ void Scene_Outgame::ChangeState(State newState)
 	{
 		curText = outGameTextTable.find(m_state)->second; // "창고에 들어가시겠습니까?..."
 
-		yesButton->SetCurrentBitmap("transparent");
+		yesButton->SetCurrentBitmap("yes");
+		noButton->SetCurrentBitmap("no");
 
 		yesButton->SetOnClickCallback([this]() {
 			cout << "창고에 들어가시겠습니까?..." << endl;
-			//SceneManager::Get().ChangeScene("InGame");
 			SafeChangeScene("InGame");
 			});
 
 		noButton->SetOnClickCallback([this]() {
-			ChangeState(CHOICE_MENU); // 선택지로 돌아가기
+			ChangeState(CHOICE_MENU);
 			});
+
+		changoButton->SetOnClickCallback([this]() {
+			});
+		moheomButton->SetOnClickCallback([this]() {
+			});
+
 		break;
 	}
 
@@ -530,16 +600,23 @@ void Scene_Outgame::ChangeState(State newState)
 	{
 		curText = outGameTextTable.find(m_state)->second; // "여행을 떠나시겠습니까?..."
 
+		yesButton->SetCurrentBitmap("yes");
+		noButton->SetCurrentBitmap("no");
 
 		yesButton->SetOnClickCallback([this]() {
 			cout << "여행을 떠나시겠습니까?..." << endl;
-			//SceneManager::Get().ChangeScene("End");
 			SafeChangeScene("End");
 			});
 
 		noButton->SetOnClickCallback([this]() {
 			ChangeState(CHOICE_MENU); // 선택지로 돌아가기
 			});
+
+		changoButton->SetOnClickCallback([this]() {
+			});
+		moheomButton->SetOnClickCallback([this]() {
+			});
+
 		break;
 	}
 	}

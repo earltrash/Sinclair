@@ -70,5 +70,8 @@ private:
 
 	std::string curText;
 
+	bool isChango = false;
+	bool isMoheom = false;
+
 };
 
