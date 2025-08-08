@@ -173,6 +173,7 @@
     <ClInclude Include="Scene_MK.h" />
     <ClInclude Include="Scene_Outgame.h" />
     <ClInclude Include="Scene_Title.h" />
+    <ClInclude Include="Scene_Tutorial.h" />
     <ClInclude Include="SimpleMathHelper.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Status.h" />
@@ -219,6 +220,7 @@
     <ClCompile Include="Scene_Outgame.cpp" />
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Scene_Tutorial.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StatWindow.cpp" />
     <ClCompile Include="TextBank.cpp" />

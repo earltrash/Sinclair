@@ -85,9 +85,9 @@ void M_Core::Update()
 
 void M_Core::Render()
 {
-    // m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
 
     D2DRenderer::Get().RenderBegin();
+    m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
     UIManager::Get().Render();
     CursorManager::Get().Render();
     D2DRenderer::Get().RenderEnd();
@@ -102,6 +102,7 @@ void M_Core::End()
 
 void M_Core::ModuleClean()
 {
+
     SceneManager::Get().Clean();
     InputManager::Get().Clean();
     ResourceManager::Get().Clean();

@@ -197,6 +197,9 @@
     <ClInclude Include="GameManager.h">
       <Filter>Module</Filter>
     </ClInclude>
+    <ClInclude Include="Scene_Tutorial.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -321,6 +324,9 @@
     </ClCompile>
     <ClCompile Include="UIManager.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Tutorial.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

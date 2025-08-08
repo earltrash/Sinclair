@@ -9,10 +9,6 @@ void ButtonComponent::BitmapPush(string NM, ComPtr<ID2D1Bitmap1> Bitmap)
 
 ComPtr<ID2D1Bitmap1> ButtonComponent::GetBitmap()
 {
-    if (m_isInvisible)
-    {
-        return nullptr;
-    }
 
     switch (m_currentState)
     {
@@ -33,39 +29,6 @@ void ButtonComponent::Worked(const MSG& msg)
     POINT CORD = { GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam) };
     Vec2 pos = m_Owner->GetTransform().GetPosition();
 
-    //// 투명 버튼 구현 미루자.
-    //// 투명 버튼인 경우 설정된 크기 사용
-    //if (m_isInvisible)
-    //{
-    //    Rect rect(pos.x, pos.y, width, height);
-    //    bool isInside = InRect(rect, CORD);
-
-    //    if (isInside)
-    //    {
-    //        if (msg.message == WM_LBUTTONDOWN)
-    //        {
-    //            SetState(ButtonState::Pressed);
-    //        }
-    //        else if (msg.message == WM_LBUTTONUP && m_currentState == ButtonState::Pressed)
-    //        {
-    //            if (m_onClick) 
-    //            {
-    //                m_onClick();
-    //                return;
-    //            }
-    //            SetState(ButtonState::Normal);
-    //        }
-    //        else if (msg.message == WM_MOUSEMOVE && m_currentState != ButtonState::Pressed)
-    //        {
-    //            SetState(ButtonState::Hover);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        SetState(ButtonState::Normal);
-    //    }
-    //    return;
-    //}
 
     // 투명버튼이 아닌데 비트맵이 설정되지 않았다면 리턴
     if (!GetBitmap()) return;
@@ -105,14 +68,6 @@ void ButtonComponent::Worked(const MSG& msg)
         }
     }
 }
-
-// 투명 버튼 구현 미룸
-//void ButtonComponent::SetInvisibleButton(int width, int height)
-//{
-//    m_isInvisible = true;
-//    SetWidth(width);
-//    SetHeight(height);
-//}
 
 void ButtonComponent::SetCurrentBitmap(string Nm)
 {

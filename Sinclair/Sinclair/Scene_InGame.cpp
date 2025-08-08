@@ -6,7 +6,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
-
+#include "UIManager.h"
 
 Scene_InGame::Scene_InGame(string name)
 {
@@ -24,20 +24,32 @@ void Scene_InGame::Initalize()
 
 	CreateObj(); // 오브젝트 생성 (한 번만)
 	dirty = true;
+
+
+	for (const auto& [Name, obj] : m_gameObjects)
+	{
+		UIManager::Get().AddSceneObject(obj);
+	}
 }
 
 void Scene_InGame::Enter()
 {
 	Initalize();
+
+
+
 }
 
 void Scene_InGame::Exit()
 {
+
 	Clean();
 }
 
 void Scene_InGame::Clean()
 {
+	UIManager::Get().ClearSceneObjects();
+
 	m_gameObjects.clear();
 
 	dirty = false;
@@ -121,7 +133,7 @@ void Scene_InGame::CreateObj()
 
 	backComp->SetOnClickCallback([this]() {
 		std::cout << "뒤로가기 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
-		SceneManager::Get().ChangeScene("OutGame");
+		SafeChangeScene("OutGame");
 		});
 
 	/// 9

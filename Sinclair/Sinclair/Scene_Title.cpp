@@ -6,6 +6,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
+#include "UIManager.h"
 
 Scene_Title::Scene_Title(string name)
 {
@@ -22,15 +23,15 @@ void Scene_Title::Initalize()
 		
 	CreateObj(); // 오브젝트 생성 (한 번만)
 	dirty = true;
+
+	for (const auto& [Name, obj] : m_gameObjects)
+	{
+		UIManager::Get().AddSceneObject(obj);
+	}
 }
 
 void Scene_Title::Enter()
 {
-	Initalize();
-	// 씬 진입 시마다 실행할 것들
-	// 오브젝트 생성, 오브젝트 상태 초기화, 사운드 재생 등
-	// ResetObjectStates();
-	// PlayBGM();
 	Initalize();
 }
 
@@ -40,19 +41,45 @@ void Scene_Title::Exit()
 	// 사운드 정지, 상태 저장 등
 	//StopBGM();
 	//PauseAnimations();
+
 	Clean();
 }
 
 void Scene_Title::Clean()
 {
-		m_gameObjects.clear();
-	//SceneAssets.clear();
+	//m_gameObjects.clear();
+	////SceneAssets.clear();
+	//dirty = false;
+	//UIManager::Get().ClearSceneObjects();
+
+
+	if (!dirty) return;
+
+	// UIManager에서 씬 객체들을 먼저 정리
+	UIManager::Get().ClearSceneObjects();
+
+	// 잠시 대기 후 게임 객체들 정리
+	m_gameObjects.clear();
+
 	dirty = false;
 }
 
+// 씬 전환 지연 처리를 위해 씬_스탠다드에서 업데이트 일괄 처리.
 void Scene_Title::Update()
 {
-
+	// 씬 전환 지연 처리
+	if (m_isTransitioning && !m_nextScene.empty())
+	{
+		m_currentDelay += 0.016f; // 대략적인 프레임 시간 (60FPS 기준)
+		if (m_currentDelay >= m_transitionDelay)
+		{
+			// 실제 씬 전환 실행
+			SceneManager::Get().ChangeScene(m_nextScene);
+			m_isTransitioning = false;
+			m_nextScene = "";
+			m_currentDelay = 0.0f;
+		}
+	}
 }
 
 void Scene_Title::LogicUpdate(float delta)
@@ -67,7 +94,24 @@ void Scene_Title::Render()
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
-}
+	}
+
+	if (isCredit)
+	{
+		// [기획 텍스트] 48pt 텍스트
+		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 48.0f);
+		D2DRenderer::Get().DrawMessage(L"기획", 649.23f, 354.14f, 649.23f + 200, 354.14f + 200, D2D1::ColorF(0xffe6d8));
+
+		// [프로그래밍 텍스트] 48pt 텍스트
+		D2DRenderer::Get().DrawMessage(L"프로그래밍", 1043.14f, 354.14f, 1043.14f + 200, 354.14f + 600, D2D1::ColorF(0xffe6d8));
+		
+		// [기획팀 이름] 30pt 텍스트
+		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
+		D2DRenderer::Get().DrawMessage(L"김유진\n문상진\n이주연", 656.65f, 536.94f, 656.65f + 200, 536.94f + 700, D2D1::ColorF(0xffe6d8));
+
+		// [프로그래밍 이름] 30pt 텍스트
+		D2DRenderer::Get().DrawMessage(L"김민경\n김범진\n장효제\n전경석", 1120.65f, 512.49f, 1120.65f + 200, 512.49f + 600, D2D1::ColorF(0xffe6d8));
+	}
 
 }
 
@@ -157,7 +201,7 @@ void Scene_Title::CreateObj()
 						);
 
 	gameStartButton_buttonComp->SetOnClickCallback([this]() {
-		SceneManager::Get().ChangeScene("OutGame");
+		SafeChangeScene("OutGame");
 		std::cout << "SceneManager::Get().ChangeScene(\"OutGame\");" << std::endl;
 		});
 
@@ -233,8 +277,115 @@ void Scene_Title::CreateObj()
 
 	creditButton_buttonComp->SetOnClickCallback([this]() {
 		std::cout << "The 크레딧 button is pressed." << std::endl;
+		isCredit = true;
+		SafeChangeScene("Title");
 		});
 
 	m_gameObjects.emplace("creditButton", std::move(creditButton));
+	
+	if(isCredit)
+	{
+		//////////////////////
+		//////////////////////
+		//////////////////////
+		// [6] [크레딧_01] 창 오브젝트
+		// 1. 이미지 갖고 오기
+		auto credit01Texture = ResourceManager::Get().GetTexture("크레딧", "01");
+		// 2. 오브젝트 만들기
+		auto Credit01 = std::make_unique<Object>();
+		Credit01->SetPosition(Vec2(431, 270));
+		auto credit01Info = Credit01->GetRenderInfo();
+		credit01Info->SetBitmap(credit01Texture.Get());
+		// 3. 배경 컴포넌트 만들기
+		auto credit01Comp = Credit01->AddComponent<BackgroundComponent>(credit01Info);
+		// 3.1.1 사이즈 설정
+		credit01Comp->SetWidth(1059.f);
+		credit01Comp->SetHeight(540.f);
+		credit01Comp->BitmapPush("크레딧_01", credit01Texture);
+		// 9. 게임 오브젝트들에 집어넣기
+		m_gameObjects.emplace("크레딧_01", std::move(Credit01));
+
+		//////////////////////
+		//////////////////////
+		//////////////////////
+		// [7] [크레딧_03] 텍스트 배경 오브젝트
+		// 1. 이미지 갖고 오기
+		auto credit03Texture = ResourceManager::Get().GetTexture("크레딧", "03");
+		// 2. 오브젝트 만들기
+		auto Credit03 = std::make_unique<Object>();
+		Credit03->SetPosition(Vec2(535, 467));
+		auto credit03Info = Credit03->GetRenderInfo();
+		credit03Info->SetBitmap(credit03Texture.Get());
+		// 3. 배경 컴포넌트 만들기
+		auto credit03Comp = Credit03->AddComponent<BackgroundComponent>(credit03Info);
+		// 3.1.1 사이즈 설정
+		credit03Comp->SetWidth(335.f);
+		credit03Comp->SetHeight(283.f);
+		credit03Comp->BitmapPush("크레딧_03", credit03Texture);
+		// 9. 게임 오브젝트들에 집어넣기
+		m_gameObjects.emplace("크레딧_03", std::move(Credit03));
+
+
+		//////////////////////
+		//////////////////////
+		//////////////////////
+		// [8] [크레딧_06] 텍스트 배경 오브젝트
+		// 1. 이미지 갖고 오기
+		auto credit06Texture = ResourceManager::Get().GetTexture("크레딧", "06");
+		// 2. 오브젝트 만들기
+		auto Credit06 = std::make_unique<Object>();
+		Credit06->SetPosition(Vec2(999, 467));
+		auto credit06Info = Credit06->GetRenderInfo();
+		credit06Info->SetBitmap(credit06Texture.Get());
+		// 3. 배경 컴포넌트 만들기
+		auto credit06Comp = Credit06->AddComponent<BackgroundComponent>(credit06Info);
+		// 3.1.1 사이즈 설정
+		credit06Comp->SetWidth(335.f);
+		credit06Comp->SetHeight(283.f);
+		credit06Comp->BitmapPush("크레딧_06", credit06Texture);
+		// 9. 게임 오브젝트들에 집어넣기
+		m_gameObjects.emplace("크레딧_06", std::move(Credit06));
+
+
+		/////////////////////
+		/////////////////////
+		/////////////////////
+		// [9] 뒤로가기 버튼
+
+		// 1. 이미지 갖고 오기
+		auto 뒤로가기 = ResourceManager::Get().GetTexture("뒤로가기");
+		// 2. 오브젝트 만들기
+		auto 뒤로 = std::make_unique<Object>();
+		뒤로->SetPosition(Vec2(1393, 307));
+
+		auto 뒤로info = 뒤로->GetRenderInfo();
+		뒤로info->SetBitmap(뒤로가기.Get());
+		// 3. 버튼 컴포넌트 만들기
+		auto backComp = 뒤로->AddComponent<ButtonComponent>(뒤로info);
+		backComp->SetWidth(35);
+		backComp->SetHeight(35);
+
+		//  4. 버튼 비트맵 설정
+		// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
+		backComp->BitmapPush("back", 뒤로가기);
+
+		backComp->SetCurrentBitmap("back");
+
+		// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
+		auto Back_mouseListener = 뒤로->AddComponent<MouseListenerComponent>(
+			[backComp](const MSG& msg) {
+				backComp->Worked(msg);
+			}
+		);
+
+		backComp->SetOnClickCallback([this]() {
+			std::cout << "닫기 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
+			isCredit = false;
+			SafeChangeScene("Title");
+			});
+
+		/// 9
+		m_gameObjects.emplace("크레딧_뒤로가기", std::move(뒤로));
+	}
 
 }

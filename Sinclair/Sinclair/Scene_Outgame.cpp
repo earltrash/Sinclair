@@ -7,6 +7,7 @@
 #include "ResourceManager.h"
 #include "GameManager.h"
 #include "Renderer.h"
+#include "UIManager.h"
 
 // 랜덤
 #include <random>
@@ -27,35 +28,37 @@ void Scene_Outgame::Initalize()
 	if (dirty) return;  
 
 	CreateObj();  
+	for (const auto& [Name, obj] : m_gameObjects)
+	{
+		UIManager::Get().AddSceneObject(obj);
+	}
+
 	dirty = true;
 }
 
 void Scene_Outgame::Clean()
 {
-		m_gameObjects.clear();
+	if (!dirty) return;
+
+	m_gameObjects.clear();
+	UIManager::Get().ClearSceneObjects();
+	
 	dirty = false;
-}
-
-void Scene_Outgame::Update()
-{
-}
-
-void Scene_Outgame::LogicUpdate(float delta)
-{
 }
 
 void Scene_Outgame::Enter()
 {
-		Initalize();
+	Initalize();
 	SetupCharacterAndBackground();
 
 
 	 if (GameManager::Get().WasInGame) {
 		 m_state = State::CHOICE_MENU;
-	 } else {
+	 } 
+	 else {
 		 m_state = State::FIRST_ENTER;
 		 GameManager::Get().WasInGame = true;
-}
+	 }
 
 
 	// 우선 초기 상태로 진입
@@ -67,6 +70,29 @@ void Scene_Outgame::Exit()
 		Clean();
 }
 
+void Scene_Outgame::Update()
+{
+	// 씬 전환 지연 처리
+	if (m_isTransitioning && !m_nextScene.empty())
+	{
+		m_currentDelay += 0.016f; // 대략적인 프레임 시간 (60FPS 기준)
+		if (m_currentDelay >= m_transitionDelay)
+		{
+			// 실제 씬 전환 실행
+			SceneManager::Get().ChangeScene(m_nextScene);
+			m_isTransitioning = false;
+			m_nextScene = "";
+			m_currentDelay = 0.0f;
+		}
+	}
+}
+
+void Scene_Outgame::LogicUpdate(float delta)
+{
+
+}
+
+
 void Scene_Outgame::Render()
 {
 
@@ -74,8 +100,6 @@ void Scene_Outgame::Render()
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
 	}
-
-
 
 
 	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 36.0f);
@@ -96,6 +120,12 @@ void Scene_Outgame::Render()
 
 void Scene_Outgame::CreateObj()
 {
+	//////////////////////
+	// 1.투명 이미지 갖고 오기
+	// 아웃게임에서 이미지 비활성화를 위해서 존재
+	auto transparentImg = ResourceManager::Get().GetTexture("transparent");
+
+
 	//////////////////////
 	//////////////////////
 	//////////////////////
@@ -200,10 +230,13 @@ void Scene_Outgame::CreateObj()
 	YesComp->SetHeight(아웃게임4->GetSize().height);
 
 	//  4. 버튼 비트맵 설정
-	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
 	YesComp->BitmapPush("yes",  아웃게임4);
-
-	YesComp->SetCurrentBitmap("yes");
+	YesComp->BitmapPush("transparent", transparentImg);
+	
+	if (m_state == FIRST_ENTER)
+		YesComp->SetCurrentBitmap("transparent");
+	else
+		YesComp->SetCurrentBitmap("yes");
 
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto Yes_mouseListener = 예->AddComponent<MouseListenerComponent>(
@@ -247,6 +280,7 @@ void Scene_Outgame::CreateObj()
 	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
 	NoComp->BitmapPush("next", 아웃게임5다음);
 	NoComp->BitmapPush("no", 아웃게임5아니오);
+	NoComp->BitmapPush("transparent", transparentImg);
 
 	//changeState()
 	//NoComp->SetCurrentBitmap("no");
@@ -300,17 +334,91 @@ void Scene_Outgame::CreateObj()
 
 	backComp->SetOnClickCallback([this]() {
 		std::cout << "버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
-		SceneManager::Get().ChangeScene("Title");
-		//std::cout << "뒤로가기 (시작화면으로)" << std::endl;
+		SafeChangeScene("Title");
+
 		});
 
 	/// 9
 	m_gameObjects.emplace("뒤로가기", std::move(뒤로));
 
 
+	/////////////////////
+	/////////////////////
+	/////////////////////
+	// [7] 투명 :  > 창고로 이동한다.
+	// size = 250 * 38
+	// pos = 750, 825
 
 
+	// 2. 오브젝트 만들기
+	auto Chango = std::make_unique<Object>();
+	Chango->SetPosition(Vec2(750, 825));
 
+	auto Changoinfo = Chango->GetRenderInfo();
+	Changoinfo->SetBitmap(transparentImg.Get());
+
+	// 3. 버튼 컴포넌트 만들기
+	auto ChangoComp = Chango->AddComponent<ButtonComponent>(Changoinfo);
+	ChangoComp->SetWidth (250);
+	ChangoComp->SetHeight(38 );
+
+	//  4. 버튼 비트맵 설정
+	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
+	ChangoComp->BitmapPush("transparent", transparentImg);
+
+	ChangoComp->SetCurrentBitmap("transparent");
+
+	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
+	auto Chango_mouseListener = Chango->AddComponent<MouseListenerComponent>(
+		[ChangoComp](const MSG& msg) {
+			ChangoComp->Worked(msg);
+		}
+	);
+
+	ChangoComp->SetOnClickCallback([this]() {
+
+		});
+
+	/// 9
+	m_gameObjects.emplace("Chango", std::move(Chango));
+
+
+	/////////////////////
+	/////////////////////
+	/////////////////////
+	// [8] 투명 :  > 모험을 떠난다.
+	// pos = 750, 863
+	
+	// 2. 오브젝트 만들기
+	auto Moheom = std::make_unique<Object>();
+	Moheom->SetPosition(Vec2(750, 863));
+
+	auto Moheominfo = Moheom->GetRenderInfo();
+	Moheominfo->SetBitmap(transparentImg.Get());
+
+	// 3. 버튼 컴포넌트 만들기
+	auto MoheomComp = Moheom->AddComponent<ButtonComponent>(Moheominfo);
+	MoheomComp->SetWidth(250);
+	MoheomComp->SetHeight(38);
+
+	//  4. 버튼 비트맵 설정
+	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
+	MoheomComp->BitmapPush("transparent", transparentImg);
+
+	MoheomComp->SetCurrentBitmap("transparent");
+
+	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
+	auto Moheom_mouseListener = Moheom->AddComponent<MouseListenerComponent>(
+		[MoheomComp](const MSG& msg) {
+			MoheomComp->Worked(msg);
+		}
+	);
+
+	MoheomComp->SetOnClickCallback([this]() {
+		});
+
+	/// 9
+	m_gameObjects.emplace("Moheom", std::move(Moheom));
 }
 
 std::string Scene_Outgame::getRandomText()
@@ -365,7 +473,7 @@ void Scene_Outgame::ChangeState(State newState)
 		curText = getRandomText();
 
 		// '다음' 버튼을 보여주고 '예' 버튼은 숨깁니다.
-		yesButton->m_isInvisible = true;
+		yesButton->SetCurrentBitmap("transparent");
 		noButton->SetCurrentBitmap("next");
 
 		// '다음' 버튼의 콜백을 설정하여, 다음 텍스트를 보여주거나 상태를 80002로 변경하도록 합니다.
@@ -384,8 +492,9 @@ void Scene_Outgame::ChangeState(State newState)
 		// 예시: '예' 버튼을 '창고' 버튼으로 사용
 		// 투명 버튼 어려움!
 		// 비활성화도 어려움
-		yesButton->m_isInvisible = false;
-		noButton->SetCurrentBitmap("no");
+
+		yesButton->SetCurrentBitmap("transparent");
+		noButton->SetCurrentBitmap("transparent");
 
 		yesButton->SetOnClickCallback([this]() {
 			// 3, 4세대는 모험을 떠날 수 없다는 등의 조건은 여기서 GameManager::Get().curGen으로 확인 가능
@@ -403,11 +512,12 @@ void Scene_Outgame::ChangeState(State newState)
 	{
 		curText = outGameTextTable.find(m_state)->second; // "창고에 들어가시겠습니까?..."
 
-
+		yesButton->SetCurrentBitmap("transparent");
 
 		yesButton->SetOnClickCallback([this]() {
 			cout << "창고에 들어가시겠습니까?..." << endl;
-			SceneManager::Get().ChangeScene("InGame");
+			//SceneManager::Get().ChangeScene("InGame");
+			SafeChangeScene("InGame");
 			});
 
 		noButton->SetOnClickCallback([this]() {
@@ -423,7 +533,8 @@ void Scene_Outgame::ChangeState(State newState)
 
 		yesButton->SetOnClickCallback([this]() {
 			cout << "여행을 떠나시겠습니까?..." << endl;
-			SceneManager::Get().ChangeScene("End");
+			//SceneManager::Get().ChangeScene("End");
+			SafeChangeScene("End");
 			});
 
 		noButton->SetOnClickCallback([this]() {

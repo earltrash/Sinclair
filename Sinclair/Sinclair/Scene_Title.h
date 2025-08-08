@@ -24,6 +24,6 @@ public:
 
 //private:
 //	std::multimap<std::string, std::unique_ptr<Object>> m_gameObjects;
-
+	bool isCredit = false;
 };
 

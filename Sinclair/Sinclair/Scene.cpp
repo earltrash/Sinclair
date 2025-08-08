@@ -5,7 +5,7 @@
 #include "SpriteRenderer.h"
 #include "UI_Renderer.h"
 #include "CursorManager.h"
-
+#include "SceneManager.h"
 
 void SceneStandard::Update()
 {
@@ -16,6 +16,8 @@ void SceneStandard::Update()
 				e.second->Update(); //일단 뭐 없긴 함. 
 			}
 		}
+
+
 }
 
 
@@ -121,7 +123,19 @@ void SceneStandard::AssetMapping()
 		}
 }
 
+// 안전한 씬 전환을 위한 헬퍼 함수
+void SceneStandard::SafeChangeScene(const std::string& sceneName)
+{
+	if (!m_isTransitioning)
+	{
+		m_isTransitioning = true;
+		m_nextScene = sceneName;
+		m_currentDelay = 0.0f;
 
+		// 디버그 로그
+		std::cout << "씬 전환 예약: " << sceneName << std::endl;
+	}
+}
 
 
 

@@ -6,6 +6,7 @@
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
+#include "UIManager.h"
 
 Scene_End::Scene_End(string name)
 {
@@ -23,11 +24,14 @@ void Scene_End::Initalize()
 
 	CreateObj(); // 오브젝트 생성 (한 번만)
 	dirty = true;
+	for (const auto& [Name, obj] : m_gameObjects)
+	{
+		UIManager::Get().AddSceneObject(obj);
+	}
 }
 
 void Scene_End::Enter()
 {
-
 	Initalize();
 }
 
@@ -39,6 +43,7 @@ void Scene_End::Exit()
 
 void Scene_End::Clean()
 {
+	UIManager::Get().ClearSceneObjects();
 	m_gameObjects.clear();
 	
 	dirty = false;

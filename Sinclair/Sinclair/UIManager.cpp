@@ -4,11 +4,10 @@ void UIManager::Initialize()
 {
 
 
-    AddComponent<MouseListenerComponent>
-        (
-            // 여기서 어떻게 입력 처리 하지?
-            [this](const MSG& msg) {
-                OnInput(msg); });
+    AddComponent<MouseListenerComponent>(
+            [this](const MSG& msg) { OnInput(msg); }
+    );
+
     try
     {
         // SettingsWindow
@@ -17,13 +16,16 @@ void UIManager::Initialize()
         //{
         //    window->SetActivate(false);
         //}
+        
+
         // InventoryWindow
         m_allWindows.emplace(UIWindowType::InventoryWindow, std::make_unique<Inventory>());
         if (auto* window = GetWindow(UIWindowType::InventoryWindow))
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::InventoryWindow);
+        //m_activeWindowOrder.push_back(UIWindowType::InventoryWindow);
+
         // InventoryTooltip
         //m_allWindows.emplace(UIWindowType::InventoryTooltip, std::make_unique<InventoryTooltip>());
         //if (auto* window = GetWindow(UIWindowType::InventoryTooltip))
@@ -38,7 +40,7 @@ void UIManager::Initialize()
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::EquipmentWindow);
+        //m_activeWindowOrder.push_back(UIWindowType::EquipmentWindow);
 
         // StatsWindow
         m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>());
@@ -46,7 +48,8 @@ void UIManager::Initialize()
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::StatsWindow);
+        //m_activeWindowOrder.push_back(UIWindowType::StatsWindow);
+
         // EnhancementWindow
         //m_allWindows.emplace(UIWindowType::EnhancementWindow, std::make_unique<EnhancementWindow>());
         //if (auto* window = GetWindow(UIWindowType::EnhancementWindow))
@@ -67,6 +70,8 @@ void UIManager::Initialize()
         //{
         //    window->SetActivate(false);
         //}
+
+
 
         OutputDebugStringA("UIManager initialized successfully\n");
     }
@@ -309,9 +314,14 @@ void UIManager::HandleSceneObjectInput(const MSG& msg)
 {
     for (auto& obj : m_currentSceneObjects)
     {
-        if (obj.get()->GetComponent<ButtonComponent>())
+        if (obj.get()->GetComponent<MouseListenerComponent>())
         {
-            obj.get()->GetComponent<ButtonComponent>()->Worked(msg);
+            obj.get()->GetComponent<MouseListenerComponent>()->_OnEvent(msg);
         }
+
+        //if (obj.get()->GetComponent<ButtonComponent>())
+        //{
+        //    obj.get()->GetComponent<ButtonComponent>()->Worked(msg);
+        //}
     }
 }

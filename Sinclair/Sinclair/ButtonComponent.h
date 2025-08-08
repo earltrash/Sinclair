@@ -45,12 +45,7 @@ public:
 
 	void SetOpacity(float o) { m_renderInfo->SetOpacity(o); }
 
-	
-	// [ ] 투명 버튼 구현
-	// 투명 버튼을 구현할 방법 
-	// 1. 투명도 0.f
-	// 2. 리스너만 주는 거임!
-	bool m_isInvisible = false;
+
 
 private:
 	// 버튼을 갈아끼우는 용도
