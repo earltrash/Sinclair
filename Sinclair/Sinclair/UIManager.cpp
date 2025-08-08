@@ -54,12 +54,13 @@ void UIManager::Initialize()
         //    window->SetActivate(false);
         //}
 
-        //// SynthesisWindow
-        ////m_allWindows.emplace(UIWindowType::SynthesisWindow, std::make_unique<SynthesisWindow>());
-        //if (auto* window = GetWindow(UIWindowType::SynthesisWindow))
-        //{
-        //    window->SetActivate(false);
-        //}
+        // SynthesisWindow
+        m_allWindows.emplace(UIWindowType::SynthesisWindow, std::make_unique<SynthesisWin>());
+        if (auto* window = GetWindow(UIWindowType::SynthesisWindow))
+        {
+            window->SetActivate(true);
+        }
+        m_activeWindowOrder.push_back(UIWindowType::SynthesisWindow);
 
         //// StatPotionUseWindow
         ////m_allWindows.emplace(UIWindowType::StatPotionUseWindow, std::make_unique<StatPotionUseWindow>());
@@ -103,6 +104,7 @@ void UIManager::Render()
     //m_allWindows.find(UIWindowType::InventoryWindow)->second->Render();
     //m_allWindows.find(UIWindowType::EquipmentWindow)->second->Render();
     //m_allWindows.find(UIWindowType::StatsWindow)->second->Render();
+        m_allWindows.find(UIWindowType::SynthesisWindow)->second->Render();
 
 }
 

@@ -23,6 +23,11 @@ bool EnhancementWindow::HandleMouseHover(Vec2 mousePos)
 		return false;
 }
 
+bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
+{
+	return false;
+}
+
 void EnhancementWindow::RenderBackground()
 {
 }

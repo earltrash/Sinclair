@@ -197,6 +197,9 @@
     <ClInclude Include="GameManager.h">
       <Filter>Module</Filter>
     </ClInclude>
+    <ClInclude Include="SynthesisWin.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -320,6 +323,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="UIManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SynthesisWin.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

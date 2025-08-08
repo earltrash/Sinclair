@@ -36,6 +36,7 @@ public:
 
     // 드래그 시작
     void StartItemDrag(std::string itemid, DragSource source, InventorySlot* sourceSlot = nullptr);
+    void StartItemDrag_NS(std::string itemid, DragSource sourc);
 
     // 드래그 종료
     void EndItemDrag();
@@ -57,6 +58,7 @@ public:
 
     // 원본 슬롯 정보 가져오기
     InventorySlot* GetSourceSlot() const { return m_sourceSlot; }
+    
 
 private:
     CursorManager() = default;

@@ -176,6 +176,7 @@
     <ClInclude Include="SimpleMathHelper.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Status.h" />
+    <ClInclude Include="SynthesisWin.h" />
     <ClInclude Include="TextBank.h" />
     <ClInclude Include="StatWindow.h" />
     <ClInclude Include="TMHelper.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StatWindow.cpp" />
+    <ClCompile Include="SynthesisWin.cpp" />
     <ClCompile Include="TextBank.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UIManager.cpp" />

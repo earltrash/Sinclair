@@ -6,6 +6,8 @@
 #include "Inputmanager.h"
 #include "MouseInput.h"
 
+#include "Item.h"
+
 #define F_GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define F_GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
 
@@ -29,6 +31,9 @@ public:
 
 		// 활성화용도
 		virtual void SetActivate(bool active) { m_isActive = active; }
+
+
+		virtual bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) =0 ;
 
 		// 타입 체크용
 		virtual UIWindowType GetType() = 0;

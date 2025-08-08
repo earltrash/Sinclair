@@ -5,11 +5,11 @@
 #include "pch.h"
 #include "Object.h"
 #include "InputManager.h"
-#include "CursorManager.h"
 #include "Status.h" // UIWindowType 가져올려고해서.
 #include "UIWindow.h"
 #include "MouseListenerComponent.h"
 #include "ButtonComponent.h"
+#include "SynthesisWin.h"
 
 #include "Inventory.h"
 

@@ -35,6 +35,10 @@ public:
 		// 타입 체크용
 		UIWindowType GetType() override { return m_windowType; }
 
+		bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
+
+
+
 		// 렌더용
 		void RenderBackground();
 		void RenderTitleBar();

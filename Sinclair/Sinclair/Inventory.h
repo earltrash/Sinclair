@@ -44,6 +44,8 @@ public:
     bool HandleMouseUp(Vec2 mousePos) override;
     bool HandleDoubleClick(Vec2 mousePos) override;
 
+    bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
+
     virtual void SetActivate(bool active) { m_isActive = active; }
     UIWindowType GetType() override;
 
@@ -54,7 +56,6 @@ public:
 
     void UpdateSlotPositions();
 
-    bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source);
 
 private:
     std::vector<Region> regions;
