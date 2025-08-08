@@ -179,6 +179,9 @@
     <ClInclude Include="EnhancementWindow.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="SynthesisWin.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -275,6 +278,12 @@
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="EnhancementWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CursorManager.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SynthesisWin.cpp">
       <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>

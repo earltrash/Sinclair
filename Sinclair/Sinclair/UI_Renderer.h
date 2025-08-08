@@ -8,7 +8,8 @@ class UI_Renderer : public Component
 {
 public:
 		UI_Renderer() = default;
-		~UI_Renderer() = default; //Raii
+		~UI_Renderer() = default; //Raii -> 
+
 
 		// 인수 한개짜리 추가로 만들어두자 일단. 임시로
 		void SetBitmap(ComPtr<ID2D1Bitmap1> bitmap);

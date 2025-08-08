@@ -18,7 +18,8 @@ class Inventory : public UIWindow
 {
 public:
     //크기는 1097 *  766 // Rect {0,0 1097,766}
-    Inventory(); //이 오브젝트의 전체 Rect, Object 형식이 어떻게 될지ㅣ 몰라서 
+    //이 오브젝트의 전체 Rect, Object 형식이 어떻게 될지ㅣ 몰라서 
+    Inventory();
 
     //Initalize
     void InitializeRegions();
@@ -30,7 +31,7 @@ public:
     void LoadItemDatabase(Need_Moment Moment);
 
     void PackItem();
-    void SetDatabase(unique_ptr<ItemDatabase> database); 
+    void SetDatabase(unique_ptr<ItemDatabase> database);
 
     // Scene 넘어갈 때 
     void UnlockRegion(int regionId);
@@ -38,15 +39,13 @@ public:
     void Update() override;
     void Render() override;
 
-     bool HandleMouseHover(Vec2 mousePos) override;
-     bool HandleMouseDown(Vec2 mousePos) override;
-     bool HandleMouseUp(Vec2 mousePos) override;
-     bool HandleDoubleClick(Vec2 mousePos) override;
+    bool HandleMouseHover(Vec2 mousePos) override;
+    bool HandleMouseDown(Vec2 mousePos) override;
+    bool HandleMouseUp(Vec2 mousePos) override;
+    bool HandleDoubleClick(Vec2 mousePos) override;
 
-     virtual void SetActivate(bool active) { m_isActive = active; }
-     UIWindowType GetType() override;
-
-
+    virtual void SetActivate(bool active) { m_isActive = active; }
+    UIWindowType GetType() override;
 
     InventorySlot* GetSlotAt(const Vec2& pos);
     void RenderTitleBar();
@@ -55,7 +54,7 @@ public:
 
     void UpdateSlotPositions();
 
-
+    bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
 private:
     std::vector<Region> regions;
     std::map<std::pair<int, int>, InventorySlot> slots;  // [region][index] -> slot
@@ -79,8 +78,6 @@ private:
     Vec2 dragStartMousePos{ 0,0 };
     Vec2 dragStartWindowPos{ 0,0 };
 
-
-
     std::string currentHoveredItemName; //HoveredItemName
     std::string currentHoveredItemDescription; //현 아이템 설명글.
     Vec2 tooltipPosition{ 0,0 };
@@ -88,6 +85,5 @@ private:
     int currentHoveredItemCount;
 
     vector<Vec2>RegionOffset;
-   
-};
 
+};

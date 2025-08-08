@@ -32,6 +32,11 @@ void StatWindow::Render()
     RenderCloseButton();    // ´Ý±â ¹öÆ° ·»´õ
 }
 
+bool StatWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
+{
+    return false;
+}
+
 void StatWindow::CalculateStats()
 {
     m_fundamentalStats = { 43, 51, 25, 41 };

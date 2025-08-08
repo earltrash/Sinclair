@@ -12,7 +12,7 @@
 
 
 #include "Inventory.h"
-
+#include "SynthesisWin.h"
 
 //GamerManager
 //SoundManager
@@ -68,18 +68,18 @@ public:
             //}
 
             // EquipmentWindow
-            m_allWindows.emplace(UIWindowType::EquipmentWindow, std::make_unique<EquipmentWindow>());
+           // m_allWindows.emplace(UIWindowType::EquipmentWindow, std::make_unique<EquipmentWindow>());
 
             if (auto* window = GetWindow(UIWindowType::EquipmentWindow))
             {
-                window->SetActivate(true);
+                window->SetActivate(false);
             }
 
             // StatsWindow
-            m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>());
+           // m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>());
             if (auto* window = GetWindow(UIWindowType::StatsWindow))
             {
-                window->SetActivate(true);
+                window->SetActivate(false);
             }
             
             // EnhancementWindow
@@ -89,12 +89,12 @@ public:
             //    window->SetActivate(false);
             //}
 
-            //// SynthesisWindow
-            ////m_allWindows.emplace(UIWindowType::SynthesisWindow, std::make_unique<SynthesisWindow>());
-            //if (auto* window = GetWindow(UIWindowType::SynthesisWindow))
-            //{
-            //    window->SetActivate(false);
-            //}
+            // SynthesisWindow
+           m_allWindows.emplace(UIWindowType::SynthesisWindow, std::make_unique<SynthesisWin>());
+            if (auto* window = GetWindow(UIWindowType::SynthesisWindow))
+            {
+                window->SetActivate(true);
+            }
 
             //// StatPotionUseWindow
             ////m_allWindows.emplace(UIWindowType::StatPotionUseWindow, std::make_unique<StatPotionUseWindow>());
@@ -136,9 +136,10 @@ public:
             }
         }*/
 
-        m_allWindows.find(UIWindowType::InventoryWindow)->second->Render();
-        m_allWindows.find(UIWindowType::EquipmentWindow)->second->Render();
-        m_allWindows.find(UIWindowType::StatsWindow)->second->Render();
+       // m_allWindows.find(UIWindowType::InventoryWindow)->second->Render();
+       // m_allWindows.find(UIWindowType::EquipmentWindow)->second->Render();
+       // m_allWindows.find(UIWindowType::StatsWindow)->second->Render();
+        m_allWindows.find(UIWindowType::SynthesisWindow)->second->Render();
 
     }
     // InputManager 이벤트 받아서 젤 위의 창부터 순서대로 이벤트 전달하고 성공 실패 여부를 통해서 계속 메세지 전달해보기.
@@ -194,9 +195,10 @@ public:
        
         
 
-        m_allWindows.find(UIWindowType::InventoryWindow)->second->HandleInput(msg);
-        m_allWindows.find(UIWindowType::EquipmentWindow)->second->HandleInput(msg);
-        m_allWindows.find(UIWindowType::StatsWindow)->second->HandleInput(msg);
+        //m_allWindows.find(UIWindowType::InventoryWindow)->second->HandleInput(msg);
+        //m_allWindows.find(UIWindowType::EquipmentWindow)->second->HandleInput(msg);
+        //m_allWindows.find(UIWindowType::StatsWindow)->second->HandleInput(msg);
+        m_allWindows.find(UIWindowType::SynthesisWindow)->second->HandleInput(msg);
 
         // 3. 모든 창이 처리 안했으면 씬 오브젝트에 전달
        // HandleSceneObjectInput(msg);
