@@ -10,9 +10,9 @@
 #include "MouseListenerComponent.h"
 #include "ButtonComponent.h"
 #include "SynthesisWin.h"
-
+#include "ToolTip.h"
 #include "Inventory.h"
-
+#include "UIPotion.h"
 
 //GamerManager
 //SoundManager
@@ -102,6 +102,8 @@ public:
     // 씬 오브젝트 입력 처리
     // buttoncomponent가 있을거니까 거기에 있는 함수 실행시키기.
     void HandleSceneObjectInput(const MSG& msg);
+
+    std::string GetWearablePartString(Wearable_part type);
 
 private:
     UIManager() = default;

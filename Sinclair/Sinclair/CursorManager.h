@@ -47,6 +47,10 @@ public:
     // 드래그 중인 아이템 가져오기
     Item* GetDraggedItem() const { return m_draggedItem; }
     void SetDraggedItem(Item* item) { m_draggedItem = item; }
+
+    void SetHoveredItem(Item* item) { m_hoveredItem = item; }
+    Item* GetHoveredItem() { return m_hoveredItem; }
+    void HoveredReleased();
     // 드래그 시작 소스 가져오기
     DragSource GetDragSource() const { return m_dragSource; }
 
@@ -71,9 +75,15 @@ private:
     bool m_isDragging = false;
     bool m_isMousePressed = false;
     Item* m_draggedItem = nullptr;
+    Item* m_hoveredItem = nullptr;
+
+
     DragSource m_dragSource = DragSource::None;
     CursorType m_currentCursor = CursorType::Normal;
     InventorySlot* m_sourceSlot = nullptr;
+
+
+
 
     Vec2 m_ghostImagePos;
     ComPtr<ID2D1Bitmap1> m_ghostImage = nullptr;

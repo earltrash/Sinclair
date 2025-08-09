@@ -130,3 +130,8 @@ void CursorManager::EndItemDrag()
     m_sourceSlot = nullptr;
     SetCursor(CursorType::Normal);
 }
+
+void CursorManager::HoveredReleased()
+{
+    { if (m_hoveredItem != nullptr) m_hoveredItem = nullptr; }
+}

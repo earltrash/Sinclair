@@ -6,7 +6,7 @@
 
 
 //: UI_Object(MWP) //생성자로 영역은 일단 설정함 (Inven 자기 영역 말임)
-Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 0,0 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
+Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
 {
 
     m_bound = { 0,0,1208,825 }; // 초기 위치  
@@ -14,14 +14,20 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 0,0 }, Vec
     windowPosition = { m_bound.x,m_bound.y };
 
     InitializeRegions();
-    std::cout << "[Inventory] Regions 초기화 완료" << std::endl;
+  //  std::cout << "[Inventory] Regions 초기화 완료" << std::endl;
     LoadUIBitmaps(); //멤버로 갖고 있는 닫기랑 윗 부분 (이건 Inven이랑 같이할 가능성도 있음) 
-    std::cout << "[Inventory] UI 비트맵 로딩 완료" << std::endl;
+   // std::cout << "[Inventory] UI 비트맵 로딩 완료" << std::endl;
 
     InitializeSlots();
     std::cout << "[Inventory] 슬롯 초기화 완료" << std::endl; // ← 여기 안 나오면 그 안에서 터진 거
 
-    LoadItemDatabase(Need_Moment::Gen_2);
+    //LoadItemDatabase(Need_Moment::Gen_2);
+    LoadItemDatabase(Need_Moment::Syn);
+    LoadItemDatabase(Need_Moment::Adv);
+    //LoadItemDatabase(Need_Moment::Gen_3);
+    //LoadItemDatabase(Need_Moment::Gen_4);
+
+
     PackItem();
 
     dragState.isDragging = false; // 드래그 상태 초기화
@@ -280,7 +286,7 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
     }
 
     // 윈도우 드래그 중일 때
-    if (isWindowDragging)
+    if (isWindowDragging) // -> 
     {
         float deltaX = mousePos.x - dragStartMousePos.x;
         float deltaY = mousePos.y - dragStartMousePos.y;
@@ -321,7 +327,7 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
                 slot.UpdateBackgroundBitmap(&controller);
             }
 
-            if (slot.isHovered && !slot.IsEmpty())
+            if (slot.isHovered && !slot.IsEmpty())  //-> 
             {
                 hoveredSlot = &slot; // 현재 마우스가 올라간 슬롯
             }
@@ -330,9 +336,17 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
         // 툴팁 정보 업데이트
         if (hoveredSlot)
         {
-            const Item* data = m_itemDatabase.GetItemData(hoveredSlot->item.id);
+             Item* data = m_itemDatabase.GetItemData(hoveredSlot->item.id); // 그 저장된 아이템 정보 가져오는 거임. ㅇㅇ 
+             //Item* data = hoveredSlot->item.
+
+
             if (data)
             {
+                CursorManager::Get().SetHoveredItem(data); 
+                Vec2 tooltipPos = mousePos + Vec2(10, 10);
+
+                UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //활성화 후, Item 값을 보내줘야 함.
+
                 currentHoveredItemName = data->m_data.name;
                 currentHoveredItemDescription = data->m_data.description;
                 currentHoveredItemCount = hoveredSlot->item.count;

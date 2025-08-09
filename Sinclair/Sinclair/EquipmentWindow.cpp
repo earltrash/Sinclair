@@ -185,15 +185,10 @@ bool EquipmentWindow::HandleMouseHover(Vec2 mousePos)
     if (!m_isActive) return false;
 
 
-    // 드래그 중이면 창 위치 업데이트
-    if (m_isDragging)
-    {
-        m_position = mousePos - m_dragOffset;
-
-        // 창 위치가 바뀌면 슬롯 위치들도 다시 계산
+    // 드래그 중이면 창 위치 업데이트/ 이거 없애야 할 듯? 
+   
         UpdateSlotPositions();
-    }
-
+    
 
     // 슬롯에 마우스 오버 시 툴팁 표시
     Wearable_part hoveredSlot = GetSlotTypeAt(mousePos);
@@ -205,14 +200,17 @@ bool EquipmentWindow::HandleMouseHover(Vec2 mousePos)
         {
             // 툴팁 표시 위치를 마우스 옆으로 조정
             Vec2 tooltipPos = mousePos + Vec2(10, 10);
-            UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos);
+            CursorManager::Get().SetHoveredItem(item);
+            UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //활성화 후, Item 값을 보내줘야 함.
+
             return true;
         }
     }
     else
     {
         // 마우스가 슬롯 밖으로 나가면 툴팁 숨기기
-        UIManager::Get().HideTooltip(UIWindowType::InventoryTooltip);
+      //  UIManager::Get().HideTooltip(UIWindowType::InventoryTooltip);
+       // CursorManager::Get().HoveredReleased();
     }
 
     return false;

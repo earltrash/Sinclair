@@ -103,6 +103,20 @@ enum class DragSource
 	None
 };
 
+enum class EnchancerType //아이템의 정보를 읽고 와서 enum값 처리 -> enum 읽고 Render처리
+{
+	Default,
+	Fail,
+	Sucess,
+	Nothing
+};
 
 
+enum class PotionLevel //아이템창 활성화 시키고, 해당 타입으로 이미지를 변화시킴. 
+{
+	level1, //0
+	level2, //1 
+	level3, //2 
+	nothing
 
+};

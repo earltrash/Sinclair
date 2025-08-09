@@ -18,56 +18,65 @@ void UIManager::Initialize()
         //    window->SetActivate(false);
         //}
         // InventoryWindow
-        m_allWindows.emplace(UIWindowType::InventoryWindow, std::make_unique<Inventory>());
+
+
+     /*   m_allWindows.emplace(UIWindowType::InventoryWindow, std::make_unique<Inventory>());
+
         if (auto* window = GetWindow(UIWindowType::InventoryWindow))
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::InventoryWindow);
-        // InventoryTooltip
-        //m_allWindows.emplace(UIWindowType::InventoryTooltip, std::make_unique<InventoryTooltip>());
-        //if (auto* window = GetWindow(UIWindowType::InventoryTooltip))
-        //{
-        //    window->SetActivate(false);
-        //}
+        m_activeWindowOrder.push_back(UIWindowType::InventoryWindow);*/
+
+         
+       /* m_allWindows.emplace(UIWindowType::InventoryTooltip, std::make_unique<ToolTip>());
+        if (auto* window = GetWindow(UIWindowType::InventoryTooltip))
+        {
+            window->SetActivate(false);
+        }*/
+        //m_activeWindowOrder.push_back(UIWindowType::InventoryTooltip);
 
         // EquipmentWindow
-        m_allWindows.emplace(UIWindowType::EquipmentWindow, std::make_unique<EquipmentWindow>());
+       // m_allWindows.emplace(UIWindowType::EquipmentWindow, std::make_unique<EquipmentWindow>());
 
-        if (auto* window = GetWindow(UIWindowType::EquipmentWindow))
+       /* if (auto* window = GetWindow(UIWindowType::EquipmentWindow))
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::EquipmentWindow);
+        m_activeWindowOrder.push_back(UIWindowType::EquipmentWindow);*/
 
         // StatsWindow
-        m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>());
+       /* m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>());
         if (auto* window = GetWindow(UIWindowType::StatsWindow))
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::StatsWindow);
-        // EnhancementWindow
-        //m_allWindows.emplace(UIWindowType::EnhancementWindow, std::make_unique<EnhancementWindow>());
-        //if (auto* window = GetWindow(UIWindowType::EnhancementWindow))
-        //{
-        //    window->SetActivate(false);
-        //}
+        m_activeWindowOrder.push_back(UIWindowType::StatsWindow);*/
 
-        // SynthesisWindow
-        m_allWindows.emplace(UIWindowType::SynthesisWindow, std::make_unique<SynthesisWin>());
-        if (auto* window = GetWindow(UIWindowType::SynthesisWindow))
+        //EnhancementWindow
+       /* m_allWindows.emplace(UIWindowType::EnhancementWindow, std::make_unique<EnhancementWindow>());
+        if (auto* window = GetWindow(UIWindowType::EnhancementWindow))
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::SynthesisWindow);
+        m_activeWindowOrder.push_back(UIWindowType::EnhancementWindow);*/
 
-        //// StatPotionUseWindow
-        ////m_allWindows.emplace(UIWindowType::StatPotionUseWindow, std::make_unique<StatPotionUseWindow>());
-        //if (auto* window = GetWindow(UIWindowType::StatPotionUseWindow))
+        //// SynthesisWindow
+        ////m_allWindows.emplace(UIWindowType::SynthesisWindow, std::make_unique<SynthesisWindow>());
+        //if (auto* window = GetWindow(UIWindowType::SynthesisWindow))
         //{
         //    window->SetActivate(false);
         //}
+
+        //// StatPotionUseWindow
+        m_allWindows.emplace(UIWindowType::StatPotionUseWindow, std::make_unique<UIPotion>());
+        if (auto* window = GetWindow(UIWindowType::StatPotionUseWindow))
+        {
+            window->SetActivate(true);
+        }
+        m_activeWindowOrder.push_back(UIWindowType::StatPotionUseWindow);
+
+
 
         OutputDebugStringA("UIManager initialized successfully\n");
     }
@@ -104,7 +113,6 @@ void UIManager::Render()
     //m_allWindows.find(UIWindowType::InventoryWindow)->second->Render();
     //m_allWindows.find(UIWindowType::EquipmentWindow)->second->Render();
     //m_allWindows.find(UIWindowType::StatsWindow)->second->Render();
-        m_allWindows.find(UIWindowType::SynthesisWindow)->second->Render();
 
 }
 
@@ -167,23 +175,27 @@ void UIManager::OnInput(const MSG& msg)
     }
 
     // 창이 있으면 역순으로 순회 (최상단부터)
-    for (auto it = m_activeWindowOrder.rbegin(); it != m_activeWindowOrder.rend(); ++it)
+    //for (auto it = m_activeWindowOrder.rbegin(); it != m_activeWindowOrder.rend(); ++it)
+    //{
+    //    if (auto* window = GetWindow(*it))
+    //    {
+    //        if (window->HandleInput(msg))
+    //        {
+    //            return; // 입력이 처리되면 종료
+    //        }
+    //    }
+    //}
+
+    auto orderSnapshot = m_activeWindowOrder;
+
+    for (auto it = orderSnapshot.rbegin(); it != orderSnapshot.rend(); ++it)
     {
         if (auto* window = GetWindow(*it))
         {
             if (window->HandleInput(msg))
-            {
-                return; // 입력이 처리되면 종료
-            }
+                return;
         }
     }
-
-
-    /* Vec2 CORD = { F_GET_X_LPARAM(msg.lParam), F_GET_X_LPARAM(msg.lParam) };
-     std::cout << "최초의 X" << CORD.x << "최초의 Y" << CORD.y << endl;*/
-
-      // 3. 모든 창이 처리 안했으면 씬 오브젝트에 전달
-     // HandleSceneObjectInput(msg);
 }
 
 void UIManager::ToggleWindow(UIWindowType type)
@@ -268,6 +280,7 @@ void UIManager::ShowTooltip(UIWindowType tooltipType, const Vec2& position)
     if (auto* tooltip = GetWindow(tooltipType))
     {
         tooltip->SetPosition(position);
+
         // 툴팁이 이미 활성화되어 있다면 위치만 업데이트
         if (!IsWindowActive(tooltipType))
         {
@@ -315,5 +328,33 @@ void UIManager::HandleSceneObjectInput(const MSG& msg)
         {
             obj.get()->GetComponent<ButtonComponent>()->Worked(msg);
         }
+    }
+}
+
+std::string UIManager::GetWearablePartString(Wearable_part type)
+{
+    switch (type)
+    {
+    case Wearable_part::Weapon:
+        return "Weapon";
+    case Wearable_part::Shoes:
+        return "Shoes";
+    case Wearable_part::Ring:
+        return "Ring";
+    case Wearable_part::Neckless:
+        return "Neckless";
+    case Wearable_part::Glove:
+        return "Glove";
+    case Wearable_part::Under:
+        return "Under";
+    case Wearable_part::Upper:
+        return "Upper";
+    case Wearable_part::Helmet:
+        return "Helmet";
+    case Wearable_part::Cape:
+        return "Cape";
+    case Wearable_part::UnKnown:
+    default:
+        return "UnKnown";
     }
 }

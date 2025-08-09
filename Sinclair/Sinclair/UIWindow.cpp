@@ -78,11 +78,14 @@ bool UIWindow::HandleInput(const MSG& msg)
 		}
 
 		// 3. 마우스 이동 중 (창 드래그 로직)
-		if (m_isDragging && msg.message == WM_MOUSEMOVE)
+			//if (m_isDragging && msg.message == WM_MOUSEMOVE)
+				if ( msg.message == WM_MOUSEMOVE)
+
 		{
 				// 창의 위치를 업데이트
 				m_position = CORD - m_dragOffset;
-				return true; 
+				return HandleMouseHover(CORD);
+				//return true; 
 		}
 
 		return false; 
