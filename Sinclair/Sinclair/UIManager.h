@@ -13,6 +13,8 @@
 #include "ToolTip.h"
 #include "Inventory.h"
 #include "UIPotion.h"
+#include "EnhancementWindow.h"
+
 
 //GamerManager
 //SoundManager

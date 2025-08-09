@@ -20,30 +20,29 @@ void UIManager::Initialize()
         // InventoryWindow
 
 
-     /*   m_allWindows.emplace(UIWindowType::InventoryWindow, std::make_unique<Inventory>());
+        m_allWindows.emplace(UIWindowType::InventoryWindow, std::make_unique<Inventory>());
 
         if (auto* window = GetWindow(UIWindowType::InventoryWindow))
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::InventoryWindow);*/
+        m_activeWindowOrder.push_back(UIWindowType::InventoryWindow);
 
          
-       /* m_allWindows.emplace(UIWindowType::InventoryTooltip, std::make_unique<ToolTip>());
+        /*m_allWindows.emplace(UIWindowType::InventoryTooltip, std::make_unique<ToolTip>());
         if (auto* window = GetWindow(UIWindowType::InventoryTooltip))
         {
             window->SetActivate(false);
-        }*/
-        //m_activeWindowOrder.push_back(UIWindowType::InventoryTooltip);
+        }
+        m_activeWindowOrder.push_back(UIWindowType::InventoryTooltip);*/
 
         // EquipmentWindow
-       // m_allWindows.emplace(UIWindowType::EquipmentWindow, std::make_unique<EquipmentWindow>());
-
-       /* if (auto* window = GetWindow(UIWindowType::EquipmentWindow))
+        m_allWindows.emplace(UIWindowType::EquipmentWindow, std::make_unique<EquipmentWindow>());
+        if (auto* window = GetWindow(UIWindowType::EquipmentWindow))
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::EquipmentWindow);*/
+        m_activeWindowOrder.push_back(UIWindowType::EquipmentWindow);
 
         // StatsWindow
        /* m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>());
@@ -54,27 +53,28 @@ void UIManager::Initialize()
         m_activeWindowOrder.push_back(UIWindowType::StatsWindow);*/
 
         //EnhancementWindow
-       /* m_allWindows.emplace(UIWindowType::EnhancementWindow, std::make_unique<EnhancementWindow>());
+        m_allWindows.emplace(UIWindowType::EnhancementWindow, std::make_unique<EnhancementWindow>());
         if (auto* window = GetWindow(UIWindowType::EnhancementWindow))
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::EnhancementWindow);*/
+        m_activeWindowOrder.push_back(UIWindowType::EnhancementWindow);
 
         //// SynthesisWindow
-        ////m_allWindows.emplace(UIWindowType::SynthesisWindow, std::make_unique<SynthesisWindow>());
-        //if (auto* window = GetWindow(UIWindowType::SynthesisWindow))
-        //{
-        //    window->SetActivate(false);
-        //}
+        m_allWindows.emplace(UIWindowType::SynthesisWindow, std::make_unique<SynthesisWin>());
+        if (auto* window = GetWindow(UIWindowType::SynthesisWindow))
+        {
+            window->SetActivate(true);
+        }
+        m_activeWindowOrder.push_back(UIWindowType::SynthesisWindow);
 
         //// StatPotionUseWindow
-        m_allWindows.emplace(UIWindowType::StatPotionUseWindow, std::make_unique<UIPotion>());
+       /* m_allWindows.emplace(UIWindowType::StatPotionUseWindow, std::make_unique<UIPotion>());
         if (auto* window = GetWindow(UIWindowType::StatPotionUseWindow))
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::StatPotionUseWindow);
+        m_activeWindowOrder.push_back(UIWindowType::StatPotionUseWindow);*/
 
 
 

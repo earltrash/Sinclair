@@ -100,6 +100,7 @@ enum class DragSource
 {
 	Inventory,
 	Equipment,
+	Enhancement,
 	None
 };
 

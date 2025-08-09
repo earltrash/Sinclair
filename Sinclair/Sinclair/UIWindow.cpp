@@ -59,7 +59,7 @@ bool UIWindow::HandleInput(const MSG& msg)
 				{
 						std::cout << "드래그 할거임." << std::endl;
 						m_isDragging = true;
-						
+
 						m_dragOffset = CORD - m_position;
 						UIManager::Get().OpenWindow(m_windowType);
 						return true;
@@ -79,14 +79,17 @@ bool UIWindow::HandleInput(const MSG& msg)
 
 		// 3. 마우스 이동 중 (창 드래그 로직)
 			//if (m_isDragging && msg.message == WM_MOUSEMOVE)
-				if ( msg.message == WM_MOUSEMOVE)
-
+		if (m_isDragging && msg.message == WM_MOUSEMOVE)
 		{
-				// 창의 위치를 업데이트
 				m_position = CORD - m_dragOffset;
-				return HandleMouseHover(CORD);
-				//return true; 
+				return true;
 		}
 
-		return false; 
+		// 드래그 중이 아닐 때는 마우스 호버만 처리합니다.
+		else if (!m_isDragging && msg.message == WM_MOUSEMOVE)
+		{
+				return HandleMouseHover(CORD);
+		}
+
+		return false;
 }
