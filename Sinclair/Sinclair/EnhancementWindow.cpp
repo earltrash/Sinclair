@@ -25,13 +25,37 @@ void EnhancementWindow::Render()
 
 bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 {
+	std::cout << "HandleMouseDown - 마우스 위치: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
+	std::cout << "창 위치: (" << m_position.x << ", " << m_position.y << ")" << std::endl;
+	std::cout << "창 크기: (" << m_size.x << ", " << m_size.y << ")" << std::endl;
+
 		if (!m_isActive) return false;
 
 		// 메세지 만들어서 던지기.
 		MSG msg{};
 		msg.message = WM_LBUTTONDOWN;
 		msg.lParam = MAKELPARAM((int)mousePos.x, (int)mousePos.y);
-
+		if (m_statSelectionButton)
+		{
+			Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
+			Vec2 btnScreenPos = m_position + btnPos;
+			std::cout << "스탯 버튼 로컬 위치: (" << btnPos.x << ", " << btnPos.y << ")" << std::endl;
+			std::cout << "스탯 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
+		}
+		if (m_leftArrowButton)
+		{
+			Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
+			Vec2 btnScreenPos = m_position + btnPos;
+			std::cout << "left 버튼 로컬 위치: (" << btnPos.x << ", " << btnPos.y << ")" << std::endl;
+			std::cout << "left 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
+		}
+		if (m_rightArrowButton)
+		{
+			Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
+			Vec2 btnScreenPos = m_position + btnPos;
+			std::cout << "right 버튼 로컬 위치: (" << btnPos.x << ", " << btnPos.y << ")" << std::endl;
+			std::cout << "right 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
+		}
 		// 스탯 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_statSelectionButton.get()))
 				m_statSelectionButton->GetComponent<ButtonComponent>()->Worked(msg);
@@ -332,106 +356,40 @@ void EnhancementWindow::RenderSheetImages()
 
 void EnhancementWindow::RenderStatSelectionButtons()
 {
-		//// 중앙 버튼 
-		//Vec2 screenPos = m_position + m_statSelectionButton->GetTransform().GetPosition();
-		//ID2D1Bitmap1* bmp = m_statSelectionButton->GetRenderInfo()->GetRenderInfo().bitmap;
-
-		//// 렌더링
-		//if (bmp)
-		//{
-		//		D2D1_SIZE_F size = bmp->GetSize();
-		//		D2D1_RECT_F dest = { screenPos.x, screenPos.y, screenPos.x + size.width, screenPos.y + size.height };
-		//		D2DRenderer::Get().DrawBitmap(bmp, dest);
-		//}
-
-		//// 좌측 화살표 버튼 렌더링
-		//screenPos = m_position + m_leftArrowButton->GetTransform().GetPosition();
-		//bmp = m_leftArrowButton->GetRenderInfo()->GetRenderInfo().bitmap;
-
-		//if (bmp)
-		//{
-		//		D2D1_SIZE_F size = bmp->GetSize();
-		//		D2D1_RECT_F dest = { screenPos.x, screenPos.y, screenPos.x + size.width, screenPos.y + size.height };
-		//		D2DRenderer::Get().DrawBitmap(bmp, dest);
-		//}
-
-		//// 우측 화살표 버튼 렌더링
-		//screenPos = m_position + m_rightArrowButton->GetTransform().GetPosition();
-		//bmp = m_rightArrowButton->GetRenderInfo()->GetRenderInfo().bitmap;
-
-		//if (bmp)
-		//{
-		//		D2D1_SIZE_F size = bmp->GetSize();
-		//		D2D1_RECT_F dest = { screenPos.x, screenPos.y, screenPos.x + size.width, screenPos.y + size.height };
-		//		D2DRenderer::Get().DrawBitmap(bmp, dest);
-		//}
 		// 중앙 버튼 
-		RenderButton(m_statSelectionButton.get(), 1.0f);
-
-		// 좌측 화살표 버튼
-		RenderButton(m_leftArrowButton.get(), 1.0f);
-
-		// 우측 화살표 버튼
-		RenderButton(m_rightArrowButton.get(), 1.0f);
-}
-
-void EnhancementWindow::RenderButton(Object* buttonObj, float baseOpacity)
-{
-		if (!buttonObj) return;
-
-		auto btnComponent = buttonObj->GetComponent<ButtonComponent>();
-		if (!btnComponent) return;
-
-		Vec2 objPos = buttonObj->GetTransform().GetPosition();
-		Vec2 screenPos = m_position + objPos;
-		ID2D1Bitmap1* bmp = buttonObj->GetRenderInfo()->GetRenderInfo().bitmap;
-
-		if (!bmp) return;
-
-		D2D1_SIZE_F originalSize = bmp->GetSize();
-
-		// 버튼 상태에 따른 크기와 opacity 계산
-		float scale = 1.0f;
-		float opacity = baseOpacity;
-
-		switch (btnComponent->GetState())
+		Vec2 screenPos = m_position + m_statSelectionButton->GetTransform().GetPosition();
+		ID2D1Bitmap1* bmp = m_statSelectionButton->GetRenderInfo()->GetRenderInfo().bitmap;
+		// 렌더링
+		if (bmp)
 		{
-		case ButtonComponent::ButtonState::Normal:
-				scale = 1.0f;
-				opacity = baseOpacity;
-				break;
-		case ButtonComponent::ButtonState::Hover:
-				scale = 1.1f;
-				opacity = 1.0f;
-				break;
-		case ButtonComponent::ButtonState::Pressed:
-				scale = 0.95f;
-				opacity = 0.7f;
-				break;
-		case ButtonComponent::ButtonState::Disabled:
-				scale = 1.0f;
-				opacity = 0.3f;
-				break;
+				D2D1_SIZE_F size = bmp->GetSize();
+				D2D1_RECT_F dest = { screenPos.x, screenPos.y, screenPos.x + size.width, screenPos.y + size.height };
+				D2DRenderer::Get().DrawBitmap(bmp, dest);
 		}
 
-		// 크기 계산
-		float scaledWidth = originalSize.width * scale;
-		float scaledHeight = originalSize.height * scale;
+		// 좌측 화살표 버튼 렌더링
+		screenPos = m_position + m_leftArrowButton->GetTransform().GetPosition();
+		bmp = m_leftArrowButton->GetRenderInfo()->GetRenderInfo().bitmap;
 
-		// 중앙 정렬을 위한 오프셋
-		float offsetX = (scaledWidth - originalSize.width) * 0.5f;
-		float offsetY = (scaledHeight - originalSize.height) * 0.5f;
+		if (bmp)
+		{
+				D2D1_SIZE_F size = bmp->GetSize();
+				D2D1_RECT_F dest = { screenPos.x, screenPos.y, screenPos.x + size.width, screenPos.y + size.height };
+				D2DRenderer::Get().DrawBitmap(bmp, dest);
+		}
 
-		D2D1_RECT_F dest = {
-				screenPos.x - offsetX,
-				screenPos.y - offsetY,
-				screenPos.x - offsetX + scaledWidth,
-				screenPos.y - offsetY + scaledHeight
-		};
+		// 우측 화살표 버튼 렌더링
+		screenPos = m_position + m_rightArrowButton->GetTransform().GetPosition();
+		bmp = m_rightArrowButton->GetRenderInfo()->GetRenderInfo().bitmap;
 
-		// opacity를 적용해서 렌더링 
-		D2DRenderer::Get().DrawBitmap(bmp, dest, D2D1_RECT_F{}, opacity);
+		if (bmp)
+		{
+				D2D1_SIZE_F size = bmp->GetSize();
+				D2D1_RECT_F dest = { screenPos.x, screenPos.y, screenPos.x + size.width, screenPos.y + size.height };
+				D2DRenderer::Get().DrawBitmap(bmp, dest);
+		}
 }
+
 
 void EnhancementWindow::RenderStatText()
 {
@@ -460,13 +418,21 @@ void EnhancementWindow::RenderStatText()
 
 void EnhancementWindow::RenderScrollButtons()
 {
-		// 주문서 3개 렌더링 - 아이템 유무에 따른 opacity 적용
-		float opacity = m_targetItem ? 1.0f : 0.5f;
 
-		for (size_t i = 0; i < m_enhancementButtons.size(); ++i)
+// 강화 버튼 3개 렌더링 
+	for (size_t i = 0; i < m_enhancementButtons.size(); ++i)
+	{
+		auto& btn = m_enhancementButtons[i];
+		Vec2 screenPos = m_position + btn->GetTransform().GetPosition();
+		ID2D1Bitmap1* bmp = btn->GetRenderInfo()->GetRenderInfo().bitmap;
+
+		if (bmp)
 		{
-				RenderButton(m_enhancementButtons[i].get(), opacity);
+			D2D1_SIZE_F size = bmp->GetSize();
+			D2D1_RECT_F dest = { screenPos.x, screenPos.y, screenPos.x + size.width, screenPos.y + size.height };
+			D2DRenderer::Get().DrawBitmap(bmp, dest);
 		}
+	}
 }
 
 
@@ -499,7 +465,7 @@ void EnhancementWindow::TryEnhance(int successRate)
 		// 강화 횟수 차감
 		/*if (m_targetItem > 0)
 		{
-				m_remainingEnhancementCount--;
+				cout--;
 		}*/
 }
 

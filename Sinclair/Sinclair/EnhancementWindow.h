@@ -55,6 +55,7 @@ public:
 				slotinfo->SetBitmap(slot.Get());
 				m_statSelectionButton->AddComponent<ButtonComponent>(slotinfo);
 				m_statSelectionButton->SetPosition(Vec2(83, 305));
+				
 
 
 				// 좌측버튼.
@@ -64,7 +65,7 @@ public:
 				slotinfo->SetBitmap(slot.Get());
 				m_leftArrowButton->AddComponent<ButtonComponent>(slotinfo);
 				m_leftArrowButton->SetPosition(Vec2(43, 305));
-
+				
 
 				// 우측버튼.
 				m_rightArrowButton = std::make_unique<Object>();
@@ -73,7 +74,7 @@ public:
 				slotinfo->SetBitmap(slot.Get());
 				m_rightArrowButton->AddComponent<ButtonComponent>(slotinfo);
 				m_rightArrowButton->SetPosition(Vec2(454, 305));
-
+				
 
 				// 주문서버튼.
 				auto btn1 = std::make_unique<Object>();
@@ -81,7 +82,8 @@ public:
 				slotinfo = btn1->GetRenderInfo();
 				slotinfo->SetBitmap(slot.Get());
 				btn1->AddComponent<ButtonComponent>(slotinfo);
-				btn1->SetPosition(Vec2(98, 444));
+				//btn1->SetPosition(Vec2(98, 444));
+				btn1->GetTransform().SetPosition((Vec2(98, 444)));
 
 
 				auto btn2 = std::make_unique<Object>();
@@ -90,7 +92,7 @@ public:
 				slotinfo->SetBitmap(slot.Get());
 				btn2->AddComponent<ButtonComponent>(slotinfo);
 				btn2->SetPosition(Vec2(98, 518));
-
+				
 
 				auto btn5 = std::make_unique<Object>();
 				slot = ResourceManager::Get().GetTexture("enhancement20");
@@ -98,7 +100,7 @@ public:
 				slotinfo->SetBitmap(slot.Get());
 				btn5->AddComponent<ButtonComponent>(slotinfo);
 				btn5->SetPosition(Vec2(98, 592));
-
+				
 
 				m_enhancementButtons.push_back(std::move(btn1));
 				m_enhancementButtons.push_back(std::move(btn2));
@@ -167,7 +169,6 @@ public:
 
 		// 좌우측 끝에 있어서 str int luk dex 이걸 text 바꿔줘야함.
 		void RenderStatSelectionButtons();
-		void RenderButton(Object* buttonObj, float opacity);
 
 		// 배경화면과 stat 및 +n 나오는 텍스트 출력.
 		void RenderStatText();

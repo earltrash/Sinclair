@@ -62,13 +62,28 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 	{
 		Item* Clicked_Item = m_slot_Item[whichSlot];
 
-			CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id , DragSource::Equipment);
-			CursorManager::Get().SetDraggedItem(Clicked_Item);
+		CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Equipment);
+		CursorManager::Get().SetDraggedItem(Clicked_Item);
 
-			return true;
+		// 결과 슬롯에서 드래그할 때 모든 슬롯 초기화
+		if (whichSlot == SynSlot::Result)
+		{
+			m_slot_Item[SynSlot::Result] = nullptr;
+			m_slot_Item[SynSlot::Slot1] = nullptr;
+			m_slot_Item[SynSlot::Slot2] = nullptr;
+		}
+		else
+		{
+			// 일반 슬롯에서 드래그할 때는 해당 슬롯만 초기화
+			m_slot_Item[whichSlot] = nullptr;
+		}
+
+		return true;
 	}
 
 	SynButton whichBut = ButtonInit(mousePos);
+
+	// cancel 버튼 클릭 시 슬롯 정리.
 	if (whichBut != SynButton::Nothing && whichBut == SynButton::Cancle)
 	{
 		
@@ -81,15 +96,20 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 				auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 				inventoryWindow->AddItem(item->m_data.id, 1); //안 쓸거면 인벤에 넣을래요 
 
+
 			}
 		}
+		// cancel 누르면 둘 다 반환. 
+		m_slot_Item[SynSlot::Result] = nullptr;
+		m_slot_Item[SynSlot::Slot1] = nullptr;
+		m_slot_Item[SynSlot::Slot2] = nullptr;
 
 		return true;
 	}
-	else
+	else if(whichBut != SynButton::Nothing && whichBut == SynButton::Syn)
 	{
 		//뭐 합성이겠지 
-
+		PerformSynthesis();
 		return true;
 
 	}
@@ -102,9 +122,6 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 
 
 	return false;
-
-
-	
 }
 
 bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리 
@@ -294,7 +311,108 @@ SynSlot SynthesisWin::SlotInit(Vec2 mpos)
 
 bool SynthesisWin::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
 {
+	if (!draggedItem) return false;
+
+	// 다른 창 내부에 있는지 확인
+	bool isInOtherWindow = false;
+
+	// 인벤토리 창 내부 확인
+	UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
+	if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
+	{
+		isInOtherWindow = true;
+	}
+
+	// 장비 창 내부 확인
+	UIWindow* equipmentWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
+	if (equipmentWindow && equipmentWindow->IsActive() && equipmentWindow->IsInBounds(mousePos))
+	{
+		isInOtherWindow = true;
+	}
+
+	// 강화 창 내부 확인
+	UIWindow* enhancementWindow = UIManager::Get().GetWindow(UIWindowType::EnhancementWindow);
+	if (enhancementWindow && enhancementWindow->IsActive() && enhancementWindow->IsInBounds(mousePos))
+	{
+		isInOtherWindow = true;
+	}
+
+	// 다른 창 내부라면 해당 창에서 처리하도록 넘김
+	if (isInOtherWindow)
+	{
+		return false;
+	}
+
+	// 어느 창 내부도 아니면 원래 위치로 복귀
+	if (source == DragSource::Inventory)
+	{
+		// 인벤토리에서 온 아이템이라면 인벤토리로 복귀
+		auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+		if (inventory && inventory->AddItem(draggedItem->m_data.id, 1))
+		{
+			std::cout << "합성 불가능한 아이템을 인벤토리로 복귀: " << draggedItem->m_data.id << std::endl;
+			return true;
+		}
+	}
+	else if (source == DragSource::Equipment)
+	{
+		// 장비창에서 온 아이템이라면 장비창으로 복귀
+		auto* equipment = dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
+		if (equipment)
+		{
+			// 장비창에 원래 슬롯이 있다면 해당 슬롯으로 복귀
+			// 현재 CursorManager에서 원래 슬롯 정보를 관리하는지 확인 필요
+			auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+			if (inventory && inventory->AddItem(draggedItem->m_data.id, 1))
+			{
+				std::cout << "합성 불가능한 장비 아이템을 인벤토리로 이동: " << draggedItem->m_data.id << std::endl;
+				return true;
+			}
+		}
+	}
+	else if (source == DragSource::Enhancement)
+	{
+		// 강화창에서 온 아이템이라면 인벤토리로 복귀
+		auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+		if (inventory && inventory->AddItem(draggedItem->m_data.id, 1))
+		{
+			std::cout << "합성 불가능한 강화 아이템을 인벤토리로 복귀: " << draggedItem->m_data.id << std::endl;
+			return true;
+		}
+	}
+
 	return false;
+}
+
+void SynthesisWin::PerformSynthesis()
+{
+	// 슬롯1과 슬롯2에 아이템이 있는지 확인
+	Item* item1 = m_slot_Item[SynSlot::Slot1];
+	Item* item2 = m_slot_Item[SynSlot::Slot2];
+
+	if (!item1 || !item2)
+	{
+		std::cout << "합성을 위해서는 두 슬롯에 모두 아이템이 필요합니다." << std::endl;
+		return;
+	}
+
+	// 두 아이템 모두 합성 가능한지 확인
+	if (!item1->m_data.synthesizable || !item2->m_data.synthesizable)
+	{
+		std::cout << "합성 불가능한 아이템이 포함되어 있습니다." << std::endl;
+		return;
+	}
+
+	std::cout << "합성 수행: " << item1->m_data.id << " + " << item2->m_data.id << std::endl;
+
+	// 현재는 임시로 첫 번째 아이템을 결과로 사용
+	m_slot_Item[SynSlot::Result] = item1;
+
+	// 재료 슬롯 비우기
+	m_slot_Item[SynSlot::Slot1] = nullptr;
+	m_slot_Item[SynSlot::Slot2] = nullptr;
+
+	std::cout << "합성 완료! 결과: " << item1->m_data.id << std::endl;
 }
 
 void SynthesisWin::Update()

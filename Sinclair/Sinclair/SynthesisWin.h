@@ -53,6 +53,10 @@ public:
 	SynSlot SlotInit(Vec2 pos);
 
 	bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
+
+	// 합성용.
+	void PerformSynthesis();
+
 private:
 
 	// size?, bound는 여기에 다 있긴 함. 
