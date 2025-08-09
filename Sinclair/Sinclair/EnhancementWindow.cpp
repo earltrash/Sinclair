@@ -375,7 +375,7 @@ void EnhancementWindow::RenderStatSelectionButtons()
 		RenderButton(m_rightArrowButton.get(), 1.0f);
 }
 
-void EnhancementWindow::RenderButton(Object* buttonObj, float opacity)
+void EnhancementWindow::RenderButton(Object* buttonObj, float baseOpacity)
 {
 		if (!buttonObj) return;
 
@@ -392,13 +392,13 @@ void EnhancementWindow::RenderButton(Object* buttonObj, float opacity)
 
 		// 버튼 상태에 따른 크기와 opacity 계산
 		float scale = 1.0f;
-		float newopacity = opacity;
+		float opacity = baseOpacity;
 
 		switch (btnComponent->GetState())
 		{
 		case ButtonComponent::ButtonState::Normal:
 				scale = 1.0f;
-				newopacity = opacity;
+				opacity = baseOpacity;
 				break;
 		case ButtonComponent::ButtonState::Hover:
 				scale = 1.1f;
@@ -429,8 +429,8 @@ void EnhancementWindow::RenderButton(Object* buttonObj, float opacity)
 				screenPos.y - offsetY + scaledHeight
 		};
 
-		// opacity를 적용해서 렌더링 (D2DRenderer에 opacity 파라미터가 있다고 가정)
-		D2DRenderer::Get().DrawBitmap(bmp, dest, D2D1_RECT_F{}, newopacity);
+		// opacity를 적용해서 렌더링 
+		D2DRenderer::Get().DrawBitmap(bmp, dest, D2D1_RECT_F{}, opacity);
 }
 
 void EnhancementWindow::RenderStatText()
