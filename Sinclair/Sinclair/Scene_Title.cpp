@@ -170,11 +170,14 @@ void Scene_Title::CreateObj()
 	bgInfo->SetBitmap(gameStartBackground.Get());
 
 	// 3. 배경 컴포넌트 만들기
-	auto bgComp = Background->AddComponent<BackgroundComponent>(bgInfo);
+	//auto bgComp = Background->AddComponent<BackgroundComponent>(bgInfo);
 	// 3.1.1 사이즈 다르면 
-	bgComp->SetWidth(1920.f); bgComp->SetHeight(1080.f);
-	bgComp->BitmapPush("Background", gameStartBackground);
-	bgComp->SetCurrentBitmap("Background");
+	//bgComp->SetWidth(1920.f); bgComp->SetHeight(1080.f);
+	//bgComp->BitmapPush("Background", gameStartBackground);
+	//bgComp->SetCurrentBitmap("Background");
+
+	// 대조 효과
+	auto bg_contrast = Background->AddComponent<DynamicContrast_Effect>(bgInfo, -0.1f, 0.8f, 0.005f, gameStartBackground.Get());
 	// 9. 게임 오브젝트들에 집어넣기
 	m_gameObjects.emplace("Background", std::move(Background));
 
@@ -202,6 +205,7 @@ void Scene_Title::CreateObj()
 	// 3. 기본 설정
 	auto d2_info = dust2->GetRenderInfo();
 	d2_info->SetBitmap(dustBM.Get());
+	dust2->GetTransform().SetPosition({ 1920.f, 0.f });
 	// 4. 컴포넌트 설정
 	auto d2_blur = dust2->AddComponent<GaussianBlur_Effect>(d2_info, 3.f, dustBM.Get());
 	auto d2_updown = dust2->AddComponent<UpDown_Effect>(d2_info, dust2->GetTransform(), 10.f, 0.03f, 0.03f);

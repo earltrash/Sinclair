@@ -179,7 +179,7 @@ public:
 	ID2D1Effect* GetEffect() { return m_contrastEffect.Get(); }
 
 private:
-	float m_strength;
+	float m_strength;		// -1~1±îÁö  
 
 	ID2D1Effect* m_effect = nullptr;
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
