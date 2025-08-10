@@ -9,6 +9,7 @@
 #include "UIManager.h"
 #include "GameManager.h"
 
+
 Scene_End::Scene_End(string name)
 {
 	m_name = name;
@@ -90,7 +91,8 @@ void Scene_End::Render()
 	D2DRenderer::Get().CreateWriteResource(L"ºûÀÇ °è½ÂÀÚ Bold", DWRITE_FONT_WEIGHT_BOLD, 90.0f);
 	// º¤ÅÍ·Î ¼øÈ¸ÇØ¼­ Ã£±â
 
-	int targetID = GameManager::Get().arrEndingID[GameManager::Get().curGen - 2];
+	int gen = GameManager::Get().curGen;
+	int targetID = GameManager::Get().arrEndingID[gen - 2];
 	auto& EndingVector = ResourceManager::Get().Get_TextBank().EndingVector;
 	auto it = std::find_if(EndingVector.begin(), EndingVector.end(),
 		[targetID](const TextBank::Ending& e) {
@@ -113,7 +115,8 @@ void Scene_End::Render()
 	std::wstring text;
 	if (it != EndingVector.end())
 	{
-		text = StrToWstr(it->endingText);
+		auto txt = ResourceManager::Get().Get_TextBank().replaceGeneration(it->endingText, gen);
+		text = StrToWstr(txt);
 	}
 	else
 	{

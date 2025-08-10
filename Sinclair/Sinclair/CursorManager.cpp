@@ -22,9 +22,9 @@ void CursorManager::Render()
         // 아이템 이미지 가져오고
         const auto& itemClip = ResourceManager::Get().Get_ItemBank().GetItemClip(m_draggedItem->m_data.id);
         // 아틀라스에서 해당아이템 가져오기.
-        ID2D1Bitmap1* itemBitmap = itemClip.atlas.Get();
+        ID2D1Bitmap1* itemBitmap = itemClip->atlas.Get();
         // 소스 크기 가져옴.
-        D2D1_RECT_F srcRect = itemClip.srcRect;
+        D2D1_RECT_F srcRect = itemClip->srcRect;
         // 크기 계산 
         D2D1_RECT_F destRect = D2D1::RectF(
             m_ghostImagePos.x - 28, m_ghostImagePos.y - 28,
