@@ -180,3 +180,39 @@ void Explode_Effect::OnEvent(const std::string& ev)
 		//m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, offsetMT);
 	}
 }
+
+DynamicContrast_Effect::DynamicContrast_Effect(RenderInfo* renderInfo, float minContrast, float maxContrast, float addNum, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_minContrast(minContrast), m_maxContrast(maxContrast), m_addNum(addNum), m_effect(effect)
+{
+	Initialize();
+}
+
+DynamicContrast_Effect::DynamicContrast_Effect(RenderInfo* renderInfo, float minContrast, float maxContrast, float addNum, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_minContrast(minContrast), m_maxContrast(maxContrast), m_addNum(addNum), m_bitmap(bitmap)
+{
+	Initialize();
+}
+
+void DynamicContrast_Effect::Initialize()
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Contrast, &m_contrastEffect);
+	DX::ThrowIfFailed(hr);
+
+	if (m_effect == nullptr)
+		m_contrastEffect->SetInput(0, m_bitmap.Get());
+	else
+		m_contrastEffect->SetInputEffect(0, m_effect);
+
+	m_contrastEffect->SetValue(D2D1_CONTRAST_PROP_CONTRAST, m_currentStrength);
+	m_contrastEffect->SetValue(D2D1_CONTRAST_PROP_CLAMP_INPUT, true);
+
+	m_renderInfo->SetEffect(m_contrastEffect.Get());
+}
+
+void DynamicContrast_Effect::Update()
+{
+	m_currentStrength += m_addNum;
+	if (m_currentStrength >= m_maxContrast)	m_addNum = -m_addNum;
+	else if (m_currentStrength <= m_minContrast) 	m_addNum = -m_addNum;
+	m_contrastEffect->SetValue(D2D1_CONTRAST_PROP_CONTRAST, m_currentStrength);
+}
