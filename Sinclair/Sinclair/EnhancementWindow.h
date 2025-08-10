@@ -24,10 +24,17 @@ enum class Stat
 		LUK
 };
 
+enum class SheetImageType
+{
+		Normal,
+		PartialEnhance,
+		FullEnhance
+};
 
 class EnhancementWindow : public UIWindow
 {
 public:
+
 
 		EnhancementWindow() : UIWindow(UIWindowType::EnhancementWindow, { 0, 0 }, { 524, 766 })
 		{
@@ -174,6 +181,13 @@ public:
 				// 랜덤 시드 초기화
 				m_rng.seed(std::random_device{}());
 
+				// 모든 주문서 버튼 초기 opacity 설정
+				for (auto& btn : m_enhancementButtons)
+				{
+						auto btnComponent = btn->GetComponent<ButtonComponent>();
+						if (btnComponent) btnComponent->SetOpacity(0.7f);
+				}
+
 				// 버튼 콜백 설정
 				SetupButtonCallbacks();
 		}
@@ -237,6 +251,8 @@ public:
 		void OnRightArrowClick();
 		void OnEnhancementButtonClick(size_t buttonIndex);
 
+		// 선택된 주문서에 따른 스탯 값 반환
+		int GetSelectedStatValue() const;       
 private:
 
 		std::unique_ptr<Object> m_enhancementSlot;									     // 슬롯.
@@ -255,5 +271,8 @@ private:
 
 		// 랜덤
 		std::mt19937 m_rng;
+
+		// 선택된 주문서 인덱스.
+		size_t m_selectedScrollIndex = 0;
 };
 

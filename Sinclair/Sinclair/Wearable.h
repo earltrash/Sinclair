@@ -15,6 +15,8 @@ public:
 
  int GetEnchanCount() const { return Enchan_Count; }
  void UseEnhanceChance() { if (Enchan_Count > 0) --Enchan_Count; }
+ void AddStat(fundamentalStatus statType, int value);
+
 
  //위 둘은 ItemGlobal 참고 
 private:

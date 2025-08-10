@@ -7,7 +7,8 @@
 
 void EnhancementWindow::Update()
 {
-
+		// 여기에 오브젝트 얘들 전부 component update 시키기.
+		
 }
 
 void EnhancementWindow::Render()
@@ -31,44 +32,62 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 		// 메세지 만들어서 던지기.
 		MSG msg{};
 		msg.message = WM_LBUTTONDOWN;
-		msg.lParam = MAKELPARAM((int)mousePos.x, (int)mousePos.y);
+		Vec2 relativePos = mousePos - m_position;
+		msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 		if (m_statSelectionButton)
 		{
 			Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
 			Vec2 btnScreenPos = m_position + btnPos;
-			std::cout << "스탯 버튼 로컬 위치: (" << btnPos.x << ", " << btnPos.y << ")" << std::endl;
 			std::cout << "스탯 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
 		}
 		if (m_leftArrowButton)
 		{
-			Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
+			Vec2 btnPos = m_leftArrowButton->GetTransform().GetPosition();
 			Vec2 btnScreenPos = m_position + btnPos;
-			std::cout << "left 버튼 로컬 위치: (" << btnPos.x << ", " << btnPos.y << ")" << std::endl;
 			std::cout << "left 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
 		}
 		if (m_rightArrowButton)
 		{
-			Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
+			Vec2 btnPos = m_rightArrowButton->GetTransform().GetPosition();
 			Vec2 btnScreenPos = m_position + btnPos;
-			std::cout << "right 버튼 로컬 위치: (" << btnPos.x << ", " << btnPos.y << ")" << std::endl;
 			std::cout << "right 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
 		}
 		// 스탯 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_statSelectionButton.get()))
+		{
+				// 상대 좌표로 변환
+				Vec2 relativePos = mousePos + m_position;
+				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 				m_statSelectionButton->GetComponent<ButtonComponent>()->Worked(msg);
+		}
 
 		// left 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_leftArrowButton.get()))
+		{
+				Vec2 relativePos = mousePos + m_position;
+				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 				m_leftArrowButton->GetComponent<ButtonComponent>()->Worked(msg);
+		}
 
 		// right 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_rightArrowButton.get()))
+		{
+				Vec2 relativePos = mousePos + m_position;
+				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 				m_rightArrowButton->GetComponent<ButtonComponent>()->Worked(msg);
+		}
 
 		// 주문서 버튼 영역.
 		for (auto& btn : m_enhancementButtons)
+		{
 				if (IsMouseOverObject(mousePos, btn.get()))
+				{
+						Vec2 relativePos = mousePos + m_position;
+						msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 						btn->GetComponent<ButtonComponent>()->Worked(msg);
+				}
+						
+		}
 
 		// 슬롯 영역 체크해서 해야함.
 		Vec2 slotScreen = m_position + m_enhancementSlot->GetTransform().GetPosition();
@@ -158,7 +177,6 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 
 										// 무기 종류에 따라 시트 렌더링 개수 결정
 										UpdateSheetVisibility();
-
 										UIManager::Get().OpenWindow(m_windowType);
 										return true;
 								}
@@ -339,6 +357,42 @@ void EnhancementWindow::RenderSheetImages()
 		size_t count = m_sheetImages.size();
 		size_t renderCount = std::min(static_cast<size_t>(m_renderSheetCount), count);
 
+		
+		//// 역순으로 렌더링 (5->4->3->2->1)
+		//for (int i = renderCount - 1; i >= 0; --i)
+		//{
+		//		auto& sheet = m_sheetImages[i];
+		//		auto bgComp = sheet->GetComponent<BackgroundComponent>();
+		//		if (!bgComp) continue;
+		//		// 상태별 비트맵 선택
+		//		switch (enchResults[i])
+		//		{
+		//		case EnchancerType::Default:
+		//				bgComp->SetCurrentBitmap("Normal");
+		//				break;
+		//		case EnchancerType::Sucess:
+		//				bgComp->SetCurrentBitmap("Success");
+		//				break;
+		//		case EnchancerType::Fail:
+		//				bgComp->SetCurrentBitmap("Fail");
+		//				break;
+		//		default:
+		//				continue;
+		//		}
+
+		//		// 화면에 렌더링
+		//		ID2D1Bitmap1* bmp = sheet->GetRenderInfo()->GetRenderInfo().bitmap;
+		//		Vec2 pos = m_position + sheet->GetTransform().GetPosition();
+
+		//		if (bmp)
+		//		{
+		//				D2D1_SIZE_F size = bmp->GetSize();
+		//				D2D1_RECT_F dest = { pos.x, pos.y, pos.x + size.width, pos.y + size.height };
+		//				D2DRenderer::Get().DrawBitmap(bmp, dest);
+		//		}
+		//}
+
+		// 정순으로 렌더링 (0->1->2->3->4)
 		for (size_t i = 0; i < renderCount; ++i)
 		{
 				auto& sheet = m_sheetImages[i];
@@ -357,8 +411,6 @@ void EnhancementWindow::RenderSheetImages()
 				case EnchancerType::Fail:
 						bgComp->SetCurrentBitmap("Fail");
 						break;
-				default:
-						continue;
 				}
 
 				// 화면에 렌더링
@@ -417,23 +469,25 @@ void EnhancementWindow::RenderStatText()
 		Vec2 textPos = { buttonPos.x + 150, buttonPos.y + 15 }; // 버튼 중앙에 텍스트 배치
 
 		std::wstring statText;
+		int statValue = GetSelectedStatValue();
+
 		switch (m_selectedStat)
 		{
 		case Stat::STR:
-				statText = L"STR + ";
+				statText = L"STR + " + std::to_wstring(statValue);
 				break;
 		case Stat::DEX:
-				statText = L"DEX + ";
+				statText = L"DEX + " + std::to_wstring(statValue);
 				break;
 		case Stat::INT:
-				statText = L"INT + ";
+				statText = L"INT + " + std::to_wstring(statValue);
 				break;
 		case Stat::LUK:
-				statText = L"LUK + ";
+				statText = L"LUK + " + std::to_wstring(statValue);
 				break;
 		}
 
-		D2DRenderer::Get().DrawMessage(statText.c_str(), textPos.x, textPos.y, 50, 20, D2D1::ColorF(D2D1::ColorF::White));
+		D2DRenderer::Get().DrawMessage(statText.c_str(), textPos.x, textPos.y, 100, 30, D2D1::ColorF(D2D1::ColorF::White));
 }
 
 void EnhancementWindow::RenderScrollButtons()
@@ -475,7 +529,23 @@ void EnhancementWindow::TryEnhance(int successRate)
 		int roll = dist(m_rng);
 		bool success = roll <= successRate;
 
-		int currentIndex = wearableItem->GetEnchanCount() - 1;
+		auto& results = wearableItem->GetEnchancResult();
+		int currentIndex = -1;
+
+		for (int i = 0; i < results.size(); ++i)
+		{
+				if (results[i] == EnchancerType::Default) //  기본값 확인
+				{
+						currentIndex = i;
+						break;
+				}
+		}
+
+		if (currentIndex == -1)
+		{
+				// 빈 슬롯 없음. 모두 기록되어있음무시
+				return;
+		}
 
 		if (success)
 		{
@@ -483,6 +553,32 @@ void EnhancementWindow::TryEnhance(int successRate)
 				// 성공 애니메이션 및 아이템 스탯 업데이트
 				// 아이템 정보 가져와서 스탯 올려주기.
 				wearableItem->GetEnchancResult()[currentIndex] = EnchancerType::Sucess;
+				// 선택된 스탯에 따라 수치 추가
+				int statValue = GetSelectedStatValue();
+				fundamentalStatus addStat = {};
+				switch (m_selectedStat)
+				{
+				case Stat::STR:
+						addStat.power = statValue;
+						wearableItem->AddStat(addStat, statValue);
+						std::cout << "STR + " << statValue << " 추가!" << std::endl;
+						break;
+				case Stat::DEX:
+						addStat.agile = statValue;
+						wearableItem->AddStat(addStat, statValue);
+						std::cout << "DEX + " << statValue << " 추가!" << std::endl;
+						break;
+				case Stat::INT:
+						addStat.intelligence = statValue;
+						wearableItem->AddStat(addStat, statValue);
+						std::cout << "INT + " << statValue << " 추가!" << std::endl;
+						break;
+				case Stat::LUK:
+						addStat.luck = statValue;
+						wearableItem->AddStat(addStat, statValue);
+						std::cout << "LUK + " << statValue << " 추가!" << std::endl;
+						break;
+				}
 		}
 		else
 		{
@@ -504,17 +600,18 @@ void EnhancementWindow::UpdateSheetVisibility()
 		Wearable* wearableItem = dynamic_cast<Wearable*>(m_targetItem);
 		if (!wearableItem) return;
 
-		// 무기인 경우 5개, 그 외는 3개 렌더링
-		if (wearableItem->Getpart() == Wearable_part::Weapon)
+		// 무기인 경우 5개, 그 외는 3개로 강화 슬롯 개수 설정
+		int newSheetCount = (wearableItem->Getpart() == Wearable_part::Weapon) ? 5 : 3;
+
+		// m_renderSheetCount 업데이트
+		m_renderSheetCount = newSheetCount;
+
+		// 만약 아이템의 강화 이력 벡터가 비어있다면 (새로운 아이템), 초기화
+		if (wearableItem->GetEnchancResult().empty())
 		{
-				m_renderSheetCount = 5;
-				wearableItem->GetEnchancResult().assign(5, EnchancerType::Default);
+				wearableItem->GetEnchancResult().assign(m_renderSheetCount, EnchancerType::Default);
 		}
-		else
-		{
-				m_renderSheetCount = 3;
-				wearableItem->GetEnchancResult().assign(3, EnchancerType::Default);
-		}
+		
 }
 
 bool EnhancementWindow::IsMouseOverObject(const Vec2& mousePos, Object* obj) const
@@ -631,7 +728,32 @@ void EnhancementWindow::SetupButtonCallbacks()
 
 void EnhancementWindow::OnStatSelectionButtonClick()
 {
-		std::cout << "스탯 선택 버튼 클릭됨" << std::endl;
+		std::cout << "스탯 강화 버튼 클릭됨" << std::endl;
+
+		if (!m_targetItem)
+		{
+				std::cout << "강화할 아이템이 없습니다" << std::endl;
+				return;
+		}
+
+		if (m_selectedScrollIndex >= m_enhancementButtons.size())
+		{
+				std::cout << "주문서를 선택해주세요" << std::endl;
+				return;
+		}
+
+		// 버튼 인덱스에 따른 성공률
+		int successRate = 0;
+		switch (m_selectedScrollIndex)
+		{
+		case 0: successRate = 100; break;
+		case 1: successRate = 40; break;
+		case 2: successRate = 20; break;
+		default: successRate = 0; break;
+		}
+
+		std::cout << "강화 시도: 성공률 " << successRate << "%" << std::endl;
+		TryEnhance(successRate);
 }
 
 void EnhancementWindow::OnLeftArrowClick()
@@ -639,8 +761,6 @@ void EnhancementWindow::OnLeftArrowClick()
 		int currentStat = static_cast<int>(m_selectedStat);
 		currentStat = (currentStat - 1 + 4) % 4; // 4개 스탯 순환
 		m_selectedStat = static_cast<Stat>(currentStat);
-
-		std::cout << "스탯 변경: " << static_cast<int>(m_selectedStat) << std::endl;
 }
 
 void EnhancementWindow::OnRightArrowClick()
@@ -649,8 +769,6 @@ void EnhancementWindow::OnRightArrowClick()
 		int currentStat = static_cast<int>(m_selectedStat);
 		currentStat = (currentStat + 1) % 4; // 4개 스탯 순환
 		m_selectedStat = static_cast<Stat>(currentStat);
-
-		std::cout << "스탯 변경: " << static_cast<int>(m_selectedStat) << std::endl;
 }
 
 void EnhancementWindow::OnEnhancementButtonClick(size_t buttonIndex)
@@ -660,13 +778,18 @@ void EnhancementWindow::OnEnhancementButtonClick(size_t buttonIndex)
 				std::cout << "강화할 아이템이 없습니다" << std::endl;
 				return;
 		}
-		for (size_t i = 0; i < m_enhancementButtons.size(); ++i)
+
+		// 이전 선택 버튼 opacity 복원
+		if (m_selectedScrollIndex < m_enhancementButtons.size())
 		{
-				auto bgComp = m_enhancementButtons[i]->GetComponent<ButtonComponent>();
-				if (!bgComp) continue;
-				bgComp->SetOpacity(i == buttonIndex ? 1.0f : 0.7f);
+				auto prevBtnComponent = m_enhancementButtons[m_selectedScrollIndex]->GetComponent<ButtonComponent>();
+				if (prevBtnComponent) prevBtnComponent->SetOpacity(0.7f);
 		}
 
+		// 새로 선택된 버튼 opacity 설정
+		m_selectedScrollIndex = buttonIndex;
+		auto btnComponent = m_enhancementButtons[buttonIndex]->GetComponent<ButtonComponent>();
+		if (btnComponent) btnComponent->SetOpacity(1.0f);
 
 		// 버튼 인덱스에 따른 성공률
 		int successRate = 0;
@@ -678,7 +801,18 @@ void EnhancementWindow::OnEnhancementButtonClick(size_t buttonIndex)
 		default: successRate = 0; break;
 		}
 
-		std::cout << "강화 시도: 성공률 " << successRate << "%" << std::endl;
-		TryEnhance(successRate);
+		std::cout << "주문서 선택: 성공률 " << successRate << "%, 스탯 +" << GetSelectedStatValue() << std::endl;
 }
+
+int EnhancementWindow::GetSelectedStatValue() const
+{
+		switch (m_selectedScrollIndex)
+		{
+		case 0: return 1;  // 100% 주문서 = +1
+		case 1: return 2;  // 40% 주문서 = +2  
+		case 2: return 5;  // 20% 주문서 = +5
+		default: return 0;
+		}
+}
+
 
