@@ -21,11 +21,13 @@ struct fundamentalStatus //얘는 앞 글자 소문자로 표기 , 아이템이 가져야 할 구조�
 
 enum class Status_Total
 {
-		Strength,
+		Strength   ,
 		Magic_Power,
-		Health,
-		Knowledge,
-		Charm
+		Health     ,
+		Knowledge  ,
+		Charm      ,
+		/////////
+		Null
 };
 
 

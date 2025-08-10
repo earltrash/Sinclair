@@ -85,15 +85,15 @@ void Scene_History::Render()
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
 	}
 
-	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 90.0f);
-	std::wstring job = StrToWstr(ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen * 10].직업명);
-	D2DRenderer::Get().DrawMessageCenter(job.c_str(),
-		1080.f, 120.f, 1920.f - 1080.f, 255.f - 120.f, D2D1::ColorF::White);
+	//D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 90.0f);
+	//std::wstring job = StrToWstr(ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen * 10].직업명);
+	//D2DRenderer::Get().DrawMessageCenter(job.c_str(),
+	//	1080.f, 120.f, 1920.f - 1080.f, 255.f - 120.f, D2D1::ColorF::White);
 
-	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
-	std::wstring text = StrToWstr(ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen * 10].엔딩텍스트);
-	D2DRenderer::Get().DrawMessageCenter(text.c_str(),
-		1223.f, 255.f, 564.f, 1080.f - 255.f, D2D1::ColorF::White);
+	//D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
+	//std::wstring text = StrToWstr(ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen * 10].엔딩텍스트);
+	//D2DRenderer::Get().DrawMessageCenter(text.c_str(),
+	//	1223.f, 255.f, 564.f, 1080.f - 255.f, D2D1::ColorF::White);
 }
 
 void Scene_History::CreateObj()

@@ -5,6 +5,11 @@
 
 using namespace std;
 
+struct StatCondition {
+    Status_Total stat;
+    int value;
+    bool isPositive; // true면 positive 조건, false면 negative 조건
+};
 class GameManager
 {
 private:
@@ -21,6 +26,8 @@ public:
     string Synthesis(const string& id1, const string& id2);
 
 
+    //엔딩 구하려고 함
+    void FindEnding();
 
 public:// get set 만들기 전
     bool isFirst = true;
@@ -31,7 +38,10 @@ public:// get set 만들기 전
     float sfxValue = 1.0f;
     
     std::vector<Recipe> m_SynTable;
+    
+    // 엔딩에 필요한 숫자
     std::array<TotalStatus, 3> arrTotalStatus{};
-
+    std::array<int, 3> arrEndingID{};
+    std::array<int, 3> arrFame{};
 
 };

@@ -84,6 +84,7 @@ void Scene_InGame::Render()
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
+		D2DRenderer::Get().DrawRectangle(obj->GetRenderInfo()->GetRenderInfo().destRect, D2D1::ColorF::Red);
 	}
 
 	if (isSETTING)
@@ -351,7 +352,7 @@ void Scene_InGame::CreateObj()
 	auto 인게임6 = ResourceManager::Get().GetTexture("인게임", "06");
 	// 2. 오브젝트 만들기
 	auto 합성 = std::make_unique<Object>();
-	합성->SetPosition(Vec2(889, 608));
+	합성->SetPosition(Vec2(909, 608));
 
 	auto 합성info = 합성->GetRenderInfo();
 	합성info->SetBitmap(인게임6.Get());

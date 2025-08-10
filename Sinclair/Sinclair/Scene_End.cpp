@@ -35,7 +35,7 @@ void Scene_End::Enter()
 	Initalize();
 
 	// 게임매니저에서 엔딩 잘 갖고 와. 지금은 임시야. 
-	// ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen];
+	GameManager::Get().FindEnding();
 
 }
 
@@ -88,12 +88,37 @@ void Scene_End::Render()
 	}
 
 	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 90.0f);
-	std::wstring job = StrToWstr(ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen * 10].직업명);
+	// 벡터로 순회해서 찾기
+
+	int targetID = GameManager::Get().arrEndingID[GameManager::Get().curGen - 2];
+	auto& EndingVector = ResourceManager::Get().Get_TextBank().EndingVector;
+	auto it = std::find_if(EndingVector.begin(), EndingVector.end(),
+		[targetID](const TextBank::Ending& e) {
+			return e.ID == targetID;
+		});
+	
+	std::wstring job;
+	if (it != EndingVector.end())
+	{
+		job = StrToWstr(it->job);
+	}
+	else
+	{
+		job = L"쉽지 않네";
+	}
 	D2DRenderer::Get().DrawMessageCenter(job.c_str(),
 		1080.f, 120.f, 1920.f - 1080.f, 255.f - 120.f, D2D1::ColorF::White);
 
 	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
-	std::wstring text = StrToWstr(ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen * 10].엔딩텍스트);
+	std::wstring text;
+	if (it != EndingVector.end())
+	{
+		text = StrToWstr(it->endingText);
+	}
+	else
+	{
+		text = L"쉽지 않네";
+	}
 	D2DRenderer::Get().DrawMessageCenter(text.c_str(),
 		1223.f, 255.f, 564.f, 1080.f - 255.f, D2D1::ColorF::White);
 }
