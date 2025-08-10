@@ -77,8 +77,10 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
         if (slotType != Wearable_part::UnKnown && wearableItem && IsItemTypeMatch(wearableItem->Getpart(), slotType))
         {
             //std::cout << "DEBUG: 장비 장착 조건 만족. 아이템을 장착합니다." << std::endl;
-             // 장비 착용 성공
-             // 없는데 가져와서 
+            // 장비 착용 성공
+            // 스탯창 가져오기.
+            auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow));
+
             Item* previousItem = GetEquippedItem(slotType); // 원래 슬롯에 있던 아이템
             m_equippedItems[slotType] = draggedItem;
 
@@ -89,7 +91,15 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
                 inventoryWindow->AddItem(previousItem->m_data.id, 1);
 
                 std::cout << "DEBUG: 기존 아이템이 있어 인벤토리로 복구시킴." << std::endl;
+                
+         
             }
+            // 슬롯 전부 다시 가져와서 다시 계산해주기.
+            if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
+            {
+                statWindow->UpdateTotalStats();
+            }
+
             // 드래그 종료.
             CursorManager::Get().EndItemDrag();
             return true;
@@ -453,9 +463,9 @@ void EquipmentWindow::RenderCloseButton()
 {
     UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
 
-    float rightMargin = 47.0f;
-    Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
-    Vec2 closeButtonSize = { 27.0f, 27.0f };
+    float rightMargin = 65;
+    Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 35 };
+    Vec2 closeButtonSize = { 35, 35 };
     D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 
     if (uiRenderer)
@@ -505,9 +515,11 @@ Item* EquipmentWindow::UnequipItem(Wearable_part slotType)
         Item* item = it->second;
         m_equippedItems[slotType] = nullptr; // 슬롯 비우기
 
-        // 스탯 업데이트
-        // GameManager::Get().UpdateStats();
-
+        // 슬롯에서 비웠으니까.
+        if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
+        {
+            statWindow->UpdateTotalStats();
+        }
         OutputDebugStringA(("Unequipped item from slot: " + std::to_string(static_cast<int>(slotType)) + "\n").c_str());
         return item;
     }

@@ -5,6 +5,7 @@
 #include "UIManager.h"
 #include "SimpleMathHelper.h"
 #include "Item.h"
+#include "Wearable.h"
 #include "EquipmentWindow.h"
 #include "UI_Renderer.h"
 #include "ResourceManager.h"
@@ -17,10 +18,10 @@ public:
 				AddComponent<UI_Renderer>();
 
 				// 스탯 초기화.
-				m_fundamentalStats.power = 0;
-				m_fundamentalStats.agile = 0;
-				m_fundamentalStats.intelligence = 0;
-				m_fundamentalStats.luck = 0;
+				m_equipmentFundamentalStats.power = 0;
+				m_equipmentFundamentalStats.agile = 0;
+				m_equipmentFundamentalStats.intelligence = 0;
+				m_equipmentFundamentalStats.luck = 0;
 
 				m_totalStats.Strength = 0;
 				m_totalStats.Knowledge = 0;
@@ -52,19 +53,25 @@ public:
 		// 타입 체크용
 		UIWindowType GetType() override { return m_windowType; }
 
-		void CalculateStats();
+		//void CalculateStats();
 		void RenderBackground();
 		void RenderTitleBar();
 		void RenderCloseButton();
 		void RenderStatsText();
 		void RenderRadarChart();
-
+		// 함수 만들어주기.
+		const fundamentalStatus& GetfundamentalStats() const { return m_equipmentFundamentalStats; }
 		float NormalizeStat(float statValue, float min, float max);
 
+		// 장비창 가져와서 스탯 전체 업데이트
+		void UpdateTotalStats();
+
+		// 특수무기 스탯 추가.
+		void CalculateBonusStats(Item* item);
 private:
-		fundamentalStatus m_fundamentalStats; // 1차 스탯을 담을 구조체
-		TotalStatus m_totalStats;						  // 2차 스탯을 담을 구조체
-		Vec2 m_statPoints[5];								  // 오각형 꼭짓점 위치 저장
+		fundamentalStatus m_equipmentFundamentalStats;		// 장비 1차 스탯을 담을 구조체
+		TotalStatus m_totalStats;						    // 최종 2차 스탯을 담을 구조체
+		Vec2 m_statPoints[5];								// 오각형 꼭짓점 위치 저장
 
 
 		ComPtr<ID2D1Bitmap1> m_closeButton;

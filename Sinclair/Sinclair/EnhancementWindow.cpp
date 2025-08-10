@@ -324,8 +324,8 @@ void EnhancementWindow::RenderBackground()
 void EnhancementWindow::RenderCloseButton()
 {
 		UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
-		float rightMargin = 47;  // 47에서 459로 변경
-		Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
+		float rightMargin = 65.0f;  // 47에서 459로 변경
+		Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 35 };
 		Vec2 closeButtonSize = { 35.0f, 35.0f };  // 27에서 35로 변경
 
 		D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
@@ -509,7 +509,7 @@ void EnhancementWindow::RenderStatText()
 				break;
 		}
 
-		D2DRenderer::Get().DrawMessage(statText.c_str(), textPos.x, textPos.y, 100, 30, D2D1::ColorF(D2D1::ColorF::White));
+		D2DRenderer::Get().DrawMessage(statText.c_str(), textPos.x, textPos.y, 150, 70, D2D1::ColorF(D2D1::ColorF::White));
 }
 
 void EnhancementWindow::RenderScrollButtons()
@@ -748,7 +748,13 @@ void EnhancementWindow::SetupButtonCallbacks()
 void EnhancementWindow::OnStatSelectionButtonClick()
 {
 		std::cout << "스탯 강화 버튼 클릭됨" << std::endl;
+		if (!m_targetItem->m_data.enchantable)
+		{
 
+			std::cout << "강화 불가능 아이템." << std::endl;
+			return;
+		}
+			
 		if (!m_targetItem)
 		{
 				std::cout << "강화할 아이템이 없습니다" << std::endl;

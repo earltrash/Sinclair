@@ -544,8 +544,8 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 			D2DRenderer::Get().DrawBitmap(backgroundBitmap, destRect);
 		}
 
-		float rightMargin = 47;  // 65.0f에서 47.0f로 변경
-		Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };  // +36에서 +7로 변경
+		float rightMargin = 65;  // 65.0f에서 47.0f로 변경
+		Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 35 };  // +36에서 +7로 변경
 		Vec2 closeButtonSize = { 35, 35 };  // 35x35에서 27x27로 변경
 		D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 

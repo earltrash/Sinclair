@@ -56,8 +56,8 @@ void Inventory::InitializeRegions()
     //닫기 버튼 영역
     float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
-        m_position.x + m_size.x - (closeButtonSize + 59), //14
-        m_position.y + 7,
+        m_position.x + m_size.x - (closeButtonSize + 75), //14
+        m_position.y + 30,      // 35였음 원래
         closeButtonSize,
         closeButtonSize);
 
@@ -218,8 +218,8 @@ void Inventory::Update() //입력처리를 받은 다음에 해야하는 거잖아? //차피 이거는
     titleBarBounds = Rect(m_position.x, m_position.y, m_size.x, 42.0f);
     float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
-        m_position.x + m_size.x - (closeButtonSize + 59),
-        m_position.y + 7,
+        m_position.x + m_size.x - (closeButtonSize + 75),   // 원래 77
+        m_position.y + 30,
         closeButtonSize,
         closeButtonSize);
 
@@ -309,7 +309,7 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
         titleBarBounds.x = windowPosition.x;
         titleBarBounds.y = windowPosition.y;
 
-        float closeButtonSize = 27.0f;
+        float closeButtonSize = 35;
 
         closeButtonBounds.x = windowPosition.x + m_bound.width - (closeButtonSize + 14);
         closeButtonBounds.y = windowPosition.y + 5;
@@ -659,8 +659,8 @@ void Inventory::RenderCloseButton()
     if (closeButton.bitmap)
     {
         // 닫기 버튼 위치를 현재 창 위치에 따라 업데이트
-        float rightMargin = 47.0f;
-        Vec2 currentCloseButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
+        float rightMargin = 75; // 원래 65
+        Vec2 currentCloseButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 30 };
 
         D2D1_RECT_F destRect = D2D1::RectF(
             currentCloseButtonPos.x, currentCloseButtonPos.y,

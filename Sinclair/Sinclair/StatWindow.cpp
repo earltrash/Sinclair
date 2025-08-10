@@ -16,9 +16,7 @@ using namespace DirectX;
 
 void StatWindow::Update()
 {
-    if (!m_isActive) return;
     
-    CalculateStats();
 }
 
 void StatWindow::Render()
@@ -68,55 +66,61 @@ bool StatWindow::HandleMouseRight(Vec2 mousePos)
     return false;
 }
 
-void StatWindow::CalculateStats()
-{
-    m_fundamentalStats = { 43, 51, 25, 41 };
-    m_totalStats.Strength = 100;
-    m_totalStats.Magic_Power = 70;
-    m_totalStats.Health = 100;
-    m_totalStats.Knowledge = 100;
-    m_totalStats.Charm = 100;
-    // 1. UIManager에서 UIWindow 포인터를 가져오기.
-    UIWindow* window = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
-    // 2. 포인터 타입 맞는지 체크
-    if (auto* equipmentWindow = dynamic_cast<EquipmentWindow*>(window))
-    {
-        // 모든 슬롯 타입을 반복하며 아이템을 가져옴
-        for (int i = 0; i < static_cast<int>(Wearable_part::UnKnown); ++i)
-        {
-            // 장비창에서 현재 슬롯에 맞는 아이템 가져오기.
-            Wearable_part slotType = static_cast<Wearable_part>(i);
-            Item* equippedItem = equipmentWindow->GetEquippedItem(slotType);
-
-            // 장비 있으면
-            if (equippedItem != nullptr)
-            {
-                // item id로 찾아서 wearable로 dynamic_cast 후 스탯 가져와서 더해주기.
-                unique_ptr<Item> item = ResourceManager::Get().Get_ItemBank().Get_Item_Status(equippedItem->m_data.id);
-                Wearable* wearableItem = dynamic_cast<Wearable*>(item.get());
-                m_fundamentalStats.power += wearableItem->GetStat(Status_fundamental::power);
-                m_fundamentalStats.agile += wearableItem->GetStat(Status_fundamental::agile);
-                m_fundamentalStats.intelligence += wearableItem->GetStat(Status_fundamental::intelligence);
-                m_fundamentalStats.luck += wearableItem->GetStat(Status_fundamental::luck);
-
-                // 1차 스탯 기반으로 2차스탯 계산
-                m_totalStats.Strength = m_fundamentalStats.power * 2 + m_fundamentalStats.agile * 1;
-                m_totalStats.Magic_Power = m_fundamentalStats.intelligence * 3;
-                m_totalStats.Health = static_cast<int>(m_fundamentalStats.power * 1 + m_fundamentalStats.intelligence * 0.5f);
-                m_totalStats.Knowledge = m_fundamentalStats.intelligence * 2 + m_fundamentalStats.luck * 1;
-                m_totalStats.Charm = m_fundamentalStats.luck * 3 + m_fundamentalStats.agile * 1;
-
-                // 2차 스탯을 0~100 사이로 정규화
-                std::cout << m_totalStats.Strength << std::endl;
-                std::cout << m_totalStats.Magic_Power << std::endl;
-                std::cout << m_totalStats.Health << std::endl;
-                std::cout << m_totalStats.Knowledge << std::endl;
-                std::cout << m_totalStats.Charm << std::endl;
-            }
-        }
-    }
-
-}
+//void StatWindow::CalculateStats()
+//{
+//    m_playerBaseFundamentalStats = { 0,0,0,0 };
+//    //m_totalStats.Strength = 100;
+//    //m_totalStats.Magic_Power = 70;
+//    //m_totalStats.Health = 100;
+//    //m_totalStats.Knowledge = 100;
+//    //m_totalStats.Charm = 100;
+//    // 1. UIManager에서 UIWindow 포인터를 가져오기.
+//    UIWindow* window = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
+//    // 2. 포인터 타입 맞는지 체크
+//    if (auto* equipmentWindow = dynamic_cast<EquipmentWindow*>(window))
+//    {
+//        // 모든 슬롯 타입을 반복하며 아이템을 가져옴
+//        for (int i = 0; i < static_cast<int>(Wearable_part::UnKnown); ++i)
+//        {
+//            // 장비창에서 현재 슬롯에 맞는 아이템 가져오기.
+//            Wearable_part slotType = static_cast<Wearable_part>(i);
+//            Item* equippedItem = equipmentWindow->GetEquippedItem(slotType);
+//
+//            // 장비 있으면
+//            if (equippedItem != nullptr)
+//            {
+//                // 아이템 데이터 가져오기
+//                unique_ptr<Item> item = ResourceManager::Get().Get_ItemBank().Get_Item_Status(equippedItem->m_data.id);
+//                if (item != nullptr) // unique_ptr 체크
+//                {
+//                    Wearable* wearableItem = dynamic_cast<Wearable*>(item.get());
+//                    if (wearableItem != nullptr) // dynamic_cast 결과 체크
+//                    {
+//                        // 1차 스탯 누적
+//                        m_playerBaseFundamentalStats.power += wearableItem->GetStat(Status_fundamental::power);
+//                        m_playerBaseFundamentalStats.agile += wearableItem->GetStat(Status_fundamental::agile);
+//                        m_playerBaseFundamentalStats.intelligence += wearableItem->GetStat(Status_fundamental::intelligence);
+//                        m_playerBaseFundamentalStats.luck += wearableItem->GetStat(Status_fundamental::luck);
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    m_totalStats.Strength = m_playerBaseFundamentalStats.power * 2 + m_playerBaseFundamentalStats.agile * 1;
+//    m_totalStats.Magic_Power = m_playerBaseFundamentalStats.intelligence * 3;
+//    m_totalStats.Health = static_cast<int>(m_playerBaseFundamentalStats.power * 1 + m_playerBaseFundamentalStats.intelligence * 0.5f);
+//    m_totalStats.Knowledge = m_playerBaseFundamentalStats.intelligence * 2 + m_playerBaseFundamentalStats.luck * 1;
+//    m_totalStats.Charm = m_playerBaseFundamentalStats.luck * 3 + m_playerBaseFundamentalStats.agile * 1;
+//
+//    // 디버그 출력
+//    std::cout << "Final Stats - Strength: " << m_totalStats.Strength
+//        << ", Magic Power: " << m_totalStats.Magic_Power
+//        << ", Health: " << m_totalStats.Health
+//        << ", Knowledge: " << m_totalStats.Knowledge
+//        << ", Charm: " << m_totalStats.Charm << std::endl;
+//
+//}
 
 void StatWindow::RenderBackground()
 {
@@ -157,9 +161,9 @@ void StatWindow::RenderTitleBar()
 void StatWindow::RenderCloseButton()
 {
     UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
-    float rightMargin = 47.0f;
-    Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
-    Vec2 closeButtonSize = { 27.0f, 27.0f };
+    float rightMargin = 65;
+    Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 35 };
+    Vec2 closeButtonSize = { 35, 35 };
     D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 
     if (uiRenderer)
@@ -336,3 +340,111 @@ float StatWindow::NormalizeStat(float statValue, float min, float max)
     float normalized = (statValue - min) / (max - min) * 100.0f;
     return std::max(0.0f, std::min(100.0f, normalized));
 }
+
+void StatWindow::UpdateTotalStats()
+{
+    // 장비 스탯 합계를 먼저 0으로 초기화
+    
+    m_equipmentFundamentalStats.power = 0;
+    m_equipmentFundamentalStats.agile = 0;
+    m_equipmentFundamentalStats.intelligence = 0;
+    m_equipmentFundamentalStats.luck = 0;
+
+    // UIManager를 통해 EquipmentWindow 포인터를 가져옵니다.
+    UIWindow* window = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
+    if (auto* equipmentWindow = dynamic_cast<EquipmentWindow*>(window))
+    {
+        // 모든 장비 슬롯을 순회하며 장착된 아이템의 스탯을 가져와 합산합니다.
+        for (int i = 0; i < static_cast<int>(Wearable_part::UnKnown); ++i)
+        {
+            Wearable_part slotType = static_cast<Wearable_part>(i);
+            Item* equippedItem = equipmentWindow->GetEquippedItem(slotType);
+            
+            if (auto* wearableItem = dynamic_cast<Wearable*>(equippedItem))
+            {
+                m_equipmentFundamentalStats.power += wearableItem->GetStat(Status_fundamental::power);
+                m_equipmentFundamentalStats.agile += wearableItem->GetStat(Status_fundamental::agile);
+                m_equipmentFundamentalStats.intelligence += wearableItem->GetStat(Status_fundamental::intelligence);
+                m_equipmentFundamentalStats.luck += wearableItem->GetStat(Status_fundamental::luck);
+            }
+
+            if (slotType == Wearable_part::Weapon)
+            {
+                CalculateBonusStats(equippedItem);
+            }
+        }
+    }
+
+    // 제공해주신 계산식으로 2차 스탯(TotalStatus)을 업데이트
+    m_totalStats.Strength = m_equipmentFundamentalStats.power * 2 + m_equipmentFundamentalStats.agile * 1;
+    m_totalStats.Magic_Power = m_equipmentFundamentalStats.intelligence * 3;
+    m_totalStats.Health = static_cast<int>(m_equipmentFundamentalStats.power * 1 + m_equipmentFundamentalStats.intelligence * 0.5f);
+    m_totalStats.Knowledge = m_equipmentFundamentalStats.intelligence * 2 + m_equipmentFundamentalStats.luck * 1;
+    m_totalStats.Charm = m_equipmentFundamentalStats.luck * 3 + m_equipmentFundamentalStats.agile * 1;
+}
+
+// 무기 고유 id로 체크할거임.
+void StatWindow::CalculateBonusStats(Item* item)
+{
+    if (item->m_data.id == "W006") 
+    {
+        m_totalStats.Strength *= 1.2f;
+    }
+    else if (item->m_data.id == "W007")
+    {
+        m_totalStats.Health *= 1.2f;
+    }
+    else if (item->m_data.id == "W008")
+    {
+        m_totalStats.Magic_Power *= 1.2f;
+    }
+    else if (item->m_data.id == "W009")
+    {
+        m_totalStats.Knowledge *= 1.2f;
+    }
+    else if (item->m_data.id == "W010")
+    {
+        m_totalStats.Charm *= 1.2f;
+    }
+    else if (item->m_data.id == "W011")
+    {
+        m_totalStats.Strength *= 2;
+        m_totalStats.Health *= 2;
+        m_totalStats.Magic_Power *= 2;
+        m_totalStats.Knowledge *= 2;
+        m_totalStats.Charm *= 2;
+    }
+    else if (item->m_data.id == "W012")
+    {
+        m_totalStats.Strength *= 2;
+        m_totalStats.Health *= 2;
+        m_totalStats.Magic_Power *= 2;
+        m_totalStats.Knowledge *= 2;
+        m_totalStats.Charm *= 2;
+    }
+    else if (item->m_data.id == "W013")
+    {
+        m_totalStats.Strength *= 2;
+        m_totalStats.Health *= 2;
+        m_totalStats.Magic_Power *= 2;
+        m_totalStats.Knowledge *= 2;
+        m_totalStats.Charm *= 2;
+    }
+    else if (item->m_data.id == "W014")
+    {
+        m_totalStats.Strength *= 2;
+        m_totalStats.Health *= 2;
+        m_totalStats.Magic_Power *= 2;
+        m_totalStats.Knowledge *= 2;
+        m_totalStats.Charm *= 2;
+    }
+    else if (item->m_data.id == "W015")
+    {
+        m_totalStats.Strength *= 2;
+        m_totalStats.Health *= 2;
+        m_totalStats.Magic_Power *= 2;
+        m_totalStats.Knowledge *= 2;
+        m_totalStats.Charm *= 2;
+    }
+}
+
