@@ -89,6 +89,7 @@ public:
 		bool HandleMouseUp(Vec2 mousePos) override;
 		bool HandleDoubleClick(Vec2 mousePos) override;
 		bool HandleMouseHover(Vec2 mousePos) override;
+		bool HandleMouseRight(Vec2 mousePos) override;
 
 		// 장비 아이템 교체. 
 		void EquipItem(Item* item);

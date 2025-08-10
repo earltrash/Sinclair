@@ -63,6 +63,11 @@ bool StatWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource 
     return false;
 }
 
+bool StatWindow::HandleMouseRight(Vec2 mousePos)
+{
+    return false;
+}
+
 void StatWindow::CalculateStats()
 {
     m_fundamentalStats = { 43, 51, 25, 41 };

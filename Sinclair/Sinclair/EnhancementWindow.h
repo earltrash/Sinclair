@@ -32,6 +32,8 @@ public:
 		// 더블클릭 안받을거임.
 		bool HandleDoubleClick(Vec2 mousePos) override { return true; }
 
+		bool HandleMouseRight(Vec2 mousePos) override;
+
 		// 타입 체크용
 		UIWindowType GetType() override { return m_windowType; }
 

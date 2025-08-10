@@ -29,6 +29,8 @@ public:
 		virtual bool HandleMouseUp(Vec2 mousePos) = 0;
 		virtual bool HandleDoubleClick(Vec2 mousePos) = 0;
 
+		virtual bool HandleMouseRight(Vec2 mousePos) = 0;
+
 		// 활성화용도
 		virtual void SetActivate(bool active) { m_isActive = active; }
 
@@ -40,6 +42,9 @@ public:
 
 		// 위치 체크용
 		Vec2 GetPosition() const { return m_position; }
+
+		void SetPosition(Vec2 Pos) { m_position = Pos; } //왜 Object랑 별개의 position이 되어있는가...
+
 
 		// 켜져있는지 체크
 		bool IsActive() const { return m_isActive; }

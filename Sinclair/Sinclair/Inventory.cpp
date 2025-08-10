@@ -3,7 +3,7 @@
 #include "ItemBank.h"
 #include "CursorManager.h"
 #include "InvenMem.h"
-
+#include "Potion.h"
 
 //: UI_Object(MWP) //생성자로 영역은 일단 설정함 (Inven 자기 영역 말임)
 Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
@@ -286,7 +286,7 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
     }
 
     // 윈도우 드래그 중일 때
-    if (isWindowDragging) // -> 
+    if (isWindowDragging) // 
     {
         float deltaX = mousePos.x - dragStartMousePos.x;
         float deltaY = mousePos.y - dragStartMousePos.y;
@@ -308,6 +308,8 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
 
         // 슬롯들의 위치도 업데이트해야 함
         UpdateSlotPositions();
+
+        return true;
     }
     else // 윈도우 드래그 중이 아닐 때만 슬롯 호버 및 툴팁 처리
     {
@@ -320,7 +322,8 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
             bool wasHovered = slot.isHovered;
             // 슬롯의 현재 렌더링 위치(이동된 창에 따라 달라짐)를 기준으로 Contains 체크
             // slot.bounds는 이미 UpdateSlotPositions에 의해 현재 창 위치에 맞게 업데이트됨 (혹은 이미 초기화 시 올바르게 설정됨)
-            slot.isHovered = slot.bounds.Contains(mousePos);
+
+            slot.isHovered = slot.bounds.Contains(mousePos); //안에 있으면 hovered 인데, 여기서 사실 렌더가 안되야 하거든 
 
             if (wasHovered != slot.isHovered)
             {
@@ -334,7 +337,7 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
         }
 
         // 툴팁 정보 업데이트
-        if (hoveredSlot)
+        if (hoveredSlot != nullptr)
         {
              Item* data = m_itemDatabase.GetItemData(hoveredSlot->item.id); // 그 저장된 아이템 정보 가져오는 거임. ㅇㅇ 
              //Item* data = hoveredSlot->item.
@@ -345,16 +348,21 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
                 CursorManager::Get().SetHoveredItem(data); 
                 Vec2 tooltipPos = mousePos + Vec2(10, 10);
 
-                UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //활성화 후, Item 값을 보내줘야 함.
-
-                currentHoveredItemName = data->m_data.name;
-                currentHoveredItemDescription = data->m_data.description;
-                currentHoveredItemCount = hoveredSlot->item.count;
-                // 툴팁 위치는 마우스 커서 옆으로 조정 (창이 이동해도 상대적으로 유지)
-                tooltipPosition = Vec2(mousePos.x + 15, mousePos.y + 15);
-                // showTooltip = true;
+                UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //위치 변경시키고, 활성화까지 
             }
+            return true;
+
         }
+
+        else //이제는 뭐 나간거겠죠...
+        {
+            CursorManager::Get().HoveredReleased(); //추적 금지 
+            UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //해제
+            return true;
+
+        }
+        return false;
+
     }
 
     // 아이템 드래그 중일 때 (마우스 위치 업데이트)
@@ -552,6 +560,30 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
 
 bool Inventory::HandleDoubleClick(Vec2 mousePos)
 {
+    
+
+    return false;
+}
+
+bool Inventory::HandleMouseRight(Vec2 mousePos)
+{
+    InventorySlot* slot = GetSlotAt(mousePos);
+    if (slot && !slot->IsEmpty())
+    {
+        Potion* item = dynamic_cast<Potion*>(m_itemDatabase.GetItemData(slot->item.id));
+        if (item != nullptr)
+        {
+            int much  = item->GetMuch();
+
+            UIManager::Get().ShowPotionWindow(much); //포지션도 맞춰 버렸다고 
+
+        }
+
+
+
+    }
+
+
     return false;
 }
 
