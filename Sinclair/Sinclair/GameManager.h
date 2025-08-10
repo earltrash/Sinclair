@@ -31,6 +31,8 @@ public:
 
     //ending Scene -> 새 InGame 
     void AftAdv(); // ->string에 해당하는 장비 넘겨주기
+    //엔딩 구하려고 함
+    void FindEnding();
 
     void PotionUsed(Status_fundamental stat, int Much);
 
@@ -56,8 +58,6 @@ public:// get set 만들기 전
     bool isFirst = true;
 
     int curGen = 2;
-
-
 
     // soundmanager야 가져가
     float bgmValue = 1.0f;
@@ -118,5 +118,9 @@ public:// get set 만들기 전
      { 6, { {"I013", 3}, {"I014", 3}, {"I015", 2} } },
      { 7, { {"I013", 3}, {"I014", 3}, {"I015", 3} } }
     };
+    
+    // 엔딩에 필요한 숫자
+    std::array<int, 3> arrEndingID{};
+    std::array<int, 3> arrFame{};
 
 };
