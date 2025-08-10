@@ -12,7 +12,6 @@ struct renderInfo
     D2D1_RECT_F			srcRect{ 0.f, 0.f, 0.f, 0.f };
 
     float				opacity = 1.f;
-    int					zOrder = 0;
     bool				activated = true;
 };
 

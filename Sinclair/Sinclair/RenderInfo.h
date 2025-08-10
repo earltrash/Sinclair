@@ -11,6 +11,17 @@ public:
 
 	RenderInfo(ID2D1Bitmap1* bitmap) { SetBitmap(bitmap); }
 
+	void Clear()
+	{
+		m_renderInfo.bitmap = nullptr;
+		m_renderInfo.effect = nullptr;
+		m_renderInfo.mt = D2D1::Matrix3x2F::Identity();
+		m_renderInfo.destRect.left = m_renderInfo.destRect.top = m_renderInfo.destRect.right = m_renderInfo.destRect.bottom = 0.f;
+		m_renderInfo.srcRect.left = m_renderInfo.srcRect.top = m_renderInfo.srcRect.right = m_renderInfo.srcRect.bottom = 0.f;
+		m_renderInfo.opacity = 1.f;
+		m_renderInfo.activated = true;
+	}
+
 	void SetBitmap(ID2D1Bitmap1* bitmap)		// 비트맵 변경 시, src에 비트맵 사이즈 들어감. dest는 따로 설정 필요.
 	{
 		m_renderInfo.bitmap = bitmap;
@@ -47,11 +58,6 @@ public:
 		m_renderInfo.opacity = opacity;
 	}
 
-	void SetzOrder(int zOrder)
-	{
-		m_renderInfo.zOrder = zOrder;
-	}
-
 	void SetisActive(bool activated)
 	{
 		m_renderInfo.activated = activated;
@@ -60,12 +66,7 @@ public:
 	const D2D1_SIZE_F GetSize()			// src rect의 너비와 높이
 	{ 
 		return { m_renderInfo.srcRect.right - m_renderInfo.srcRect.left, m_renderInfo.srcRect.bottom - m_renderInfo.srcRect.top }; 
-	}
-
-	//renderInfo& GetReference()								// obj 내 다른 component에서 사용
-	//{ 
-	//	return m_renderInfo; 
-	//}		
+	}	
 														
 	const renderInfo& GetRenderInfo()							// Scene - Render()에서 사용
 	{ 
