@@ -5,7 +5,10 @@
 #include <filesystem>    // std::filesystem
 #include "UI_Renderer.h"
 #include "Renderer.h"
-
+#include "Potion.h"
+#include "Material.h"
+#include "Wearable.h"
+#include "Inventory.h"
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
@@ -58,16 +61,29 @@ void ItemBank::LoadItemStatus(const string& path) { //스텟 JSON - Item_S
             std::unique_ptr<Item> item;
             times++;
             if (type == "Potion")
+            {
                 item = std::make_unique<Potion>(common, itemData);
+                m_prototypes[itemData["id"]] = std::make_unique<Potion>(common, itemData);
+            }
+
             else if (type == "Wearable")
+            {
                 item = std::make_unique<Wearable>(common, itemData);
+                m_prototypes[itemData["id"]] = std::make_unique<Wearable>(common, itemData);
+
+            }
             else if (type == "Material")
+            {
                 item = std::make_unique<Material>(common, itemData);
+                m_prototypes[itemData["id"]] = std::make_unique<Material>(common, itemData);
+
+            }
             else {
                 std::cerr << "[WARN] Unknown item type: " << type << std::endl;
                 continue;
             }
            // std::cout << moment << endl;
+
 
             m_S_Item.emplace(item->m_data.Momnet, std::move(item));
         }
@@ -157,13 +173,14 @@ ComPtr<ID2D1Bitmap1> ItemBank::GetItemAtlas(const string& path)
 
 //호출 시기는 Inven 초기화 할 때도 가능할 듯? ㅇㅇ 차피 ResourceManager 싱글톤이니깐.
 
-const ItemBitmapClip& ItemBank::GetItemClip(string name) //atlas가 여러개면 그것도 구분 해야 함.
+const ItemBitmapClip* ItemBank::GetItemClip(string id) //atlas가 여러개면 그것도 구분 해야 함.
 {
-    if (m_Atlas.find(name) != m_Atlas.end())
-        return m_Atlas[name];
+    if (auto it = m_Atlas.find(id); it != m_Atlas.end())
+        return &it->second;
     else
     {
-        std::cout << name << " " << "에 해당하는 값이 없는데요?" << std::endl;
+        std::cout << id << " " << "에 해당하는 값이 없는데요?" << std::endl;
+        return nullptr;
     }
 
 } 
@@ -172,17 +189,23 @@ void ItemBank::GiveItem(Need_Moment Moment, ItemDatabase& InvenDatabase) //일단 
 {
     for (auto it = m_S_Item.begin(); it != m_S_Item.end(); ) {
         if (it->first == Moment) {
-            InvenDatabase.AddItemData(std::move(it->second));
-            it = m_S_Item.erase(it); //key 자체는 인식 가능하니 erase 하는 거로 
+            // 원본에서 복제본 생성
+            auto newItem = CreateItem(it->second->m_data.id); //클론을 만들어서 보내줌 -> base는 변경 값 없음 
+            if (newItem) {
+                InvenDatabase.AddItemData(std::move(newItem));
+            }
+            ++it; // 원본은 지우지 않음
         }
         else {
             ++it;
         }
     }
-
-   
-
 }
+
+
+// 확룰 계산해서 특정 세대 -> Need_Moment / 받아와야 하는 개수를 넣어서, 랜덤 -> 장비 RETURN 해주는 함수를 만들어야 할 듯 ? 
+
+
 
 unique_ptr<Item> ItemBank::Get_Item_Status(string id) //합성에서 쓸 거면 필요. 혹은 그냥 
 {
@@ -203,4 +226,28 @@ void ItemBank::clean()
     m_LoadedAtlases.clear();
 }
 
+vector<string> ItemBank::GetItemIDsByMoment(Need_Moment moment)
+{
+    vector<string> result;
 
+    for (auto& pair : m_S_Item)
+    {
+        if (pair.first == moment )
+        {
+            result.push_back(pair.second->m_data.id);
+        }
+    }
+
+    return result;
+
+
+}
+
+
+std::unique_ptr<Item> ItemBank::CreateItem(const std::string& id) {
+    auto it = m_prototypes.find(id);
+    if (it != m_prototypes.end()) {
+        return it->second->Clone(); // 복사본 리턴
+    }
+    return nullptr;
+}

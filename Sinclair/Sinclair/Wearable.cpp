@@ -99,6 +99,11 @@ void Wearable::SetPart(const Wearable_part& Part)
     }
 }
 
+std::unique_ptr<Item> Wearable::Clone() const
+{
+    return std::make_unique<Wearable>(*this);
+}
+
 Wearable_part Wearable::Getpart()
 {
     return m_part;

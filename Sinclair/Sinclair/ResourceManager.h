@@ -8,7 +8,7 @@
 #include "UI_Bank.h"
 #include "ItemBank.h"
 #include "TextBank.h"
-
+#include "SoundBank.h"
 
 using namespace std;
 
@@ -75,5 +75,6 @@ private:
     ItemBank m_ItemBank;
     UI_Bank m_UI_Bank;
     TextBank m_TextBank;
+    SoundBank m_SoundBank;
     // AsepriteParser -> ÆÄ½ÌÇÏ´Â °Ç 
 };

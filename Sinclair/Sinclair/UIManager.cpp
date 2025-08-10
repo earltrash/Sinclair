@@ -42,12 +42,12 @@ void UIManager::Initialize()
         //m_activeWindowOrder.push_back(UIWindowType::EquipmentWindow);
 
         // StatsWindow
-       /* m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>());
+        m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>());
         if (auto* window = GetWindow(UIWindowType::StatsWindow))
         {
             window->SetActivate(true);
         }
-        m_activeWindowOrder.push_back(UIWindowType::StatsWindow);*/
+        //m_activeWindowOrder.push_back(UIWindowType::StatsWindow);
 
         //EnhancementWindow
         m_allWindows.emplace(UIWindowType::EnhancementWindow, std::make_unique<EnhancementWindow>());

@@ -140,7 +140,6 @@
     <ClInclude Include="CursorManager.h" />
     <ClInclude Include="Dispatcher.h" />
     <ClInclude Include="EffectComponent.h" />
-    <ClInclude Include="Enchancer.h" />
     <ClInclude Include="EnhancementWindow.h" />
     <ClInclude Include="EquipmentWindow.h" />
     <ClInclude Include="GameManager.h" />
@@ -177,6 +176,7 @@
     <ClInclude Include="Scene_Tutorial.h" />
     <ClInclude Include="SimpleMathHelper.h" />
     <ClInclude Include="SliderHandleComponent.h" />
+    <ClInclude Include="SoundBank.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Status.h" />
     <ClInclude Include="SynthesisWin.h" />
@@ -199,7 +199,6 @@
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="CursorManager.cpp" />
     <ClCompile Include="EffectComponent.cpp" />
-    <ClCompile Include="Enchancer.cpp" />
     <ClCompile Include="EnhancementWindow.cpp" />
     <ClCompile Include="EquipmentWindow.cpp" />
     <ClCompile Include="GameManager.cpp" />
@@ -227,6 +226,7 @@
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Scene_Tutorial.cpp" />
+    <ClCompile Include="SoundBank.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StatWindow.cpp" />
     <ClCompile Include="SynthesisWin.cpp" />
