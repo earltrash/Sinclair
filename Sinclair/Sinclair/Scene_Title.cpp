@@ -9,6 +9,8 @@
 #include "UIManager.h"
 #include "SliderHandleComponent.h"
 #include "GameManager.h"
+#include "EffectComponent.h"
+#include "PlayComponent.h"
 
 Scene_Title::Scene_Title(string name)
 {
@@ -69,6 +71,10 @@ void Scene_Title::Clean()
 // 씬 전환 지연 처리를 위해 씬_스탠다드에서 업데이트 일괄 처리.
 void Scene_Title::Update()
 {
+	for (auto& obj : m_gameObjects)
+	{
+		obj.second->Update();
+	}
 	// 씬 전환 지연 처리
 	if (m_isTransitioning && !m_nextScene.empty())
 	{
@@ -86,7 +92,10 @@ void Scene_Title::Update()
 
 void Scene_Title::LogicUpdate(float delta)
 {
-
+	for (auto& obj : m_gameObjects)
+	{
+		obj.second->FixedUpdate(delta);
+	}
 }
 
 
@@ -165,9 +174,40 @@ void Scene_Title::CreateObj()
 	// 3.1.1 사이즈 다르면 
 	bgComp->SetWidth(1920.f); bgComp->SetHeight(1080.f);
 	bgComp->BitmapPush("Background", gameStartBackground);
+	bgComp->SetCurrentBitmap("Background");
 	// 9. 게임 오브젝트들에 집어넣기
 	m_gameObjects.emplace("Background", std::move(Background));
 
+	//////////////////////
+	//////////////////////
+	//////////////////////
+	//	airParticle
+
+	// 1. 이미지 로드
+	auto dustBM = ResourceManager::Get().GetTexture("airParticle");
+	// 2. 오브젝트 생성
+	auto dust1 = std::make_unique<Object>();
+	// 3. 기본 설정
+	auto d1_info = dust1->GetRenderInfo();
+	d1_info->SetBitmap(dustBM.Get());
+	// 4. 컴포넌트 설정
+	auto d1_blur = dust1->AddComponent<GaussianBlur_Effect>(d1_info, 3.f, dustBM.Get());
+	auto d1_updown = dust1->AddComponent<UpDown_Effect>(d1_info, dust1->GetTransform(), 10.f, 0.03f, 0.03f);
+	auto d1_slide = dust1->AddComponent<Slide_Effect>(d1_info, dust1->GetTransform(), 0.07f, 1920.f, 1920.f, true);
+	// 5. 게임 오브젝트 관리 map에 추가
+	m_gameObjects.emplace("b_airDust1", std::move(dust1));
+
+	// 2. 오브젝트 생성
+	auto dust2 = std::make_unique<Object>();
+	// 3. 기본 설정
+	auto d2_info = dust2->GetRenderInfo();
+	d2_info->SetBitmap(dustBM.Get());
+	// 4. 컴포넌트 설정
+	auto d2_blur = dust2->AddComponent<GaussianBlur_Effect>(d2_info, 3.f, dustBM.Get());
+	auto d2_updown = dust2->AddComponent<UpDown_Effect>(d2_info, dust2->GetTransform(), 10.f, 0.03f, 0.03f);
+	auto d2_slide = dust2->AddComponent<Slide_Effect>(d2_info, dust2->GetTransform(), 0.08f, 1920.f, 1920.f, true);
+	// 5. 게임 오브젝트 관리 map에 추가
+	m_gameObjects.emplace("b_airDust2", std::move(dust2));
 
 	//////////////////////
 	//////////////////////
@@ -188,6 +228,7 @@ void Scene_Title::CreateObj()
 	nameComp->SetWidth (gameNameBG->GetSize().width);
 	nameComp->SetHeight(gameNameBG->GetSize().height);
 	nameComp->BitmapPush("gameName", gameNameBG);
+	nameComp->SetCurrentBitmap("gameName");
 	// 9. 게임 오브젝트들에 집어넣기
 	m_gameObjects.emplace("gameName", std::move(gameName));
 
@@ -347,6 +388,7 @@ void Scene_Title::CreateObj()
 		credit01Comp->SetWidth(1059.f);
 		credit01Comp->SetHeight(540.f);
 		credit01Comp->BitmapPush("크레딧_01", credit01Texture);
+		credit01Comp->SetCurrentBitmap("크레딧_01");
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("크레딧_01", std::move(Credit01));
 
@@ -367,6 +409,7 @@ void Scene_Title::CreateObj()
 		credit03Comp->SetWidth(335.f);
 		credit03Comp->SetHeight(283.f);
 		credit03Comp->BitmapPush("크레딧_03", credit03Texture);
+		credit03Comp->SetCurrentBitmap("크레딧_03");
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("크레딧_03", std::move(Credit03));
 
@@ -388,6 +431,7 @@ void Scene_Title::CreateObj()
 		credit06Comp->SetWidth(335.f);
 		credit06Comp->SetHeight(283.f);
 		credit06Comp->BitmapPush("크레딧_06", credit06Texture);
+		credit06Comp->SetCurrentBitmap("크레딧_06");
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("크레딧_06", std::move(Credit06));
 
@@ -453,6 +497,7 @@ void Scene_Title::CreateObj()
 		credit01Comp->SetWidth(1059.f);
 		credit01Comp->SetHeight(540.f);
 		credit01Comp->BitmapPush("크레딧_01", credit01Texture);
+		credit01Comp->SetCurrentBitmap("크레딧_01");
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("크레딧_01", std::move(Credit01));
 

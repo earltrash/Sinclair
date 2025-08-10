@@ -4,8 +4,6 @@
 
 void BackgroundComponent::Update()
 {
-    if (m_currentName == "Background")   return;
-    SetCurrentBitmap("Background");
 }
 
 void BackgroundComponent::BitmapPush(string NM, ComPtr<ID2D1Bitmap1> Bitmap)
