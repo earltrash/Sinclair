@@ -108,10 +108,10 @@ vector<EnchancerType>& Wearable::GetEnchancResult()
 
 void Wearable::AddStat(fundamentalStatus statType, int value)
 {
-    m_stat.agile = statType.agile + value;
-    m_stat.intelligence = statType.intelligence + value;
-    m_stat.luck = statType.luck + value;
-    m_stat.power = statType.power + value;
+    m_stat.agile += statType.agile + value;
+    m_stat.intelligence += statType.intelligence + value;
+    m_stat.luck += statType.luck + value;
+    m_stat.power += statType.power + value;
 
 }
 
