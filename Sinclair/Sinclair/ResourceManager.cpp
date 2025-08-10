@@ -193,6 +193,50 @@ TextBank& ResourceManager::Get_TextBank()
     return m_TextBank;
 }
 
+std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ResourceManager::GetEndingBitmap(string id )
+{
+    namespace fs = std::filesystem;
+
+    std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> result;
+
+    // ending/<id> 경로 생성
+    fs::path base = fs::current_path();
+    fs::path folderPath = base / "ending" / id;
+
+    if (!fs::exists(folderPath) || !fs::is_directory(folderPath))
+    {
+        std::cerr << "[ERROR] 폴더 없음: " << folderPath << std::endl;
+        return result;
+    }
+
+    // 폴더 내 순회
+    for (const auto& entry : fs::directory_iterator(folderPath, fs::directory_options::skip_permission_denied))
+    {
+        if (!entry.is_regular_file() || entry.path().extension() != ".png")
+            continue;
+
+        // 파일 이름(확장자 제거)
+        std::string fileName = entry.path().stem().string();
+
+        // 비트맵 로드
+        Microsoft::WRL::ComPtr<ID2D1Bitmap1> bitmap;
+        D2DRenderer::Get().CreateBitmapFromFile(entry.path().c_str(), bitmap.GetAddressOf());
+
+        if (bitmap)
+        {
+            result.emplace(fileName, bitmap);
+        }
+        else
+        {
+            std::cerr << "[WARN] 비트맵 로드 실패: " << entry.path() << std::endl;
+        }
+    }
+
+    return result;
+}
+
+
+
 std::vector<Clip_Asset> ResourceManager::GetClips(const string& Info)
 {
     std::vector<Clip_Asset> Out;
