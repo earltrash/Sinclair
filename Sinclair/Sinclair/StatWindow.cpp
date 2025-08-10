@@ -467,3 +467,11 @@ void StatWindow::CalculateBonusStats(Item* item)
     }
 }
 
+void StatWindow::ResetStat()
+{
+    m_equipmentFundamentalStats; {}
+    m_potionFundamentalStats; {}
+    m_totalStats = {};
+
+}
+

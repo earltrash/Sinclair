@@ -33,10 +33,11 @@ void Scene_End::Initalize()
 
 void Scene_End::Enter()
 {
+	ebm = GameManager::Get().AftAdv();
 	Initalize();
 
 	// 게임매니저에서 엔딩 잘 갖고 와. 지금은 임시야. 
-	GameManager::Get().FindEnding();
+	
 
 }
 
@@ -83,9 +84,42 @@ void Scene_End::LogicUpdate(float delta)
 
 void Scene_End::Render()
 {
+
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
+	}
+
+	if (ebm.size() == 1)
+	{
+		// 하나만 있을 때 → 그냥 렌더
+		const auto& [Name, obj] = *ebm.begin();
+		D2D1_RECT_F rect{ 0, 0, 1024, 1024 };
+		D2DRenderer::Get().DrawBitmap(obj.Get(), rect);
+	}
+	else if (ebm.size() == 2)
+	{
+		// 두 개 있을 때 → good/bad 구분
+		for (const auto& [Name, obj] : ebm) // -> 임시로 하고 일단 
+		{
+			D2D1_RECT_F rect{ 0, 0, 1024, 1024 };
+
+			if (Name.find("_good") != std::string::npos)
+			{
+				// good일 때 처리
+				D2DRenderer::Get().DrawBitmap(obj.Get(), rect);
+			}
+			else if (Name.find("_bad") != std::string::npos)
+			{
+				// bad일 때 처리
+				D2DRenderer::Get().DrawBitmap(obj.Get(), rect);
+			}
+			else
+			{
+				// 예상 외의 이름이면 경고
+				std::cerr << "[WARN] good/bad 구분 불가: " << Name << std::endl;
+			}
+		}
 	}
 
 	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 90.0f);
@@ -160,10 +194,14 @@ void Scene_End::CreateObj()
 	// 효제 : 이거 어떻게 해야할지 고민하기
 
 	// 1. 이미지 갖고 오기
-	auto 엔딩2 = ResourceManager::Get().GetTexture("엔딩", "02");
+	//auto 엔딩2 = ResourceManager::Get().GetTexture("엔딩", "02");
+	
+	
 	// 2. 오브젝트 만들기
 	auto 이미지 = std::make_unique<Object>();
 	이미지->SetPosition(Vec2(17, 22));
+
+	auto 엔딩2 = ResourceManager::Get().GetTexture("엔딩", "02");
 
 	auto 이미지info = 이미지->GetRenderInfo();
 	이미지info->SetBitmap(엔딩2.Get());
@@ -247,6 +285,14 @@ void Scene_End::CreateObj()
 		{
 			temp++;
 			SafeChangeScene("OutGame", temp);
+			Inventory* statwin = dynamic_cast<Inventory*>(UIManager::
+				Get().GetWindow(UIWindowType::InventoryWindow));
+
+			if (statwin != nullptr)
+			{
+				statwin->LoadItemDatabase(static_cast<Need_Moment>(temp - 2)); //-> 언제 필요하냐?	
+			}
+
 		}
 
 		});

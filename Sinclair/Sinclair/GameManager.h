@@ -30,7 +30,7 @@ public:
     void PreAdv(); // -> 현재 ingame string 받아서 스탯 저장하고, 기존 장비 정리하는 과정임. 
 
     //ending Scene -> 새 InGame 
-    void AftAdv(); // ->string에 해당하는 장비 넘겨주기
+    std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> AftAdv(); // ->string에 해당하는 장비 넘겨주기
     //엔딩 구하려고 함
     void FindEnding();
 
@@ -49,7 +49,7 @@ public:
     void AdvResult_Potion(int Fam);
 
     void TempToNext();
-
+    void Default_Item_TO_Inven(int GEN);
 
     int GetCurrentFam() { return arrTotalFam[GetCurrentGen() - 2]; }; //한 세대 기준 
     int GetResultFam();

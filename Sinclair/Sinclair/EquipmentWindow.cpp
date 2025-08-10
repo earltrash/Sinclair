@@ -254,6 +254,17 @@ bool EquipmentWindow::HandleMouseRight(Vec2 mousePos)
     return false;
 }
 
+void EquipmentWindow::ClearSlot(Wearable_part part)
+{
+    auto it = m_equippedItems.find(part);
+    if (it != m_equippedItems.end() && it->second != nullptr)
+    {
+        m_equippedItems[part] = nullptr;
+    }
+        // 슬롯 비우기
+}
+
+
 void EquipmentWindow::EquipItem(Item* item) //Item 이름이 아니라, 타입을 비교해서 해야 함요 
 {
     Wearable* t_item = dynamic_cast<Wearable*>(item);

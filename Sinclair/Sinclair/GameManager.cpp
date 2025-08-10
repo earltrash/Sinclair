@@ -113,19 +113,20 @@ void GameManager::PreAdv()
     //2. 기존 장비를 정리함.
     //3. 스탯을 통한 ending id & ending id를 통한 한 세대의 명성치를 받아와야 함. 
     //4. 아이템을 넘겨줌까지 함. 
-
-
     int index = GetCurrentGen() - 2; //int curGen 2 ; 
 
     StatWindow* statwin = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow));
     if (statwin != nullptr)
     {
         arrTotalStatus[index] = statwin->GetTotalStatus(); //저장 하고 이거로 보내주면 됨 -> 보내줄거야. 
+        statwin->ResetStat(); 
     }
     UsedEquipedClean(); // temp에다가 저장, 기존 인벤은 싹다 정리함.
     AdvResult(); //명성치와 세대에 따른 인벤 & 임시 vector 업데이트 함. ㅇㅇ 
-    TempToNext(); //최종적으로 아이템을 인벤에 넣어둠. 
 
+
+    TempToNext(); //최종적으로 아이템을 인벤에 넣어둠. 
+    Default_Item_TO_Inven(GetCurrentGen());
 
     // 명성치랑 엔딩에 던져줄 string id 값 준비하기 
     
@@ -139,16 +140,20 @@ void GameManager::PreAdv()
 //id를 통해서 비트맵 준비할 거고 
 // 그냥 여기서 명성이랑 이런것들 다 나올테니깐
 
-void GameManager::AftAdv() //ending scene -> endingScene의 id를 받을거고 ? 
+std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> GameManager::AftAdv() //ending scene -> endingScene의 id를 받을거고 ? 
 {
+    FindEnding();
+    int index = GetCurrentGen() - 2;
+    int id = arrEndingID[index];
     
-    
-    
-   
+    //SceneManager로 엔딩씬을 받아옴? -> 멤버에다가 담아줌? 
 
+    std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ending_bitmap =
+        ResourceManager::Get().GetEndingBitmap(std::to_string(id));
+    
+  //  UpdateGen(); 
 
-    //세대 업데이트 , 
-    UpdateGen(); 
+    return ending_bitmap;
 }
 
 //장비 스텟이랑 수치값 
@@ -200,6 +205,8 @@ void GameManager::UsedEquipedClean() //청소하는 김에 추가까지 해버릴래 .
             m_tempItem.push_back(std::move(it->second));
             AdvResult_Wep(id); // -> 그 겸사 넣은 거긴 한데, 특정 아이템 들고 모험 나가면 특수한 아이템 넣는 거 그거 한 거임. 
             invenDB.erase(it);
+            equipmentWindow->ClearSlot((Wearable_part)i);
+
         }
     }
 
@@ -223,8 +230,13 @@ void GameManager::AdvResult_Wep(string itemkey)
 
 void GameManager::AdvResult()
 {
-    int this_Gen_Fam = GetCurrentFam();
-    int gen = GetCurrentGen(); //현재 세대의 값 2 3 4 -> 
+    //int this_Gen_Fam = GetCurrentFam();
+
+    //int gen = GetCurrentGen(); //현재 세대의 값 2 3 4 -> 
+
+    int this_Gen_Fam = 5;
+
+    int gen = 2;
     //
 
     AdvResult_Potion(this_Gen_Fam);
@@ -271,10 +283,12 @@ void GameManager::AdvResult_Item_Gen2_Gen3(int Fam)
         UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
     if (!inven) return;
 
-    auto items = GetRandomItemsByFam(Fam , famToPoolCounts_Gen2to3);
+    auto items = GetRandomItemsByFam(Fam , famToPoolCounts_Gen2to3); //id를 받은거고 
     for (auto& id : items)
-        inven->AddItem(id);
-
+    {
+        inven->GetItemBase().AddItemData(ResourceManager::Get().Get_ItemBank().CreateItem(id));
+    }
+    inven->PackItem();
 }
 
 void GameManager::AdvResult_Item_Gen3_Gen4(int Fam)
@@ -285,7 +299,12 @@ void GameManager::AdvResult_Item_Gen3_Gen4(int Fam)
 
     auto items = GetRandomItemsByFam(Fam, famToPoolCounts_Gen3to4);
     for (auto& id : items)
-        inven->AddItem(id);
+        //inven->AddItem(id);
+    {
+        inven->GetItemBase().AddItemData(ResourceManager::Get().Get_ItemBank().CreateItem(id));
+    }
+    inven->PackItem();
+
 }
 
 void GameManager::AdvResult_Potion(int Fam)
@@ -295,15 +314,42 @@ void GameManager::AdvResult_Potion(int Fam)
 
 void GameManager::TempToNext()
 {
-    Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow));
+   
+    Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
     if (inven != nullptr)
     {
         for (auto& item : m_tempItem)
         {
             inven->GetItemBase().AddItemData(std::move(item));
         }
+        inven->PackItem();
+    }
+    m_tempItem.clear();
+}
+
+void GameManager::Default_Item_TO_Inven(int GEN)
+{
+    if (GEN == 2) //기본 3 
+    {
+        Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+        if (inven != nullptr)
+        {
+            inven-> LoadItemDatabase(Need_Moment::Gen_3);
+            inven->PackItem();
+
+        }
     }
 
+    if (GEN == 3) //기본 4 
+    {
+        Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+        if (inven != nullptr)
+        {
+            inven->LoadItemDatabase(Need_Moment::Gen_4);
+            inven->PackItem();
+
+        }
+    }
 }
 
 int GameManager::GetResultFam()

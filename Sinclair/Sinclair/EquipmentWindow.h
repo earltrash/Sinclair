@@ -91,6 +91,7 @@ public:
 	bool HandleMouseHover(Vec2 mousePos) override;
 	bool HandleMouseRight(Vec2 mousePos) override;
 
+	void ClearSlot(Wearable_part part);
 	// 장비 아이템 교체. 
 	void EquipItem(Item* item);
 	// 장비 아이템 해제

@@ -45,7 +45,6 @@ void Scene_InGame::Enter()
 
 void Scene_InGame::Exit()
 {
-
 	Clean();
 }
 

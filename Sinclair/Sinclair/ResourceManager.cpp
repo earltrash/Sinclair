@@ -201,7 +201,7 @@ std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ResourceMa
 
     // ending/<id> 경로 생성
     fs::path base = fs::current_path();
-    fs::path folderPath = base / "ending" / id;
+    fs::path folderPath = base.parent_path() / "ending" / id;
 
     if (!fs::exists(folderPath) || !fs::is_directory(folderPath))
     {

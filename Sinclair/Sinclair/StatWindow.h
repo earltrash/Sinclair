@@ -72,6 +72,10 @@ public:
 
 	// 특수무기 스탯 추가.
 	void CalculateBonusStats(Item* item);
+
+
+	void ResetStat();
+
 private:
 	fundamentalStatus m_equipmentFundamentalStats;		// 장비 1차 스탯을 담을 구조체
 	fundamentalStatus m_potionFundamentalStats;
