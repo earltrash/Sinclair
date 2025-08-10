@@ -197,6 +197,7 @@ void Scene_History::CreateObj()
 	// 5. ¸¶¿ì½º ¸®½º³Ê ÄÄÆ÷³ÍÆ® (¹öÆ° ÄÄÆ÷³ÍÆ®¸¦ Ä¸Ã³·Î Àü´Þ)
 	auto ½ºÅµ¸®½º³Ê = ½ºÅµ¹öÆ°->AddComponent<MouseListenerComponent>(
 		[½ºÅµÄÄÆ÷³ÍÆ®](const MSG& msg) {
+			½ºÅµÄÄÆ÷³ÍÆ®->CheckCollision(msg);
 			½ºÅµÄÄÆ÷³ÍÆ®->Worked(msg);
 		}
 	);

@@ -70,5 +70,7 @@ private:
 
 	std::string curText;
 
+	bool isSETTING = false;
+
 };
 

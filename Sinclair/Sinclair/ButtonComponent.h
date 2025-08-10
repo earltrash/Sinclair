@@ -38,10 +38,11 @@ public:
 	void SetOnClickCallback(std::function<void()> callback) { m_onClick = callback; }
 	void OnClick() { if (m_onClick) m_onClick(); }
 
+	void CheckCollision(const MSG& MSG);
 	void Worked(const MSG& MSG);
 
-	void SetWidth(int w)  { m_renderInfo->SetDestRight (w); }
-	void SetHeight(int h) { m_renderInfo->SetDestBottom(h); }
+	void SetWidth (float w)  { m_renderInfo->SetDestRight (w); }
+	void SetHeight(float h) { m_renderInfo->SetDestBottom(h); }
 
 	void SetOpacity(float o) { m_renderInfo->SetOpacity(o); }
 
@@ -51,8 +52,6 @@ private:
 	// 버튼을 갈아끼우는 용도
 	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmaps;
 
-	
-	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmap; 
 	ComPtr<ID2D1Bitmap1> m_curbm;
 
 	ButtonState m_currentState = ButtonState::Normal;
@@ -60,4 +59,7 @@ private:
 	std::function<void()> m_onClick;
 
 	RenderInfo* m_renderInfo;
+
+	bool wasInside = false;
+	bool isInside = false;
 };

@@ -23,7 +23,8 @@ ComPtr<ID2D1Bitmap1> ButtonComponent::GetBitmap()
 }
 
 
-void ButtonComponent::Worked(const MSG& msg)
+
+void ButtonComponent::CheckCollision(const MSG& msg)
 {
 
     POINT CORD = { GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam) };
@@ -38,9 +39,12 @@ void ButtonComponent::Worked(const MSG& msg)
     D2D1_SIZE_F size = currentBitmap->GetSize();
     Rect rect(pos.x, pos.y, size.width, size.height);
 
-    bool wasInside = (m_currentState == ButtonState::Hover || m_currentState == ButtonState::Pressed);
-    bool isInside = InRect(rect, CORD);
+    wasInside = (m_currentState == ButtonState::Hover || m_currentState == ButtonState::Pressed);
+    isInside = InRect(rect, CORD);
+}
 
+void ButtonComponent::Worked(const MSG& msg)
+{
     if (isInside)
     {
         if (msg.message == WM_LBUTTONDOWN)

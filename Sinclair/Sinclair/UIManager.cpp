@@ -321,6 +321,7 @@ void UIManager::HandleSceneObjectInput(const MSG& msg)
 
         //if (obj.get()->GetComponent<ButtonComponent>())
         //{
+        //    obj.get()->CheckCollision(msg);
         //    obj.get()->GetComponent<ButtonComponent>()->Worked(msg);
         //}
     }

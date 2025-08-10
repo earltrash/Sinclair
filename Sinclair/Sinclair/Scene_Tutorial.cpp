@@ -186,11 +186,13 @@ void Scene_Tutorial::CreateObj()
 	// 얘가 필요없는 거 아닌가...
 	auto tutorialButton1_mouseListener = TutorialButton1->AddComponent<MouseListenerComponent>(
 		[tutorialButton1Comp](const MSG& msg) {
+			tutorialButton1Comp->CheckCollision(msg);
 			tutorialButton1Comp->Worked(msg);
 		}
 	);
 	auto tutorialButton2_mouseListener = TutorialButton2->AddComponent<MouseListenerComponent>(
 		[tutorialButton2Comp](const MSG& msg) {
+			tutorialButton2Comp->CheckCollision(msg);
 			tutorialButton2Comp->Worked(msg);
 		}
 	);

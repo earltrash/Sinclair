@@ -175,6 +175,7 @@
     <ClInclude Include="Scene_Title.h" />
     <ClInclude Include="Scene_Tutorial.h" />
     <ClInclude Include="SimpleMathHelper.h" />
+    <ClInclude Include="SliderHandleComponent.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Status.h" />
     <ClInclude Include="TextBank.h" />

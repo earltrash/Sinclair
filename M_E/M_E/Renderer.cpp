@@ -74,6 +74,13 @@ void D2DRenderer::DrawRectangle(float left, float top, float right, float bottom
     m_d2dContext->DrawRectangle(D2D1::Rect(left, top, right, bottom), m_brush.Get());
 }
 
+void D2DRenderer::DrawRectangle(D2D1_RECT_F destRect, const D2D1::ColorF& color)
+{
+    m_brush->SetColor(color);
+    m_d2dContext->DrawRectangle(D2D1::Rect(destRect.left, destRect.top, destRect.right, destRect.bottom), m_brush.Get());
+}
+
+
 void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F dest)
 {
     m_d2dContext->DrawBitmap(bitmap, dest);

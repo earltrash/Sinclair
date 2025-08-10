@@ -41,6 +41,8 @@ public:
 
     void DrawRectangle(float left, float top, float right, float bottom, const D2D1::ColorF& color);
 
+    void DrawRectangle(D2D1_RECT_F destRect, const D2D1::ColorF& color);
+
     void DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F dest);
 
     void DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RECT_F srcRect, float opacity = 1.0f);

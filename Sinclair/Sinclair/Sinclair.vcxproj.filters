@@ -200,6 +200,9 @@
     <ClInclude Include="Scene_Tutorial.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="SliderHandleComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

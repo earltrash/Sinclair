@@ -24,6 +24,14 @@ public:
 
 //private:
 //	std::multimap<std::string, std::unique_ptr<Object>> m_gameObjects;
-	bool isCredit = false;
+	//bool isCredit = false;
+	enum Window {
+		CREDIT,
+		SETTING,
+		NORMAL
+	};
+
+private:
+	Window m_window = NORMAL;
 };
 

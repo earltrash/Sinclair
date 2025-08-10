@@ -65,7 +65,8 @@ public:
 	//renderInfo& GetReference()								// obj 내 다른 component에서 사용
 	//{ 
 	//	return m_renderInfo; 
-	//}															
+	//}		
+														
 	const renderInfo& GetRenderInfo()							// Scene - Render()에서 사용
 	{ 
 		return m_renderInfo; 

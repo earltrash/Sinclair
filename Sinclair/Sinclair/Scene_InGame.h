@@ -17,5 +17,8 @@ public:
 		virtual void Render()override;
 
 		void CreateObj();
+
+private:
+	bool isSETTING = false;
 };
 

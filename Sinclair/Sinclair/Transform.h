@@ -187,6 +187,7 @@ namespace D2DTM
             return m_pivot;
         }
 
+        Vec2 GetPosition() { return m_position; }
     private:
         void SetDirty()
         {
@@ -198,6 +199,7 @@ namespace D2DTM
         }
 
         void UpdateMatrices();
+
 
     private:
 
