@@ -55,6 +55,8 @@ public:
     void RenderCloseButton();
     void RenderSlot(const InventorySlot& slot);
 
+    ItemDatabase& GetItemBase();
+
     void UpdateSlotPositions();
 
 

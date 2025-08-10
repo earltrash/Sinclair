@@ -121,3 +121,10 @@ enum class PotionLevel //아이템창 활성화 시키고, 해당 타입으로 이미지를 변화시킴
 	nothing
 
 };
+
+
+struct Recipe {
+	std::string mat1;
+	std::string mat2;
+	std::string result;
+};

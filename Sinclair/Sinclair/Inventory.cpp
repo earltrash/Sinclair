@@ -21,9 +21,13 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }
     InitializeSlots();
     std::cout << "[Inventory] 슬롯 초기화 완료" << std::endl; // ← 여기 안 나오면 그 안에서 터진 거
 
-    //LoadItemDatabase(Need_Moment::Gen_2);
-    LoadItemDatabase(Need_Moment::Syn);
+   LoadItemDatabase(Need_Moment::Syn);
+
     LoadItemDatabase(Need_Moment::Adv);
+    //LoadItemDatabase(Need_Moment::Syn);
+
+    //LoadItemDatabase(Need_Moment::Gen_2);
+
     //LoadItemDatabase(Need_Moment::Gen_3);
     //LoadItemDatabase(Need_Moment::Gen_4);
 
@@ -803,6 +807,11 @@ void Inventory::UpdateSlotPositions() // -> widndow 기준으로 되고 있지 않아요
             }
         }
     }
+}
+
+ItemDatabase& Inventory::GetItemBase()
+{
+    return m_itemDatabase;
 }
 
 void Inventory::PackItem() //현재 database에 있는 모든 Item을 Slot에 넣어줌 
