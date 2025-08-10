@@ -58,6 +58,8 @@ public:
     // 합성용.
     void PerformSynthesis();
 
+    // 아이템 인벤토리로 반환.
+    void ReturnItemToInventory();
 private:
 
     // size?, bound는 여기에 다 있긴 함. 

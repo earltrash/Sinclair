@@ -57,7 +57,8 @@ public:
 
     void UpdateSlotPositions();
 
-
+    // ΩΩ∑‘ √ ±‚»≠
+    void ClearAllSlots();
 private:
     std::vector<Region> regions;
     std::map<std::pair<int, int>, InventorySlot> slots;  // [region][index] -> slot

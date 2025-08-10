@@ -473,6 +473,34 @@ void SynthesisWin::PerformSynthesis()
 	std::cout << "합성 완료! 결과: " << item1->m_data.id << std::endl;
 }
 
+void SynthesisWin::ReturnItemToInventory()
+{
+		auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+		if (!inventoryWindow) return;
+
+		// 합성창의 모든 슬롯에 있는 아이템들을 인벤토리로 반환
+
+		if (m_slot_Item[SynSlot::Result] != nullptr)
+		{
+				inventoryWindow->AddItem(m_slot_Item[SynSlot::Result]->m_data.id, 1);
+				m_slot_Item[SynSlot::Result] = nullptr;
+		}
+
+		if (m_slot_Item[SynSlot::Slot1] != nullptr)
+		{
+				inventoryWindow->AddItem(m_slot_Item[SynSlot::Slot1]->m_data.id, 1);
+				m_slot_Item[SynSlot::Slot1] = nullptr;
+		}
+
+		if (m_slot_Item[SynSlot::Slot2] != nullptr)
+		{
+				inventoryWindow->AddItem(m_slot_Item[SynSlot::Slot2]->m_data.id, 1);
+				m_slot_Item[SynSlot::Slot2] = nullptr;
+		}
+
+		std::cout << "합성창 닫기 전 모든 아이템 인벤토리로 반환 완료" << std::endl;
+}
+
 void SynthesisWin::Update()
 {
 	if (!m_isActive) return;
@@ -495,9 +523,9 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 			D2DRenderer::Get().DrawBitmap(backgroundBitmap, destRect);
 		}
 
-		float rightMargin = 65.0f;
-		Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 36 };
-		Vec2 closeButtonSize = { 35.0f, 35.0f };
+		float rightMargin = 47;  // 65.0f에서 47.0f로 변경
+		Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };  // +36에서 +7로 변경
+		Vec2 closeButtonSize = { 35, 35 };  // 35x35에서 27x27로 변경
 		D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 
 

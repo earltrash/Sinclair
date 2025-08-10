@@ -49,7 +49,7 @@ void Inventory::InitializeRegions()
     //타이틀 바 영역, 위치만 존재한다고 생각하셈 
     titleBarBounds = Rect(m_position.x, m_position.y, m_size.x, 42.0f);  //7+35
 
-    //닫기 버튼 영역 //86
+    //닫기 버튼 영역
     float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
         m_position.x + m_size.x - (closeButtonSize + 59), //14
@@ -69,7 +69,7 @@ void Inventory::InitializeRegions()
     //닫기 버튼 랜더 위치 
     closeButton.position = Vec2(closeButtonBounds.x, closeButtonBounds.y);
     closeButton.size = Vec2(closeButtonBounds.width, closeButtonBounds.height);
-    closeButton.srcRect = D2D1::RectF(0, 0, 27, 27); // 닫기 버튼 이미지 크기
+    closeButton.srcRect = D2D1::RectF(0, 0, closeButtonSize, closeButtonSize); // 닫기 버튼 이미지 크기
 
     TitleBar.srcRect = D2D1::RectF(m_position.x, m_position.y, m_size.x, 42.0f);
 
@@ -227,6 +227,10 @@ void Inventory::Update() //입력처리를 받은 다음에 해야하는 거잖아? //차피 이거는
 
 void Inventory::Render()
 {
+    // 이거 안하면 계속 그려짐.
+
+    if (!m_isActive) return;
+
     // 1. 윈도우 배경 렌더링
     if (windowBackground.bitmap)
     {
@@ -656,7 +660,7 @@ void Inventory::RenderCloseButton()
 
         D2D1_RECT_F destRect = D2D1::RectF(
             currentCloseButtonPos.x, currentCloseButtonPos.y,
-            currentCloseButtonPos.x + 27.0f, currentCloseButtonPos.y + 27.0f
+            currentCloseButtonPos.x + 35, currentCloseButtonPos.y + 35
         );
         D2D1_RECT_F srcRect = closeButton.srcRect;
 
@@ -803,6 +807,24 @@ void Inventory::UpdateSlotPositions() // -> widndow 기준으로 되고 있지 않아요
             }
         }
     }
+}
+
+void Inventory::ClearAllSlots()
+{
+    // 모든 슬롯 순회하면서 초기화
+    for (auto& [key, slot] : slots)
+    {
+        // 슬롯 내용 클리어
+        slot.Clear();
+
+        // 아이템 비트맵 업데이트 (빈 슬롯으로)
+        slot.UpdateItemBitmap(&controller, &m_itemDatabase);
+
+        // 배경 비트맵 업데이트 (기본 상태로)
+        slot.UpdateBackgroundBitmap(&controller);
+    }
+
+    std::cout << "[Inventory] 모든 슬롯이 초기화되었습니다." << std::endl;
 }
 
 void Inventory::PackItem() //현재 database에 있는 모든 Item을 Slot에 넣어줌 

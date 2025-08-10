@@ -218,6 +218,7 @@ public:
 		// 렌더용
 		void RenderBackground();
 		void RenderCloseButton();
+
 		// 강화 슬롯
 		void RenderEnhancementSlot();
 
@@ -254,7 +255,10 @@ public:
 		void OnEnhancementButtonClick(size_t buttonIndex);
 
 		// 선택된 주문서에 따른 스탯 값 반환
-		int GetSelectedStatValue() const;       
+		int GetSelectedStatValue() const;     
+
+		// 닫기 버튼 시 
+		void ReturnItemToInventory();
 private:
 
 		std::unique_ptr<Object> m_enhancementSlot;									     // 슬롯.

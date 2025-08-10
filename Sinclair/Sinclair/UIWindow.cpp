@@ -51,6 +51,26 @@ bool UIWindow::HandleInput(const MSG& msg)
 				if (IsInCloseButton(CORD))
 				{
 						std::cout << "닫기 할거임." << std::endl;
+
+						// 강화창인 경우 슬롯의 아이템을 인벤토리로 반환
+						if (m_windowType == UIWindowType::EnhancementWindow)
+						{
+								auto* enhancementWindow = dynamic_cast<EnhancementWindow*>(this);
+								if (enhancementWindow)
+								{
+										enhancementWindow->ReturnItemToInventory();
+								}
+						}
+						// 합성창인 경우 슬롯의 아이템들을 인벤토리로 반환
+						else if (m_windowType == UIWindowType::SynthesisWindow)
+						{
+								auto* synthesisWindow = dynamic_cast<SynthesisWin*>(this);
+								if (synthesisWindow)
+								{
+										synthesisWindow->ReturnItemToInventory();
+								}
+						}
+
 						UIManager::Get().CloseWindow(m_windowType);
 						return true;
 				}

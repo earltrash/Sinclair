@@ -324,9 +324,10 @@ void EnhancementWindow::RenderBackground()
 void EnhancementWindow::RenderCloseButton()
 {
 		UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
-		float rightMargin = 47.0f;
+		float rightMargin = 47;  // 47에서 459로 변경
 		Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
-		Vec2 closeButtonSize = { 27.0f, 27.0f };
+		Vec2 closeButtonSize = { 35.0f, 35.0f };  // 27에서 35로 변경
+
 		D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 
 		if (uiRenderer)
@@ -830,6 +831,26 @@ int EnhancementWindow::GetSelectedStatValue() const
 		case 1: return 2;  // 40% 주문서 = +2  
 		case 2: return 5;  // 20% 주문서 = +5
 		default: return 0;
+		}
+}
+
+void EnhancementWindow::ReturnItemToInventory()
+{
+		if (m_targetItem != nullptr)
+		{
+				// 인벤토리로 아이템 반환
+				auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+				if (inventoryWindow)
+				{
+						inventoryWindow->AddItem(m_targetItem->m_data.id, 1);
+						std::cout << "강화창 닫기 전 아이템 인벤토리로 반환: " << m_targetItem->m_data.name << std::endl;
+
+						// 슬롯 비우기
+						m_targetItem = nullptr;
+
+						// 시트 이미지 초기화
+						m_renderSheetCount = 0;
+				}
 		}
 }
 
