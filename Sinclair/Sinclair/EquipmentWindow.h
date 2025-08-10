@@ -89,6 +89,7 @@ public:
 		bool HandleMouseUp(Vec2 mousePos) override;
 		bool HandleDoubleClick(Vec2 mousePos) override;
 		bool HandleMouseHover(Vec2 mousePos) override;
+		bool HandleMouseRight(Vec2 mousePos) override;
 
 		// 장비 아이템 교체. 
 		void EquipItem(Item* item);
@@ -112,7 +113,7 @@ public:
 		bool IsItemTypeMatch(Wearable_part itemType, Wearable_part slotType);
 		bool IsItemTypeMatch(const std::string& itemId, Wearable_part slotType) const;
 
-		bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source);
+		bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override ;
 private:
 		std::unordered_map<Wearable_part, Item*> m_equippedItems;
 		std::unordered_map<Wearable_part, Vec2> m_slotPositions;

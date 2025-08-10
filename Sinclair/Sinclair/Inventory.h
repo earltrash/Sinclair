@@ -43,6 +43,9 @@ public:
     bool HandleMouseDown(Vec2 mousePos) override;
     bool HandleMouseUp(Vec2 mousePos) override;
     bool HandleDoubleClick(Vec2 mousePos) override;
+    bool HandleMouseRight(Vec2 mousePos) override;
+
+    bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
 
     virtual void SetActivate(bool active) { m_isActive = active; }
     UIWindowType GetType() override;
@@ -52,10 +55,12 @@ public:
     void RenderCloseButton();
     void RenderSlot(const InventorySlot& slot);
 
+    ItemDatabase& GetItemBase();
+
     void UpdateSlotPositions();
 
-    bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source);
-
+    // ΩΩ∑‘ √ ±‚»≠
+    void ClearAllSlots();
 private:
     std::vector<Region> regions;
     std::map<std::pair<int, int>, InventorySlot> slots;  // [region][index] -> slot

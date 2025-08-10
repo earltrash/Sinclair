@@ -6,6 +6,8 @@
 #include "Inputmanager.h"
 #include "MouseInput.h"
 
+#include "Item.h"
+
 #define F_GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define F_GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
 
@@ -27,14 +29,22 @@ public:
 		virtual bool HandleMouseUp(Vec2 mousePos) = 0;
 		virtual bool HandleDoubleClick(Vec2 mousePos) = 0;
 
+		virtual bool HandleMouseRight(Vec2 mousePos) = 0;
+
 		// 활성화용도
 		virtual void SetActivate(bool active) { m_isActive = active; }
+
+
+		virtual bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) =0 ;
 
 		// 타입 체크용
 		virtual UIWindowType GetType() = 0;
 
 		// 위치 체크용
 		Vec2 GetPosition() const { return m_position; }
+
+		void SetPosition(Vec2 Pos) { m_position = Pos; } //왜 Object랑 별개의 position이 되어있는가...
+
 
 		// 켜져있는지 체크
 		bool IsActive() const { return m_isActive; }
@@ -55,20 +65,21 @@ public:
 
 		bool IsInCloseButton(Vec2 pos) const
 		{
-			// 오른쪽에서 47 떨어진 지점이 기준이라.
-			float rightMargin = 47.0f;
+				// 오른쪽에서 47 떨어진 지점이 기준이라.
+				float rightMargin = 47.0f;
 
-			// 닫기 버튼 x,y 위치 계산임. +7는 기획서 보고 넣어둠.
-			Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
+				// 닫기 버튼 x,y 위치 계산임. +7는 기획서 보고 넣어둠.
+				Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
 
-			// 닫기 버튼 크기. 마찬가지로 기획서에 있는 그대로임.
-			float closeButtonWidth = 27.0f;
-			float closeButtonHeight = 27.0f;
+				// 닫기 버튼 크기. 마찬가지로 기획서에 있는 그대로임.
+				float closeButtonWidth = 35;
+				float closeButtonHeight = 35;
 
-			// 닫기 버튼 안에 있는지 체크.
-			return pos.x >= closeButtonPos.x && pos.x <= closeButtonPos.x + closeButtonWidth &&
-				pos.y >= closeButtonPos.y && pos.y <= closeButtonPos.y + closeButtonHeight;
+				// 닫기 버튼 안에 있는지 체크.
+				return pos.x >= closeButtonPos.x && pos.x <= closeButtonPos.x + closeButtonWidth &&
+						pos.y >= closeButtonPos.y && pos.y <= closeButtonPos.y + closeButtonHeight;
 		}
+
 
 
 		bool HandleInput(const MSG& msg);

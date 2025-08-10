@@ -115,6 +115,13 @@ void CursorManager::StartItemDrag(std::string itemID, DragSource source, Invento
     SetCursor(CursorType::Drag);
 }
 
+void CursorManager::StartItemDrag_NS(std::string itemid, DragSource source)
+{
+    m_isDragging = true;
+    m_dragSource = source;
+    SetCursor(CursorType::Drag);
+}
+
 void CursorManager::EndItemDrag()
 {
     m_isDragging = false;
@@ -122,4 +129,9 @@ void CursorManager::EndItemDrag()
     m_dragSource = DragSource::None;
     m_sourceSlot = nullptr;
     SetCursor(CursorType::Normal);
+}
+
+void CursorManager::HoveredReleased()
+{
+    { if (m_hoveredItem != nullptr) m_hoveredItem = nullptr; }
 }

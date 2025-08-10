@@ -31,9 +31,6 @@ void ButtonComponent::CheckCollision(const MSG& msg)
     Vec2 pos = m_Owner->GetTransform().GetPosition();
 
 
-    // 투명버튼이 아닌데 비트맵이 설정되지 않았다면 리턴
-    if (!GetBitmap()) return;
-
     // 현재 상태에 맞는 비트맵 크기 사용
     auto currentBitmap = GetBitmap();
     D2D1_SIZE_F size = currentBitmap->GetSize();

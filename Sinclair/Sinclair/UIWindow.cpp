@@ -37,7 +37,7 @@
 
 bool UIWindow::HandleInput(const MSG& msg)
 {
-		// 창이 비활성화되어 있으면 처리 안함
+		// 창이 비활성화되어 있으면 처리 안함 -> 음.. 그럼 다른 창 함수 내에서 이걸 할 필요는 없네 
 		if (!m_isActive)
 				return false;
 
@@ -51,14 +51,37 @@ bool UIWindow::HandleInput(const MSG& msg)
 				if (IsInCloseButton(CORD))
 				{
 						std::cout << "닫기 할거임." << std::endl;
+
+						// 강화창인 경우 슬롯의 아이템을 인벤토리로 반환
+						if (m_windowType == UIWindowType::EnhancementWindow)
+						{
+								auto* enhancementWindow = dynamic_cast<EnhancementWindow*>(this);
+								if (enhancementWindow)
+								{
+										enhancementWindow->ReturnItemToInventory();
+								}
+						}
+						// 합성창인 경우 슬롯의 아이템들을 인벤토리로 반환
+						else if (m_windowType == UIWindowType::SynthesisWindow)
+						{
+								auto* synthesisWindow = dynamic_cast<SynthesisWin*>(this);
+								if (synthesisWindow)
+								{
+										synthesisWindow->ReturnItemToInventory();
+								}
+						}
+
 						UIManager::Get().CloseWindow(m_windowType);
 						return true;
 				}
 				// 타이틀바면 드래그.
-				if (IsInTitleBar(CORD))
+				if (IsInTitleBar(CORD)) //얘 없는 애들은 다 막아야 함. 
 				{
 						std::cout << "드래그 할거임." << std::endl;
-						m_isDragging = true;
+						if(GetType() != UIWindowType::InventoryTooltip)
+						{
+							m_isDragging = true;
+						}
 						
 						m_dragOffset = CORD - m_position;
 						UIManager::Get().OpenWindow(m_windowType);
@@ -67,6 +90,13 @@ bool UIWindow::HandleInput(const MSG& msg)
 				// 바가 아니면 각자 윈도우 위치 내부 로직 처리.
 				return HandleMouseDown(CORD);
 		}
+
+
+		if (msg.message == WM_RBUTTONDOWN)
+		{
+			return HandleMouseRight(CORD);
+		}
+
 
 		// 2. 마우스 왼쪽 버튼을 뗀 경우 (드래그 종료 및 드롭 처리)
 		if (msg.message == WM_LBUTTONUP)
@@ -78,12 +108,27 @@ bool UIWindow::HandleInput(const MSG& msg)
 		}
 
 		// 3. 마우스 이동 중 (창 드래그 로직)
-		if (m_isDragging && msg.message == WM_MOUSEMOVE)
-		{
-				// 창의 위치를 업데이트
+						//if (m_isDragging && msg.message == WM_MOUSEMOVE)
+
+		//if (CursorManager::Get().GetCurrentCursor() == CursorType::Drag
+		//	&& msg.message == WM_MOUSEMOVE) //툴팁만을 위한 특별한 수임. 
+		//{
+		//	return HandleMouseHover(CORD);
+		//}
+
+		else if (m_isDragging && msg.message == WM_MOUSEMOVE) //tooltip은 update 들어가야 함.
+		{	
 				m_position = CORD - m_dragOffset;
-				return true; 
+				return true;
 		}
+
+
+		// 드래그 중이 아닐 때는 마우스 호버만 처리합니다.
+		else if (!m_isDragging && msg.message == WM_MOUSEMOVE)
+		{
+			return HandleMouseHover(CORD); //업데이트를 하긴 함. 
+		}
+
 
 		return false; 
 }

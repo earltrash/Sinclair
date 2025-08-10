@@ -9,6 +9,7 @@
 #include "UIManager.h"
 #include "SliderHandleComponent.h"
 #include "GameManager.h"
+#include "Status.h"
 
 Scene_InGame::Scene_InGame(string name)
 {
@@ -209,6 +210,7 @@ void Scene_InGame::CreateObj()
 
 	창고버튼->SetOnClickCallback([this]() {
 		std::cout << "창고" << std::endl;
+		UIManager::Get().OpenWindow(UIWindowType::InventoryWindow);
 		});
 
 	/// 9
@@ -249,6 +251,7 @@ void Scene_InGame::CreateObj()
 
 	장비버튼->SetOnClickCallback([this]() {
 		std::cout << "장비버튼" << std::endl;
+		UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow);
 		});
 
 	/// 9
@@ -289,6 +292,7 @@ void Scene_InGame::CreateObj()
 
 	스테이터스버튼->SetOnClickCallback([this]() {
 		std::cout << "스테이터스" << std::endl;
+		UIManager::Get().OpenWindow(UIWindowType::StatsWindow);
 		});
 
 	/// 9
@@ -331,6 +335,7 @@ void Scene_InGame::CreateObj()
 
 	강화버튼->SetOnClickCallback([this]() {
 		std::cout << "강화" << std::endl;
+		UIManager::Get().OpenWindow(UIWindowType::EnhancementWindow);
 		});
 
 	/// 9
@@ -373,6 +378,7 @@ void Scene_InGame::CreateObj()
 
 	합성버튼->SetOnClickCallback([this]() {
 		std::cout << "합성" << std::endl;
+		UIManager::Get().OpenWindow(UIWindowType::SynthesisWindow);
 		});
 
 	/// 9

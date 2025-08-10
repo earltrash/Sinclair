@@ -154,6 +154,7 @@
     <ClInclude Include="PlayComponent.h" />
     <ClInclude Include="MouseInput.h" />
     <ClInclude Include="Potion.h" />
+    <ClInclude Include="PotionWin.h" />
     <ClInclude Include="Scene_BJ.h" />
     <ClInclude Include="RenderInfo.h" />
     <ClInclude Include="Scene_End.h" />
@@ -178,11 +179,14 @@
     <ClInclude Include="SliderHandleComponent.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Status.h" />
+    <ClInclude Include="SynthesisWin.h" />
     <ClInclude Include="TextBank.h" />
     <ClInclude Include="StatWindow.h" />
     <ClInclude Include="TMHelper.h" />
+    <ClInclude Include="ToolTip.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UIManager.h" />
+    <ClInclude Include="UIPotion.h" />
     <ClInclude Include="UIWindow.h" />
     <ClInclude Include="UI_Bank.h" />
     <ClInclude Include="UI_Renderer.h" />
@@ -206,6 +210,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="PlayComponent.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="PotionWin.cpp" />
     <ClCompile Include="RenderInfo.cpp" />
     <ClCompile Include="Scene_End.cpp" />
     <ClCompile Include="Scene_History.cpp" />
@@ -224,9 +229,12 @@
     <ClCompile Include="Scene_Tutorial.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StatWindow.cpp" />
+    <ClCompile Include="SynthesisWin.cpp" />
     <ClCompile Include="TextBank.cpp" />
+    <ClCompile Include="ToolTip.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="UIPotion.cpp" />
     <ClCompile Include="UIWindow.cpp" />
     <ClCompile Include="UI_Bank.cpp" />
     <ClCompile Include="UI_Renderer.cpp" />

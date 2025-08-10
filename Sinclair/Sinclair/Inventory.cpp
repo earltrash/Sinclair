@@ -3,10 +3,10 @@
 #include "ItemBank.h"
 #include "CursorManager.h"
 #include "InvenMem.h"
-
+#include "Potion.h"
 
 //: UI_Object(MWP) //생성자로 영역은 일단 설정함 (Inven 자기 영역 말임)
-Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 0,0 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
+Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
 {
 
     m_bound = { 0,0,1208,825 }; // 초기 위치  
@@ -14,14 +14,24 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 0,0 }, Vec
     windowPosition = { m_bound.x,m_bound.y };
 
     InitializeRegions();
-    std::cout << "[Inventory] Regions 초기화 완료" << std::endl;
+  //  std::cout << "[Inventory] Regions 초기화 완료" << std::endl;
     LoadUIBitmaps(); //멤버로 갖고 있는 닫기랑 윗 부분 (이건 Inven이랑 같이할 가능성도 있음) 
-    std::cout << "[Inventory] UI 비트맵 로딩 완료" << std::endl;
+   // std::cout << "[Inventory] UI 비트맵 로딩 완료" << std::endl;
 
     InitializeSlots();
     std::cout << "[Inventory] 슬롯 초기화 완료" << std::endl; // ← 여기 안 나오면 그 안에서 터진 거
 
-    LoadItemDatabase(Need_Moment::Gen_2);
+   LoadItemDatabase(Need_Moment::Syn);
+
+    LoadItemDatabase(Need_Moment::Adv);
+    //LoadItemDatabase(Need_Moment::Syn);
+
+    //LoadItemDatabase(Need_Moment::Gen_2);
+
+    //LoadItemDatabase(Need_Moment::Gen_3);
+    //LoadItemDatabase(Need_Moment::Gen_4);
+
+
     PackItem();
 
     dragState.isDragging = false; // 드래그 상태 초기화
@@ -43,7 +53,7 @@ void Inventory::InitializeRegions()
     //타이틀 바 영역, 위치만 존재한다고 생각하셈 
     titleBarBounds = Rect(m_position.x, m_position.y, m_size.x, 42.0f);  //7+35
 
-    //닫기 버튼 영역 //86
+    //닫기 버튼 영역
     float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
         m_position.x + m_size.x - (closeButtonSize + 59), //14
@@ -63,7 +73,7 @@ void Inventory::InitializeRegions()
     //닫기 버튼 랜더 위치 
     closeButton.position = Vec2(closeButtonBounds.x, closeButtonBounds.y);
     closeButton.size = Vec2(closeButtonBounds.width, closeButtonBounds.height);
-    closeButton.srcRect = D2D1::RectF(0, 0, 27, 27); // 닫기 버튼 이미지 크기
+    closeButton.srcRect = D2D1::RectF(0, 0, closeButtonSize, closeButtonSize); // 닫기 버튼 이미지 크기
 
     TitleBar.srcRect = D2D1::RectF(m_position.x, m_position.y, m_size.x, 42.0f);
 
@@ -221,6 +231,10 @@ void Inventory::Update() //입력처리를 받은 다음에 해야하는 거잖아? //차피 이거는
 
 void Inventory::Render()
 {
+    // 이거 안하면 계속 그려짐.
+
+    if (!m_isActive) return;
+
     // 1. 윈도우 배경 렌더링
     if (windowBackground.bitmap)
     {
@@ -280,7 +294,7 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
     }
 
     // 윈도우 드래그 중일 때
-    if (isWindowDragging)
+    if (isWindowDragging) // 
     {
         float deltaX = mousePos.x - dragStartMousePos.x;
         float deltaY = mousePos.y - dragStartMousePos.y;
@@ -302,6 +316,8 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
 
         // 슬롯들의 위치도 업데이트해야 함
         UpdateSlotPositions();
+
+        return true;
     }
     else // 윈도우 드래그 중이 아닐 때만 슬롯 호버 및 툴팁 처리
     {
@@ -314,33 +330,47 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
             bool wasHovered = slot.isHovered;
             // 슬롯의 현재 렌더링 위치(이동된 창에 따라 달라짐)를 기준으로 Contains 체크
             // slot.bounds는 이미 UpdateSlotPositions에 의해 현재 창 위치에 맞게 업데이트됨 (혹은 이미 초기화 시 올바르게 설정됨)
-            slot.isHovered = slot.bounds.Contains(mousePos);
+
+            slot.isHovered = slot.bounds.Contains(mousePos); //안에 있으면 hovered 인데, 여기서 사실 렌더가 안되야 하거든 
 
             if (wasHovered != slot.isHovered)
             {
                 slot.UpdateBackgroundBitmap(&controller);
             }
 
-            if (slot.isHovered && !slot.IsEmpty())
+            if (slot.isHovered && !slot.IsEmpty())  //-> 
             {
                 hoveredSlot = &slot; // 현재 마우스가 올라간 슬롯
             }
         }
 
         // 툴팁 정보 업데이트
-        if (hoveredSlot)
+        if (hoveredSlot != nullptr)
         {
-            const Item* data = m_itemDatabase.GetItemData(hoveredSlot->item.id);
+             Item* data = m_itemDatabase.GetItemData(hoveredSlot->item.id); // 그 저장된 아이템 정보 가져오는 거임. ㅇㅇ 
+             //Item* data = hoveredSlot->item.
+
+
             if (data)
             {
-                currentHoveredItemName = data->m_data.name;
-                currentHoveredItemDescription = data->m_data.description;
-                currentHoveredItemCount = hoveredSlot->item.count;
-                // 툴팁 위치는 마우스 커서 옆으로 조정 (창이 이동해도 상대적으로 유지)
-                tooltipPosition = Vec2(mousePos.x + 15, mousePos.y + 15);
-                // showTooltip = true;
+                CursorManager::Get().SetHoveredItem(data); 
+                Vec2 tooltipPos = mousePos + Vec2(10, 10);
+
+                UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //위치 변경시키고, 활성화까지 
             }
+            return true;
+
         }
+
+        else //이제는 뭐 나간거겠죠...
+        {
+            CursorManager::Get().HoveredReleased(); //추적 금지 
+            UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //해제
+            return true;
+
+        }
+        return false;
+
     }
 
     // 아이템 드래그 중일 때 (마우스 위치 업데이트)
@@ -538,6 +568,30 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
 
 bool Inventory::HandleDoubleClick(Vec2 mousePos)
 {
+    
+
+    return false;
+}
+
+bool Inventory::HandleMouseRight(Vec2 mousePos)
+{
+    InventorySlot* slot = GetSlotAt(mousePos);
+    if (slot && !slot->IsEmpty())
+    {
+        Potion* item = dynamic_cast<Potion*>(m_itemDatabase.GetItemData(slot->item.id));
+        if (item != nullptr)
+        {
+            int much  = item->GetMuch() -1 ;
+
+            UIManager::Get().ShowPotionWindow(much); //포지션도 맞춰 버렸다고 
+
+        }
+
+
+
+    }
+
+
     return false;
 }
 
@@ -610,7 +664,7 @@ void Inventory::RenderCloseButton()
 
         D2D1_RECT_F destRect = D2D1::RectF(
             currentCloseButtonPos.x, currentCloseButtonPos.y,
-            currentCloseButtonPos.x + 27.0f, currentCloseButtonPos.y + 27.0f
+            currentCloseButtonPos.x + 35, currentCloseButtonPos.y + 35
         );
         D2D1_RECT_F srcRect = closeButton.srcRect;
 
@@ -759,15 +813,38 @@ void Inventory::UpdateSlotPositions() // -> widndow 기준으로 되고 있지 않아요
     }
 }
 
+// 슬롯은 비워지는데 장비창에 있는게 어떻게 꼬일지 모른다. 
+// 일단은 만들기만했지 아무것도 추가 안했으니까.
+void Inventory::ClearAllSlots()
+{
+    // 모든 슬롯 순회하면서 초기화
+    for (auto& [key, slot] : slots)
+    {
+        // 슬롯 내용 클리어
+        slot.Clear();
+
+        // 아이템 비트맵 업데이트 (빈 슬롯으로)
+        slot.UpdateItemBitmap(&controller, &m_itemDatabase);
+
+        // 배경 비트맵 업데이트 (기본 상태로)
+        slot.UpdateBackgroundBitmap(&controller);
+    }
+
+    std::cout << "[Inventory] 모든 슬롯이 초기화되었습니다." << std::endl;
+}
+
+ItemDatabase& Inventory::GetItemBase()
+{
+    return m_itemDatabase;
+}
+
 void Inventory::PackItem() //현재 database에 있는 모든 Item을 Slot에 넣어줌 
 {
-
     for (const auto& [Id, Item] : m_itemDatabase.GetMap())
     {
         //std::cout << Item->m_data.id << endl;
         AddItem(Item->m_data.id, 1);
     }
-
 }
 
 void Inventory::SetDatabase(unique_ptr<ItemDatabase> database) //외부에서 만들고 넣어버릴래/

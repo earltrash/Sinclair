@@ -13,8 +13,12 @@ Wearable::Wearable(const ItemCommonData& data, const json& j) : Item(data)
     {
         std::string part = j["part"];
         m_part = StringToWP(part);
+
+
         Enchan_Count = (m_part == Wearable_part::Weapon) ? 5 : 3; //깔끔하다
-        //BOOL 값 
+         
+        m_EnchanceResult.assign(Enchan_Count, EnchancerType::Default);
+
     }
     else
         std::cout << "장비 파트 부분에서 문제 발생함" << endl;
@@ -98,5 +102,19 @@ void Wearable::SetPart(const Wearable_part& Part)
 Wearable_part Wearable::Getpart()
 {
     return m_part;
+}
+
+vector<EnchancerType>& Wearable::GetEnchancResult()
+{
+    return m_EnchanceResult;
+}
+
+void Wearable::AddStat(const fundamentalStatus& statType)
+{
+    m_stat.agile += statType.agile;
+    m_stat.intelligence += statType.intelligence;
+    m_stat.luck += statType.luck;
+    m_stat.power += statType.power;
+
 }
 
