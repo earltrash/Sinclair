@@ -54,6 +54,13 @@ public:
 				slotinfo = m_statSelectionButton->GetRenderInfo();
 				slotinfo->SetBitmap(slot.Get());
 				m_statSelectionButton->AddComponent<ButtonComponent>(slotinfo);
+				if (auto btn = m_statSelectionButton->GetComponent<ButtonComponent>()) 
+				{
+						btn->BitmapPush("normal", slot);
+						btn->BitmapPush("hover", slot);
+						btn->BitmapPush("pressed", slot);
+						btn->BitmapPush("disabled", slot);
+				}
 				m_statSelectionButton->SetPosition(Vec2(83, 305));
 				
 
@@ -64,6 +71,13 @@ public:
 				slotinfo = m_leftArrowButton->GetRenderInfo();
 				slotinfo->SetBitmap(slot.Get());
 				m_leftArrowButton->AddComponent<ButtonComponent>(slotinfo);
+				if (auto btn = m_leftArrowButton->GetComponent<ButtonComponent>()) 
+				{
+						btn->BitmapPush("normal", slot);
+						btn->BitmapPush("hover", slot);
+						btn->BitmapPush("pressed", slot);
+						btn->BitmapPush("disabled", slot);
+				}
 				m_leftArrowButton->SetPosition(Vec2(43, 305));
 				
 
@@ -73,6 +87,12 @@ public:
 				slotinfo = m_rightArrowButton->GetRenderInfo();
 				slotinfo->SetBitmap(slot.Get());
 				m_rightArrowButton->AddComponent<ButtonComponent>(slotinfo);
+				if (auto btn = m_rightArrowButton->GetComponent<ButtonComponent>()) {
+						btn->BitmapPush("normal", slot);
+						btn->BitmapPush("hover", slot);
+						btn->BitmapPush("pressed", slot);
+						btn->BitmapPush("disabled", slot);
+				}
 				m_rightArrowButton->SetPosition(Vec2(454, 305));
 				
 
@@ -83,6 +103,12 @@ public:
 				slotinfo->SetBitmap(slot.Get());
 				btn1->AddComponent<ButtonComponent>(slotinfo);
 				//btn1->SetPosition(Vec2(98, 444));
+				if (auto bc = btn1->GetComponent<ButtonComponent>()) {
+						bc->BitmapPush("normal", slot);
+						bc->BitmapPush("hover", slot);
+						bc->BitmapPush("pressed", slot);
+						bc->BitmapPush("disabled", slot);
+				}
 				btn1->GetTransform().SetPosition((Vec2(98, 444)));
 
 
@@ -91,6 +117,12 @@ public:
 				slotinfo = btn2->GetRenderInfo();
 				slotinfo->SetBitmap(slot.Get());
 				btn2->AddComponent<ButtonComponent>(slotinfo);
+				if (auto bc = btn2->GetComponent<ButtonComponent>()) {
+						bc->BitmapPush("normal", slot);
+						bc->BitmapPush("hover", slot);
+						bc->BitmapPush("pressed", slot);
+						bc->BitmapPush("disabled", slot);
+				}
 				btn2->SetPosition(Vec2(98, 518));
 				
 
@@ -99,6 +131,12 @@ public:
 				slotinfo = btn5->GetRenderInfo();
 				slotinfo->SetBitmap(slot.Get());
 				btn5->AddComponent<ButtonComponent>(slotinfo);
+				if (auto bc = btn5->GetComponent<ButtonComponent>()) {
+						bc->BitmapPush("normal", slot);
+						bc->BitmapPush("hover", slot);
+						bc->BitmapPush("pressed", slot);
+						bc->BitmapPush("disabled", slot);
+				}
 				btn5->SetPosition(Vec2(98, 592));
 				
 

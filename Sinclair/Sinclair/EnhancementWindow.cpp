@@ -26,9 +26,6 @@ void EnhancementWindow::Render()
 bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 {
 	std::cout << "HandleMouseDown - 마우스 위치: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
-	std::cout << "창 위치: (" << m_position.x << ", " << m_position.y << ")" << std::endl;
-	std::cout << "창 크기: (" << m_size.x << ", " << m_size.y << ")" << std::endl;
-
 		if (!m_isActive) return false;
 
 		// 메세지 만들어서 던지기.
@@ -332,16 +329,39 @@ void EnhancementWindow::RenderEnhancementSlot()
 
 void EnhancementWindow::RenderSheetImages()
 {
+		if (!m_targetItem) return;
+
+		Wearable* wearableItem = dynamic_cast<Wearable*>(m_targetItem);
+		if (!wearableItem) return;
+
+		auto& enchResults = wearableItem->GetEnchancResult();
+
 		size_t count = m_sheetImages.size();
 		size_t renderCount = std::min(static_cast<size_t>(m_renderSheetCount), count);
 
 		for (size_t i = 0; i < renderCount; ++i)
 		{
-				// 첫번째와 마지막은 안그리기 (무기가 아닌 경우 3개만 렌더링)
-				if (m_renderSheetCount == 3 && (i == 0 || i == count))
-						continue;
-
 				auto& sheet = m_sheetImages[i];
+				auto bgComp = sheet->GetComponent<BackgroundComponent>();
+				if (!bgComp) continue;
+
+				// 상태별 비트맵 선택
+				switch (enchResults[i])
+				{
+				case EnchancerType::Default:
+						bgComp->SetCurrentBitmap("Normal");
+						break;
+				case EnchancerType::Sucess:
+						bgComp->SetCurrentBitmap("Success");
+						break;
+				case EnchancerType::Fail:
+						bgComp->SetCurrentBitmap("Fail");
+						break;
+				default:
+						continue;
+				}
+
+				// 화면에 렌더링
 				ID2D1Bitmap1* bmp = sheet->GetRenderInfo()->GetRenderInfo().bitmap;
 				Vec2 pos = m_position + sheet->GetTransform().GetPosition();
 
@@ -444,29 +464,37 @@ void EnhancementWindow::TryEnhance(int successRate)
 		// 아이템 정보 업데이트. 
 		if (!m_targetItem) return;
 
+		Wearable* wearableItem = dynamic_cast<Wearable*>(m_targetItem);
+
+		if (!wearableItem || wearableItem->GetEnchanCount() <= 0)
+				return;
+
 		// 랜덤 성공/실패 결정
 		std::uniform_int_distribution<int> dist(1, 100);
+
 		int roll = dist(m_rng);
 		bool success = roll <= successRate;
+
+		int currentIndex = wearableItem->GetEnchanCount() - 1;
 
 		if (success)
 		{
 				std::cout << "강화 성공!" << std::endl;
 				// 성공 애니메이션 및 아이템 스탯 업데이트
 				// 아이템 정보 가져와서 스탯 올려주기.
+				wearableItem->GetEnchancResult()[currentIndex] = EnchancerType::Sucess;
 		}
 		else
 		{
 				std::cout << "강화 실패..." << std::endl;
 				// 실패 애니메이션
-				// 실패 시 아이템 강화 횟수만 차감이라 뭐 없음.
+				// 실패로 바꿔주기.
+				wearableItem->GetEnchancResult()[currentIndex] = EnchancerType::Fail;
 		}
 
-		// 강화 횟수 차감
-		/*if (m_targetItem > 0)
-		{
-				cout--;
-		}*/
+		// 카운트 빼주기.
+		wearableItem->UseEnhanceChance();
+
 }
 
 void EnhancementWindow::UpdateSheetVisibility()
@@ -480,10 +508,12 @@ void EnhancementWindow::UpdateSheetVisibility()
 		if (wearableItem->Getpart() == Wearable_part::Weapon)
 		{
 				m_renderSheetCount = 5;
+				wearableItem->GetEnchancResult().assign(5, EnchancerType::Default);
 		}
 		else
 		{
 				m_renderSheetCount = 3;
+				wearableItem->GetEnchancResult().assign(3, EnchancerType::Default);
 		}
 }
 
@@ -630,6 +660,13 @@ void EnhancementWindow::OnEnhancementButtonClick(size_t buttonIndex)
 				std::cout << "강화할 아이템이 없습니다" << std::endl;
 				return;
 		}
+		for (size_t i = 0; i < m_enhancementButtons.size(); ++i)
+		{
+				auto bgComp = m_enhancementButtons[i]->GetComponent<ButtonComponent>();
+				if (!bgComp) continue;
+				bgComp->SetOpacity(i == buttonIndex ? 1.0f : 0.7f);
+		}
+
 
 		// 버튼 인덱스에 따른 성공률
 		int successRate = 0;

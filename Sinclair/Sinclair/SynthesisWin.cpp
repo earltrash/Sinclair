@@ -62,6 +62,11 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 	{
 		Item* Clicked_Item = m_slot_Item[whichSlot];
 
+		if (!Clicked_Item)
+		{
+				return false;
+		}
+
 		CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Equipment);
 		CursorManager::Get().SetDraggedItem(Clicked_Item);
 

@@ -13,6 +13,9 @@ public:
  Wearable_part Getpart();
  vector<EnchancerType>& GetEnchancResult();
 
+ int GetEnchanCount() const { return Enchan_Count; }
+ void UseEnhanceChance() { if (Enchan_Count > 0) --Enchan_Count; }
+
  //위 둘은 ItemGlobal 참고 
 private:
 fundamentalStatus m_stat{}; //장비의 스텟 

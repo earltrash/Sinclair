@@ -77,47 +77,47 @@ enum class Need_Moment //-> 언제 필요하냐?
 //----------------------------------- ui ----------------------------------------
 enum class UIWindowType
 {
-	SettingsWindow = 0,         // 설정창
-	InventoryWindow,            // 인벤토리
-	InventoryTooltip,           // 인벤토리툴팁
-	EquipmentWindow,            // 장비창
-	StatsWindow,                // 스탯창
-	EnhancementWindow,          // 강화창
-	SynthesisWindow,            // 합성창
-	StatPotionUseWindow         // 스탯 증가 물약 사용창
+		SettingsWindow = 0,         // 설정창
+		InventoryWindow,            // 인벤토리
+		InventoryTooltip,           // 인벤토리툴팁
+		EquipmentWindow,            // 장비창
+		StatsWindow,                // 스탯창
+		EnhancementWindow,          // 강화창
+		SynthesisWindow,            // 합성창
+		StatPotionUseWindow         // 스탯 증가 물약 사용창
 };
 
 enum class CursorType
 {
-	Normal,
-	Pressed,
-	Move,
-	Pointer,
-	Drag
+		Normal,
+		Pressed,
+		Move,
+		Pointer,
+		Drag
 };
 
 enum class DragSource
 {
-	Inventory,
-	Equipment,
-	Enhancement,
-	None
+		Inventory,
+		Equipment,
+		Enhancement,
+		None
 };
 
 enum class EnchancerType //아이템의 정보를 읽고 와서 enum값 처리 -> enum 읽고 Render처리
 {
-	Default,
-	Fail,
-	Sucess,
-	Nothing
+		Default,
+		Fail,
+		Sucess,
+		Nothing
 };
 
 
 enum class PotionLevel //아이템창 활성화 시키고, 해당 타입으로 이미지를 변화시킴. 
 {
-	level1, //0
-	level2, //1 
-	level3, //2 
-	nothing
+		level1, //0
+		level2, //1 
+		level3, //2 
+		nothing
 
 };
