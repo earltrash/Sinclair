@@ -14,7 +14,29 @@ void GameManager::Initalize()
     m_SynTable.push_back({ "W009", "I024", "W014" });
     m_SynTable.push_back({ "W010", "I025", "W015" });
 
+    // ¿”Ω√∑Œ ∏∏µÎ - æÍ∑Œ ∞ËªÍ«“≤®¿”
+    TotalStatus gen2;
+    gen2.Charm         = 21;
+    gen2.Health        = 43;
+    gen2.Knowledge     = 54;
+    gen2.Magic_Power   = 65;
+    gen2.Strength      = 78;
 
+    TotalStatus gen3;
+    gen3.Charm         = 58;
+    gen3.Health        = 53;
+    gen3.Knowledge     = 74;
+    gen3.Magic_Power   = 21;
+    gen3.Strength      = 46;
+
+    TotalStatus gen4;
+    gen4.Charm         = 46;
+    gen4.Health        = 74;
+    gen4.Knowledge     = 85;
+    gen4.Magic_Power   = 12;
+    gen4.Strength      = 35;
+
+    arrTotalStatus = { gen2,gen3,gen4 };
 }
 
 GameManager& GameManager::Get()
@@ -25,7 +47,7 @@ GameManager& GameManager::Get()
 
 void GameManager::SetGen()
 {
-
+    
 }
 
 string GameManager::Synthesis(const string& id1, const string& id2)

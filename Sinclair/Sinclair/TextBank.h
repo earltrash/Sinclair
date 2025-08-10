@@ -26,13 +26,6 @@ public:
     
     struct Ending
     {
-        //int ID;
-        //pair<string, optional<string>> positive;
-        //optional<string> negative;
-        //int fame;
-        //string job;
-        //vector<string> endingTexts;
-
         int ID;
         string positive;
         string negative;
@@ -41,13 +34,25 @@ public:
         string 엔딩텍스트;
     };
 
+    // 이걸로 바꿔야 함
+    struct Ending_
+    {
+        int ID;
+        pair<string, optional<string>> positive;
+        optional<string> negative;
+        int fame;
+        string job;
+        vector<string> endingTexts;
+    };
+
     void parseTSV_Ending(const string& filename);
+    void parseTSV_Ending_(const string& filename);
 
 
 //private: //일단 퍼블릭
 public:
      vector<Ending>  EndingVector;
-
+     vector<Ending_>  Ending_Vector;
 
 };
 

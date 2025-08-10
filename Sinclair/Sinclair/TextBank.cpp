@@ -103,4 +103,46 @@ void TextBank::parseTSV_Ending(const string& filename)
     cout << "엔딩 텍스트" << endl;
 }
 
+void TextBank::parseTSV_Ending_(const string& filename)
+{
+    ifstream file(filename);
+    string line;
+
+    if (!file.is_open()) {
+        cout << "파일을 열 수 없습니다: " << filename << endl;
+        return;
+    }
+
+    // 헤더 스킵
+    getline(file, line);
+
+    while (getline(file, line)) {
+        istringstream ss(line);
+        string field;
+        Ending_ ending_data;
+
+        // ID - 안전한 변환
+        if (getline(ss, field, '\t')) {
+            try {
+                // 공백 제거
+                field.erase(0, field.find_first_not_of(" \t\r\n"));
+                field.erase(field.find_last_not_of(" \t\r\n") + 1);
+
+                if (!field.empty()) {
+                    ending_data.ID = stoi(field);
+                }
+                else {
+                    ending_data.ID = 0; // 기본값
+                }
+            }
+            catch (const exception& e) {
+                cout << "ID 변환 오류: '" << field << "' - " << e.what() << endl;
+                ending_data.ID = 0;
+            }
+        }
+
+    }
+
+}
+
 
