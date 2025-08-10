@@ -573,7 +573,7 @@ bool Inventory::HandleMouseRight(Vec2 mousePos)
         Potion* item = dynamic_cast<Potion*>(m_itemDatabase.GetItemData(slot->item.id));
         if (item != nullptr)
         {
-            int much  = item->GetMuch();
+            int much  = item->GetMuch() -1 ;
 
             UIManager::Get().ShowPotionWindow(much); //포지션도 맞춰 버렸다고 
 

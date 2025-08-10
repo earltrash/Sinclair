@@ -49,16 +49,6 @@ void Scene_Outgame::Enter()
 		Initalize();
 	SetupCharacterAndBackground();
 
-
-	 if (GameManager::Get().WasInGame) {
-		 m_state = State::CHOICE_MENU;
-	 } else {
-		 m_state = State::FIRST_ENTER;
-		 GameManager::Get().WasInGame = true;
-}
-
-
-	// 우선 초기 상태로 진입
 	ChangeState(m_state);
 }
 

@@ -25,7 +25,7 @@ void UIPotion::Render()
 	UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
 	if (uiRenderer)
 	{
-		ComPtr<ID2D1Bitmap1> backgroundBitmap = m_BG_BITMAP[static_cast<int>(GetLevel())];
+		ComPtr<ID2D1Bitmap1> backgroundBitmap = m_BG_BITMAP[static_cast<int>(GetLevel()) ];
 		if (backgroundBitmap)
 		{
 			D2D1_RECT_F destRect = { m_position.x, m_position.y, m_position.x + m_size.x, m_position.y + m_size.y };
