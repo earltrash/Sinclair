@@ -418,6 +418,14 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
     Item* draggedItemData = CursorManager::Get().GetDraggedItem(); // CursorManager에서 드래그 중인 아이템 가져오기
     DragSource dragSource = CursorManager::Get().GetDragSource();
 
+    // 만약 장비창에서 온거면 스탯 업데이트
+    if (dragSource == DragSource::Equipment)
+    {
+        if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
+        {
+            statWindow->UpdateTotalStats();
+        }
+    }
     bool placed = false;
 
     if (targetSlot && targetSlot->isEnabled && draggedItemData)

@@ -16,7 +16,6 @@ using namespace DirectX;
 
 void StatWindow::Update()
 {
-    
 }
 
 void StatWindow::Render()
