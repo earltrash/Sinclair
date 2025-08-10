@@ -287,6 +287,27 @@ bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, Drag
 		return true;
 }
 
+bool EnhancementWindow::HandleMouseRight(Vec2 mousePos)
+{
+		Item* item = m_targetItem;
+
+		Wearable* wearableItem = dynamic_cast<Wearable*>(item);
+		// 만약 현재 착용한 아이템 있으면.
+		if (wearableItem->Getpart() != Wearable_part::UnKnown)
+		{
+				// 인벤토리로 복귀
+				if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
+				{
+						// 슬롯 아이템 지워주기.
+						inventory->AddItem(item->m_data.id, 1);
+						m_targetItem = nullptr;
+						return true;
+				}
+		}
+
+		return false;
+}
+
 void EnhancementWindow::RenderBackground()
 {
 		UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
@@ -560,25 +581,22 @@ void EnhancementWindow::TryEnhance(int successRate)
 				{
 				case Stat::STR:
 						addStat.power = statValue;
-						wearableItem->AddStat(addStat, statValue);
 						std::cout << "STR + " << statValue << " 추가!" << std::endl;
 						break;
 				case Stat::DEX:
 						addStat.agile = statValue;
-						wearableItem->AddStat(addStat, statValue);
 						std::cout << "DEX + " << statValue << " 추가!" << std::endl;
 						break;
 				case Stat::INT:
 						addStat.intelligence = statValue;
-						wearableItem->AddStat(addStat, statValue);
 						std::cout << "INT + " << statValue << " 추가!" << std::endl;
 						break;
 				case Stat::LUK:
 						addStat.luck = statValue;
-						wearableItem->AddStat(addStat, statValue);
 						std::cout << "LUK + " << statValue << " 추가!" << std::endl;
 						break;
 				}
+				wearableItem->AddStat(addStat);
 		}
 		else
 		{

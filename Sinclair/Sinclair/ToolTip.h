@@ -44,8 +44,12 @@ public:
     bool HandleMouseDown(Vec2 mousePos) override;
     bool HandleMouseUp(Vec2 mousePos) override;
     bool HandleDoubleClick(Vec2 mousePos) override;
+    bool HandleMouseRight(Vec2 mousePos) override;
 
     bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
+
+    void UpdatePositions();
+
 
     virtual void SetActivate(bool active) { m_isActive = active; }
     UIWindowType GetType() override;
@@ -75,7 +79,10 @@ private:
 
 
     std::vector<Vec2> m_enchancer_Pos; //±×³É º¤ÅÍ¶û ¿¬°á 
+    std::vector<Vec2> m_enchancer_PosBase;
 
     std::map< TextType, Vec2> m_text_pos;
+    std::map<TextType, Vec2> m_text_posBase;
+
 };
 

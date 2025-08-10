@@ -34,6 +34,7 @@ public:
     bool HandleMouseDown(Vec2 mousePos) override;
     bool HandleMouseUp(Vec2 mousePos) override;
     bool HandleDoubleClick(Vec2 mousePos) override;
+    bool HandleMouseRight(Vec2 mousePos) override;
 
     void LoadUIBitmaps(); //얘는 비트맵 가져오기지 뭐
     void InitializeMem(); //버튼 오브젝트도 만들어야 하고, 슬롯도 처리해야 함
@@ -69,7 +70,7 @@ private: // 오브젝트로 만들어서 컴포넌트 넣어가지고 위치 받으면 처리?
     vector <ComPtr<ID2D1Bitmap1>> m_luk_bitmap;
 
     PotionLevel m_PotionLevel;
-    PotionStat m_Stat;
+    Status_fundamental m_Stat;
     //그럼 받아야 하는게, 스탯이랑 수치 정도치잖아 
 };
 

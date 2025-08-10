@@ -2,6 +2,7 @@
 #include "UI_Bank.h"
 #include "UI_Renderer.h"
 #include "ResourceManager.h"
+#include "GameManager.h"
 
 UIPotion::UIPotion() : UIWindow(UIWindowType::StatPotionUseWindow, Vec2{ 0,0 }, Vec2{ 524,766 })  // Vec2{ 1097,766 }) 
 {
@@ -24,12 +25,13 @@ void UIPotion::Render()
 	UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
 	if (uiRenderer)
 	{
-		ComPtr<ID2D1Bitmap1> backgroundBitmap = m_BG_BITMAP[static_cast<int>(GetLevel())];
+		ComPtr<ID2D1Bitmap1> backgroundBitmap = m_BG_BITMAP[static_cast<int>(GetLevel()) ];
 		if (backgroundBitmap)
 		{
 			D2D1_RECT_F destRect = { m_position.x, m_position.y, m_position.x + m_size.x, m_position.y + m_size.y };
 
 			D2DRenderer::Get().DrawBitmap(backgroundBitmap.Get(), destRect);
+
 		}
 
 		float rightMargin = 66.0f; //524-458
@@ -146,11 +148,14 @@ bool UIPotion::HandleMouseDown(Vec2 mousePos)
 		{
 			//1번 인덱스에서 그랬다면,  str
 
-			m_Stat = static_cast<PotionStat>(i); // 인덱스가 스텟임. 
-			int Much = static_cast<int>(GetLevel());
+			m_Stat = static_cast<Status_fundamental>(i); // 인덱스가 스텟임. 
+			int Much = static_cast<int>(GetLevel()) +1 ; 
 
 			//이대로 게임 매니져한테 보내주던가 //스탯이랑 수치 
 			std::cout << " 스탯 인덱스 " << static_cast<int>(m_Stat) << "수치 " << Much << endl;
+
+
+			//게임 매니져 한테, 타입으로 주고, 
 
 			//더블클릭 된 아이템의 수명 주기를 여기서 해결한다. 
 			//합성 및 강화로 인한 아이템 삭제를 처리 해야하긴 할 듯. 
@@ -168,6 +173,11 @@ bool UIPotion::HandleMouseUp(Vec2 mousePos)
 }
 
 bool UIPotion::HandleDoubleClick(Vec2 mousePos)
+{
+	return false;
+}
+
+bool UIPotion::HandleMouseRight(Vec2 mousePos)
 {
 	return false;
 }

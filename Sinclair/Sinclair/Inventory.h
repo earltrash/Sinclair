@@ -43,6 +43,7 @@ public:
     bool HandleMouseDown(Vec2 mousePos) override;
     bool HandleMouseUp(Vec2 mousePos) override;
     bool HandleDoubleClick(Vec2 mousePos) override;
+    bool HandleMouseRight(Vec2 mousePos) override;
 
     bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
 

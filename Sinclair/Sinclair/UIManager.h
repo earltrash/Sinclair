@@ -105,6 +105,8 @@ public:
     // buttoncomponent가 있을거니까 거기에 있는 함수 실행시키기.
     void HandleSceneObjectInput(const MSG& msg);
 
+    void ShowPotionWindow(int level);
+
     std::string GetWearablePartString(Wearable_part type);
 
 private:

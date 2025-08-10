@@ -15,13 +15,14 @@ public:
 
  int GetEnchanCount() const { return Enchan_Count; }
  void UseEnhanceChance() { if (Enchan_Count > 0) --Enchan_Count; }
- void AddStat(fundamentalStatus statType, int value);
+ void AddStat(const fundamentalStatus& statType);
 
 
  //위 둘은 ItemGlobal 참고 
 private:
 fundamentalStatus m_stat{}; //장비의 스텟 
 Wearable_part m_part; //장비 중에서도 어떤 파츠인지
+
 int Enchan_Count; //무기면 5, 갑옷 3번 
 vector<EnchancerType> m_EnchanceResult;
 };

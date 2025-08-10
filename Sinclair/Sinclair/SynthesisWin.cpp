@@ -14,7 +14,7 @@ SynthesisWin::SynthesisWin() :UIWindow(UIWindowType::SynthesisWindow, Vec2{ 0,0 
 
 SynthesisWin::~SynthesisWin()
 {
-	
+
 }
 
 bool SynthesisWin::HandleMouseHover(Vec2 mousePos) //hover? 
@@ -29,26 +29,40 @@ bool SynthesisWin::HandleMouseHover(Vec2 mousePos) //hover?
 
 		// 창 위치가 바뀌면 슬롯 위치들도 다시 계산
 		UpdatePosition();
-	}
-
-	// 슬롯에 마우스 오버 시 툴팁 표시
-	SynSlot whichSlot = SlotInit(mousePos);
-	if (whichSlot != SynSlot::Nothing)
-	{
-		Item* Clicked_Item = m_slot_Item[whichSlot];
-		// 툴팁 표시 위치를 마우스 옆으로 조정
-		Vec2 tooltipPos = mousePos + Vec2(10, 10);
-		UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos);
 		return true;
-
 	}
-		
-	else
+
+	else 
 	{
-		// 마우스가 슬롯 밖으로 나가면 툴팁 숨기기
-		UIManager::Get().HideTooltip(UIWindowType::InventoryTooltip);
-	}
+		// 슬롯에 마우스 오버 시 툴팁 표시
+		SynSlot whichSlot = SlotInit(mousePos);
 
+		if (whichSlot != SynSlot::Nothing)
+		{
+			Item* Clicked_Item = m_slot_Item[whichSlot];
+			if (Clicked_Item != nullptr)
+			{
+				CursorManager::Get().SetHoveredItem(Clicked_Item);
+				Vec2 tooltipPos = mousePos + Vec2(10, 10);
+
+				UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //위치 변경시키고, 활성화까지 
+				return true;
+			}
+			else
+				return true;
+
+		}
+
+		else/* if(whichSlot == SynSlot::Nothing)*/
+		{
+			CursorManager::Get().HoveredReleased(); //추적 금지 
+			return false;
+		}
+	}
+	
+
+	CursorManager::Get().HoveredReleased(); //추적 금지 
+	UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //해제
 	return false;
 }
 
@@ -58,32 +72,28 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 	if (!m_isActive) return false;
 
 	SynSlot whichSlot = SlotInit(mousePos);
+
 	if (whichSlot != SynSlot::Nothing)
 	{
 		Item* Clicked_Item = m_slot_Item[whichSlot];
 
-		if (!Clicked_Item)
-		{
-				return false;
-		}
+		if (Clicked_Item == nullptr)
+			return false; // 빈 슬롯이면 드래그 안 함
 
 		CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Equipment);
 		CursorManager::Get().SetDraggedItem(Clicked_Item);
 
-		// 결과 슬롯에서 드래그할 때 모든 슬롯 초기화
-		if (whichSlot == SynSlot::Result)
+		if (whichSlot == SynSlot::Result) //아이템이 있는 result 슬롯을 누르면 다 반환시킨다라 
 		{
 			m_slot_Item[SynSlot::Result] = nullptr;
 			m_slot_Item[SynSlot::Slot1] = nullptr;
 			m_slot_Item[SynSlot::Slot2] = nullptr;
 		}
-		else
+		else //아닌 경우에는, 그치 기존 슬롯에 있던거 빼야지 
 		{
-			// 일반 슬롯에서 드래그할 때는 해당 슬롯만 초기화
 			m_slot_Item[whichSlot] = nullptr;
 		}
-
-		return true;
+		return true; // 드래그 시작 시에는 무조건 true 반환
 	}
 
 	SynButton whichBut = ButtonInit(mousePos);
@@ -91,7 +101,7 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 	// cancel 버튼 클릭 시 슬롯 정리.
 	if (whichBut != SynButton::Nothing && whichBut == SynButton::Cancle)
 	{
-		
+
 		for (auto& [type, pos] : m_slot)
 		{
 			Item* item = m_slot_Item[type];
@@ -111,7 +121,7 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 
 		return true;
 	}
-	else if(whichBut != SynButton::Nothing && whichBut == SynButton::Syn)
+	else if (whichBut != SynButton::Nothing && whichBut == SynButton::Syn)
 	{
 		//뭐 합성이겠지 
 		PerformSynthesis();
@@ -119,7 +129,7 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 
 	}
 
-	if (IsInBounds(mousePos)) 
+	if (IsInBounds(mousePos))
 	{
 		UIManager::Get().OpenWindow(m_windowType);
 		return true;
@@ -134,47 +144,67 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 	if (!m_isActive) return false;
 
 	//  현재 아이템을 드래그 중인지 확인
-	if (CursorManager::Get().IsDragging())
-	{
+	if (!CursorManager::Get().IsDragging()) return false;
+	
 		// 드래그 중인 아이템과 소스 정보 가져오기
 		Item* draggedItem = CursorManager::Get().GetDraggedItem();
 		DragSource dragSource = CursorManager::Get().GetDragSource();
 		SynSlot whichSlot = SlotInit(mousePos);
 
 
-		if (whichSlot != SynSlot::Nothing && draggedItem->m_data.synthesizable)
+		if (whichSlot == SynSlot::Result && draggedItem != nullptr)
 		{
-			Item* previousItem = m_slot_Item[whichSlot]; // 원래 슬롯에 있던 아이템
-			m_slot_Item[whichSlot] = draggedItem;
+			auto* inventoryWindow = dynamic_cast<Inventory*>(
+				UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 
-			// 기존 아이템이 있었다면 인벤토리로 복구.
-			if (previousItem)
-			{
-				auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+			// 기존 아이템 복귀
+			Item* previousItem = m_slot_Item[whichSlot];
+			if (previousItem != nullptr) {
 				inventoryWindow->AddItem(previousItem->m_data.id, 1);
-
-				std::cout << "DEBUG: 기존 아이템이 있어 인벤토리로 복구시킴." << std::endl;
 			}
-			// 드래그 종료.
+
+			// 드롭한 아이템도 복귀
+			inventoryWindow->AddItem(draggedItem->m_data.id, 1);
+
+			// 결과 슬롯 비우기
+			m_slot_Item[whichSlot] = nullptr;
+
 			CursorManager::Get().EndItemDrag();
 			return true;
 		}
+
+		else if (whichSlot != SynSlot::Nothing && draggedItem != nullptr)
+		{
+			Item* previousItem = m_slot_Item[whichSlot];
+			m_slot_Item[whichSlot] = draggedItem;
+
+			if (previousItem)
+			{
+				auto* inventoryWindow = dynamic_cast<Inventory*>(
+					UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+				inventoryWindow->AddItem(previousItem->m_data.id, 1);
+			}
+
+			CursorManager::Get().EndItemDrag();
+
+			// 드롭한 아이템을 바로 hover 상태로
+			CursorManager::Get().SetHoveredItem(draggedItem);
+			UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, mousePos + Vec2(10, 10));
+
+			return true;
+		}
+
+		
+
+
 		else //부적절한 Slot이거나, 다른 창인 경우도 봐야 겠죠? 
 		{
 			CursorManager::Get().EndItemDrag();
-
 			return HandleDropFailure(mousePos, draggedItem, dragSource);
-
 		}
-	}
+	
 
-	//  창 내부 클릭 시 최상단으로 올리기 (드래그 드롭 로직 이후에 처리)
-
-	//if (IsInBounds(mousePos)) // -> 얘는 왜 있는 거임?
-	//{
-	//	UIManager::Get().OpenWindow(m_windowType);
-	//	return true;
-	//}
+	CursorManager::Get().HoveredReleased();
 	return false;
 }
 
@@ -183,23 +213,43 @@ bool SynthesisWin::HandleDoubleClick(Vec2 mousePos) //swap 정도? sort도 필요할 �
 	return false;
 }
 
+bool SynthesisWin::HandleMouseRight(Vec2 mousePos) //slot 위치에 mousepos -> 1 2 번째인 경우에만. 
+{
+	
+	SynSlot whichSlot = SlotInit(mousePos); //마우스 오른쪽 클릭된 슬롯 
+
+	if (whichSlot != SynSlot::Nothing)
+	{
+		Item* Clicked_Item = m_slot_Item[whichSlot]; 
+
+		if (Clicked_Item != nullptr)
+		{
+			//기존 슬롯에 있던 
+			m_slot_Item[whichSlot] = nullptr;
+
+			if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
+			{
+				inventory->AddItem(Clicked_Item->m_data.id, 1);
+
+				return true;
+			}
+		}
+
+
+
+	}
+
+	return false;
+}
+
 void SynthesisWin::UpdatePosition()
 {
-	m_slot[SynSlot::Result] = { m_position.x+ 226,m_position.y + 140 };
+	m_slot[SynSlot::Result] = { m_position.x + 226,m_position.y + 140 };
 	m_slot[SynSlot::Slot1] = { m_position.x + 92 , m_position.y + 419 };
 	m_slot[SynSlot::Slot2] = { m_position.x + 359 ,m_position.y + 419 };
-	 
+
 	m_but[SynButton::Cancle] = { m_position.x + 52,m_position.y + 626 };
 	m_but[SynButton::Syn] = { m_position.x + 286,m_position.y + 626 };
-
-
-
-
-	//for (auto& [type, relPos] : m_slot)
-	//	m_slot[type] = m_position + relPos;
-
-	//for (auto& [type, relPos] : m_but)
-	//	m_but[type] = m_position + relPos;
 
 
 }
@@ -251,15 +301,15 @@ void SynthesisWin::MemRender()
 		Vec2 closeButtonSize = { 35.0f, 35.0f };
 		D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 
-		
-			ID2D1Bitmap1* closeButtonBitmap = uiRenderer->GetBitmap("Close_But").Get();
 
-			if (closeButtonBitmap)
-			{
-				D2DRenderer::Get().DrawBitmap(closeButtonBitmap, destRect);
-			}
+		ID2D1Bitmap1* closeButtonBitmap = uiRenderer->GetBitmap("Close_But").Get();
 
-		
+		if (closeButtonBitmap)
+		{
+			D2DRenderer::Get().DrawBitmap(closeButtonBitmap, destRect);
+		}
+
+
 
 		for (const auto& [type, pos] : m_slot)
 		{
@@ -402,6 +452,9 @@ void SynthesisWin::PerformSynthesis()
 	}
 
 	// 두 아이템 모두 합성 가능한지 확인
+
+	//이건 테이블로 확인 해야 함. 
+	
 	if (!item1->m_data.synthesizable || !item2->m_data.synthesizable)
 	{
 		std::cout << "합성 불가능한 아이템이 포함되어 있습니다." << std::endl;
@@ -423,9 +476,9 @@ void SynthesisWin::PerformSynthesis()
 void SynthesisWin::Update()
 {
 	if (!m_isActive) return;
-		//m_position = mousePos - m_dragOffset;
-		UpdatePosition();
-	
+	//m_position = mousePos - m_dragOffset;
+	UpdatePosition();
+
 }
 
 void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → 닫기 버튼
@@ -447,14 +500,14 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 		Vec2 closeButtonSize = { 35.0f, 35.0f };
 		D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 
-		
-			ID2D1Bitmap1* closeButtonBitmap = uiRenderer->GetBitmap("Close_But").Get();
-			if (closeButtonBitmap)
-			{
-				D2DRenderer::Get().DrawBitmap(closeButtonBitmap, destRect);
-			}
 
-		
+		ID2D1Bitmap1* closeButtonBitmap = uiRenderer->GetBitmap("Close_But").Get();
+		if (closeButtonBitmap)
+		{
+			D2DRenderer::Get().DrawBitmap(closeButtonBitmap, destRect);
+		}
+
+
 
 		for (const auto& [type, pos] : m_slot)
 		{
@@ -464,14 +517,20 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 
 			if (item != nullptr)
 			{
+				
+
+				ID2D1Bitmap1* SlotBitmap = (type == SynSlot::Result) ? uiRenderer->GetBitmap("Syn_Result").Get() : uiRenderer->GetBitmap("Syn_Slot").Get();
+				D2DRenderer::Get().DrawBitmap(SlotBitmap, DEST);
+
 				D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).atlas.Get(),
 					DEST, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).srcRect, 1);
+
 			}
 			else
-			
+
 			{
-				ID2D1Bitmap1* closeButtonBitmap = (type == SynSlot::Result) ? uiRenderer->GetBitmap("Syn_Result").Get() : uiRenderer->GetBitmap("Syn_Slot").Get();
-				D2DRenderer::Get().DrawBitmap(closeButtonBitmap, DEST);
+				ID2D1Bitmap1* SlotBitmap = (type == SynSlot::Result) ? uiRenderer->GetBitmap("Syn_Result").Get() : uiRenderer->GetBitmap("Syn_Slot").Get();
+				D2DRenderer::Get().DrawBitmap(SlotBitmap, DEST);
 			}
 
 
@@ -479,9 +538,9 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 
 		for (const auto& [type, pos] : m_but) //그냥
 		{
-			ID2D1Bitmap1* closeButtonBitmap = (type == SynButton::Cancle) ? uiRenderer->GetBitmap("Cancle_But").Get() : uiRenderer->GetBitmap("Syn_But").Get();
+			ID2D1Bitmap1* ButtonBitmap = (type == SynButton::Cancle) ? uiRenderer->GetBitmap("Cancle_But").Get() : uiRenderer->GetBitmap("Syn_But").Get();
 			D2D1_RECT_F DEST = { pos.x,pos.y,pos.x + ButX,pos.y + ButY };
-			D2DRenderer::Get().DrawBitmap(closeButtonBitmap, DEST);
+			D2DRenderer::Get().DrawBitmap(ButtonBitmap, DEST);
 		}
 
 

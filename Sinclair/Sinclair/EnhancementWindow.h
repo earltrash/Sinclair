@@ -210,9 +210,11 @@ public:
 
 		bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
 
+		bool HandleMouseRight(Vec2 mousePos) override;
+
 		// 타입 체크용
 		UIWindowType GetType() override { return m_windowType; }
-
+		
 		// 렌더용
 		void RenderBackground();
 		void RenderCloseButton();

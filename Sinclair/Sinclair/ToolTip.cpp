@@ -39,22 +39,7 @@ void ToolTip::Render()
 			D2DRenderer::Get().DrawBitmap(backgroundBitmap, destRect);
 		}
 
-		////slot 개념을 하나 만들어야 할 듯 
-		// destRect = { m_position.x+25.0f, m_position.y+128.0f, 
-		//	 m_position.x + 25.0f + ToolTipSize, m_position.y + 128.0f + ToolTipSize };
-
-
-		/*ID2D1Bitmap1* ToolTipSlot = uiRenderer->GetBitmap("Tool_Tip_Slot").Get();
-		if (ToolTipSlot)
-		{
-			D2DRenderer::Get().DrawBitmap(ToolTipSlot, destRect);
-		}*/
-
-		// Item 정보를 읽어오고 그 아이템의 강화 상태를 확인해서 Bitmap의 갯수와 양식을 정해서 Render함 
-
-		//Item* item = dynamic_cast<Wearable*>(CursorManager::Get().GetDraggedItem());
-
-
+	
 		Item* item = CursorManager::Get().GetHoveredItem(); //이거 말고 다른 거 가져와야 함. 
 
 		if (item != nullptr) //안될 리가 없음요!! 
@@ -67,8 +52,16 @@ void ToolTip::Render()
 	}
 }
 
-bool ToolTip::HandleMouseHover(Vec2 mousePos)
+bool ToolTip::HandleMouseHover(Vec2 mousePos) //초기값은 해주지만 hover될 때는 값도 업데이트 해야 겠네 
 {
+	if (!m_isActive)
+	{
+		// showTooltip = false;
+		return false;
+	}
+
+	UpdatePositions();
+	//return true;
 	return false;
 }
 
@@ -84,12 +77,34 @@ bool ToolTip::HandleMouseUp(Vec2 mousePos)
 
 bool ToolTip::HandleDoubleClick(Vec2 mousePos)
 {
+	return true;
+}
+
+bool ToolTip::HandleMouseRight(Vec2 mousePos)
+{
 	return false;
 }
 
 bool ToolTip::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
 {
 	return false;
+}
+
+void ToolTip::UpdatePositions()
+{
+	for (int i = 0; i < m_enchancer_PosBase.size(); ++i)
+	{
+		m_enchancer_Pos[i].x = m_position.x + m_enchancer_PosBase[i].x;
+		m_enchancer_Pos[i].y = m_position.y + m_enchancer_PosBase[i].y;
+	}
+
+	for (auto& [type, basePos] : m_text_posBase)
+	{
+		m_text_pos[type].x = m_position.x + basePos.x;
+		m_text_pos[type].y = m_position.y + basePos.y;
+	}
+
+
 }
 
 UIWindowType ToolTip::GetType()
@@ -99,27 +114,25 @@ UIWindowType ToolTip::GetType()
 
 void ToolTip::MemInit()
 {
-	m_enchancer_Pos.push_back({ 38.0f, 65 });
-	m_enchancer_Pos.push_back({ 73.0f, 65 });
-	m_enchancer_Pos.push_back({ 108.0f, 65 });
-	m_enchancer_Pos.push_back({ 143.0f, 65 });
-	m_enchancer_Pos.push_back({ 178.0f, 65 });
 
-	m_enchancer_Type.assign(5, EnchancerType::Default);
+	m_enchancer_PosBase = {
+	   { 38.0f, 65 }, { 73.0f, 65 }, { 108.0f, 65 }, { 143.0f, 65 }, { 178.0f, 65 }
+	};
 
-	//중앙 정렬값은 size 반토막 내서 text 출력할 거라 일단 0으로 넣고 사용
+	m_text_posBase[TextType::ItemNm] = { 0.f, 35.7f };
+	m_text_posBase[TextType::Enchancable] = { 0.f, 94.88f };
+	m_text_posBase[TextType::Synthesisable] = { 0.f, 111.77f };
+	m_text_posBase[TextType::STR] = { 130.61f, 144.94f };
+	m_text_posBase[TextType::DEX] = { 130.61f, 161.04f };
+	m_text_posBase[TextType::INT] = { 130.61f, 177.14f };
+	m_text_posBase[TextType::LUK] = { 130.61f, 193.24f };
+	m_text_posBase[TextType::DES] = { 41.0f, 236.0f };
+	m_text_posBase[TextType::DES_N] = { 41.0f, 236.0f };
 
-	m_text_pos[TextType::ItemNm] = {0.f, 35.7f }; //중앙 정렬은 어케해야 함?
-	m_text_pos[TextType::Enchancable] = { 0.f,94.88f };
-	m_text_pos[TextType::Synthesisable] = { 0.f,111.77f };
-	m_text_pos[TextType::STR] = { 130.61f,144.94f };
-	m_text_pos[TextType::DEX] = { 130.61f ,161.04f };
-	m_text_pos[TextType::INT] = { 130.61f,177.14f };
-	m_text_pos[TextType::LUK] = { 130.61f,193.24f };
-	m_text_pos[TextType::DES] = { 41.0f,236.0f }; //장비 전용 
 
-	m_text_pos[TextType::DES_N] = { 0.f,226.35f }; //무기 외의 것들 
-
+	//기준점과 렌더 좌표를 분리했어요.. 
+	m_enchancer_Pos = m_enchancer_PosBase;
+	m_text_pos = m_text_posBase;
 
 }
 
@@ -175,85 +188,6 @@ void ToolTip::LoadUIBitmaps()
 
 void ToolTip::TextRender(Item*& item)
 {
-	
-	//wstring ItemNm = UTF8ToWstr(item->m_data.name); //파싱 데이터는 데이터랑 맞게 
-
-	//wstring Ehchan = (item->m_data.enchantable == true) ? StrToWstr("강화 가능") : StrToWstr("강화 불가능");
-	//wstring Syn = (item->m_data.synthesizable == true) ? StrToWstr("합성 가능") : StrToWstr("합성 불가능");
-	//wstring des = UTF8ToWstr(item->m_data.description);
-
-
-
-	//Wearable* wear = dynamic_cast<Wearable*>(item);
-	//if (wear != nullptr)
-	//{
-
-	//	wstring TotalStr = StrToWstr("STR" + std::to_string(wear->GetStat(Status_fundamental::power)));
-	//	wstring TotalDex = StrToWstr("DEX" + std::to_string(wear->GetStat(Status_fundamental::agile)));
-	//	wstring TotalInt = StrToWstr("INT" + std::to_string(wear->GetStat(Status_fundamental::intelligence)));
-	//	wstring TotalLuk = StrToWstr("LUK" + std::to_string(wear->GetStat(Status_fundamental::luck)));
-
-
-
-	//	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 16.0f);
-
-	//	D2DRenderer::Get().DrawMessageCenter(ItemNm.c_str(), m_text_pos[TextType::ItemNm].x,
-	//		m_text_pos[TextType::ItemNm].y, m_position.x + m_size.x, m_text_pos[TextType::ItemNm].y + 21.0f, D2D1::ColorF::White);//Name
-
-
-	//	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 15.36f);
-
-
-	//	D2DRenderer::Get().DrawMessageCenter(Ehchan.c_str(), m_text_pos[TextType::Enchancable].x,
-	//			m_text_pos[TextType::Enchancable].y, m_position.x + m_size.x, m_text_pos[TextType::Enchancable].y + 24.36f, D2D1::ColorF::Orange);//Enchan
-
-	//	D2DRenderer::Get().DrawMessageCenter(Syn.c_str(), m_text_pos[TextType::Synthesisable].x,
-	//			m_text_pos[TextType::Synthesisable].y, m_position.x + m_size.x, m_text_pos[TextType::Synthesisable].y + 24.36f, D2D1::ColorF::Orange); //Syn
-
-
-
-
-
-	//	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 14.0f);
-
-	//	//얘는 기니깐 어떻게 랜더할 지도 봐야할 듯해요 
-	//	D2DRenderer::Get().DrawMessage(des.c_str(), m_text_pos[TextType::DES].x,
-	//			m_text_pos[TextType::DES].y, m_position.x + m_size.x, m_text_pos[TextType::DES].y + 14.0f, D2D1::ColorF::White); //des
-
-
-	//	// 스탯은 여기에 합시다. 
-
-	//	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 12.07f);
-
-
-	//	D2DRenderer::Get().DrawMessage(TotalStr.c_str(), m_text_pos[TextType::STR].x, m_text_pos[TextType::STR].y,
-	//		m_text_pos[TextType::STR].x + m_size.x, m_text_pos[TextType::STR].y + m_size.y, D2D1::ColorF::White);
-	//	D2DRenderer::Get().DrawMessage(TotalDex.c_str(), m_text_pos[TextType::DEX].x, m_text_pos[TextType::DEX].y,
-	//		m_text_pos[TextType::DEX].x + m_size.x, m_text_pos[TextType::DEX].y + m_size.y, D2D1::ColorF::White);
-	//	D2DRenderer::Get().DrawMessage(TotalInt.c_str(), m_text_pos[TextType::INT].x, m_text_pos[TextType::INT].y,
-	//		m_text_pos[TextType::INT].x + m_size.x, m_text_pos[TextType::INT].y + m_size.y, D2D1::ColorF::White);
-	//	D2DRenderer::Get().DrawMessage(TotalLuk.c_str(), m_text_pos[TextType::LUK].x, m_text_pos[TextType::LUK].y,
-	//		m_text_pos[TextType::LUK].x + m_size.x, m_text_pos[TextType::LUK].y + m_size.y, D2D1::ColorF::White);
-
-
-
-	//}
-	//else 
-	//{
-	//	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 20.0f); //20 pt -> 픽셀 26  //12 -> 16
-
-	//	D2DRenderer::Get().DrawMessageCenter(ItemNm.c_str(), m_text_pos[TextType::ItemNm].x,
-	//		m_text_pos[TextType::ItemNm].y, m_position.x + m_size.x, m_text_pos[TextType::ItemNm].y + 26.7f, D2D1::ColorF::White);//Name
-
-
-	//	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 16.0f);
-
-	//	D2DRenderer::Get().DrawMessageCenter(ItemNm.c_str(), m_text_pos[TextType::DES].x,
-	//		m_text_pos[TextType::DES].y, m_position.x + m_size.x, m_text_pos[TextType::DES].y + 16.0f, D2D1::ColorF::White);//Name
-
-
-
-	//}
 	wstring ItemNm = UTF8ToWstr(item->m_data.name);
 	wstring Ehchan = (item->m_data.enchantable ? StrToWstr("강화 가능") : StrToWstr("강화 불가능"));
 	wstring Syn = (item->m_data.synthesizable ? StrToWstr("합성 가능") : StrToWstr("합성 불가능"));
@@ -277,8 +211,8 @@ void ToolTip::TextRender(Item*& item)
 		DrawMessageCenterHorizontal(Ehchan, m_text_pos[TextType::Enchancable].y, PtToPx(12.36f), L"빛의 계승자 Bold", D2D1::ColorF::Orange);
 		DrawMessageCenterHorizontal(Syn, m_text_pos[TextType::Synthesisable].y, PtToPx(12.36f), L"빛의 계승자 Bold", D2D1::ColorF::Orange);
 
-		// 설명
-		//DrawMessageCenterHorizontal(des, m_text_pos[TextType::DES].y, PtToPx(14), L"빛의 계승자 Bold", D2D1::ColorF::White);
+		
+
 
 		//얘랑 제목은 일단 하드코딩 때려놓음 
 
@@ -308,9 +242,9 @@ void ToolTip::TextRender(Item*& item)
 
 		D2DRenderer::Get().DrawMessage(
 			des.c_str(),
-			m_text_pos[TextType::DES_N].x +40.0f,                        // 좌측 여백
+			m_text_pos[TextType::DES_N].x,                        // 좌측 여백
 			m_text_pos[TextType::DES_N].y,                 // 시작 Y
-			m_text_pos[TextType::DES_N].x + m_size.x - 80.0f,                            // 텍스트 영역 너비 (좌우 여백 고려)
+			m_size.x - 80.0f,                            // 텍스트 영역 너비 (좌우 여백 고려)
 			m_size.y,                                    // 충분히 큰 높이
 			D2D1::ColorF::White);
 

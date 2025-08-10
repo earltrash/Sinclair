@@ -161,21 +161,22 @@ bool EquipmentWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSo
 
 bool EquipmentWindow::HandleDoubleClick(Vec2 mousePos)
 {
-    // 슬롯 더블클릭 시 아이템 해제
-    Wearable_part clickedSlot = GetSlotTypeAt(mousePos);
-    if (clickedSlot != Wearable_part::UnKnown)
-    {
-        Item* item = UnequipItem(clickedSlot);
-        if (item)
-        {
-            if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
-            {
-                inventory->AddItem(item->m_data.name, 1);
-            }
-            return true;
-        }
-    }
+    //// 슬롯 더블클릭 시 아이템 해제
+    //Wearable_part clickedSlot = GetSlotTypeAt(mousePos);
+    //if (clickedSlot != Wearable_part::UnKnown)
+    //{
+    //    Item* item = UnequipItem(clickedSlot);
+    //    if (item)
+    //    {
+    //        if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
+    //        {
+    //            inventory->AddItem(item->m_data.name, 1);
+    //        }
+    //        return true;
+    //    }
+    //}
 
+    //return false;
     return false;
 }
 
@@ -184,16 +185,19 @@ bool EquipmentWindow::HandleMouseHover(Vec2 mousePos)
 
     if (!m_isActive) return false;
 
+    if (m_isDragging)
+    {
+        m_position = mousePos - m_dragOffset;
 
-    // 드래그 중이면 창 위치 업데이트/ 이거 없애야 할 듯? 
-   
+        // 창 위치가 바뀌면 슬롯 위치들도 다시 계산
         UpdateSlotPositions();
+    }
     
 
     // 슬롯에 마우스 오버 시 툴팁 표시
     Wearable_part hoveredSlot = GetSlotTypeAt(mousePos);
 
-    if (hoveredSlot != Wearable_part::UnKnown)
+    if (hoveredSlot != Wearable_part::UnKnown) //장비가 진짜 있는 경우 
     {
         Item* item = GetEquippedItem(hoveredSlot);
         if (item)
@@ -206,11 +210,35 @@ bool EquipmentWindow::HandleMouseHover(Vec2 mousePos)
             return true;
         }
     }
-    else
+    else 
     {
-        // 마우스가 슬롯 밖으로 나가면 툴팁 숨기기
-      //  UIManager::Get().HideTooltip(UIWindowType::InventoryTooltip);
-       // CursorManager::Get().HoveredReleased();
+        CursorManager::Get().HoveredReleased(); //추적 금지 
+        UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //해제
+        return true;
+    }
+
+    return false;
+}
+
+bool EquipmentWindow::HandleMouseRight(Vec2 mousePos)
+{
+    // 슬롯 더블클릭 시 아이템 해제
+    Wearable_part clickedSlot = GetSlotTypeAt(mousePos);
+    if (clickedSlot != Wearable_part::UnKnown)
+    {
+        Item* item = UnequipItem(clickedSlot);
+        if (item)
+        {
+            if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
+            {
+                inventory->AddItem(item->m_data.id, 1);
+
+                return true;
+            
+
+            }
+           
+        }
     }
 
     return false;

@@ -10,13 +10,22 @@ private:
     GameManager() = default;
     ~GameManager() = default;
 public:
-    
+
 
     static GameManager& Get();
 
 public:// get set 만들기 전
+    bool isFirst = true;
     int curGen = 2;
-    std::array<TotalStatus, 3> arrTotalStatus{};
-    bool WasInGame = false;
-};
 
+    std::array<TotalStatus, 3> arrTotalStatus{};
+
+    void SetGen();
+
+
+
+    // soundmanager야 가져가
+    float bgmValue = 1.0f;
+    float sfxValue = 1.0f;
+    
+};
