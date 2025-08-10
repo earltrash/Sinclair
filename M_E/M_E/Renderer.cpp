@@ -27,6 +27,14 @@ void D2DRenderer::Initialize(HWND hwnd)
     DX::ThrowIfFailed(hr);
 
     m_wicFactory = wicFactory;
+
+     hr = DWriteCreateFactory(
+        DWRITE_FACTORY_TYPE_SHARED,
+        __uuidof(IDWriteFactory),
+        reinterpret_cast<IUnknown**>(m_dwriteFactory.GetAddressOf())
+    );
+    DX::ThrowIfFailed(hr);
+
 }
 
 void D2DRenderer::Uninitialize()
@@ -77,7 +85,15 @@ void D2DRenderer::DrawRectangle(float left, float top, float right, float bottom
 void D2DRenderer::DrawRectangle(D2D1_RECT_F destRect, const D2D1::ColorF& color)
 {
     m_brush->SetColor(color);
+
     m_d2dContext->DrawRectangle(D2D1::Rect(destRect.left, destRect.top, destRect.right, destRect.bottom), m_brush.Get());
+}
+
+void D2DRenderer::FillRectangle(D2D1_RECT_F destRect, const D2D1::ColorF& color, float opacity)
+{
+    m_brush->SetColor(color);
+    m_brush->SetOpacity(opacity);
+    m_d2dContext->FillRectangle(D2D1::Rect(destRect.left, destRect.top, destRect.right, destRect.bottom), m_brush.Get());
 }
 
 
@@ -206,6 +222,40 @@ void D2DRenderer::Present()
     {
         DX::ThrowIfFailed(hr);
     }
+}
+
+D2D1_SIZE_F D2DRenderer::MeasureText(const std::wstring& text, float fontSize, const std::wstring& fontName)
+{
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> textFormat;
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> textLayout;
+
+    // 폰트 포맷 생성
+    m_dwriteFactory->CreateTextFormat(
+        fontName.c_str(),
+        nullptr,
+        DWRITE_FONT_WEIGHT_NORMAL,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        fontSize,
+        L"ko-kr",
+        &textFormat
+    );
+
+    // 텍스트 레이아웃 생성 (크기: 제한 없음)
+    m_dwriteFactory->CreateTextLayout(
+        text.c_str(),
+        (UINT32)text.length(),
+        textFormat.Get(),
+        FLT_MAX,
+        FLT_MAX,
+        &textLayout
+    );
+
+    // 텍스트 크기 반환
+    DWRITE_TEXT_METRICS metrics;
+    textLayout->GetMetrics(&metrics);
+
+    return { metrics.width, metrics.height };
 }
 
 void D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)

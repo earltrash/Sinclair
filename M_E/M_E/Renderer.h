@@ -42,6 +42,8 @@ public:
 
     void DrawRectangle(D2D1_RECT_F destRect, const D2D1::ColorF& color);
 
+    void FillRectangle(D2D1_RECT_F destRect, const D2D1::ColorF& color, float opacity);
+
     void DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F dest);
 
     void DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RECT_F srcRect, float opacity = 1.0f);
@@ -80,6 +82,7 @@ public:
     ComPtr<ID2D1SolidColorBrush> GetTBrush()   {return m_textBrush;}
     ComPtr <IDWriteTextFormat>   GetTFormat() { return  m_textFormat; }
 
+    D2D1_SIZE_F MeasureText(const std::wstring& text, float fontSize, const std::wstring& fontName);
 private:
 
     void CreateDeviceAndSwapChain(HWND hwnd);
@@ -96,6 +99,8 @@ private:
 
     ComPtr<ID3D11DeviceContext>    m_d3dContext;
     ComPtr<ID3D11RenderTargetView> m_d3dRenderTV; // D3D render target view
+
+    ComPtr<IDWriteFactory> m_dwriteFactory; //vertical 정렬을 위한. 
 
     ComPtr<ID2D1Bitmap1>           m_targetBitmap; // D2D render target bitmap
     ComPtr<ID2D1SolidColorBrush>   m_brush;

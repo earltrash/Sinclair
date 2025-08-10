@@ -9,6 +9,7 @@
 #include "UIManager.h"
 #include "SliderHandleComponent.h"
 #include "GameManager.h"
+#include "Status.h"
 
 Scene_InGame::Scene_InGame(string name)
 {
@@ -209,6 +210,7 @@ void Scene_InGame::CreateObj()
 
 	창고버튼->SetOnClickCallback([this]() {
 		std::cout << "창고" << std::endl;
+		UIManager::Get().OpenWindow(UIWindowType::InventoryWindow);
 		});
 
 	/// 9
@@ -249,6 +251,7 @@ void Scene_InGame::CreateObj()
 
 	장비버튼->SetOnClickCallback([this]() {
 		std::cout << "장비버튼" << std::endl;
+		UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow);
 		});
 
 	/// 9
@@ -289,6 +292,7 @@ void Scene_InGame::CreateObj()
 
 	스테이터스버튼->SetOnClickCallback([this]() {
 		std::cout << "스테이터스" << std::endl;
+		UIManager::Get().OpenWindow(UIWindowType::StatsWindow);
 		});
 
 	/// 9
@@ -320,14 +324,18 @@ void Scene_InGame::CreateObj()
 
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 강화리스너 = 강화->AddComponent<MouseListenerComponent>(
-		[강화버튼](const MSG& msg) {
-			강화버튼->CheckCollision(msg);
+		[강화버튼, this](const MSG& msg) {
+			if (!isSETTING)
+			{
+				강화버튼->CheckCollision(msg);
+			}
 			강화버튼->Worked(msg);
 		}
 	);
 
 	강화버튼->SetOnClickCallback([this]() {
 		std::cout << "강화" << std::endl;
+		UIManager::Get().OpenWindow(UIWindowType::EnhancementWindow);
 		});
 
 	/// 9
@@ -359,18 +367,22 @@ void Scene_InGame::CreateObj()
 
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 합성리스너 = 합성->AddComponent<MouseListenerComponent>(
-		[합성버튼](const MSG& msg) {
-			합성버튼->CheckCollision(msg);
+		[합성버튼, this](const MSG& msg) {
+			if(!isSETTING)
+			{
+				합성버튼->CheckCollision(msg);
+			}
 			합성버튼->Worked(msg);
-}
+		}
 	);
 
 	합성버튼->SetOnClickCallback([this]() {
 		std::cout << "합성" << std::endl;
+		UIManager::Get().OpenWindow(UIWindowType::SynthesisWindow);
 		});
 
 	/// 9
-	m_gameObjects.emplace("합성", std::move(합성));
+	m_gameObjects.emplace("카_합성", std::move(합성));
 
 
 	/////////////////////

@@ -194,7 +194,6 @@ unique_ptr<Item> ItemBank::Get_Item_Status(string id) //ÇÕ¼º¿¡¼­ ¾µ °Å¸é ÇÊ¿ä. È
         m_S_Item.erase(it); // key ÀÚÃ¼´Â ÀÎ½Ä °¡´ÉÇÏ´Ï erase ÇÏ´Â °Å·Î 
         return result;
     }
-
 }
 
 void ItemBank::clean()

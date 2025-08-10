@@ -526,9 +526,16 @@ void Scene_Outgame::CreateObj()
 		}
 	);
 
+
+
 	settingComp->SetOnClickCallback([this]() {
 		std::cout << "¼³Á¤ ¹öÆ° Å¬¸¯µÊ - ÇöÀç ¾À: " << typeid(*this).name() << std::endl;
 		isSETTING = !isSETTING;
+		if (m_state == State::FIRST_ENTER)
+		{
+			GameManager::Get().isFirst = true;
+		}
+
 		SafeChangeScene("OutGame");
 		});
 

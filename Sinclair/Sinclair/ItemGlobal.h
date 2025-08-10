@@ -9,3 +9,5 @@ extern POINT dragStart;
 Status_fundamental StringToF(std::string& val);
 Wearable_part StringToWP(std::string& val);
 Need_Moment StringToNM(std::string& val);
+std::wstring StrToWstr(const std::string& source);
+std::wstring UTF8ToWstr(const std::string& str);
