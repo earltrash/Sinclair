@@ -809,6 +809,8 @@ void Inventory::UpdateSlotPositions() // -> widndow 기준으로 되고 있지 않아요
     }
 }
 
+// 슬롯은 비워지는데 장비창에 있는게 어떻게 꼬일지 모른다. 
+// 일단은 만들기만했지 아무것도 추가 안했으니까.
 void Inventory::ClearAllSlots()
 {
     // 모든 슬롯 순회하면서 초기화
@@ -829,13 +831,11 @@ void Inventory::ClearAllSlots()
 
 void Inventory::PackItem() //현재 database에 있는 모든 Item을 Slot에 넣어줌 
 {
-
     for (const auto& [Id, Item] : m_itemDatabase.GetMap())
     {
         //std::cout << Item->m_data.id << endl;
         AddItem(Item->m_data.id, 1);
     }
-
 }
 
 void Inventory::SetDatabase(unique_ptr<ItemDatabase> database) //외부에서 만들고 넣어버릴래/
