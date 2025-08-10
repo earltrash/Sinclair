@@ -4,6 +4,8 @@
 #include "UIManager.h"
 #include "CursorManager.h"
 
+#include "GameManager.h"
+
 SynthesisWin::SynthesisWin() :UIWindow(UIWindowType::SynthesisWindow, Vec2{ 0,0 }, Vec2{ 524,766 })
 {
 	//포지션은 ㅇㅇ 알아서 되고 
@@ -464,13 +466,32 @@ void SynthesisWin::PerformSynthesis()
 	std::cout << "합성 수행: " << item1->m_data.id << " + " << item2->m_data.id << std::endl;
 
 	// 현재는 임시로 첫 번째 아이템을 결과로 사용
-	m_slot_Item[SynSlot::Result] = item1;
 
-	// 재료 슬롯 비우기
-	m_slot_Item[SynSlot::Slot1] = nullptr;
-	m_slot_Item[SynSlot::Slot2] = nullptr;
 
-	std::cout << "합성 완료! 결과: " << item1->m_data.id << std::endl;
+	string result = GameManager::Get().Synthesis(item1->m_data.id, item2->m_data.id);
+	std::cout << "합성 결과: " << result;
+
+	if (result != "F") //성공인 경우 
+	{
+		unique_ptr<Item> resultitem  = ResourceManager::Get().Get_ItemBank().Get_Item_Status(result);
+
+		Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+		if (inven != nullptr)
+		{
+			inven->GetItemBase().AddItemData(std::move(resultitem));
+			m_slot_Item[SynSlot::Result] = inven->GetItemBase().GetItemData(result);
+			m_slot_Item[SynSlot::Slot1] = nullptr;
+			m_slot_Item[SynSlot::Slot2] = nullptr;
+
+		}
+
+		
+	}
+	else
+	{
+		//뭐 없긴 함 
+	}
+
 }
 
 void SynthesisWin::ReturnItemToInventory()

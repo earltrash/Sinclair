@@ -7,7 +7,7 @@
 #include "IAssetProvider.h"
 #include "Renderer.h"
 #include "UIManager.h"
-
+#include "GameManager.h"
 using namespace std;
 
 
@@ -138,7 +138,7 @@ bool M_Core::ModuleInit()
     SceneManager::Get().Initalize(m_Scene_map); //받은 map 멤버로 시작 
 
     UIManager::Get().Initialize(); //UI 들 생성하기. 
-
+    GameManager::Get().Initalize();
 
     m_timer = make_unique<GameTimer>();
     m_timer->Start();

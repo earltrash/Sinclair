@@ -20,7 +20,6 @@ Scene_End::~Scene_End()
 void Scene_End::Initalize()
 {
 	if (dirty) return; // 이미 초기화되었으면 스킵
-
 	CreateObj(); // 오브젝트 생성 (한 번만)
 	dirty = true;
 }
