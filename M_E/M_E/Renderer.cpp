@@ -77,7 +77,15 @@ void D2DRenderer::DrawRectangle(float left, float top, float right, float bottom
 void D2DRenderer::DrawRectangle(D2D1_RECT_F destRect, const D2D1::ColorF& color)
 {
     m_brush->SetColor(color);
+
     m_d2dContext->DrawRectangle(D2D1::Rect(destRect.left, destRect.top, destRect.right, destRect.bottom), m_brush.Get());
+}
+
+void D2DRenderer::FillRectangle(D2D1_RECT_F destRect, const D2D1::ColorF& color, float opacity)
+{
+    m_brush->SetColor(color);
+    m_brush->SetOpacity(opacity);
+    m_d2dContext->FillRectangle(D2D1::Rect(destRect.left, destRect.top, destRect.right, destRect.bottom), m_brush.Get());
 }
 
 
