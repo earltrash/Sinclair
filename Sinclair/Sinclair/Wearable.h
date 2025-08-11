@@ -13,6 +13,7 @@ public:
         , Enchan_Count(other.Enchan_Count)
         , m_EnchanceResult(other.m_EnchanceResult)
     {
+        m_data.wearablePart = m_part;
     }
 
 

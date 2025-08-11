@@ -64,7 +64,7 @@ public:
 
 	ID2D1Effect* GetEffect() { return m_shadowEffect.Get(); }
 private:
-	float m_edgeBlur;
+	float m_edgeBlur;							// 1 ~ 10 ÃßÃµ
 
 	D2D1_VECTOR_4F m_shadowColor;
 

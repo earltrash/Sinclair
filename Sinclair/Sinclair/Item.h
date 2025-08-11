@@ -42,6 +42,20 @@ public:
 			maxCount = other.maxCount;
 		}
 		return *this;
+
+
+		//Item* operator=(const Item*  other) {
+		//	if (this != &other) {
+		//		// Object 쪽은 건드리지 않음
+		//		m_data = other.m_data;
+		//		Momnet = other.Momnet;
+		//		maxCount = other.maxCount;
+		//	}
+		//	return this;
+
+
+
+
 	}
 
 

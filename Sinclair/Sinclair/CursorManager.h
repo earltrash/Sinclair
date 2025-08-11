@@ -76,7 +76,7 @@ private:
     bool m_isMousePressed = false;
     Item* m_draggedItem = nullptr;
     Item* m_hoveredItem = nullptr;
-
+    Item* m_stopDraggingItem = nullptr;
 
     DragSource m_dragSource = DragSource::None;
     CursorType m_currentCursor = CursorType::Normal;

@@ -116,11 +116,11 @@ bool UIWindow::HandleInput(const MSG& msg)
 		//	return HandleMouseHover(CORD);
 		//}
 
-		else if (m_isDragging && msg.message == WM_MOUSEMOVE) // -> 
+		else if (m_isDragging && msg.message == WM_MOUSEMOVE) // ->  
 		{	
 				m_position = CORD - m_dragOffset;
 
-				if (GetType() != UIWindowType::InventoryTooltip && 
+				if (GetType() == UIWindowType::InventoryWindow && 
 					CursorManager::Get().GetDraggedItem() != nullptr) //나 인벤이고, 커서매니저에 아이템 있는 경우 
 				{
 					if (UIManager::Get().IsWindowActive(UIWindowType::EquipmentWindow))
@@ -130,7 +130,7 @@ bool UIWindow::HandleInput(const MSG& msg)
 						Item* item = CursorManager::Get().GetDraggedItem();
 
 						if(win->CanEquipItem(item, item->m_data.wearablePart)); // -> 들고 있는것도 모자 장비창에 모자칸에 해당하는 슬롯이 비어있는 경우 
-
+						win->SendEventToComponent("PLAY", item->m_data.wearablePart);
 					}
 				}
 				return true;

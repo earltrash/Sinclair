@@ -13,7 +13,7 @@ Wearable::Wearable(const ItemCommonData& data, const json& j) : Item(data)
     {
         std::string part = j["part"];
         m_part = StringToWP(part);
-
+        m_data.wearablePart = m_part;
 
         Enchan_Count = (m_part == Wearable_part::Weapon) ? 5 : 3; //±ò²ûÇÏ´Ù
          
