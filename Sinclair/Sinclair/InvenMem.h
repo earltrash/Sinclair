@@ -61,7 +61,10 @@ public:
     void AddItemData(std::unique_ptr<Item> itemData);
     Item* GetItemData(const std::string& itemId);
     std::unordered_map<std::string, std::unique_ptr<Item>>& GetMap();
-    void DeleItem(std::string id);
+    std::unique_ptr<Item> TakeItemData(const std::string& itemId);
+    void ClearAllItems();
+
+
 
 private:
     std::unordered_map<std::string, std::unique_ptr<Item>> itemDataMap;

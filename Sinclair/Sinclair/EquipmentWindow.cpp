@@ -77,8 +77,10 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
         if (slotType != Wearable_part::UnKnown && wearableItem && IsItemTypeMatch(wearableItem->Getpart(), slotType))
         {
             //std::cout << "DEBUG: 장비 장착 조건 만족. 아이템을 장착합니다." << std::endl;
-             // 장비 착용 성공
-             // 없는데 가져와서 
+            // 장비 착용 성공
+            // 스탯창 가져오기.
+            auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow));
+
             Item* previousItem = GetEquippedItem(slotType); // 원래 슬롯에 있던 아이템
             m_equippedItems[slotType] = draggedItem;
 
@@ -89,7 +91,15 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
                 inventoryWindow->AddItem(previousItem->m_data.id, 1);
 
                 std::cout << "DEBUG: 기존 아이템이 있어 인벤토리로 복구시킴." << std::endl;
+
+
             }
+            // 슬롯 전부 다시 가져와서 다시 계산해주기.
+            if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
+            {
+                statWindow->UpdateTotalStats();
+            }
+
             // 드래그 종료.
             CursorManager::Get().EndItemDrag();
             return true;
@@ -192,7 +202,7 @@ bool EquipmentWindow::HandleMouseHover(Vec2 mousePos)
         // 창 위치가 바뀌면 슬롯 위치들도 다시 계산
         UpdateSlotPositions();
     }
-    
+
 
     // 슬롯에 마우스 오버 시 툴팁 표시
     Wearable_part hoveredSlot = GetSlotTypeAt(mousePos);
@@ -210,7 +220,7 @@ bool EquipmentWindow::HandleMouseHover(Vec2 mousePos)
             return true;
         }
     }
-    else 
+    else
     {
         CursorManager::Get().HoveredReleased(); //추적 금지 
         UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //해제
@@ -234,15 +244,26 @@ bool EquipmentWindow::HandleMouseRight(Vec2 mousePos)
                 inventory->AddItem(item->m_data.id, 1);
 
                 return true;
-            
+
 
             }
-           
+
         }
     }
 
     return false;
 }
+
+void EquipmentWindow::ClearSlot(Wearable_part part)
+{
+    auto it = m_equippedItems.find(part);
+    if (it != m_equippedItems.end() && it->second != nullptr)
+    {
+        m_equippedItems[part] = nullptr;
+    }
+        // 슬롯 비우기
+}
+
 
 void EquipmentWindow::EquipItem(Item* item) //Item 이름이 아니라, 타입을 비교해서 해야 함요 
 {
@@ -428,12 +449,12 @@ void EquipmentWindow::RenderEquippedItems()
             Vec2 slotSize = m_slotSizes[slotType];
             D2D1_RECT_F destRect = { slotPos.x, slotPos.y, slotPos.x + slotSize.x, slotPos.y + slotSize.y };
 
-            ID2D1Bitmap1* itemBitmap = ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).atlas.Get();
+            ID2D1Bitmap1* itemBitmap = ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get();
             // GetTexture(item->GetImagePath()).Get(); // 나중에 처리.
 
             if (itemBitmap)
             {
-                D2D_RECT_F SR = ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).srcRect;
+                D2D_RECT_F SR = ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect;
                 //D2D1_RECT_F srcRect = { 0, 0, (float)itemBitmap->GetSize().width, (float)itemBitmap->GetSize().height };
                 D2DRenderer::Get().DrawBitmap(itemBitmap, destRect, SR);
             }
@@ -505,9 +526,11 @@ Item* EquipmentWindow::UnequipItem(Wearable_part slotType)
         Item* item = it->second;
         m_equippedItems[slotType] = nullptr; // 슬롯 비우기
 
-        // 스탯 업데이트
-        // GameManager::Get().UpdateStats();
-
+        // 슬롯에서 비웠으니까.
+        if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
+        {
+            statWindow->UpdateTotalStats();
+        }
         OutputDebugStringA(("Unequipped item from slot: " + std::to_string(static_cast<int>(slotType)) + "\n").c_str());
         return item;
     }

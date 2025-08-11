@@ -32,16 +32,21 @@ std::unordered_map<std::string, std::unique_ptr<Item>>& ItemDatabase::GetMap()
     return itemDataMap;
 }
 
-void ItemDatabase::DeleItem(std::string id)
+std::unique_ptr<Item> ItemDatabase::TakeItemData(const std::string& itemId)
 {
-    auto it = std::find_if(itemDataMap.begin(), itemDataMap.end(),
-        [&](auto& pair) { return pair.second->m_data.id == id; });
+    auto it = itemDataMap.find(itemId);
+    if (it == itemDataMap.end()) return nullptr;
 
-    if (it != itemDataMap.end()) {
-        auto result = std::move(it->second);
-        itemDataMap.erase(it);
-    }
+    auto ptr = std::move(it->second); // 소유권 이동
+    itemDataMap.erase(it);
+    return ptr;
 }
+
+void ItemDatabase::ClearAllItems()
+{
+    itemDataMap.clear();
+}
+
 
 ItemInstance::ItemInstance(std::string id, int cnt) : id(id), count(cnt) {}
 
@@ -72,8 +77,8 @@ void InventorySlot::UpdateItemBitmap(SlotBitmapController* controller, ItemDatab
         Item* data = itemDB->GetItemData(item.id);
         if (data)
         {
-            itemBitmap.bitmap = ResourceManager::Get().Get_ItemBank().GetItemClip(item.id).atlas.Get();
-            itemBitmap.srcRect = ResourceManager::Get().Get_ItemBank().GetItemClip(item.id).srcRect;
+            itemBitmap.bitmap = ResourceManager::Get().Get_ItemBank().GetItemClip(item.id)->atlas.Get();
+            itemBitmap.srcRect = ResourceManager::Get().Get_ItemBank().GetItemClip(item.id)->srcRect;
             itemBitmap.opacity = 1.0f;
 
 

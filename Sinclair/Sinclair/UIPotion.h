@@ -1,6 +1,7 @@
 #pragma once
 #include "UIWindow.h"
 #include "Status.h"
+#include "UIManager.h"
 //StatPotionUseWindow         // 스탯 증가 물약 사용창
 
 #define ButtonX 425.0f
@@ -45,7 +46,7 @@ public:
     void SetLevel(PotionLevel level);
     PotionLevel GetLevel();
 
-    void UpdateSlotPositions();
+    //void UpdateSlotPositions();
 
 private: // 오브젝트로 만들어서 컴포넌트 넣어가지고 위치 받으면 처리?
 
@@ -58,7 +59,7 @@ private: // 오브젝트로 만들어서 컴포넌트 넣어가지고 위치 받으면 처리?
 
 
     //초기
-
+    vector<Vec2> m_ButtonFixedPos;
     vector<Vec2> m_button;
     vector < ComPtr<ID2D1Bitmap1>> m_BG_BITMAP;
 

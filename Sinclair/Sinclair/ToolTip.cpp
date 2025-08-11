@@ -276,8 +276,8 @@ void ToolTip::BitmapRender(Item*& item)
 
 		D2DRenderer::Get().DrawBitmap(uiRenderer->GetBitmap("Tool_Tip_Slot").Get(), destRect);
 
-		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).atlas.Get() //비트맵 정도야 가능하긴 하지 
-			,destRect, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).srcRect, 1.0f);
+		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get() //비트맵 정도야 가능하긴 하지 
+			,destRect, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect, 1.0f);
 
 
 			for (int i = 0; i < wear->GetEnchancResult().size(); i++) //횟수가 고정이라 굳이? 싶었음 iterator는 
@@ -312,8 +312,8 @@ void ToolTip::BitmapRender(Item*& item)
 
 
 		D2DRenderer::Get().DrawBitmap(uiRenderer->GetBitmap("Tool_Tip_Slot").Get(), destRect);
-		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).atlas.Get()
-			, destRect, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).srcRect, 1.0f);
+		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get()
+			, destRect, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect, 1.0f);
 	}
 
 

@@ -27,6 +27,27 @@ public:
 	Item(ItemCommonData data) :m_data(data) {}; //stat을 넣어주자, 값 받아오는 거를 어떻게 하면 좋을까
 	virtual ~Item() = default;
 
+	Item(const Item& other)
+		: Object()  //  복사생성이 아니라 '기본생성'으로 기저 Object를 새로 깐다
+		, m_data(other.m_data)
+		, Momnet(other.Momnet)
+		, maxCount(other.maxCount)
+	{}
+
+	Item& operator=(const Item& other) {
+		if (this != &other) {
+			// Object 쪽은 건드리지 않음
+			m_data = other.m_data;
+			Momnet = other.Momnet;
+			maxCount = other.maxCount;
+		}
+		return *this;
+	}
+
+
+
+	virtual std::unique_ptr<Item> Clone() const = 0;
+
 	const bool IsStackable() const {
 		return maxCount > 1;
 	}

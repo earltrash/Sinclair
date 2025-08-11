@@ -69,6 +69,7 @@ void Scene_Outgame::Enter()
 
 void Scene_Outgame::Exit()
 {
+
 		Clean();
 }
 
@@ -842,6 +843,7 @@ void Scene_Outgame::ChangeState(State newState)
 
 		yesButton->SetOnClickCallback([this]() {
 			cout << "여행을 떠나시겠습니까?..." << endl;
+			GameManager::Get().PreAdv();
 			SafeChangeScene("End");
 			});
 

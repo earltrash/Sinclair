@@ -22,7 +22,7 @@ void ResourceManager::GameAssetLoad()
     m_ItemBank.LoadItemRect("Item_A"); //Atlas랑 정확히는 Item 별 srect 
 
     // 효제: 현재는 한 파일이지만 결국 위처럼 로드 함수를 만들어야 함.
-    m_TextBank.parseTSV_Ending("../Resource/text/싱클레어가히스토리.txt");
+    m_TextBank.parseTSV_Ending("../Resource/text/SinclairEnding.txt");
 }
 
 void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std::string& directory)
@@ -192,6 +192,50 @@ TextBank& ResourceManager::Get_TextBank()
 {
     return m_TextBank;
 }
+
+std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ResourceManager::GetEndingBitmap(string id )
+{
+    namespace fs = std::filesystem;
+
+    std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> result;
+
+    // ending/<id> 경로 생성
+    fs::path base = fs::current_path();
+    fs::path folderPath = base.parent_path() / "ending" / id;
+
+    if (!fs::exists(folderPath) || !fs::is_directory(folderPath))
+    {
+        std::cerr << "[ERROR] 폴더 없음: " << folderPath << std::endl;
+        return result;
+    }
+
+    // 폴더 내 순회
+    for (const auto& entry : fs::directory_iterator(folderPath, fs::directory_options::skip_permission_denied))
+    {
+        if (!entry.is_regular_file() || entry.path().extension() != ".png")
+            continue;
+
+        // 파일 이름(확장자 제거)
+        std::string fileName = entry.path().stem().string();
+
+        // 비트맵 로드
+        Microsoft::WRL::ComPtr<ID2D1Bitmap1> bitmap;
+        D2DRenderer::Get().CreateBitmapFromFile(entry.path().c_str(), bitmap.GetAddressOf());
+
+        if (bitmap)
+        {
+            result.emplace(fileName, bitmap);
+        }
+        else
+        {
+            std::cerr << "[WARN] 비트맵 로드 실패: " << entry.path() << std::endl;
+        }
+    }
+
+    return result;
+}
+
+
 
 std::vector<Clip_Asset> ResourceManager::GetClips(const string& Info)
 {
