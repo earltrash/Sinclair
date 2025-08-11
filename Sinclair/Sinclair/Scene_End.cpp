@@ -46,6 +46,10 @@ void Scene_End::Enter()
 void Scene_End::Exit()
 {
 
+	m_textShown = false;
+	m_titleShown = false;
+	m_scriptShown = false;
+
 	Clean();
 }
 
