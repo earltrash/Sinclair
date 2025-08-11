@@ -67,7 +67,12 @@ public:
 	{ 
 		return { m_renderInfo.srcRect.right - m_renderInfo.srcRect.left, m_renderInfo.srcRect.bottom - m_renderInfo.srcRect.top }; 
 	}	
-														
+		
+	ID2D1Bitmap1* GetBitmap()
+	{
+		return m_renderInfo.bitmap;
+	}
+
 	const renderInfo& GetRenderInfo()							// Scene - Render()에서 사용
 	{ 
 		return m_renderInfo; 

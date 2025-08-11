@@ -266,7 +266,11 @@ void ToolTip::BitmapRender(Item*& item)
 
 	if (uiRenderer == nullptr) return;
 
-
+	D2D_RECT_F src = ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect;
+	src.left = src.left + 70.f;
+	src.top = src.top + 70.f;
+	src.right = src.right - 70.f;
+	src.bottom = src.bottom - 70.f;
 	if (wear != nullptr )
 	{
 		//주문서 비트맵 갯수랑 위치를 가져와야 하고 
@@ -277,7 +281,7 @@ void ToolTip::BitmapRender(Item*& item)
 		D2DRenderer::Get().DrawBitmap(uiRenderer->GetBitmap("Tool_Tip_Slot").Get(), destRect);
 
 		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get() //비트맵 정도야 가능하긴 하지 
-			,destRect, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect, 1.0f);
+			,destRect, src, 1.0f);
 
 
 			for (int i = 0; i < wear->GetEnchancResult().size(); i++) //횟수가 고정이라 굳이? 싶었음 iterator는 
@@ -313,7 +317,7 @@ void ToolTip::BitmapRender(Item*& item)
 
 		D2DRenderer::Get().DrawBitmap(uiRenderer->GetBitmap("Tool_Tip_Slot").Get(), destRect);
 		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get()
-			, destRect, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect, 1.0f);
+			, destRect, src, 1.0f);
 	}
 
 

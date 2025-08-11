@@ -427,6 +427,10 @@ void EquipmentWindow::RenderEquippedItems()
             if (itemBitmap)
             {
                 D2D_RECT_F SR = ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect;
+                SR.left = SR.left + 86.f;
+                SR.top = SR.top + 86.f;
+                SR.right = SR.right - 86.f;
+                SR.bottom = SR.bottom - 86.f;
                 //D2D1_RECT_F srcRect = { 0, 0, (float)itemBitmap->GetSize().width, (float)itemBitmap->GetSize().height };
                 D2DRenderer::Get().DrawBitmap(itemBitmap, destRect, SR);
             }

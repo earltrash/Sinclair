@@ -550,8 +550,14 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 				ID2D1Bitmap1* SlotBitmap = (type == SynSlot::Result) ? uiRenderer->GetBitmap("Syn_Result").Get() : uiRenderer->GetBitmap("Syn_Slot").Get();
 				D2DRenderer::Get().DrawBitmap(SlotBitmap, DEST);
 
+				D2D_RECT_F src = ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect;
+				src.left = src.left + 80.f;
+				src.top = src.top + 80.f;
+				src.right = src.right - 80.f;
+				src.bottom = src.bottom - 80.f;
+
 				D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get(),
-					DEST, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect, 1);
+					DEST, src, 1);
 
 			}
 			else

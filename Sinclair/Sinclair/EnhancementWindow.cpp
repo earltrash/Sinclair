@@ -383,12 +383,17 @@ void EnhancementWindow::RenderEnhancementSlot()
 		// 슬롯에 등록된 아이템 아이콘 표시
 		if (m_targetItem)
 		{
+			D2D_RECT_F src = ResourceManager::Get().Get_ItemBank().GetItemClip(m_targetItem->m_data.id)->srcRect;
+			src.left = src.left + 80.f;
+			src.top = src.top + 80.f;
+			src.right = src.right - 80.f;
+			src.bottom = src.bottom - 80.f;
 				auto clip = ResourceManager::Get().Get_ItemBank().GetItemClip(m_targetItem->m_data.id);
 				ID2D1Bitmap1* itemAtlas = clip->atlas.Get();
 				if (itemAtlas)
 				{
 						// destRect 크기에 맞춰서 아이템 그리기
-						D2DRenderer::Get().DrawBitmap(itemAtlas, destRect, clip->srcRect);
+						D2DRenderer::Get().DrawBitmap(itemAtlas, destRect, src);
 				}
 		}
 }

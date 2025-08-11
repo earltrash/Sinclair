@@ -1,6 +1,6 @@
 #include "CursorManager.h"
 #include "ResourceManager.h"
-
+#include "EffectComponent.h"
 
 void CursorManager::Update()
 {
@@ -8,8 +8,19 @@ void CursorManager::Update()
     {
         m_ghostImagePos = InputManager::Get().GetMousePosition();
         // 약간의 오프셋으로 마우스 커서와 겹치지 않게
-        m_ghostImagePos.x += 5;
-        m_ghostImagePos.y += 5;
+        //m_ghostImagePos.x += 5;
+        //m_ghostImagePos.y += 5;
+    }
+    //드래그 중인 아이템 업데이트
+    if (m_isDragging && m_draggedItem)
+    {
+        m_draggedItem->Update();
+
+        // 장비창에 정보 보내기
+        //auto part = m_draggedItem->m_data.wearablePart;
+        //bool isPopped = UIManager::Get().IsWindowActive(UIWindowType::EquipmentWindow);
+        //if (!isPopped) return;
+        //auto pWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
     }
 }
 
@@ -18,26 +29,33 @@ void CursorManager::Render()
     // 드래그 중인 아이템 렌더링
     if (m_isDragging && m_draggedItem)
     {
-        Vec2 mousePos = InputManager::Get().GetMousePosition();
-        // 아이템 이미지 가져오고
-        const auto& itemClip = ResourceManager::Get().Get_ItemBank().GetItemClip(m_draggedItem->m_data.id);
-        // 아틀라스에서 해당아이템 가져오기.
-        ID2D1Bitmap1* itemBitmap = itemClip->atlas.Get();
-        // 소스 크기 가져옴.
-        D2D1_RECT_F srcRect = itemClip->srcRect;
-        // 크기 계산 
-        D2D1_RECT_F destRect = D2D1::RectF(
-            m_ghostImagePos.x - 28, m_ghostImagePos.y - 28,
-            m_ghostImagePos.x + 28, m_ghostImagePos.y + 28
-        );
-        // 그리기.
-        D2DRenderer::Get().DrawBitmap(
-            static_cast<ID2D1Bitmap1*>(itemBitmap),
-            destRect,
-            srcRect, // 소스 사각형을 사용하여 아틀라스의 특정 부분만 그리는거.
-            0.8f
-        );
+        m_draggedItem->GetTransform().SetScale({ 1.f, 1.f });
+        m_draggedItem->GetTransform().SetPosition({ m_ghostImagePos.x - 128.f * 1.f,  m_ghostImagePos.y - 128.f * 1.f });
+        auto info = m_draggedItem->GetRenderInfo();
+        D2DRenderer::Get().DrawBitmap(info->GetRenderInfo());
     }
+    //if (m_isDragging && m_draggedItem)
+    //{
+    //    Vec2 mousePos = InputManager::Get().GetMousePosition();
+    //    // 아이템 이미지 가져오고
+    //    const auto& itemClip = ResourceManager::Get().Get_ItemBank().GetItemClip(m_draggedItem->m_data.id);
+    //    // 아틀라스에서 해당아이템 가져오기.
+    //    ID2D1Bitmap1* itemBitmap = itemClip->atlas.Get();
+    //    // 소스 크기 가져옴.
+    //    D2D1_RECT_F srcRect = itemClip->srcRect;
+    //    // 크기 계산 
+    //    D2D1_RECT_F destRect = D2D1::RectF(
+    //        m_ghostImagePos.x - 28, m_ghostImagePos.y - 28,
+    //        m_ghostImagePos.x + 28, m_ghostImagePos.y + 28
+    //    );
+    //    // 그리기.
+    //    D2DRenderer::Get().DrawBitmap(
+    //        static_cast<ID2D1Bitmap1*>(itemBitmap),
+    //        destRect,
+    //        srcRect, // 소스 사각형을 사용하여 아틀라스의 특정 부분만 그리는거.
+    //        0.8f
+    //    );
+    //}
     RenderCursor();
 }
 
@@ -129,6 +147,26 @@ void CursorManager::EndItemDrag()
     m_dragSource = DragSource::None;
     m_sourceSlot = nullptr;
     SetCursor(CursorType::Normal);
+}
+
+void CursorManager::SetDraggedItem(Item* item)
+{
+    if (m_draggedItem == item)  return;
+    m_draggedItem = item;
+    m_draggedItem->ComponentClear();
+    const auto& itemClip = ResourceManager::Get().Get_ItemBank().GetItemClip(m_draggedItem->m_data.id);
+    // 아틀라스에서 해당아이템 가져오기.
+    ID2D1Bitmap1* itemBitmap = itemClip->atlas.Get();
+    // 소스 크기 가져옴.
+    D2D1_RECT_F srcRect = itemClip->srcRect;
+
+    auto info = m_draggedItem->GetRenderInfo();
+    info->SetBitmap(itemBitmap);
+    info->SetSrcRect(srcRect);
+    
+    auto shadow = m_draggedItem->AddComponent<Shadow_Effect>(info, 3.f, 0.f, 0.f, 0.f, 1.f, itemBitmap);
+    auto offset = m_draggedItem->AddComponent<Offset_Effect>(info, 5.f, 5.f, shadow->GetEffect());
+    auto composite = m_draggedItem->AddComponent<Composite_Effect>(info, itemBitmap, offset->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
 }
 
 void CursorManager::HoveredReleased()
