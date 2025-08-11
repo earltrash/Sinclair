@@ -21,11 +21,13 @@ struct fundamentalStatus //얘는 앞 글자 소문자로 표기 , 아이템이 가져야 할 구조�
 
 enum class Status_Total
 {
-		Strength,
+		Strength   ,
 		Magic_Power,
-		Health,
-		Knowledge,
-		Charm
+		Health     ,
+		Knowledge  ,
+		Charm      ,
+		/////////
+		Null
 };
 
 
@@ -69,6 +71,7 @@ enum class Need_Moment //-> 언제 필요하냐?
 		//명성 
 		Fam3_a, //2세대 엔딩 후, 명성 수치에 따라서 3세대로 들어가는 애들 
 		Fam4_a, //특정 명성 수치 달성 시,
+
 		Fam3_b, //2세대 엔딩 후, 명성 수치에 따라서 3세대로 들어가는 애들 
 		Fam4_b, //특정 명성 수치 달성 시,
 		UnKnown
@@ -127,4 +130,10 @@ struct Recipe {
 	std::string mat1;
 	std::string mat2;
 	std::string result;
+};
+
+
+struct PoolCount {
+	Need_Moment pool;
+	int count;
 };

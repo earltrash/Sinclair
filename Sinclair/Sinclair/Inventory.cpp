@@ -21,9 +21,9 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }
     InitializeSlots();
     std::cout << "[Inventory] 슬롯 초기화 완료" << std::endl; // ← 여기 안 나오면 그 안에서 터진 거
 
-    LoadItemDatabase(Need_Moment::Syn);
+   LoadItemDatabase(Need_Moment::Gen_2);
 
-    LoadItemDatabase(Need_Moment::Adv);
+    //LoadItemDatabase(Need_Moment::Adv);
     //LoadItemDatabase(Need_Moment::Syn);
 
     LoadItemDatabase(Need_Moment::Gen_2);
@@ -412,8 +412,6 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
     if (!m_isActive) return false;
 
     // CursorManager에서 드래그 중인 아이템이 있는지 확인
-    if (!CursorManager::Get().IsDragging()) return false;
-
     InventorySlot* targetSlot = GetSlotAt(mousePos); // 현재 마우스 위치의 슬롯을 다시 찾음
     Item* draggedItemData = CursorManager::Get().GetDraggedItem(); // CursorManager에서 드래그 중인 아이템 가져오기
     DragSource dragSource = CursorManager::Get().GetDragSource();
@@ -426,6 +424,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
             statWindow->UpdateTotalStats();
         }
     }
+
     bool placed = false;
 
     if (targetSlot && targetSlot->isEnabled && draggedItemData)
@@ -546,6 +545,26 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
     return false;
 }
 
+bool Inventory::ConsumePendingPotion()
+{
+    if (!m_pendingPotionSlot) return false;
+
+    // 슬롯/아이템 유효성 체크
+    if (m_pendingPotionSlot->IsEmpty()) { m_pendingPotionSlot = nullptr; return false; } 
+
+    Item* data = m_itemDatabase.GetItemData(m_pendingPotionSlot->item.id);
+    if (!data || dynamic_cast<Potion*>(data) == nullptr) { m_pendingPotionSlot = nullptr; return false; }
+
+    // 스택 1 감소 → 0이면 비우기 → 비트맵 갱신
+    m_pendingPotionSlot->item.count -= 1;
+    if (m_pendingPotionSlot->item.count <= 0)
+        m_pendingPotionSlot->Clear(); //포인터는 안 없앰 
+
+    m_pendingPotionSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
+    m_pendingPotionSlot = nullptr;
+    return true;
+}
+
 
 bool Inventory::HandleDoubleClick(Vec2 mousePos)
 {
@@ -554,20 +573,46 @@ bool Inventory::HandleDoubleClick(Vec2 mousePos)
     return false;
 }
 
-bool Inventory::HandleMouseRight(Vec2 mousePos)
+bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아와서 없애는 식으로 진행해야 할듯. 
 {
     InventorySlot* slot = GetSlotAt(mousePos);
+
     if (slot && !slot->IsEmpty())
     {
         Potion* item = dynamic_cast<Potion*>(m_itemDatabase.GetItemData(slot->item.id));
+
         if (item != nullptr)
         {
             int much  = item->GetMuch() -1 ;
+            m_pendingPotionSlot = slot; //  기억
 
             UIManager::Get().ShowPotionWindow(much); //포지션도 맞춰 버렸다고 
 
         }
+
+        Wearable* wear = dynamic_cast<Wearable*>(m_itemDatabase.GetItemData(slot->item.id));
+        if (wear != nullptr)
+        {
+
+            UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow); //활성화 시도 
+
+            auto* EQUIPWIN = dynamic_cast<EquipmentWindow*>(
+                UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
+
+            if (EQUIPWIN != nullptr)
+            {
+                EQUIPWIN->EquipItem(wear);
+                slot->Clear();
+                slot->UpdateItemBitmap(&controller, &m_itemDatabase);
+            }
+
+           //장비인 경우에는 장착하려고 함. 
+
+        }
+
     }
+
+
     return false;
 }
 
@@ -805,6 +850,7 @@ void Inventory::ClearAllSlots()
         // 배경 비트맵 업데이트 (기본 상태로)
         slot.UpdateBackgroundBitmap(&controller);
     }
+    m_itemDatabase.ClearAllItems();
 
     std::cout << "[Inventory] 모든 슬롯이 초기화되었습니다." << std::endl;
 }
@@ -858,3 +904,6 @@ void Inventory::LoadItemDatabase(Need_Moment Moment)
 {
     ResourceManager::Get().Get_ItemBank().GiveItem(Moment, m_itemDatabase);
 }
+
+
+//

@@ -5,6 +5,8 @@
 #undef max
 #include <algorithm>
 
+#include "Wearable.h"
+
 void EnhancementWindow::Update()
 {
 		// 여기에 오브젝트 얘들 전부 component update 시키기.
@@ -411,12 +413,12 @@ void EnhancementWindow::RenderEnhancementSlot()
 		// 슬롯에 등록된 아이템 아이콘 표시
 		if (m_targetItem)
 		{
-				auto& clip = ResourceManager::Get().Get_ItemBank().GetItemClip(m_targetItem->m_data.id);
-				ID2D1Bitmap1* itemAtlas = clip.atlas.Get();
+				auto clip = ResourceManager::Get().Get_ItemBank().GetItemClip(m_targetItem->m_data.id);
+				ID2D1Bitmap1* itemAtlas = clip->atlas.Get();
 				if (itemAtlas)
 				{
 						// destRect 크기에 맞춰서 아이템 그리기
-						D2DRenderer::Get().DrawBitmap(itemAtlas, destRect, clip.srcRect);
+						D2DRenderer::Get().DrawBitmap(itemAtlas, destRect, clip->srcRect);
 				}
 		}
 }
@@ -773,39 +775,42 @@ void EnhancementWindow::SetupButtonCallbacks()
 
 void EnhancementWindow::OnStatSelectionButtonClick()
 {
-		std::cout << "스탯 강화 버튼 클릭됨" << std::endl;
-		if (!m_targetItem->m_data.enchantable)
-		{
+	std::cout << "스탯 강화 버튼 클릭됨" << std::endl;
+	if (!m_targetItem->m_data.enchantable)
+	{
 
-			std::cout << "강화 불가능 아이템." << std::endl;
-			return;
-		}
-			
-		if (!m_targetItem)
-		{
-				std::cout << "강화할 아이템이 없습니다" << std::endl;
-				return;
-		}
+		std::cout << "강화 불가능 아이템." << std::endl;
+		return;
+	}
 
-		if (m_selectedScrollIndex >= m_enhancementButtons.size())
-		{
-				std::cout << "주문서를 선택해주세요" << std::endl;
-				return;
-		}
+	if (!m_targetItem)
+	{
+		std::cout << "강화할 아이템이 없습니다" << std::endl;
+		return;
+	}
 
-		// 버튼 인덱스에 따른 성공률
-		int successRate = 0;
-		switch (m_selectedScrollIndex)
-		{
-		case 0: successRate = 100; break;
-		case 1: successRate = 40; break;
-		case 2: successRate = 20; break;
-		default: successRate = 0; break;
-		}
+	if (m_selectedScrollIndex >= m_enhancementButtons.size())
+	{
+		std::cout << "주문서를 선택해주세요" << std::endl;
+		return;
+	}
 
-		std::cout << "강화 시도: 성공률 " << successRate << "%" << std::endl;
-		TryEnhance(successRate);
+	// 버튼 인덱스에 따른 성공률
+	int successRate = 0;
+	switch (m_selectedScrollIndex)
+	{
+	case 0: successRate = 100; break;
+	case 1: successRate = 40; break;
+	case 2: successRate = 20; break;
+	default: successRate = 0; break;
+	}
+
+	std::cout << "강화 시도: 성공률 " << successRate << "%" << std::endl;
+	TryEnhance(successRate);
+
 }
+
+
 
 void EnhancementWindow::OnLeftArrowClick()
 {

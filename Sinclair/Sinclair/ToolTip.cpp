@@ -205,7 +205,7 @@ void ToolTip::TextRender(Item*& item)
 		// 아이템명 (가로 중앙 정렬)
 
 
-	    DrawMessageCenterHorizontal(ItemNm, m_text_pos[TextType::ItemNm].y, PtToPx(15), L"빛의 계승자 Bold", D2D1::ColorF::White);
+	    DrawMessageCenterHorizontal(ItemNm, m_text_pos[TextType::ItemNm].y, PtToPx(14), L"빛의 계승자 Bold", D2D1::ColorF::White);
 
 		// 강화 / 합성
 		DrawMessageCenterHorizontal(Ehchan, m_text_pos[TextType::Enchancable].y, PtToPx(12.36f), L"빛의 계승자 Bold", D2D1::ColorF::Orange);
@@ -276,8 +276,8 @@ void ToolTip::BitmapRender(Item*& item)
 
 		D2DRenderer::Get().DrawBitmap(uiRenderer->GetBitmap("Tool_Tip_Slot").Get(), destRect);
 
-		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).atlas.Get() //비트맵 정도야 가능하긴 하지 
-			,destRect, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).srcRect, 1.0f);
+		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get() //비트맵 정도야 가능하긴 하지 
+			,destRect, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect, 1.0f);
 
 
 			for (int i = 0; i < wear->GetEnchancResult().size(); i++) //횟수가 고정이라 굳이? 싶었음 iterator는 
@@ -312,8 +312,8 @@ void ToolTip::BitmapRender(Item*& item)
 
 
 		D2DRenderer::Get().DrawBitmap(uiRenderer->GetBitmap("Tool_Tip_Slot").Get(), destRect);
-		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).atlas.Get()
-			, destRect, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).srcRect, 1.0f);
+		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get()
+			, destRect, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect, 1.0f);
 	}
 
 

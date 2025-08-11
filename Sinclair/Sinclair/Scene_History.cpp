@@ -9,6 +9,7 @@
 #include "UIManager.h"
 #include "GameManager.h"
 
+
 Scene_History::Scene_History(string name)
 {
 	m_name = name;
@@ -33,6 +34,25 @@ void Scene_History::Initalize()
 
 void Scene_History::Enter()
 {
+	//여기서 히스토리 계산
+	int resultFame = GameManager::Get().GetResultFam();
+	if (resultFame >= 19)
+	{
+		m_History = History::H1;
+	}
+	else if (resultFame >= 15)
+	{
+		m_History = History::H2;
+	}
+	else if (resultFame >= 10)
+	{
+		m_History = History::H3;
+	}
+	else
+	{
+		m_History = History::H4;
+	}
+
 	Initalize();
 
 }
@@ -85,15 +105,184 @@ void Scene_History::Render()
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
 	}
 
-	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 90.0f);
-	std::wstring job = StrToWstr(ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen * 10].직업명);
-	D2DRenderer::Get().DrawMessageCenter(job.c_str(),
-		1080.f, 120.f, 1920.f - 1080.f, 255.f - 120.f, D2D1::ColorF::White);
+	if (m_History == History::H1)
+	{
+		// 제목 (박스 3)
+		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 48.0f);
+		std::wstring Title = StrToWstr(vvs[0][0]);
+		D2DRenderer::Get().DrawMessageCenter(Title.c_str(),
+			1100.f, 65.f, 1880.f - 1100.f, 155.f - 65.f, D2D1::ColorF::White);
 
-	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
-	std::wstring text = StrToWstr(ResourceManager::Get().Get_TextBank().EndingVector[GameManager::Get().curGen * 10].엔딩텍스트);
-	D2DRenderer::Get().DrawMessageCenter(text.c_str(),
-		1223.f, 255.f, 564.f, 1080.f - 255.f, D2D1::ColorF::White);
+		// 본문 텍스트들 (박스 5, 6, 7 영역들)
+		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_NORMAL, 30.0f);
+
+		// 첫 번째 텍스트 블록 (박스 5 영역)
+		if (vvs[0].size() > 2) {
+			std::wstring text1 = StrToWstr(vvs[0][2]);
+			D2DRenderer::Get().DrawMessage(text1.c_str(),
+				1130.f, 200.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[0].size() > 3) {
+			std::wstring text2 = StrToWstr(vvs[0][3]);
+			D2DRenderer::Get().DrawMessage(text2.c_str(),
+				1130.f, 250.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+
+		// 두 번째 텍스트 블록 (박스 6 영역)
+		if (vvs[0].size() > 5) {
+			std::wstring text3 = StrToWstr(vvs[0][5]);
+			D2DRenderer::Get().DrawMessage(text3.c_str(),
+				1130.f, 350.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[0].size() > 6) {
+			std::wstring text4 = StrToWstr(vvs[0][6]);
+			D2DRenderer::Get().DrawMessage(text4.c_str(),
+				1130.f, 400.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+
+		// 세 번째 텍스트 블록 (박스 7 영역)
+		if (vvs[0].size() > 8) {
+			std::wstring text5 = StrToWstr(vvs[0][8]);
+			D2DRenderer::Get().DrawMessage(text5.c_str(),
+				1130.f, 500.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[0].size() > 9) {
+			std::wstring text6 = StrToWstr(vvs[0][9]);
+			D2DRenderer::Get().DrawMessage(text6.c_str(),
+				1130.f, 550.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+	}
+	else if (m_History == History::H2)
+	{
+		// 제목
+		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 48.0f);
+		std::wstring Title = StrToWstr(vvs[1][0]);
+		D2DRenderer::Get().DrawMessageCenter(Title.c_str(),
+			1100.f, 65.f, 1880.f - 1100.f, 155.f - 65.f, D2D1::ColorF::White);
+
+		// 본문 텍스트들
+		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_NORMAL, 30.0f);
+
+		if (vvs[1].size() > 2) {
+			std::wstring text1 = StrToWstr(vvs[1][2]);
+			D2DRenderer::Get().DrawMessage(text1.c_str(),
+				1130.f, 200.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[1].size() > 3) {
+			std::wstring text2 = StrToWstr(vvs[1][3]);
+			D2DRenderer::Get().DrawMessage(text2.c_str(),
+				1130.f, 250.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[1].size() > 5) {
+			std::wstring text3 = StrToWstr(vvs[1][5]);
+			D2DRenderer::Get().DrawMessage(text3.c_str(),
+				1130.f, 350.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[1].size() > 6) {
+			std::wstring text4 = StrToWstr(vvs[1][6]);
+			D2DRenderer::Get().DrawMessage(text4.c_str(),
+				1130.f, 400.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[1].size() > 7) {
+			std::wstring text5 = StrToWstr(vvs[1][7]);
+			D2DRenderer::Get().DrawMessage(text5.c_str(),
+				1130.f, 450.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[1].size() > 8) {
+			std::wstring text6 = StrToWstr(vvs[1][8]);
+			D2DRenderer::Get().DrawMessage(text6.c_str(),
+				1130.f, 500.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[1].size() > 9) {
+			std::wstring text7 = StrToWstr(vvs[1][9]);
+			D2DRenderer::Get().DrawMessage(text7.c_str(),
+				1130.f, 550.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+	}
+	else if (m_History == History::H3)
+	{
+		// 제목
+		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 48.0f);
+		std::wstring Title = StrToWstr(vvs[2][0]);
+		D2DRenderer::Get().DrawMessageCenter(Title.c_str(),
+			1100.f, 65.f, 1880.f - 1100.f, 155.f - 65.f, D2D1::ColorF::White);
+
+		// 본문 텍스트들
+		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_NORMAL, 30.0f);
+
+		if (vvs[2].size() > 2) {
+			std::wstring text1 = StrToWstr(vvs[2][2]);
+			D2DRenderer::Get().DrawMessage(text1.c_str(),
+				1130.f, 200.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[2].size() > 3) {
+			std::wstring text2 = StrToWstr(vvs[2][3]);
+			D2DRenderer::Get().DrawMessage(text2.c_str(),
+				1130.f, 250.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[2].size() > 4) {
+			std::wstring text3 = StrToWstr(vvs[2][4]);
+			D2DRenderer::Get().DrawMessage(text3.c_str(),
+				1130.f, 300.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[2].size() > 6) {
+			std::wstring text4 = StrToWstr(vvs[2][6]);
+			D2DRenderer::Get().DrawMessage(text4.c_str(),
+				1130.f, 400.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[2].size() > 8) {
+			std::wstring text5 = StrToWstr(vvs[2][8]);
+			D2DRenderer::Get().DrawMessage(text5.c_str(),
+				1130.f, 500.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[2].size() > 9) {
+			std::wstring text6 = StrToWstr(vvs[2][9]);
+			D2DRenderer::Get().DrawMessage(text6.c_str(),
+				1130.f, 550.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+	}
+	else // H4
+	{
+		// 제목
+		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 48.0f);
+		std::wstring Title = StrToWstr(vvs[3][0]);
+		D2DRenderer::Get().DrawMessageCenter(Title.c_str(),
+			1100.f, 65.f, 1880.f - 1100.f, 155.f - 65.f, D2D1::ColorF::White);
+
+		// 본문 텍스트들
+		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_NORMAL, 30.0f);
+
+		if (vvs[3].size() > 2) {
+			std::wstring text1 = StrToWstr(vvs[3][2]);
+			D2DRenderer::Get().DrawMessage(text1.c_str(),
+				1130.f, 200.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[3].size() > 3) {
+			std::wstring text2 = StrToWstr(vvs[3][3]);
+			D2DRenderer::Get().DrawMessage(text2.c_str(),
+				1130.f, 250.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[3].size() > 5) {
+			std::wstring text3 = StrToWstr(vvs[3][5]);
+			D2DRenderer::Get().DrawMessage(text3.c_str(),
+				1130.f, 350.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[3].size() > 6) {
+			std::wstring text4 = StrToWstr(vvs[3][6]);
+			D2DRenderer::Get().DrawMessage(text4.c_str(),
+				1130.f, 400.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[3].size() > 8) {
+			std::wstring text5 = StrToWstr(vvs[3][8]);
+			D2DRenderer::Get().DrawMessage(text5.c_str(),
+				1130.f, 500.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+		if (vvs[3].size() > 9) {
+			std::wstring text6 = StrToWstr(vvs[3][9]);
+			D2DRenderer::Get().DrawMessage(text6.c_str(),
+				1130.f, 550.f, 1850.f - 1130.f, 40.f, D2D1::ColorF::White);
+		}
+	}
 }
 
 void Scene_History::CreateObj()
@@ -130,7 +319,25 @@ void Scene_History::CreateObj()
 	// 효제 : 이거 어떻게 해야할지 고민하기
 
 	// 1. 이미지 갖고 오기
-	auto History2 = ResourceManager::Get().GetTexture("H1");
+	
+	
+	ComPtr<ID2D1Bitmap1> History2;
+	if(m_History == History::H1)
+	{
+		History2 = ResourceManager::Get().GetTexture("H1");
+	}
+	else if (m_History == History::H2)
+	{
+		History2 = ResourceManager::Get().GetTexture("H2");
+	}
+	else if (m_History == History::H3)
+	{
+		History2 = ResourceManager::Get().GetTexture("H3");
+	}
+	else 
+	{
+		History2 = ResourceManager::Get().GetTexture("H4");
+	}
 	// 2. 오브젝트 만들기
 	auto 이미지 = std::make_unique<Object>();
 	이미지->SetPosition(Vec2(17, 22));

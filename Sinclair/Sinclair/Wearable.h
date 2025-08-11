@@ -6,9 +6,21 @@ class Wearable : public Item
 public:
 	Wearable(const ItemCommonData& data, const json& j);
 
+    Wearable(const Wearable& other)
+        : Item(other)
+        , m_stat(other.m_stat)
+        , m_part(other.m_part)
+        , Enchan_Count(other.Enchan_Count)
+        , m_EnchanceResult(other.m_EnchanceResult)
+    {
+    }
+
+
  void SetStat(const Status_fundamental& statName, int value);
  int GetStat(const Status_fundamental& statName) const;
  void SetPart(const Wearable_part& Part);
+
+ std::unique_ptr<Item> Clone() const override;
 
  Wearable_part Getpart();
  vector<EnchancerType>& GetEnchancResult();

@@ -113,9 +113,6 @@
     <ClInclude Include="Scene_InGame.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Enchancer.h">
-      <Filter>Item</Filter>
-    </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>Item</Filter>
     </ClInclude>
@@ -215,6 +212,9 @@
     <ClInclude Include="SliderHandleComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="SoundBank.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -258,9 +258,6 @@
     </ClCompile>
     <ClCompile Include="Scene_InGame.cpp">
       <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Enchancer.cpp">
-      <Filter>Item</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Item</Filter>
@@ -354,6 +351,9 @@
     </ClCompile>
     <ClCompile Include="Scene_Tutorial.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundBank.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

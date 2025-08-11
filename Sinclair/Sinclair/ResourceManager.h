@@ -8,7 +8,7 @@
 #include "UI_Bank.h"
 #include "ItemBank.h"
 #include "TextBank.h"
-
+#include "SoundBank.h"
 
 using namespace std;
 
@@ -57,6 +57,10 @@ public:
     ItemBank& Get_ItemBank();
     TextBank& Get_TextBank();
    
+    std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> GetEndingBitmap(string id);
+
+    std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> m_endingmap;
+
 public:
     void Clean();
     //Æó±â ¿¹Á¤  std::string GetAbsoluteResourcePathA(); 
@@ -75,5 +79,6 @@ private:
     ItemBank m_ItemBank;
     UI_Bank m_UI_Bank;
     TextBank m_TextBank;
+    SoundBank m_SoundBank;
     // AsepriteParser -> ÆÄ½ÌÇÏ´Â °Ç 
 };

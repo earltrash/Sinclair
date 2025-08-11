@@ -355,8 +355,8 @@ void SynthesisWin::MemRender()
 
 				D2D1_RECT_F DEST = { pos.x, pos.y, SlotSize + pos.x , SlotSize + pos.y };
 
-				D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).atlas.Get(),
-					DEST, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).srcRect, 1);
+				D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get(),
+					DEST, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect, 1);
 			}
 		}
 
@@ -462,7 +462,6 @@ void SynthesisWin::PerformSynthesis()
 			m_slot_Item[SynSlot::Result] = inven->GetItemBase().GetItemData(result);
 			m_slot_Item[SynSlot::Slot1] = nullptr;
 			m_slot_Item[SynSlot::Slot2] = nullptr;
-
 		}
 
 		
@@ -551,8 +550,8 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 				ID2D1Bitmap1* SlotBitmap = (type == SynSlot::Result) ? uiRenderer->GetBitmap("Syn_Result").Get() : uiRenderer->GetBitmap("Syn_Slot").Get();
 				D2DRenderer::Get().DrawBitmap(SlotBitmap, DEST);
 
-				D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).atlas.Get(),
-					DEST, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id).srcRect, 1);
+				D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get(),
+					DEST, ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect, 1);
 
 			}
 			else

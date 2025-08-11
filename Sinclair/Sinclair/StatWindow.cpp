@@ -16,6 +16,7 @@ using namespace DirectX;
 
 void StatWindow::Update()
 {
+
 }
 
 void StatWindow::Render()
@@ -209,7 +210,7 @@ void StatWindow::RenderStatsText()
 
     // 레이더 차트 중심점과 최대 반경 
     float titleBarHeight = 42.0f;
-    Vec2 center = m_position + Vec2(m_size.x * 0.4f, titleBarHeight + (m_size.y - titleBarHeight) * 0.435f);   
+    Vec2 center = m_position + Vec2(m_size.x * 0.4f, titleBarHeight + (m_size.y - titleBarHeight) * 0.435f);
     float maxRadius = 180.0f; // 레이더 차트보다 약간 더 큰 반경으로 설정
 
     // 각도 초기화 (RenderRadarChart와 동일)
@@ -277,13 +278,13 @@ void StatWindow::RenderRadarChart()
     UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
     if (!uiRenderer) return;
 
-    
+
     if (m_statBase)
     {
         float newWidth = m_size.x / 1.4f;
         float newHeight = m_size.y / 2.0f;
 
-        D2D1_RECT_F destRect = { 
+        D2D1_RECT_F destRect = {
             m_position.x + (m_size.x - newWidth) / 2.0f,
             m_position.y + (m_size.y - newHeight) / 2.0f,
             m_position.x + (m_size.x - newWidth) / 2.0f + newWidth,
@@ -368,52 +369,71 @@ float StatWindow::NormalizeStat(float statValue, float min, float max)
     return std::max(0.0f, std::min(100.0f, normalized));
 }
 
+void StatWindow::StatUpdate(Status_fundamental stat, int Much)
+{
+    switch(stat)
+    {
+    case Status_fundamental::power:
+        m_potionFundamentalStats.power += Much;
+        UpdateTotalStats();
+        break;
+    case Status_fundamental::agile:
+        m_potionFundamentalStats.agile += Much;
+        UpdateTotalStats();
+        break;
+    case Status_fundamental::intelligence:
+        m_potionFundamentalStats.intelligence += Much;
+        UpdateTotalStats();
+        break;
+    case Status_fundamental::luck:
+        m_potionFundamentalStats.luck += Much;
+        UpdateTotalStats();
+        break;
+    default:
+        break;
+    }
+}
+
 void StatWindow::UpdateTotalStats()
 {
-    // 장비 스탯 합계를 먼저 0으로 초기화
-    
-    m_equipmentFundamentalStats.power = 0;
-    m_equipmentFundamentalStats.agile = 0;
-    m_equipmentFundamentalStats.intelligence = 0;
-    m_equipmentFundamentalStats.luck = 0;
+    // 1. 장비 스탯 초기화
+    m_equipmentFundamentalStats = {};
 
-    // UIManager를 통해 EquipmentWindow 포인터를 가져옵니다.
+    // 2. 장비 스탯 합산
     UIWindow* window = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
     if (auto* equipmentWindow = dynamic_cast<EquipmentWindow*>(window))
     {
-        // 모든 장비 슬롯을 순회하며 장착된 아이템의 스탯을 가져와 합산합니다.
         for (int i = 0; i < static_cast<int>(Wearable_part::UnKnown); ++i)
         {
-            Wearable_part slotType = static_cast<Wearable_part>(i);
-            Item* equippedItem = equipmentWindow->GetEquippedItem(slotType);
-            
-            if (auto* wearableItem = dynamic_cast<Wearable*>(equippedItem))
+            if (auto* wearableItem = dynamic_cast<Wearable*>(equipmentWindow->GetEquippedItem((Wearable_part)i)))
             {
                 m_equipmentFundamentalStats.power += wearableItem->GetStat(Status_fundamental::power);
                 m_equipmentFundamentalStats.agile += wearableItem->GetStat(Status_fundamental::agile);
                 m_equipmentFundamentalStats.intelligence += wearableItem->GetStat(Status_fundamental::intelligence);
                 m_equipmentFundamentalStats.luck += wearableItem->GetStat(Status_fundamental::luck);
             }
-
-            if (slotType == Wearable_part::Weapon)
-            {
-                CalculateBonusStats(equippedItem);
-            }
         }
     }
 
-    // 제공해주신 계산식으로 2차 스탯(TotalStatus)을 업데이트
-    m_totalStats.Strength = m_equipmentFundamentalStats.power * 2 + m_equipmentFundamentalStats.agile * 1;
-    m_totalStats.Magic_Power = m_equipmentFundamentalStats.intelligence * 3;
-    m_totalStats.Health = static_cast<int>(m_equipmentFundamentalStats.power * 1 + m_equipmentFundamentalStats.intelligence * 0.5f);
-    m_totalStats.Knowledge = m_equipmentFundamentalStats.intelligence * 2 + m_equipmentFundamentalStats.luck * 1;
-    m_totalStats.Charm = m_equipmentFundamentalStats.luck * 3 + m_equipmentFundamentalStats.agile * 1;
+    // 3. 장비 + 포션 효과 합산
+    fundamentalStatus totalFundamentalStats;
+    totalFundamentalStats.power = m_equipmentFundamentalStats.power + m_potionFundamentalStats.power;
+    totalFundamentalStats.agile = m_equipmentFundamentalStats.agile + m_potionFundamentalStats.agile;
+    totalFundamentalStats.intelligence = m_equipmentFundamentalStats.intelligence + m_potionFundamentalStats.intelligence;
+    totalFundamentalStats.luck = m_equipmentFundamentalStats.luck + m_potionFundamentalStats.luck;
+
+    // 4. 2차 스탯 계산
+    m_totalStats.Strength = totalFundamentalStats.power * 2 + totalFundamentalStats.agile * 1;
+    m_totalStats.Magic_Power = totalFundamentalStats.intelligence * 3;
+    m_totalStats.Health = static_cast<int>(totalFundamentalStats.power * 1 + totalFundamentalStats.intelligence * 0.5f);
+    m_totalStats.Knowledge = totalFundamentalStats.intelligence * 2 + totalFundamentalStats.luck * 1;
+    m_totalStats.Charm = totalFundamentalStats.luck * 3 + totalFundamentalStats.agile * 1;
 }
 
 // 무기 고유 id로 체크할거임.
 void StatWindow::CalculateBonusStats(Item* item)
 {
-    if (item->m_data.id == "W006") 
+    if (item->m_data.id == "W006")
     {
         m_totalStats.Strength *= 1.2f;
     }
@@ -473,5 +493,13 @@ void StatWindow::CalculateBonusStats(Item* item)
         m_totalStats.Knowledge *= 2;
         m_totalStats.Charm *= 2;
     }
+}
+
+void StatWindow::ResetStat()
+{
+    m_equipmentFundamentalStats; {}
+    m_potionFundamentalStats; {}
+    m_totalStats = {};
+
 }
 

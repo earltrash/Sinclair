@@ -46,7 +46,7 @@ public:
     bool HandleMouseRight(Vec2 mousePos) override;
 
     bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
-
+    bool ConsumePendingPotion();
     virtual void SetActivate(bool active) { m_isActive = active; }
     UIWindowType GetType() override;
 
@@ -62,6 +62,10 @@ public:
     // 슬롯 초기화
     void ClearAllSlots();
 private:
+
+    InventorySlot* m_pendingPotionSlot = nullptr;
+
+
     std::vector<Region> regions;
     std::map<std::pair<int, int>, InventorySlot> slots;  // [region][index] -> slot
     SlotBitmapController controller; //슬롯 비트맵 설정해주는 친구 

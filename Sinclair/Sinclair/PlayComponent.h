@@ -12,6 +12,7 @@ class Slide_Effect;		// 옆으로 이동 연출
 class UpDown_Effect;	// 위아래 왔다갔다 연출
 class Blink_Effect;
 class Explode_Effect;
+class DynamicContrast_Effect;
 
 class Slide_Effect : public Component
 {
@@ -142,6 +143,35 @@ private:
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
 
 	ComPtr<ID2D1Effect> m_offsetEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
+};
+
+class DynamicContrast_Effect : public Component
+{
+public:
+	DynamicContrast_Effect(RenderInfo* renderInfo, float minContrast, float maxContrast, float addNum, ID2D1Effect* effect);
+	DynamicContrast_Effect(RenderInfo* renderInfo, float minContrast, float maxContrast, float addNum, ID2D1Bitmap1* bitmap);
+	~DynamicContrast_Effect() { m_contrastEffect.Reset(); }
+
+	void Initialize();
+
+	void Update() override;
+
+	ID2D1Effect* GetEffect() { return m_contrastEffect.Get(); }
+
+private:
+	float m_minContrast;			// -1~1까지
+	float m_maxContrast;			// -1~1까지
+	float m_addNum;					// 증가량
+	float m_currentStrength = 0.f;	// 대조 효과 기본 0.f
+
+	bool isUp = true;
+
+	ID2D1Effect* m_effect = nullptr;
+	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
+
+	ComPtr<ID2D1Effect> m_contrastEffect;
 
 	RenderInfo* m_renderInfo = nullptr;
 };
