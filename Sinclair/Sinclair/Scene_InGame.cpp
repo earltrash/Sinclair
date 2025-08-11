@@ -83,7 +83,7 @@ void Scene_InGame::Render()
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
-		D2DRenderer::Get().DrawRectangle(obj->GetRenderInfo()->GetRenderInfo().destRect, D2D1::ColorF::Red);
+		//D2DRenderer::Get().DrawRectangle(obj->GetRenderInfo()->GetRenderInfo().destRect, D2D1::ColorF::Red);
 	}
 
 	if (isSETTING)
