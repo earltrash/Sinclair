@@ -39,10 +39,12 @@ private:
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ebm;
 
 
-	bool m_allTextsShown = false;
+
+	bool  m_textShown = false;
+	bool  m_titleShown = false;
+	bool  m_scriptShown = false;
 	float m_currentShowingDelay = 0.f;
-	float m_showingDelay = 1.0f; // 텍스트 간격
-	int index = 0;
-	int m_targetTextCount = 6; // H2면 6, 아니면 5
+	float m_showingDelay = 3.0f;			// 텍스트 간격
+	int   index = 0;
 };
 
