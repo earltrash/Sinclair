@@ -28,39 +28,40 @@ void EnhancementWindow::Render()
 
 bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 {
-		std::cout << "HandleMouseDown - 마우스 위치: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
+		
 		if (!m_isActive) return false;
 
 		// 메세지 만들어서 던지기.
 		MSG msg{};
 		msg.message = WM_LBUTTONDOWN;
+
+		// 상대좌표로 이미 계산함 머지 겹쳐서 자동머지로 터진거임
 		Vec2 relativePos = mousePos - m_position;
 		msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-		//if (m_statSelectionButton)
-		//{
-		//	Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
-		//	Vec2 btnScreenPos = m_position + btnPos;
-		//	std::cout << "스탯 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
-		//}
-		//if (m_leftArrowButton)
-		//{
-		//	Vec2 btnPos = m_leftArrowButton->GetTransform().GetPosition();
-		//	Vec2 btnScreenPos = m_position + btnPos;
-		//	std::cout << "left 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
-		//}
-		//if (m_rightArrowButton)
-		//{
-		//	Vec2 btnPos = m_rightArrowButton->GetTransform().GetPosition();
-		//	Vec2 btnScreenPos = m_position + btnPos;
-		//	std::cout << "right 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
-		//}
+
+		std::cout << "HandleMouseDown - 마우스 위치: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
+	/*	if (m_statSelectionButton)
+		{
+			Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
+			Vec2 btnScreenPos = m_position + btnPos;
+			std::cout << "스탯 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
+		}
+		if (m_leftArrowButton)
+		{
+			Vec2 btnPos = m_leftArrowButton->GetTransform().GetPosition();
+			Vec2 btnScreenPos = m_position + btnPos;
+			std::cout << "left 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
+		}
+		if (m_rightArrowButton)
+		{
+			Vec2 btnPos = m_rightArrowButton->GetTransform().GetPosition();
+			Vec2 btnScreenPos = m_position + btnPos;
+			std::cout << "right 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
+		}*/
 		// 스탯 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_statSelectionButton.get()))
 		{
-				// 상대 좌표로 변환
-				Vec2 relativePos = mousePos + m_position;
 				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-
 				m_statSelectionButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
 				m_statSelectionButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
 		}
@@ -68,9 +69,7 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 		// left 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_leftArrowButton.get()))
 		{
-				Vec2 relativePos = mousePos + m_position;
 				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-				
 				m_leftArrowButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
 				m_leftArrowButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
 		}
@@ -78,9 +77,7 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 		// right 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_rightArrowButton.get()))
 		{
-				Vec2 relativePos = mousePos + m_position;
 				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-
 				m_rightArrowButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
 				m_rightArrowButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
 		}
@@ -90,10 +87,8 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 		{
 				if (IsMouseOverObject(mousePos, btn.get()))
 				{
-						Vec2 relativePos = mousePos + m_position;
 						msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-
-						btn->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
+   					btn->GetComponent<ButtonComponent>()->CheckCollision(msg);
 						btn->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
 				}
 						
@@ -146,7 +141,7 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 		if (IsMouseOverObject(mousePos, m_statSelectionButton.get()))
 		{
 				// 상대 좌표로 변환
-				Vec2 relativePos = mousePos + m_position;
+				//Vec2 relativePos = mousePos + m_position;
 				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 
 				m_statSelectionButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
@@ -156,7 +151,7 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 		// left 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_leftArrowButton.get()))
 		{
-				Vec2 relativePos = mousePos + m_position;
+				//Vec2 relativePos = mousePos + m_position;
 				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 
 				m_leftArrowButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
@@ -166,7 +161,7 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 		// right 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_rightArrowButton.get()))
 		{
-				Vec2 relativePos = mousePos + m_position;
+				//Vec2 relativePos = mousePos + m_position;
 				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 
 				m_rightArrowButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
@@ -178,7 +173,7 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 		{
 				if (IsMouseOverObject(mousePos, btn.get()))
 				{
-						Vec2 relativePos = mousePos + m_position;
+						//Vec2 relativePos = mousePos + m_position;
 						msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 
 						btn->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
