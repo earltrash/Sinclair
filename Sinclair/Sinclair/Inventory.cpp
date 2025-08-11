@@ -23,7 +23,7 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }
 
    LoadItemDatabase(Need_Moment::Gen_2);
 
-    //LoadItemDatabase(Need_Moment::Adv);
+   // LoadItemDatabase(Need_Moment::Adv);
     //LoadItemDatabase(Need_Moment::Syn);
 
     //LoadItemDatabase(Need_Moment::Gen_2);
@@ -285,7 +285,7 @@ void Inventory::Render()
 
 
 
-bool Inventory::HandleMouseHover(Vec2 mousePos)
+bool Inventory::HandleMouseHover(Vec2 mousePos) 
 {
     if (!m_isActive)
     {
@@ -625,12 +625,14 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아�
 
             auto* EQUIPWIN = dynamic_cast<EquipmentWindow*>(
                 UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
+            auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow));
 
-            if (EQUIPWIN != nullptr)
+            if (EQUIPWIN != nullptr && statWindow != nullptr)
             {
                 EQUIPWIN->EquipItem(wear);
                 slot->Clear();
                 slot->UpdateItemBitmap(&controller, &m_itemDatabase);
+                statWindow->UpdateTotalStats();
             }
 
            //장비인 경우에는 장착하려고 함. 
