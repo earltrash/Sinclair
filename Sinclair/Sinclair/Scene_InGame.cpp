@@ -165,6 +165,7 @@ void Scene_InGame::CreateObj()
 	backComp->SetOnClickCallback([this]() {
 		std::cout << "뒤로가기 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
 		isSETTING = false;
+		UIManager::Get().CloseAllWindows();
 		SafeChangeScene("OutGame");
 		});
 

@@ -603,6 +603,7 @@ bool Inventory::HandleDoubleClick(Vec2 mousePos)
 bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아와서 없애는 식으로 진행해야 할듯. 
 {
     InventorySlot* slot = GetSlotAt(mousePos);
+
     if (slot && !slot->IsEmpty())
     {
         Potion* item = dynamic_cast<Potion*>(m_itemDatabase.GetItemData(slot->item.id));
@@ -616,7 +617,25 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아�
 
         }
 
+        Wearable* wear = dynamic_cast<Wearable*>(m_itemDatabase.GetItemData(slot->item.id));
+        if (wear != nullptr)
+        {
 
+            UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow); //활성화 시도 
+
+            auto* EQUIPWIN = dynamic_cast<EquipmentWindow*>(
+                UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
+
+            if (EQUIPWIN != nullptr)
+            {
+                EQUIPWIN->EquipItem(wear);
+                slot->Clear();
+                slot->UpdateItemBitmap(&controller, &m_itemDatabase);
+            }
+
+           //장비인 경우에는 장착하려고 함. 
+
+        }
 
     }
 

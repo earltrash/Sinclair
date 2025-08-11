@@ -205,7 +205,7 @@ void ToolTip::TextRender(Item*& item)
 		// 아이템명 (가로 중앙 정렬)
 
 
-	    DrawMessageCenterHorizontal(ItemNm, m_text_pos[TextType::ItemNm].y, PtToPx(15), L"빛의 계승자 Bold", D2D1::ColorF::White);
+	    DrawMessageCenterHorizontal(ItemNm, m_text_pos[TextType::ItemNm].y, PtToPx(14), L"빛의 계승자 Bold", D2D1::ColorF::White);
 
 		// 강화 / 합성
 		DrawMessageCenterHorizontal(Ehchan, m_text_pos[TextType::Enchancable].y, PtToPx(12.36f), L"빛의 계승자 Bold", D2D1::ColorF::Orange);
