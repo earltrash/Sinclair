@@ -177,7 +177,7 @@ void Scene_Title::CreateObj()
 	//bgComp->SetCurrentBitmap("Background");
 
 	// 대조 효과
-	auto bg_contrast = Background->AddComponent<DynamicContrast_Effect>(bgInfo, -0.1f, 0.8f, 0.005f, gameStartBackground.Get());
+	auto bg_contrast = Background->AddComponent<DynamicContrast_Effect>(bgInfo, -0.2f, 0.6f, 0.0005f, gameStartBackground.Get());
 	// 9. 게임 오브젝트들에 집어넣기
 	m_gameObjects.emplace("Background", std::move(Background));
 
@@ -194,7 +194,7 @@ void Scene_Title::CreateObj()
 	auto d1_info = dust1->GetRenderInfo();
 	d1_info->SetBitmap(dustBM.Get());
 	// 4. 컴포넌트 설정
-	auto d1_blur = dust1->AddComponent<GaussianBlur_Effect>(d1_info, 3.f, dustBM.Get());
+	auto d1_blur = dust1->AddComponent<GaussianBlur_Effect>(d1_info, 1.f, dustBM.Get());
 	auto d1_updown = dust1->AddComponent<UpDown_Effect>(d1_info, dust1->GetTransform(), 10.f, 0.03f, 0.03f);
 	auto d1_slide = dust1->AddComponent<Slide_Effect>(d1_info, dust1->GetTransform(), 0.07f, 1920.f, 1920.f, true);
 	// 5. 게임 오브젝트 관리 map에 추가

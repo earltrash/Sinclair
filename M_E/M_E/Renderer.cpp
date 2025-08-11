@@ -129,6 +129,7 @@ void D2DRenderer::DrawBitmap(const renderInfo& renderInfo)
             {0.f, 0.f},                                                         // 렌더타겟에서 그려지는 위치. SetTransform 때문에 좌상단 고정
             renderInfo.srcRect,
             D2D1_INTERPOLATION_MODE_LINEAR, D2D1_COMPOSITE_MODE_SOURCE_OVER);
+        SetTransform(D2D1::Matrix3x2F::Identity());
     }
     else
     {

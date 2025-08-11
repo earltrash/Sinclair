@@ -46,7 +46,7 @@ public:
 
     // 드래그 중인 아이템 가져오기
     Item* GetDraggedItem() const { return m_draggedItem; }
-    void SetDraggedItem(Item* item) { m_draggedItem = item; }
+    void SetDraggedItem(Item* item);
 
     void SetHoveredItem(Item* item) { m_hoveredItem = item; }
     Item* GetHoveredItem() { return m_hoveredItem; }

@@ -59,7 +59,7 @@ public:
 		template<typename T>
 		T* GetComponent() const;
 
-		//void ComponentClear(); //¿Ã∞« ππ¿”
+		void ComponentClear() { m_Components.clear(); }
 
 protected:
 

@@ -23,7 +23,7 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }
 
    LoadItemDatabase(Need_Moment::Gen_2);
 
-    //LoadItemDatabase(Need_Moment::Adv);
+    LoadItemDatabase(Need_Moment::Adv);
     //LoadItemDatabase(Need_Moment::Syn);
 
     //LoadItemDatabase(Need_Moment::Gen_2);
@@ -213,6 +213,12 @@ void Inventory::Update() //입력처리를 받은 다음에 해야하는 거잖아? //차피 이거는
 {
     // effect가 필요하다면 여기서 Update 하는 게 맞아. 
     if (!m_isActive) return;
+    // 이펙트 컴포넌트 업데이트
+    for (const auto& [key, slot] : slots)
+    {
+        if (slot.itemBitmap.item == nullptr) continue;
+        slot.itemBitmap.item->Update();
+    }
 
     // 창 위치가 변경될 때마다 타이틀바 및 닫기 버튼의 위치도 업데이트
     titleBarBounds = Rect(m_position.x, m_position.y, m_size.x, 42.0f);
@@ -732,7 +738,33 @@ void Inventory::RenderSlot(const InventorySlot& slot)
     }
 
     // 2. 아이템 아이콘 렌더링
-    if (!slot.IsEmpty() && slot.itemBitmap.bitmap)
+    if (!slot.IsEmpty() && slot.itemBitmap.item != nullptr)
+    {
+        auto info = slot.itemBitmap.item->GetRenderInfo();
+        slot.itemBitmap.item->SetPosition({ slot.itemBitmap.position.x - 128.f * 0.8f + 35.f, slot.itemBitmap.position.y - 128.f * 0.8f + 35.f });
+        D2DRenderer::Get().DrawBitmap(info->GetRenderInfo());
+
+        // 3. 아이템 개수 텍스트
+        if (slot.item.count > 1)
+        {
+            std::wstring countText = std::to_wstring(slot.item.count);
+            // 텍스트 위치를 슬롯 우측 하단에 배치 (예시)
+            D2D1_RECT_F textRect = D2D1::RectF(
+                slot.bounds.x + slot.bounds.width - 30, // 우측 정렬
+                slot.bounds.y + slot.bounds.height - 20, // 하단 정렬
+                slot.bounds.x + slot.bounds.width,
+                slot.bounds.y + slot.bounds.height
+            );
+            D2DRenderer::Get().GetContext()->DrawText(
+                countText.c_str(),
+                static_cast<UINT32>(countText.length()),
+                D2DRenderer::Get().GetTFormat().Get(),
+                &textRect,
+                D2DRenderer::Get().GetTBrush().Get()
+            );
+        }
+    }
+    else if (!slot.IsEmpty() && slot.itemBitmap.bitmap)
     {
         D2D1_RECT_F itemDestRect = D2D1::RectF(
             slot.itemBitmap.position.x, // itemBitmap.position은 SetBounds에서 이미 슬롯 bounds에 맞춰 설정됨
@@ -741,6 +773,10 @@ void Inventory::RenderSlot(const InventorySlot& slot)
             slot.itemBitmap.position.y + slot.itemBitmap.size.y
         );
         D2D1_RECT_F itemSrcRect = slot.itemBitmap.srcRect;
+        itemSrcRect.left = itemSrcRect.left + 85.f;
+        itemSrcRect.top = itemSrcRect.top + 85.f;
+        itemSrcRect.right = itemSrcRect.right - 85.f;
+        itemSrcRect.bottom = itemSrcRect.bottom - 85.f;
 
         D2DRenderer::Get().DrawBitmap(
             static_cast<ID2D1Bitmap1*>(slot.itemBitmap.bitmap),
@@ -750,7 +786,6 @@ void Inventory::RenderSlot(const InventorySlot& slot)
 
         );
         //  std::cout << " slot.itemBitmap:Opacity" << slot.itemBitmap.opacity << endl;
-
 
           // 3. 아이템 개수 텍스트
         if (slot.item.count > 1)
