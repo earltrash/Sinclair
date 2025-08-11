@@ -125,49 +125,21 @@ bool EquipmentWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSo
 {
     if (!draggedItem) return false;
 
-    // 다른 창들의 영역인지 확인
-    bool isInOtherWindow = false;
-
-    // 인벤창 영역 확인
-    UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
-    if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
-    {
-        isInOtherWindow = true;
-    }
-
-    // 다른 창 영역이면 해당 창에서 처리하도록 넘김
-    if (isInOtherWindow)
-    {
-        return false;
-    }
-
-    // 어떤 창 영역도 아니면 원래 위치로 복구
-    if (source == DragSource::Equipment)
-    {
-        // 장비창에서 나온 아이템이므로 다시 착용
-        Wearable* wearableItem = dynamic_cast<Wearable*>(draggedItem);
-        if (wearableItem)
+        // 어떤 창 영역도 아니면 원래 위치로 복구
+        if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement)
         {
-            Wearable_part slotType = wearableItem->Getpart();
-            m_equippedItems[slotType] = draggedItem; // EquipItem 대신 직접 설정
+            // 인벤토리에서 온 아이템이므로 인벤토리로 복구
+            auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+            if (inventoryWindow)
+            {
+                inventoryWindow->AddItem(draggedItem->m_data.id, 1);
+                std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
+            }
         }
-        std::cout << "장비 아이템을 원래 슬롯으로 복구했습니다: " << draggedItem->m_data.name << std::endl;
-    }
-    else if (source == DragSource::Inventory)
-    {
-        // 인벤토리에서 온 아이템이므로 인벤토리로 복구
-        auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-        if (inventoryWindow)
-        {
-            inventoryWindow->AddItem(draggedItem->m_data.id, 1);
-            std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
-        }
-    }
 
     CursorManager::Get().EndItemDrag();
     return true;
 }
-
 
 bool EquipmentWindow::HandleDoubleClick(Vec2 mousePos)
 {
@@ -474,9 +446,9 @@ void EquipmentWindow::RenderCloseButton()
 {
     UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
 
-    float rightMargin = 47.0f;
-    Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
-    Vec2 closeButtonSize = { 27.0f, 27.0f };
+    float rightMargin = 65;
+    Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 35 };
+    Vec2 closeButtonSize = { 35, 35 };
     D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 
     if (uiRenderer)

@@ -215,6 +215,9 @@
     <ClInclude Include="SoundBank.h">
       <Filter>Bank</Filter>
     </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -354,6 +357,9 @@
     </ClCompile>
     <ClCompile Include="SoundBank.cpp">
       <Filter>Bank</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

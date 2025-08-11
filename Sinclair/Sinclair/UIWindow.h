@@ -65,19 +65,31 @@ public:
 
 		bool IsInCloseButton(Vec2 pos) const
 		{
-				// 오른쪽에서 47 떨어진 지점이 기준이라.
-				float rightMargin = 47.0f;
+			float rightMargin;
+			float yOffset;
 
-				// 닫기 버튼 x,y 위치 계산임. +7는 기획서 보고 넣어둠.
-				Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
+			// 인벤토리만 예외처리
+			if (m_windowType == UIWindowType::InventoryWindow)
+			{
+				rightMargin = 75.0f; // x값
+				yOffset = 30.0f;     // y값
+			}
+			else
+			{
+				rightMargin = 65.0f; // 일반적인 경우
+				yOffset = 35.0f;     // 일반적인 경우
+			}
 
-				// 닫기 버튼 크기. 마찬가지로 기획서에 있는 그대로임.
-				float closeButtonWidth = 35;
-				float closeButtonHeight = 35;
+			// 닫기 버튼 x,y 위치 계산
+			Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + yOffset };
 
-				// 닫기 버튼 안에 있는지 체크.
-				return pos.x >= closeButtonPos.x && pos.x <= closeButtonPos.x + closeButtonWidth &&
-						pos.y >= closeButtonPos.y && pos.y <= closeButtonPos.y + closeButtonHeight;
+			// 닫기 버튼 크기. 마찬가지로 기획서에 있는 그대로임.
+			float closeButtonWidth = 35;
+			float closeButtonHeight = 35;
+
+			// 닫기 버튼 안에 있는지 체크.
+			return pos.x >= closeButtonPos.x && pos.x <= closeButtonPos.x + closeButtonWidth &&
+				pos.y >= closeButtonPos.y && pos.y <= closeButtonPos.y + closeButtonHeight;
 		}
 
 

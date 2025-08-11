@@ -1,5 +1,7 @@
 #pragma once
 #include "pch.h"
+#include "SoundManager.h"
+
 
 using namespace std;
 class SoundBank
@@ -7,15 +9,16 @@ class SoundBank
 	SoundBank() = default;
 	~SoundBank() = default;
 
-	//void SoundAssetLoad(string path);
+	void SoundAssetLoad(string path);
 
 
 
 private:
-	//std::map<string, > m_EDM;
-	//std::map<string, > m_EUIM;
-	//std::map<string, > m_HM;
-	//std::map<string, > m_BG; //인게임 아웃게임 튜토리얼 
+
+	/*std::unordered_map<std::string, FMOD_SOUND*> m_BG;
+	std::unordered_map<std::string, FMOD_SOUND*> m_EDM;
+	std::unordered_map<std::string, FMOD_SOUND*> m_EUIM;
+	std::unordered_map<std::string, FMOD_SOUND*> m_HM;*/
 
 
 

@@ -17,7 +17,17 @@ void ItemBank::LoadItemStatus(const string& path) { //스텟 JSON - Item_S
 
     namespace fs = std::filesystem;
     fs::path base = fs::current_path();
+
+#ifdef _DEBUG
     fs::path resourceFolder = base.parent_path() / "Item" / path;
+
+#else NDEBUG 
+    fs::path resourceFolder = base.parent_path().parent_path() / "Item" / path;
+
+#endif
+    
+
+
     int times = 0;
 
     for (const auto& entry : fs::recursive_directory_iterator(resourceFolder, fs::directory_options::skip_permission_denied)) {
@@ -96,7 +106,19 @@ void ItemBank::LoadItemRect(const string& path) //Json과 Png는 이름이 같고 같은 
 {
     namespace fs = std::filesystem;
     fs::path base = fs::current_path();
-    fs::path resourceFolder = base.parent_path() /"Item" / path;
+
+
+#ifdef _DEBUG
+    fs::path resourceFolder = base.parent_path() / "Item" / path;
+
+#else NDEBUG 
+    fs::path resourceFolder = base.parent_path().parent_path() / "Item" / path;
+
+#endif
+    //fs::path resourceFolder = base.parent_path() / "Item" / path;
+
+
+   // fs::path resourceFolder = base.parent_path() /"Item" / path;
     int times = 0;
 
     for (const auto& entry : fs::recursive_directory_iterator(resourceFolder, fs::directory_options::skip_permission_denied)) {
