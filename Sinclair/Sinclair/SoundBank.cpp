@@ -6,66 +6,79 @@
 
 void SoundBank::SoundAssetLoad(string path) //Sound 로 고정 
 {
-    //namespace fs = std::filesystem;
-    //fs::path base = fs::current_path();
-    //fs::path resourceFolder = base.parent_path() / path;
+    namespace fs = std::filesystem;
+    fs::path base = fs::current_path();
+    fs::path resourceFolder = base.parent_path() / path;
+
+    FMOD_SYSTEM* g_fmodSystem = SoundManager::Instance().GetSystem();
 
 
+    for (const auto& entry : fs::directory_iterator(resourceFolder))
+    {
+        if (!entry.is_regular_file())
+            continue;
 
-    //for (const auto& entry : fs::directory_iterator(resourceFolder))
-    //{
-    //    if (!entry.is_regular_file())
-    //        continue;
+        std::string filename = entry.path().filename().string();
+        std::string name = filename.substr(0, filename.find_last_of('.')); // 확장자 제거
+        std::wstring fullPathW = entry.path().wstring();
+        std::string fullPath(fullPathW.begin(), fullPathW.end()); // FMOD는 UTF-8 필요
 
-    //    std::string filename = entry.path().filename().string();
+        FMOD_SOUND* sound = nullptr;
+        FMOD_RESULT result = FMOD_System_CreateSound(
+            g_fmodSystem,
+            fullPath.c_str(),
+            FMOD_DEFAULT,
+            nullptr,
+            &sound
+        );
 
+        if (result != FMOD_OK)
+        {
+           // printf("FMOD sound load error: %s\n", FMOD_ErrorString(result));
+            continue;
+        }
 
-    //    // 확장자 체크 (lowercase 비교)
-    //    if (entry.path().extension() != ".png")
-    //        continue;
+        auto splitPos = name.find('_');
+        if (splitPos == std::string::npos) // Single
+        {
+            m_BG.emplace(name, sound);
+        }
+        else
+        {
+            std::string prefix = name.substr(0, splitPos);
+            std::string suffix = name.substr(splitPos + 1);
 
-    //    std::string name = filename.substr(0, filename.find_last_of('.')); // . 빼고 
-
-    //    //여기서 분기가 갈림.  Single인지 / 아님 Multi인지 
-
-
-    //    auto splitPos = name.find('_');
-    //    if (splitPos == std::string::npos) //나는 그냥 Single이야 
-    //    {
-    //        std::wstring fullPath = entry.path().wstring(); //이런거로 파일 접근해서 emplace 하기 
-
-    //        m_BG.emplace(splitPos, )//뭐 파일이겠죠 //파일 
-    //    }
-    //    else
-    //    {
- 
-    //        std::string prefix = name.substr(0, splitPos);        // _ 앞부분
-    //        std::string suffix = name.substr(splitPos + 1);       // _ 뒷부분
-    //        std::wstring fullPath = entry.path().wstring();
-
-    //        if (prefix == "EDM")
-    //        {
-    //            m_EDM.emplace(suffix, );
-
-    //        }
-    //        else if (prefix == "EUIM")
-    //        {
-    //            m_EUIM.emplace(suffix, );
-    //        }
-    //        else if (prefix == "HM")
-    //        {
-    //            m_HM.emplace(suffix, );
-    //        }
-    //       
-    //       //뭐 파일 받아와서 저장하면 됨 
-    //        
+            if (prefix == "EDM") {
+                m_EDM.emplace(suffix, sound);
+            }
+            else if (prefix == "EUIM") {
+                m_EUIM.emplace(suffix, sound);
+            }
+            else if (prefix == "HM") {
+                m_HM.emplace(suffix, sound);
+            }
+        }
+    }
 
 
+}
 
+FMOD_SOUND* SoundBank::GetEndingBGM( string& id)
+{
+    return m_EDM[id];
+}
 
-    //    }
-    //}
+FMOD_SOUND* SoundBank::GetUIBGM( string& id)
+{
+    return m_EUIM[id];
+}
 
+FMOD_SOUND* SoundBank::GetBGM( string& id)
+{
+    return m_BG[id];
+}
 
-
+FMOD_SOUND* SoundBank::GetHistoryBGM( string& id)
+{
+    return m_HM[id];
 }

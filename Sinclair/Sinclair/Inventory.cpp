@@ -4,7 +4,7 @@
 #include "CursorManager.h"
 #include "InvenMem.h"
 #include "Potion.h"
-
+#include "Wearable.h"
 //: UI_Object(MWP) //?ì„±?ë¡œ ?ì—­?€ ?¼ë‹¨ ?¤ì •??(Inven ?ê¸° ?ì—­ ë§ì„)
 Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
 {
@@ -617,10 +617,10 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //?¬ìš©???„ì´?œì˜ ?¬ì¸?°ë? ë°
 
         if (item != nullptr)
         {
-            int much  = item->GetMuch() -1 ;
-            m_pendingPotionSlot = slot; //  ê¸°ì–µ
+            int much = item->GetMuch() - 1;
+            m_pendingPotionSlot = slot; //  ±â¾ï
 
-            UIManager::Get().ShowPotionWindow(much); //?¬ì??˜ë„ ë§ì¶° ë²„ë ¸?¤ê³  
+            UIManager::Get().ShowPotionWindow(much); //Æ÷Áö¼Çµµ ¸ÂÃç ¹ö·È´Ù°í 
 
         }
 
@@ -628,29 +628,32 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //?¬ìš©???„ì´?œì˜ ?¬ì¸?°ë? ë°
         if (wear != nullptr)
         {
 
-            UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow); //?œì„±???œë„ 
+            UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow); //È°¼ºÈ­ ½Ãµµ 
 
-            auto* EQUIPWIN = dynamic_cast<EquipmentWindow*>(
+            auto EQUIPWIN = dynamic_cast<EquipmentWindow*>(
                 UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
-            auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow));
 
-            if (EQUIPWIN != nullptr && statWindow != nullptr)
+            if (EQUIPWIN != nullptr)
             {
                 EQUIPWIN->EquipItem(wear);
                 slot->Clear();
                 slot->UpdateItemBitmap(&controller, &m_itemDatabase);
-                statWindow->UpdateTotalStats();
             }
 
-           //?¥ë¹„??ê²½ìš°?ëŠ” ?¥ì°©?˜ë ¤ê³??? 
+            //ÀåºñÀÎ °æ¿ì¿¡´Â ÀåÂøÇÏ·Á°í ÇÔ. 
 
         }
-
+        return true;
     }
 
 
     return false;
-}
+
+    }
+
+
+  
+
 
 UIWindowType Inventory::GetType()
 {
@@ -719,7 +722,7 @@ void Inventory::RenderCloseButton()
         float rightMargin = 75; // ¿ø·¡ 65
         Vec2 currentCloseButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 30 };
         // ?«ê¸° ë²„íŠ¼ ?„ì¹˜ë¥??„ì¬ ì°??„ì¹˜???°ë¼ ?…ë°?´íŠ¸
-        float rightMargin = 47.0f;
+      //  float rightMargin = 47.0f;
 
         D2D1_RECT_F destRect = D2D1::RectF(
             currentCloseButtonPos.x, currentCloseButtonPos.y,
