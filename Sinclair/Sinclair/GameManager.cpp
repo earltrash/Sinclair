@@ -362,126 +362,120 @@ int GameManager::GetResultFam()
     return i;
 }
 
-
 void GameManager::FindEnding()
 {
-
     unordered_map<Status_Total, int> statMap = {
-    {Status_Total::Strength   , arrTotalStatus[curGen - 2].Strength   },
-    {Status_Total::Magic_Power, arrTotalStatus[curGen - 2].Magic_Power  },
-    {Status_Total::Health     , arrTotalStatus[curGen - 2].Health       },
-    {Status_Total::Knowledge  , arrTotalStatus[curGen - 2].Knowledge    },
-    {Status_Total::Charm      , arrTotalStatus[curGen - 2].Charm        }
+        {Status_Total::Strength   , arrTotalStatus[curGen - 2].Strength   },
+        {Status_Total::Magic_Power, arrTotalStatus[curGen - 2].Magic_Power  },
+        {Status_Total::Health     , arrTotalStatus[curGen - 2].Health       },
+        {Status_Total::Knowledge  , arrTotalStatus[curGen - 2].Knowledge    },
+        {Status_Total::Charm      , arrTotalStatus[curGen - 2].Charm        }
     };
 
     vector<Status_Total> positiveStats;
     vector<Status_Total> negativeStats;
+
     for (const auto& stat : statMap) {
         if (stat.second >= 50) {
             positiveStats.push_back(stat.first);
         }
-        else if (stat.second <= 20)
-        {
+        else if (stat.second <= 20) {
             negativeStats.push_back(stat.first);
         }
     }
 
-    if (positiveStats.size() >= 5) 
-    {
-        // 상
+    // 전체 상위 엔딩 (모든 스탯 50% 이상)
+    if (positiveStats.size() >= 5) {
         arrEndingID[curGen - 2] = 3011;
         return;
     }
-    else if (positiveStats.size() >= 3 && positiveStats.size() < 5)
-    {
-        sort(positiveStats.begin(), positiveStats.end(),
-            [&statMap](Status_Total a, Status_Total b) {
-                return statMap[a] > statMap[b];
-            });
-        positiveStats.resize(2);
-        std::sort(positiveStats.begin(), positiveStats.end(),
+
+    // 전체 하위 엔딩 (모든 스탯 20% 이하)
+    if (negativeStats.size() >= 5) {
+        arrEndingID[curGen - 2] = 3031;
+        return;
+    }
+
+    // positive가 없는 경우 중간 엔딩
+    if (positiveStats.size() == 0) {
+        arrEndingID[curGen - 2] = 3021;
+        return;
+    }
+
+    // positive 스탯들을 값 기준으로 내림차순 정렬 (가장 높은 것부터)
+    sort(positiveStats.begin(), positiveStats.end(),
+        [&statMap](Status_Total a, Status_Total b) {
+            return statMap[a] > statMap[b];
+        });
+
+    // negative 스탯들을 값 기준으로 오름차순 정렬 (가장 낮은 것부터)
+    sort(negativeStats.begin(), negativeStats.end(),
+        [&statMap](Status_Total a, Status_Total b) {
+            return statMap[a] < statMap[b];
+        });
+
+    // 엔딩 매칭을 위한 조건 설정
+    vector<Status_Total> finalPositive;
+    Status_Total finalNegative = Status_Total::Null;
+
+    if (positiveStats.size() >= 2) {
+        // 2개 이상이면 가장 높은 2개 선택
+        finalPositive.push_back(positiveStats[0]);
+        finalPositive.push_back(positiveStats[1]);
+
+        // positive 조건을 enum 값 기준으로 정렬 (엔딩 데이터와 매칭을 위해)
+        sort(finalPositive.begin(), finalPositive.end(),
             [](Status_Total lhs, Status_Total rhs) {
                 return static_cast<int>(lhs) < static_cast<int>(rhs);
             });
     }
-    else if (positiveStats.size() == 0)
-    {
-        if(negativeStats.size() == 5)
-        {
-            // 하
-            arrEndingID[curGen - 2] = 3031;
-            return;
-        }
-        else
-        {
-            // 중
-            arrEndingID[curGen - 2] = 3021;
-            return;
-        }
+    else if (positiveStats.size() == 1) {
+        // 1개면 그것만 사용
+        finalPositive.push_back(positiveStats[0]);
     }
 
-    if (negativeStats.size() >= 2)
-    {
-        sort(negativeStats.begin(), negativeStats.end(),
-            [&statMap](Status_Total a, Status_Total b) {
-                return statMap[a] < statMap[b];
-            });
-        negativeStats.resize(1);
+    // negative 조건 설정
+    if (!negativeStats.empty()) {
+        finalNegative = negativeStats[0]; // 가장 낮은 스탯
     }
 
-    //TextBank::EndingVector
+    // 엔딩 매칭
     for (const auto& ending : ResourceManager::Get().Get_TextBank().EndingVector) {
-        bool matches = true;
-
-        // positive 조건 체크
+        // positive 조건 구성
         vector<Status_Total> requiredPositive;
-
-        // positive.first 추가
         if (ending.positive.first != Status_Total::Null) {
             requiredPositive.push_back(ending.positive.first);
         }
-
-        // positive.second 추가 (Null이 아닌 경우)
         if (ending.positive.second != Status_Total::Null) {
             requiredPositive.push_back(ending.positive.second);
         }
 
-        // positive 조건 개수가 일치하는지 확인
-        if (requiredPositive.size() != positiveStats.size()) {
+        // positive 조건 개수 확인
+        if (requiredPositive.size() != finalPositive.size()) {
             continue;
         }
 
-        // positive 조건이 모두 매칭되는지 확인
-        for (Status_Total requiredStat : requiredPositive) {
-            bool found = false;
-            for (Status_Total playerStat : positiveStats) {
-                if (requiredStat == playerStat) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                matches = false;
+        // positive 조건 매칭 확인 (정렬된 상태에서 비교)
+        sort(requiredPositive.begin(), requiredPositive.end(),
+            [](Status_Total lhs, Status_Total rhs) {
+                return static_cast<int>(lhs) < static_cast<int>(rhs);
+            });
+
+        bool positiveMatches = true;
+        for (size_t i = 0; i < requiredPositive.size(); i++) {
+            if (requiredPositive[i] != finalPositive[i]) {
+                positiveMatches = false;
                 break;
             }
         }
 
-        if (!matches) {
+        if (!positiveMatches) {
             continue;
         }
 
-        // negative 조건 체크
-        if (ending.negative == Status_Total::Null) {
-            // 엔딩에서 negative 조건이 없는 경우
-            if (!negativeStats.empty()) {
-                continue; // 플레이어에게 negative가 있으면 매칭 안됨
-            }
-        }
-        else {
-            // 엔딩에서 negative 조건이 있는 경우
-            if (negativeStats.size() != 1 || negativeStats[0] != ending.negative) {
-                continue; // negative 조건이 정확히 매칭되지 않음
-            }
+        // negative 조건 확인
+        if (ending.negative != finalNegative) {
+            continue;
         }
 
         // 모든 조건이 매칭되면 해당 엔딩 선택
@@ -491,6 +485,135 @@ void GameManager::FindEnding()
 
     // 매칭되는 엔딩이 없으면 기본 엔딩 (중)
     arrEndingID[curGen - 2] = 3021;
-
 }
+//void GameManager::FindEnding()
+//{
+//
+//    unordered_map<Status_Total, int> statMap = {
+//    {Status_Total::Strength   , arrTotalStatus[curGen - 2].Strength   },
+//    {Status_Total::Magic_Power, arrTotalStatus[curGen - 2].Magic_Power  },
+//    {Status_Total::Health     , arrTotalStatus[curGen - 2].Health       },
+//    {Status_Total::Knowledge  , arrTotalStatus[curGen - 2].Knowledge    },
+//    {Status_Total::Charm      , arrTotalStatus[curGen - 2].Charm        }
+//    };
+//
+//    vector<Status_Total> positiveStats;
+//    vector<Status_Total> negativeStats;
+//    for (const auto& stat : statMap) {
+//        if (stat.second >= 50) {
+//            positiveStats.push_back(stat.first);
+//        }
+//        else if (stat.second <= 20)
+//        {
+//            negativeStats.push_back(stat.first);
+//        }
+//    }
+//
+//    if (positiveStats.size() >= 5) 
+//    {
+//        // 상
+//        arrEndingID[curGen - 2] = 3011;
+//        return;
+//    }
+//    else if (positiveStats.size() >= 3 && positiveStats.size() < 5)
+//    {
+//        sort(positiveStats.begin(), positiveStats.end(),
+//            [&statMap](Status_Total a, Status_Total b) {
+//                return statMap[a] > statMap[b];
+//            });
+//        positiveStats.resize(2);
+//        std::sort(positiveStats.begin(), positiveStats.end(),
+//            [](Status_Total lhs, Status_Total rhs) {
+//                return static_cast<int>(lhs) < static_cast<int>(rhs);
+//            });
+//    }
+//    else if (positiveStats.size() == 0)
+//    {
+//        if(negativeStats.size() == 5)
+//        {
+//            // 하
+//            arrEndingID[curGen - 2] = 3031;
+//            return;
+//        }
+//        else
+//        {
+//            // 중
+//            arrEndingID[curGen - 2] = 3021;
+//            return;
+//        }
+//    }
+//
+//    if (negativeStats.size() >= 2)
+//    {
+//        sort(negativeStats.begin(), negativeStats.end(),
+//            [&statMap](Status_Total a, Status_Total b) {
+//                return statMap[a] < statMap[b];
+//            });
+//        negativeStats.resize(1);
+//    }
+//
+//    //TextBank::EndingVector
+//    for (const auto& ending : ResourceManager::Get().Get_TextBank().EndingVector) {
+//        bool matches = true;
+//
+//        // positive 조건 체크
+//        vector<Status_Total> requiredPositive;
+//
+//        // positive.first 추가
+//        if (ending.positive.first != Status_Total::Null) {
+//            requiredPositive.push_back(ending.positive.first);
+//        }
+//
+//        // positive.second 추가 (Null이 아닌 경우)
+//        if (ending.positive.second != Status_Total::Null) {
+//            requiredPositive.push_back(ending.positive.second);
+//        }
+//
+//        // positive 조건 개수가 일치하는지 확인
+//        if (requiredPositive.size() != positiveStats.size()) {
+//            continue;
+//        }
+//
+//        // positive 조건이 모두 매칭되는지 확인
+//        for (Status_Total requiredStat : requiredPositive) {
+//            bool found = false;
+//            for (Status_Total playerStat : positiveStats) {
+//                if (requiredStat == playerStat) {
+//                    found = true;
+//                    break;
+//                }
+//            }
+//            if (!found) {
+//                matches = false;
+//                break;
+//            }
+//        }
+//
+//        if (!matches) {
+//            continue;
+//        }
+//
+//        // negative 조건 체크
+//        if (ending.negative == Status_Total::Null) {
+//            // 엔딩에서 negative 조건이 없는 경우
+//            if (!negativeStats.empty()) {
+//                continue; // 플레이어에게 negative가 있으면 매칭 안됨
+//            }
+//        }
+//        else {
+//            // 엔딩에서 negative 조건이 있는 경우
+//            if (negativeStats.size() != 1 || negativeStats[0] != ending.negative) {
+//                continue; // negative 조건이 정확히 매칭되지 않음
+//            }
+//        }
+//
+//        // 모든 조건이 매칭되면 해당 엔딩 선택
+//        arrEndingID[curGen - 2] = ending.ID;
+//        return;
+//    }
+//
+//    // 매칭되는 엔딩이 없으면 기본 엔딩 (중)
+//    arrEndingID[curGen - 2] = 3021;
+//
+//}
 
