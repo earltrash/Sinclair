@@ -102,7 +102,7 @@ void Scene_End::Render()
 		// 두 개 있을 때 → good/bad 구분
 		for (const auto& [Name, obj] : ebm) // -> 임시로 하고 일단 
 		{
-			D2D1_RECT_F rect{ 0, 0, 1024, 1024 };
+			D2D1_RECT_F rect{ 17, 22, 1024 + 17, 1024 + 22 };
 
 			if (Name.find("_good") != std::string::npos)
 			{
@@ -193,28 +193,28 @@ void Scene_End::CreateObj()
 	// [2] 이미지
 	// 효제 : 이거 어떻게 해야할지 고민하기
 
-	// 1. 이미지 갖고 오기
+	//// 1. 이미지 갖고 오기
 	//auto 엔딩2 = ResourceManager::Get().GetTexture("엔딩", "02");
 	
 	
-	// 2. 오브젝트 만들기
-	auto 이미지 = std::make_unique<Object>();
-	이미지->SetPosition(Vec2(17, 22));
+	//// 2. 오브젝트 만들기
+	//auto 이미지 = std::make_unique<Object>();
+	//이미지->SetPosition(Vec2(17, 22));
 
-	auto 엔딩2 = ResourceManager::Get().GetTexture("엔딩", "02");
+	//auto 엔딩2 = ResourceManager::Get().GetTexture("엔딩", "02");
 
-	auto 이미지info = 이미지->GetRenderInfo();
-	이미지info->SetBitmap(엔딩2.Get());
-	// 3. 배경 컴포넌트 만들기
-	auto 이미지Comp = 이미지->AddComponent<BackgroundComponent>(이미지info);
-	이미지Comp->SetWidth(1036);
-	이미지Comp->SetHeight(1036);
-	이미지Comp->BitmapPush("이미지", 엔딩2);
-	이미지Comp->SetCurrentBitmap("이미지");
+	//auto 이미지info = 이미지->GetRenderInfo();
+	//이미지info->SetBitmap(엔딩2.Get());
+	//// 3. 배경 컴포넌트 만들기
+	//auto 이미지Comp = 이미지->AddComponent<BackgroundComponent>(이미지info);
+	//이미지Comp->SetWidth(1036);
+	//이미지Comp->SetHeight(1036);
+	//이미지Comp->BitmapPush("이미지", 엔딩2);
+	//이미지Comp->SetCurrentBitmap("이미지");
 
 
 	/// 9
-	m_gameObjects.emplace("이미지", std::move(이미지));
+	//m_gameObjects.emplace("이미지", std::move(이미지));
 
 	//////////////////////
 	//////////////////////

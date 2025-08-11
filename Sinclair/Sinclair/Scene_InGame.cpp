@@ -83,7 +83,7 @@ void Scene_InGame::Render()
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
 		D2DRenderer::Get().DrawBitmap(obj->GetRenderInfo()->GetRenderInfo());
-		D2DRenderer::Get().DrawRectangle(obj->GetRenderInfo()->GetRenderInfo().destRect, D2D1::ColorF::Red);
+		//D2DRenderer::Get().DrawRectangle(obj->GetRenderInfo()->GetRenderInfo().destRect, D2D1::ColorF::Red);
 	}
 
 	if (isSETTING)
@@ -165,6 +165,7 @@ void Scene_InGame::CreateObj()
 	backComp->SetOnClickCallback([this]() {
 		std::cout << "뒤로가기 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
 		isSETTING = false;
+		UIManager::Get().CloseAllWindows();
 		SafeChangeScene("OutGame");
 		});
 

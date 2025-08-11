@@ -213,7 +213,7 @@
       <Filter>Component</Filter>
     </ClInclude>
     <ClInclude Include="SoundBank.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Bank</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -353,7 +353,7 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="SoundBank.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Bank</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

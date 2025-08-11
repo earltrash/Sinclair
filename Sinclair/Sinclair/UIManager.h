@@ -60,7 +60,7 @@ public:
    
 
     // 윈도우타입의 창이 켜져있는지 체크용.
-    inline bool IsWindowActive(UIWindowType type) const;
+    inline bool IsWindowActive(UIWindowType type) const; //장비창 -> true false 
 
 
     // 현재 제일 활성화된놈중에서 젤 위에놈 리턴해주기.
