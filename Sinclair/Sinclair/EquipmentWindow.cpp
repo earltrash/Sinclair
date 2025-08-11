@@ -6,9 +6,24 @@
 
 #include "Wearable.h"
 
+#include "EffectComponent.h"
+#include "PlayComponent.h"
+
+void EquipmentWindow::AddEffect(Object* slot)
+{
+    auto info = slot->GetRenderInfo();
+    auto shadow = slot->AddComponent<Shadow_Effect>(info, 3.f, 1.f, 1.f, 1.f, 1.f, info->GetBitmap());
+    auto scale = slot->AddComponent<Scale_Effect>(info, 37.f, 37.f, 1.1f, 1.1f, shadow->GetEffect());
+    auto blink = slot->AddComponent<Blink_Effect>(info, 0.2f, 1.f, scale->GetEffect());
+    auto comp = slot->AddComponent<Composite_Effect>(info, info->GetBitmap(), blink->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+}
+
 void EquipmentWindow::Update() // 이거는 Inven 때처럼 Update 말고 메시지 받을 때 하면 될 듯 
 {
-
+    for (auto& slot : m_slots)
+    {
+        slot.second->Update();
+    }
 }
 
 void EquipmentWindow::Render()
@@ -66,6 +81,9 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
         // 드래그 중인 아이템과 소스 정보 가져오기
         Item* draggedItem = CursorManager::Get().GetDraggedItem();
         DragSource dragSource = CursorManager::Get().GetDragSource();
+
+        // 슬롯 오브젝트의 blink effect 끄기
+        //SendEventToComponent("STOP", draggedItem->m_data.wearablePart);
 
         // 마우스가 놓인 위치가 유효한 장비 슬롯인지 확인
         Wearable_part slotType = GetSlotTypeAt(mousePos);
@@ -385,56 +403,71 @@ void EquipmentWindow::RenderSlots()
     {
         Vec2 screenPos = m_position + position; // 창 위치를 더한 최종 화면 좌표
         Vec2 slotSize = m_slotSizes.at(slotType);
-        D2D1_RECT_F destRect = { screenPos.x, screenPos.y, screenPos.x + slotSize.x, screenPos.y + slotSize.y };
+        //D2D1_RECT_F destRect = { screenPos.x, screenPos.y, screenPos.x + slotSize.x, screenPos.y + slotSize.y };
 
         // 슬롯의 배경 비트맵을 slotType에 따라 동적으로 가져오도록 수정
-        std::string slotKey;
+        //std::string slotKey;
         switch (slotType)
         {
         case Wearable_part::Helmet:
-            slotKey = "icon_helmet_slot";
+            //slotKey = "icon_helmet_slot";
+            m_slots[Wearable_part::Helmet]->GetTransform().SetPosition({ screenPos.x, screenPos.y });
             break;
         case Wearable_part::Weapon:
-            slotKey = "icon_weapon_slot";
+            //slotKey = "icon_weapon_slot";
+            m_slots[Wearable_part::Weapon]->GetTransform().SetPosition({ screenPos.x, screenPos.y });
             break;
         case Wearable_part::Upper:
-            slotKey = "icon_armor_slot";
+            //slotKey = "icon_armor_slot";
+            m_slots[Wearable_part::Upper]->GetTransform().SetPosition({ screenPos.x, screenPos.y });
             break;
         case Wearable_part::Under:
-            slotKey = "icon_pants_slot";
+            //slotKey = "icon_pants_slot";
+            m_slots[Wearable_part::Under]->GetTransform().SetPosition({ screenPos.x, screenPos.y });
             break;
         case Wearable_part::Glove:
-            slotKey = "icon_glove_slot";
+            //slotKey = "icon_glove_slot";
+            m_slots[Wearable_part::Glove]->GetTransform().SetPosition({ screenPos.x, screenPos.y });
             break;
         case Wearable_part::Shoes:
-            slotKey = "icon_shoes_slot";
+            //slotKey = "icon_shoes_slot";
+            m_slots[Wearable_part::Shoes]->GetTransform().SetPosition({ screenPos.x, screenPos.y });
             break;
         case Wearable_part::Neckless:
-            slotKey = "icon_necklace_slot";
+            //slotKey = "icon_necklace_slot";
+            m_slots[Wearable_part::Neckless]->GetTransform().SetPosition({ screenPos.x, screenPos.y });
             break;
         case Wearable_part::Ring:
-            slotKey = "icon_earring_slot";
+            //slotKey = "icon_earring_slot";
+            m_slots[Wearable_part::Ring]->GetTransform().SetPosition({ screenPos.x, screenPos.y });
             break;
         case Wearable_part::Cape:
-            slotKey = "icon_cape_slot";
+            //slotKey = "icon_cape_slot";
+            m_slots[Wearable_part::Cape]->GetTransform().SetPosition({ screenPos.x, screenPos.y });
             break;
         default:
-            slotKey = "empty_slot"; // 기본 슬롯 비트맵
+            //slotKey = "empty_slot"; // 기본 슬롯 비트맵
             break;
         }
 
-        ID2D1Bitmap1* slotBitmap = uiRenderer->GetBitmap(slotKey).Get();
-        if (slotBitmap)
-        {
-            // 해당하는 Bitmap 
-            D2DRenderer::Get().DrawBitmap(slotBitmap, destRect);
-        }
+        //ID2D1Bitmap1* slotBitmap = uiRenderer->GetBitmap(slotKey).Get();
+        //if (slotBitmap)
+        //{
+        //    // 해당하는 Bitmap 
+        //    D2DRenderer::Get().DrawBitmap(slotBitmap, destRect);
+        //}
 
         // screenPos 기준
         D2DRenderer::Get().DrawRectangle(screenPos.x, screenPos.y, screenPos.x + slotSize.x, screenPos.y + slotSize.y, D2D1::ColorF(D2D1::ColorF::Black));
 
         // screenPos 기준
         //RenderSlotIcon(slotType, screenPos);
+    }
+
+    for (auto& slot : m_slots)
+    {
+        auto info = slot.second->GetRenderInfo()->GetRenderInfo();
+        D2DRenderer::Get().DrawBitmap(info);
     }
 }
 
@@ -608,6 +641,8 @@ void EquipmentWindow::UpdateSlotPositions()
     m_slotPositions[Wearable_part::Cape] = { m_position.x + 370, m_position.y + 365 };
     m_slotPositions[Wearable_part::Ring] = { m_position.x + 370, m_position.y + 517 };
     m_slotPositions[Wearable_part::Neckless] = { m_position.x + 222, m_position.y + 593 };
+
+    std::cout << "마우스 위치 받는 중" << std::endl;
 }
 
 

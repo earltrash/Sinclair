@@ -22,6 +22,7 @@ public:
 
 		virtual void Update() override {};
 		virtual void Render() override = 0;
+		virtual void FixedUpdate(float dt) override {}
 		
 		// 마우스 인풋 관련 함수들.
 		virtual bool HandleMouseHover(Vec2 mousePos) = 0;

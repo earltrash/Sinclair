@@ -88,6 +88,7 @@ void Blink_Effect::Initialize()
 		m_opacityEffect->SetInput(0, m_bitmap.Get());
 	else
 		m_opacityEffect->SetInputEffect(0, m_effect);
+	m_opacityEffect->SetValue(D2D1_COMPOSITE_MODE_SOURCE_OVER, 0.f);
 }
 
 void Blink_Effect::FixedUpdate(float dt)
@@ -111,6 +112,21 @@ void Blink_Effect::FixedUpdate(float dt)
 	}
 
 	m_opacityEffect->SetValue(D2D1_COMPOSITE_MODE_SOURCE_OVER, Graph(x));
+}
+
+void Blink_Effect::OnEvent(const std::string& ev)
+{
+	if (ev == "STOP") 
+	{
+		isStop = true;
+		m_opacityEffect->SetValue(D2D1_COMPOSITE_MODE_SOURCE_OVER, 0.f);
+		x = 0.f;
+		time = 0.f;
+	}
+	else if (ev == "PLAY")
+	{
+		isStop = false;
+	}
 }
 
 Explode_Effect::Explode_Effect(RenderInfo* renderInfo, float x_currentScale, float y_currentScale, float x_addScale, float y_addScale, float totalSecond, ID2D1Effect* effect)

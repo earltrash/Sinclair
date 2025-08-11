@@ -17,10 +17,31 @@ void CursorManager::Update()
         m_draggedItem->Update();
 
         // 장비창에 정보 보내기
-        //auto part = m_draggedItem->m_data.wearablePart;
+        auto part = m_draggedItem->m_data.wearablePart;
         //bool isPopped = UIManager::Get().IsWindowActive(UIWindowType::EquipmentWindow);
         //if (!isPopped) return;
         //auto pWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
+        if (UIManager::Get().IsWindowActive(UIWindowType::EquipmentWindow))
+        {
+            EquipmentWindow* win =
+                dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
+
+            if (win->CanEquipItem(m_draggedItem, part));
+            win->SendEventToComponent("PLAY", part);
+        }
+        m_stopDraggingItem = m_draggedItem;
+    }
+    if (!m_isDragging && m_stopDraggingItem != nullptr)
+    {
+        auto part = m_stopDraggingItem->m_data.wearablePart;
+        if (UIManager::Get().IsWindowActive(UIWindowType::EquipmentWindow))
+        {
+            EquipmentWindow* win =
+                dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
+
+            if (win->CanEquipItem(m_stopDraggingItem, part));
+            win->SendEventToComponent("STOP", part);
+        }
     }
 }
 
