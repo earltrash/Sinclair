@@ -108,10 +108,10 @@ void Scene_Tutorial::CreateObj()
 	//////////////////////
 	// [1] Background 
 
-	// 1. 16개의 이미지 갖고 오기
+	// 1. 17개의 이미지 갖고 오기
 	vector<ComPtr<ID2D1Bitmap1>> tutorialBackground{};
 
-	for (int i = 1; i <= 16 ; i++)
+	for (int i = 1; i <= 17 ; i++)
 	{
 		//튜토리얼_01
 		tutorialBackground.emplace_back(
@@ -132,7 +132,7 @@ void Scene_Tutorial::CreateObj()
 	auto bgComp = Background->AddComponent<BackgroundComponent>(bgInfo);
 	// 3.1.1 사이즈 다르면 
 	bgComp->SetWidth(1920.f); bgComp->SetHeight(1080.f);
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 17; i++)
 	{
 		bgComp->BitmapPush( to_string(i + 1), tutorialBackground[i]);
 	}
@@ -205,14 +205,14 @@ void Scene_Tutorial::CreateObj()
 	tutorialButton2Comp->SetOnClickCallback([this, bgComp]() {
 		static int i = 1;
 
-		if ( i  <= 16)
+		if ( i  <= 17)
 		{
 			bgComp->SetCurrentBitmap(to_string(i));
 			i++;
 		}
 		else
 		{
-			cout << "16번 건너뛰기" << endl;
+			cout << "17번 건너뛰기" << endl;
 			SafeChangeScene("InGame");
 		}
 

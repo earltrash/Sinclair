@@ -5,21 +5,21 @@
 #include "InvenMem.h"
 #include "Potion.h"
 
-//: UI_Object(MWP) //생성자로 영역은 일단 설정함 (Inven 자기 영역 말임)
+//: UI_Object(MWP) //?�성?�로 ?�역?� ?�단 ?�정??(Inven ?�기 ?�역 말임)
 Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
 {
 
-    m_bound = { 0,0,1208,825 }; // 초기 위치  
+    m_bound = { 0,0,1208,825 }; // 초기 ?�치  
 
     windowPosition = { m_bound.x,m_bound.y };
 
     InitializeRegions();
-  //  std::cout << "[Inventory] Regions 초기화 완료" << std::endl;
-    LoadUIBitmaps(); //멤버로 갖고 있는 닫기랑 윗 부분 (이건 Inven이랑 같이할 가능성도 있음) 
-   // std::cout << "[Inventory] UI 비트맵 로딩 완료" << std::endl;
+  //  std::cout << "[Inventory] Regions 초기???�료" << std::endl;
+    LoadUIBitmaps(); //멤버�?갖고 ?�는 ?�기????부�?(?�건 Inven?�랑 같이??가?�성???�음) 
+   // std::cout << "[Inventory] UI 비트�?로딩 ?�료" << std::endl;
 
     InitializeSlots();
-    std::cout << "[Inventory] 슬롯 초기화 완료" << std::endl; // ← 여기 안 나오면 그 안에서 터진 거
+    std::cout << "[Inventory] ?�롯 초기???�료" << std::endl; // ???�기 ???�오�?�??�에???�진 �?
 
    LoadItemDatabase(Need_Moment::Gen_2);
 
@@ -35,11 +35,11 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }
 
     PackItem();
 
-    dragState.isDragging = false; // 드래그 상태 초기화
+    dragState.isDragging = false; // ?�래�??�태 초기??
 
     //0. slot Init
-    //1. 비트맵 로드
-    //2. Item 데이터 넣기
+    //1. 비트�?로드
+    //2. Item ?�이???�기
 
      //3. Update
      //4. Render
@@ -49,20 +49,20 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }
 
 void Inventory::InitializeRegions()
 {
-    regions.resize(3); // 3개의 영역 (4x8, 4x8, 4x8)
+    regions.resize(3); // 3개의 ?�역 (4x8, 4x8, 4x8)
 
-    //타이틀 바 영역, 위치만 존재한다고 생각하셈 
+    //?�?��? �??�역, ?�치�?존재?�다�??�각?�셈 
     titleBarBounds = Rect(m_position.x, m_position.y, m_size.x, 42.0f);  //7+35
 
-    //닫기 버튼 영역
+    //?�기 버튼 ?�역
     float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
-        m_position.x + m_size.x - (closeButtonSize + 59), //14
-        m_position.y + 7,
+        m_position.x + m_size.x - (closeButtonSize + 75), //14
+        m_position.y + 30,      // 35���� ����
         closeButtonSize,
         closeButtonSize);
 
-    //Inven 위치 
+    //Inven ?�치 
     windowBackground.position = m_position;
     windowBackground.size = Vec2(m_size.x, m_size.y);
     windowBackground.srcRect = D2D1::RectF(
@@ -71,10 +71,10 @@ void Inventory::InitializeRegions()
         static_cast<float>(m_size.y)
     );
 
-    //닫기 버튼 랜더 위치 
+    //?�기 버튼 ?�더 ?�치 
     closeButton.position = Vec2(closeButtonBounds.x, closeButtonBounds.y);
     closeButton.size = Vec2(closeButtonBounds.width, closeButtonBounds.height);
-    closeButton.srcRect = D2D1::RectF(0, 0, closeButtonSize, closeButtonSize); // 닫기 버튼 이미지 크기
+    closeButton.srcRect = D2D1::RectF(0, 0, closeButtonSize, closeButtonSize); // ?�기 버튼 ?��?지 ?�기
 
     TitleBar.srcRect = D2D1::RectF(m_position.x, m_position.y, m_size.x, 42.0f);
 
@@ -85,25 +85,25 @@ void Inventory::InitializeRegions()
     float totalSlotDimension_x = slotSize + padding_x;
     float totalSlotDimension_y = slotSize + padding_y;
 
-    // windowBounds의 내부 영역을 기준으로 배치
-    float currentRegionX = m_position.x + 68.0f; // 윈도우 좌측 여백
+    // windowBounds???��? ?�역??기�??�로 배치
+    float currentRegionX = m_position.x + 68.0f; // ?�도??좌측 ?�백
     RegionOffset.push_back({ currentRegionX , m_bound.y });
-    // Region 0: 기본 해금 영역 (4x8)
+    // Region 0: 기본 ?�금 ?�역 (4x8)
     regions[0].id = 0;
     regions[0].isEnabled = true;
-    regions[0].gridSize = Vec2{ 4, 8 }; //4열 8행
+    regions[0].gridSize = Vec2{ 4, 8 }; //4??8??
     regions[0].bounds = Rect(
         currentRegionX,
-        m_bound.y + 64.0f, // 윈도우 상단 여백 + 타이틀바 공간
+        m_bound.y + 64.0f, // ?�도???�단 ?�백 + ?�?��?�?공간
         regions[0].gridSize.x * totalSlotDimension_x,
         regions[0].gridSize.y * totalSlotDimension_y
     );
-    currentRegionX += (regions[0].bounds.width) + 24.0f; // 다음 영역 시작 X
+    currentRegionX += (regions[0].bounds.width) + 24.0f; // ?�음 ?�역 ?�작 X
     RegionOffset.push_back({ currentRegionX, m_bound.y });
 
-    // Region 1: 중간 잠금 영역 (4x8)
+    // Region 1: 중간 ?�금 ?�역 (4x8)
     regions[1].id = 1;
-    regions[1].isEnabled = true; // 잠금
+    regions[1].isEnabled = true; // ?�금
     regions[1].gridSize = Vec2{ 4, 8 };
     regions[1].bounds = Rect(
         currentRegionX,
@@ -114,9 +114,9 @@ void Inventory::InitializeRegions()
     currentRegionX += regions[1].bounds.width + 24.0f;
     RegionOffset.push_back({ currentRegionX, m_bound.y });
 
-    // Region 2: 오른쪽 잠금 영역 (4x8)
+    // Region 2: ?�른�??�금 ?�역 (4x8)
     regions[2].id = 2;
-    regions[2].isEnabled = true; // 잠금
+    regions[2].isEnabled = true; // ?�금
     regions[2].gridSize = Vec2{ 4, 8 };
     regions[2].bounds = Rect(
         currentRegionX,
@@ -148,13 +148,13 @@ void Inventory::InitializeSlots()
 
                 InventorySlot& slot = slots[key];
 
-                // 슬롯 위치는 해당 Region의 bounds를 기준으로 계산
+                // ?�롯 ?�치???�당 Region??bounds�?기�??�로 계산
                 float slotX = region.bounds.x + x * totalSlotDimension_x;
                 float slotY = region.bounds.y + y * totalSlotDimension_y;
 
                 slot.SetBounds(Rect(slotX, slotY, slotSize, slotSize));
-                slot.isEnabled = region.isEnabled; // 영역의 활성화 상태에 따라 슬롯 활성화 설정
-                slot.UpdateBackgroundBitmap(&controller); // 초기 배경 설정
+                slot.isEnabled = region.isEnabled; // ?�역???�성???�태???�라 ?�롯 ?�성???�정
+                slot.UpdateBackgroundBitmap(&controller); // 초기 배경 ?�정
             }
         }
     }
@@ -167,16 +167,16 @@ bool Inventory::AddItem(string itemId, int count)
     const Item* itemData = m_itemDatabase.GetItemData(itemId);
     if (!itemData) return false;
 
-    // 빈 슬롯 찾기
+    // �??�롯 찾기
     for (auto& [key, slot] : slots)
     {
-        if (!slot.isEnabled) continue; // 비활성화된 슬롯에는 추가 불가
+        if (!slot.isEnabled) continue; // 비활?�화???�롯?�는 추�? 불�?
 
-        // 스택 가능한 아이템이라면 기존 슬롯에 합치기 시도 (예시)
-        if (itemData->IsStackable() && slot.item.id == itemId && (slot.item.count + count) <= itemData->maxCount) //maxCount는 10으로 하긴 함. 
+        // ?�택 가?�한 ?�이?�이?�면 기존 ?�롯???�치�??�도 (?�시)
+        if (itemData->IsStackable() && slot.item.id == itemId && (slot.item.count + count) <= itemData->maxCount) //maxCount??10?�로 ?�긴 ?? 
         {
             slot.item.count += count;
-            slot.UpdateItemBitmap(&controller, &m_itemDatabase); // 개수 변경은 비트맵 변경이 없지만, 혹시 모를 경우 호출
+            slot.UpdateItemBitmap(&controller, &m_itemDatabase); // 개수 변경�? 비트�?변경이 ?��?�? ?�시 모�? 경우 ?�출
             return true;
         }
 
@@ -210,39 +210,39 @@ void Inventory::UnlockRegion(int regionId)
     }
 }
 
-void Inventory::Update() //입력처리를 받은 다음에 해야하는 거잖아? //차피 이거는 의미 없을 듯 함? ㅇㅇ 입력 처리 받으면 알아서 변경 될 부분이라. 
+void Inventory::Update() //?�력처리�?받�? ?�음???�야?�는 거잖?? //차피 ?�거???��? ?�을 ???? ?�ㅇ ?�력 처리 받으�??�아??변�???부분이?? 
 {
-    // effect가 필요하다면 여기서 Update 하는 게 맞아. 
+    // effect가 ?�요?�다�??�기??Update ?�는 �?맞아. 
     if (!m_isActive) return;
-    // 이펙트 컴포넌트 업데이트
+    // ?�펙??컴포?�트 ?�데?�트
     for (const auto& [key, slot] : slots)
     {
         if (slot.itemBitmap.item == nullptr) continue;
         slot.itemBitmap.item->Update();
     }
 
-    // 창 위치가 변경될 때마다 타이틀바 및 닫기 버튼의 위치도 업데이트
+    // �??�치가 변경될 ?�마???�?��?�?�??�기 버튼???�치???�데?�트
     titleBarBounds = Rect(m_position.x, m_position.y, m_size.x, 42.0f);
     float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
-        m_position.x + m_size.x - (closeButtonSize + 59),
-        m_position.y + 7,
+        m_position.x + m_size.x - (closeButtonSize + 75),   // ���� 77
+        m_position.y + 30,
         closeButtonSize,
         closeButtonSize);
 
     UpdateSlotPositions();
 
-    // 윈도우 배경 이미지 위치 업데이트
+    // ?�도??배경 ?��?지 ?�치 ?�데?�트
     windowBackground.position = m_position;
 }
 
 void Inventory::Render()
 {
-    // 이거 안하면 계속 그려짐.
+    // ?�거 ?�하�?계속 그려�?
 
     if (!m_isActive) return;
 
-    // 1. 윈도우 배경 렌더링
+    // 1. ?�도??배경 ?�더�?
     if (windowBackground.bitmap)
     {
         D2D1_RECT_F destRect = D2D1::RectF(
@@ -260,11 +260,11 @@ void Inventory::Render()
     //std::cout << " slot.windowBackground:Opacity" << windowBackground.opacity << endl;
 
 
-    // 2. 타이틀바 및 닫기 버튼 렌더링
+    // 2. ?�?��?�?�??�기 버튼 ?�더�?
    // RenderTitleBar();
     RenderCloseButton();
 
-    // 3. 모든 슬롯 렌더링
+    // 3. 모든 ?�롯 ?�더�?
     for (const auto& [key, slot] : slots)
     {
         RenderSlot(slot);
@@ -273,7 +273,7 @@ void Inventory::Render()
     //if (dragState.isDragging && dragState.dragBitmap.bitmap)
     //{
     //    D2D1_RECT_F dragDestRect = D2D1::RectF(
-    //        dragState.mousePos.x - dragState.dragBitmap.size.x / 2.0f, // 마우스 중앙에 오도록
+    //        dragState.mousePos.x - dragState.dragBitmap.size.x / 2.0f, // 마우??중앙???�도�?
     //        dragState.mousePos.y - dragState.dragBitmap.size.y / 2.0f,
     //        dragState.mousePos.x + dragState.dragBitmap.size.x / 2.0f,
     //        dragState.mousePos.y + dragState.dragBitmap.size.y / 2.0f
@@ -283,7 +283,7 @@ void Inventory::Render()
     //        dragDestRect, dragState.dragBitmap.srcRect, 1.0f);
     //}
 
-    // 5. 툴팁 렌더링 (가장 마지막에 렌더링하여 다른 UI 위에 표시)
+    // 5. ?�팁 ?�더�?(가??마�?막에 ?�더링하???�른 UI ?�에 ?�시)
    /* if (showTooltip)
     {
         RenderTooltip(renderTarget);
@@ -300,7 +300,7 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
         return false;
     }
 
-    // 윈도우 드래그 중일 때
+    // ?�도???�래�?중일 ??
     if (isWindowDragging) // 
     {
         float deltaX = mousePos.x - dragStartMousePos.x;
@@ -308,9 +308,9 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
 
         windowPosition = Vec2(dragStartWindowPos.x + deltaX, dragStartWindowPos.y + deltaY);
 
-        m_position = Vec2(dragStartWindowPos.x + deltaX, dragStartWindowPos.y + deltaY); //부모한테 넘겨줄 값. -> 사실 
+        m_position = Vec2(dragStartWindowPos.x + deltaX, dragStartWindowPos.y + deltaY); //부모한???�겨�?�? -> ?�실 
 
-        // 윈도우 바운드, 타이틀바, 닫기 버튼 바운드 업데이트
+        // ?�도??바운?? ?�?��?�? ?�기 버튼 바운???�데?�트
         m_bound.x = windowPosition.x;
         m_bound.y = windowPosition.y;
         titleBarBounds.x = windowPosition.x;
@@ -321,24 +321,24 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
         closeButtonBounds.x = windowPosition.x + m_bound.width - (closeButtonSize + 14);
         closeButtonBounds.y = windowPosition.y + 5;
 
-        // 슬롯들의 위치도 업데이트해야 함
+        // ?�롯?�의 ?�치???�데?�트?�야 ??
         UpdateSlotPositions();
 
         return true;
     }
-    else // 윈도우 드래그 중이 아닐 때만 슬롯 호버 및 툴팁 처리
+    else // ?�도???�래�?중이 ?�닐 ?�만 ?�롯 ?�버 �??�팁 처리
     {
         //showTooltip = false;
         InventorySlot* hoveredSlot = nullptr;
 
-        // 슬롯 호버 상태 업데이트
+        // ?�롯 ?�버 ?�태 ?�데?�트
         for (auto& [key, slot] : slots)
         {
             bool wasHovered = slot.isHovered;
-            // 슬롯의 현재 렌더링 위치(이동된 창에 따라 달라짐)를 기준으로 Contains 체크
-            // slot.bounds는 이미 UpdateSlotPositions에 의해 현재 창 위치에 맞게 업데이트됨 (혹은 이미 초기화 시 올바르게 설정됨)
+            // ?�롯???�재 ?�더�??�치(?�동??창에 ?�라 ?�라�?�?기�??�로 Contains 체크
+            // slot.bounds???��? UpdateSlotPositions???�해 ?�재 �??�치??맞게 ?�데?�트??(?��? ?��? 초기?????�바르게 ?�정??
 
-            slot.isHovered = slot.bounds.Contains(mousePos); //안에 있으면 hovered 인데, 여기서 사실 렌더가 안되야 하거든 
+            slot.isHovered = slot.bounds.Contains(mousePos); //?�에 ?�으�?hovered ?�데, ?�기???�실 ?�더가 ?�되???�거??
 
             if (wasHovered != slot.isHovered)
             {
@@ -347,14 +347,14 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
 
             if (slot.isHovered && !slot.IsEmpty())  //-> 
             {
-                hoveredSlot = &slot; // 현재 마우스가 올라간 슬롯
+                hoveredSlot = &slot; // ?�재 마우?��? ?�라�??�롯
             }
         }
 
-        // 툴팁 정보 업데이트
+        // ?�팁 ?�보 ?�데?�트
         if (hoveredSlot != nullptr)
         {
-             Item* data = m_itemDatabase.GetItemData(hoveredSlot->item.id); // 그 저장된 아이템 정보 가져오는 거임. ㅇㅇ 
+             Item* data = m_itemDatabase.GetItemData(hoveredSlot->item.id); // �??�?�된 ?�이???�보 가?�오??거임. ?�ㅇ 
              //Item* data = hoveredSlot->item.
 
 
@@ -363,16 +363,16 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
                 CursorManager::Get().SetHoveredItem(data); 
                 Vec2 tooltipPos = mousePos + Vec2(10, 10);
 
-                UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //위치 변경시키고, 활성화까지 
+                UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //?�치 변경시?�고, ?�성?�까지 
             }
             return true;
 
         }
 
-        else //이제는 뭐 나간거겠죠...
+        else //?�제??�??�간거겠�?..
         {
-            CursorManager::Get().HoveredReleased(); //추적 금지 
-            UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //해제
+            CursorManager::Get().HoveredReleased(); //추적 금�? 
+            UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //?�제
             return true;
 
         }
@@ -380,31 +380,31 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
 
     }
 
-    // 아이템 드래그 중일 때 (마우스 위치 업데이트)
+    // ?�이???�래�?중일 ??(마우???�치 ?�데?�트)
     if (dragState.isDragging)
     {
         dragState.mousePos = mousePos;
     }
 }
 
-bool Inventory::HandleMouseDown(Vec2 mousePos) //어차피 Inven 위치 내에 있어야 이게 처리가 되는 거니깐 
+bool Inventory::HandleMouseDown(Vec2 mousePos) //?�차??Inven ?�치 ?�에 ?�어???�게 처리가 ?�는 거니�?
 {
     if (!m_isActive) return false;
 
     InventorySlot* slot = GetSlotAt(mousePos);
     if (slot && !slot->IsEmpty() && slot->isEnabled)
     {
-        // CursorManager를 통해 전역적으로 아이템 드래그 시작
+        // CursorManager�??�해 ?�역?�으�??�이???�래�??�작
         CursorManager::Get().StartItemDrag(slot->item.id, DragSource::Inventory, slot);
-        CursorManager::Get().SetDraggedItem(m_itemDatabase.GetItemData(slot->item.id)); // 실제 Item* 전달
+        CursorManager::Get().SetDraggedItem(m_itemDatabase.GetItemData(slot->item.id)); // ?�제 Item* ?�달
 
-        // 아이템 정보만 CursorManager에 넘기고 슬롯 비우기.
+        // ?�이???�보�?CursorManager???�기�??�롯 비우�?
         slot->Clear();
         slot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
-        return true; // 입력 처리 완료
+        return true; // ?�력 처리 ?�료
     }
-    // 영역 안 클릭 시 최상단으로.
+    // ?�역 ???�릭 ??최상?�으�?
     if (IsInBounds(mousePos))
     {
         UIManager::Get().OpenWindow(m_windowType);
@@ -414,16 +414,16 @@ bool Inventory::HandleMouseDown(Vec2 mousePos) //어차피 Inven 위치 내에 �
     return false;
 }
 
-bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해야 함. 누가 시작 했는지 알아야 할 듯 
+bool Inventory::HandleMouseUp(Vec2 mousePos) //�??��? ?�치???�???�외처리�??�야 ?? ?��? ?�작 ?�는지 ?�아??????
 {
     if (!m_isActive) return false;
 
-    // CursorManager에서 드래그 중인 아이템이 있는지 확인
-    InventorySlot* targetSlot = GetSlotAt(mousePos); // 현재 마우스 위치의 슬롯을 다시 찾음
-    Item* draggedItemData = CursorManager::Get().GetDraggedItem(); // CursorManager에서 드래그 중인 아이템 가져오기
+    // CursorManager?�서 ?�래�?중인 ?�이?�이 ?�는지 ?�인
+    InventorySlot* targetSlot = GetSlotAt(mousePos); // ?�재 마우???�치???�롯???�시 찾음
+    Item* draggedItemData = CursorManager::Get().GetDraggedItem(); // CursorManager?�서 ?�래�?중인 ?�이??가?�오�?
     DragSource dragSource = CursorManager::Get().GetDragSource();
 
-    // 만약 장비창에서 온거면 스탯 업데이트
+    // 만약 ?�비창에???�거�??�탯 ?�데?�트
     if (dragSource == DragSource::Equipment)
     {
         if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
@@ -436,38 +436,38 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예�
 
     if (targetSlot && targetSlot->isEnabled && draggedItemData)
     {
-        // 스택 가능한 아이템이라면 합치기 시도
+        // ?�택 가?�한 ?�이?�이?�면 ?�치�??�도
         if (draggedItemData->IsStackable() &&
             targetSlot->item.id == draggedItemData->m_data.id &&
-            (targetSlot->item.count + 1) <= draggedItemData->maxCount) // count는 CursorManager에서 관리해야 함
+            (targetSlot->item.count + 1) <= draggedItemData->maxCount) // count??CursorManager?�서 관리해????
         {
-            //std::cout << "스택 가능. 아이템 합칠거임." << std::endl; 조건은 맞게 들어옴.
-            targetSlot->item.count += 1; // 드래그된 아이템의 실제 count를 더해야 함
+            //std::cout << "?�택 가?? ?�이???�칠거임." << std::endl; 조건?� 맞게 ?�어??
+            targetSlot->item.count += 1; // ?�래그된 ?�이?�의 ?�제 count�??�해????
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
             placed = true;
         }
         else if (targetSlot->IsEmpty())
         {
-            // 빈 슬롯에 드롭
-            targetSlot->SetItem(draggedItemData->m_data.id, 1); // count는 CursorManager에서 관리해야 함
+            // �??�롯???�롭
+            targetSlot->SetItem(draggedItemData->m_data.id, 1); // count??CursorManager?�서 관리해????
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
             placed = true;
         }
-        else // 슬롯이 비어있지 않고 스택 불가능하거나 다른 아이템인 경우 (교환 로직)
+        else // ?�롯??비어?��? ?�고 ?�택 불�??�하거나 ?�른 ?�이?�인 경우 (교환 로직)
         {
-            // 원본 슬롯 정보 가져오기
+            // ?�본 ?�롯 ?�보 가?�오�?
             InventorySlot* sourceSlot = CursorManager::Get().GetSourceSlot();
 
             if (sourceSlot)
             {
-                // 현재 타겟 슬롯의 아이템을 임시 저장
+                // ?�재 ?��??�롯???�이?�을 ?�시 ?�??
                 ItemInstance tempItem = targetSlot->item;
 
-                // 타겟 슬롯에 드래그된 아이템 놓기
+                // ?��??�롯???�래그된 ?�이???�기
                 targetSlot->SetItem(draggedItemData->m_data.id, 1);
                 targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
-                // 원본 슬롯에 교환된 아이템 놓기
+                // ?�본 ?�롯??교환???�이???�기
                 sourceSlot->SetItem(tempItem.id, tempItem.count);
                 sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
@@ -475,7 +475,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예�
             }
             else
             {
-                // 빈 슬롯에 추가
+                // �??�롯??추�?
                 ItemInstance tempItem = targetSlot->item;
                 targetSlot->SetItem(draggedItemData->m_data.id, 1);
                 targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
@@ -490,7 +490,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예�
     }
     if (placed)
     {
-        CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
+        CursorManager::Get().EndItemDrag(); // ?�롭 ?�공 ???�래�?종료
         return true;
     }
     else
@@ -498,7 +498,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예�
         return HandleDropFailure(mousePos, draggedItemData, dragSource);
     }
 
-    // 영역 안 클릭 시 최상단으로.
+    // ?�역 ???�릭 ??최상?�으�?
 
 
     return placed;
@@ -508,73 +508,73 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
 {
     if (!draggedItem) return false;
 
-    // 1. 다른 창들의 영역인지 확인
+    // 1. ?�른 창들???�역?��? ?�인
     bool isInOtherWindow = false;
 
-    // 장비창 영역 확인
+    // ?�비�??�역 ?�인
     UIWindow* equipWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
     if (equipWindow && equipWindow->IsActive() && equipWindow->IsInBounds(mousePos))
     {
         isInOtherWindow = true;
     }
 
-    // 강화창 영역 확인 (활성화되어 있다면)
+    // 강화�??�역 ?�인 (?�성?�되???�다�?
     UIWindow* enhanceWindow = UIManager::Get().GetWindow(UIWindowType::EnhancementWindow);
     if (enhanceWindow && enhanceWindow->IsActive() && enhanceWindow->IsInBounds(mousePos))
     {
         isInOtherWindow = true;
     }
 
-    // 합성창 영역 확인 (활성화되어 있다면)
+    // ?�성�??�역 ?�인 (?�성?�되???�다�?
     UIWindow* synthesisWindow = UIManager::Get().GetWindow(UIWindowType::SynthesisWindow);
     if (synthesisWindow && synthesisWindow->IsActive() && synthesisWindow->IsInBounds(mousePos))
     {
         isInOtherWindow = true;
     }
 
-    // 2. 다른 창 영역이면 해당 창에서 처리하도록 넘김 (드래그 상태 유지)
+    // 2. ?�른 �??�역?�면 ?�당 창에??처리?�도�??��? (?�래�??�태 ?��?)
     if (isInOtherWindow)
     {
-        return false; // 다른 창에서 처리하도록 넘김
+        return false; // ?�른 창에??처리?�도�??��?
     }
 
-    // 3. 어떤 창 영역도 아니면 원래 인벤토리로 복구
+    // 3. ?�떤 �??�역???�니�??�래 ?�벤?�리�?복구
     if (source == DragSource::Inventory)
     {
-        // 인벤토리에서 나온 아이템이므로 빈 슬롯에 다시 넣기 시도
+        // ?�벤?�리?�서 ?�온 ?�이?�이므�?�??�롯???�시 ?�기 ?�도
         if (AddItem(draggedItem->m_data.id, 1))
         {
-            std::cout << "아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
+            std::cout << "?�이?�을 ?�벤?�리�?복구?�습?�다: " << draggedItem->m_data.name << std::endl;
             CursorManager::Get().EndItemDrag();
             return true;
         }
         else
         {
-            std::cout << "인벤토리가 가득 참. 아이템 복구 실패." << std::endl;
-            // 인벤토리가 가득 찬 경우에도 드래그 종료 (아이템 소실 방지를 위해 로그 출력)
+            std::cout << "?�벤?�리가 가??�? ?�이??복구 ?�패." << std::endl;
+            // ?�벤?�리가 가??�?경우?�도 ?�래�?종료 (?�이???�실 방�?�??�해 로그 출력)
             CursorManager::Get().EndItemDrag();
             return true;
         }
     }
     else if (source == DragSource::Equipment)
     {
-        // 장비창에서 나온 아이템이므로 인벤토리로 이동
+        // ?�비창에???�온 ?�이?�이므�??�벤?�리�??�동
         if (AddItem(draggedItem->m_data.id, 1))
         {
-            std::cout << "장비 아이템을 인벤토리로 이동했습니다: " << draggedItem->m_data.name << std::endl;
+            std::cout << "?�비 ?�이?�을 ?�벤?�리�??�동?�습?�다: " << draggedItem->m_data.name << std::endl;
             CursorManager::Get().EndItemDrag();
             return true;
         }
         else
         {
-            std::cout << "인벤토리가 가득 참. 장비를 원래 슬롯으로 복구합니다." << std::endl;
-            // 인벤토리가 가득 차면 원래 장비 슬롯으로 복구해야 함
-            // 이는 EquipmentWindow에서 처리해야 할 로직
+            std::cout << "?�벤?�리가 가??�? ?�비�??�래 ?�롯?�로 복구?�니??" << std::endl;
+            // ?�벤?�리가 가??차면 ?�래 ?�비 ?�롯?�로 복구?�야 ??
+            // ?�는 EquipmentWindow?�서 처리?�야 ??로직
             return false;
         }
     }
 
-    // 기본적으로 드래그 종료
+    // 기본?�으�??�래�?종료
     CursorManager::Get().EndItemDrag();
     return true;
 }
@@ -583,16 +583,16 @@ bool Inventory::ConsumePendingPotion()
 {
     if (!m_pendingPotionSlot) return false;
 
-    // 슬롯/아이템 유효성 체크
+    // ?�롯/?�이???�효??체크
     if (m_pendingPotionSlot->IsEmpty()) { m_pendingPotionSlot = nullptr; return false; } 
 
     Item* data = m_itemDatabase.GetItemData(m_pendingPotionSlot->item.id);
     if (!data || dynamic_cast<Potion*>(data) == nullptr) { m_pendingPotionSlot = nullptr; return false; }
 
-    // 스택 1 감소 → 0이면 비우기 → 비트맵 갱신
+    // ?�택 1 감소 ??0?�면 비우�???비트�?갱신
     m_pendingPotionSlot->item.count -= 1;
     if (m_pendingPotionSlot->item.count <= 0)
-        m_pendingPotionSlot->Clear(); //포인터는 안 없앰 
+        m_pendingPotionSlot->Clear(); //?�인?�는 ???�앰 
 
     m_pendingPotionSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
     m_pendingPotionSlot = nullptr;
@@ -607,7 +607,7 @@ bool Inventory::HandleDoubleClick(Vec2 mousePos)
     return false;
 }
 
-bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아와서 없애는 식으로 진행해야 할듯. 
+bool Inventory::HandleMouseRight(Vec2 mousePos) //?�용???�이?�의 ?�인?��? 받아?�???�애???�으�?진행?�야 ?�듯. 
 {
     InventorySlot* slot = GetSlotAt(mousePos);
 
@@ -620,7 +620,7 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인�
             int much  = item->GetMuch() -1 ;
             m_pendingPotionSlot = slot; //  기억
 
-            UIManager::Get().ShowPotionWindow(much); //포지션도 맞춰 버렸다고 
+            UIManager::Get().ShowPotionWindow(much); //?��??�도 맞춰 버렸?�고 
 
         }
 
@@ -628,7 +628,7 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인�
         if (wear != nullptr)
         {
 
-            UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow); //활성화 시도 
+            UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow); //?�성???�도 
 
             auto* EQUIPWIN = dynamic_cast<EquipmentWindow*>(
                 UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
@@ -642,7 +642,7 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인�
                 statWindow->UpdateTotalStats();
             }
 
-           //장비인 경우에는 장착하려고 함. 
+           //?�비??경우?�는 ?�착?�려�??? 
 
         }
 
@@ -659,11 +659,11 @@ UIWindowType Inventory::GetType()
 
 InventorySlot* Inventory::GetSlotAt(const Vec2& pos)
 {
-    if (!m_isActive || isWindowDragging) return nullptr; // 윈도우 비활성 또는 드래그 중에는 슬롯 클릭 불가
+    if (!m_isActive || isWindowDragging) return nullptr; // ?�도??비활???�는 ?�래�?중에???�롯 ?�릭 불�?
 
     for (auto& [key, slot] : slots)
     {
-        // 슬롯의 bounds는 이미 UpdateSlotPositions에 의해 현재 창 위치에 맞게 업데이트되어 있음
+        // ?�롯??bounds???��? UpdateSlotPositions???�해 ?�재 �??�치??맞게 ?�데?�트?�어 ?�음
         if (slot.bounds.Contains(pos))
         {
             return &slot;
@@ -679,7 +679,7 @@ void Inventory::RenderTitleBar()
 
     if (context)
     {
-        // 1. 타이틀바 영역 색상 출력 (고정 색 브러시 사용)
+        // 1. ?�?��?�??�역 ?�상 출력 (고정 ??브러???�용)
         ComPtr<ID2D1SolidColorBrush> darkBrush;
         context->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::DarkSlateGray, 0.7f), &darkBrush);
 
@@ -690,7 +690,7 @@ void Inventory::RenderTitleBar()
         D2DRenderer::Get().DrawBitmap(static_cast<ID2D1Bitmap1*>(TitleBar.bitmap), rect, TitleBar.srcRect, 1.0f);
 
     }
-    // 2. 텍스트 출력
+    // 2. ?�스??출력
     auto textBrush = renderer.GetTBrush();
     auto textFormat = renderer.GetTFormat();
 
@@ -715,9 +715,9 @@ void Inventory::RenderCloseButton()
 {
     if (closeButton.bitmap)
     {
-        // 닫기 버튼 위치를 현재 창 위치에 따라 업데이트
-        float rightMargin = 47.0f;
-        Vec2 currentCloseButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
+        // �ݱ� ��ư ��ġ�� ���� â ��ġ�� ���� ������Ʈ
+        float rightMargin = 75; // ���� 65
+        Vec2 currentCloseButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 30 };
 
         D2D1_RECT_F destRect = D2D1::RectF(
             currentCloseButtonPos.x, currentCloseButtonPos.y,
@@ -735,7 +735,7 @@ void Inventory::RenderCloseButton()
 
 void Inventory::RenderSlot(const InventorySlot& slot)
 {
-    // 슬롯 배경 렌더링
+    // ?�롯 배경 ?�더�?
     if (slot.backgroundBitmap.bitmap)
     {
         D2D1_RECT_F destRect = D2D1::RectF(
@@ -752,28 +752,28 @@ void Inventory::RenderSlot(const InventorySlot& slot)
             slot.backgroundBitmap.opacity);
     }
 
-    // 비활성화된 슬롯은 빈slot이미지 그림.
+    // 비활?�화???�롯?� 빈slot?��?지 그림.
     if (!slot.isEnabled)
     {
-        //std::cout << "비활성화된 슬롯이므로 배경만 렌더링하고 종료" << std::endl;
+        //std::cout << "비활?�화???�롯?��?�?배경�??�더링하�?종료" << std::endl;
         return;
     }
 
-    // 2. 아이템 아이콘 렌더링
+    // 2. ?�이???�이�??�더�?
     if (!slot.IsEmpty() && slot.itemBitmap.item != nullptr)
     {
         auto info = slot.itemBitmap.item->GetRenderInfo();
         slot.itemBitmap.item->SetPosition({ slot.itemBitmap.position.x - 128.f * 0.8f + 35.f, slot.itemBitmap.position.y - 128.f * 0.8f + 35.f });
         D2DRenderer::Get().DrawBitmap(info->GetRenderInfo());
 
-        // 3. 아이템 개수 텍스트
+        // 3. ?�이??개수 ?�스??
         if (slot.item.count > 1)
         {
             std::wstring countText = std::to_wstring(slot.item.count);
-            // 텍스트 위치를 슬롯 우측 하단에 배치 (예시)
+            // ?�스???�치�??�롯 ?�측 ?�단??배치 (?�시)
             D2D1_RECT_F textRect = D2D1::RectF(
-                slot.bounds.x + slot.bounds.width - 30, // 우측 정렬
-                slot.bounds.y + slot.bounds.height - 20, // 하단 정렬
+                slot.bounds.x + slot.bounds.width - 30, // ?�측 ?�렬
+                slot.bounds.y + slot.bounds.height - 20, // ?�단 ?�렬
                 slot.bounds.x + slot.bounds.width,
                 slot.bounds.y + slot.bounds.height
             );
@@ -789,7 +789,7 @@ void Inventory::RenderSlot(const InventorySlot& slot)
     else if (!slot.IsEmpty() && slot.itemBitmap.bitmap)
     {
         D2D1_RECT_F itemDestRect = D2D1::RectF(
-            slot.itemBitmap.position.x, // itemBitmap.position은 SetBounds에서 이미 슬롯 bounds에 맞춰 설정됨
+            slot.itemBitmap.position.x, // itemBitmap.position?� SetBounds?�서 ?��? ?�롯 bounds??맞춰 ?�정??
             slot.itemBitmap.position.y,
             slot.itemBitmap.position.x + slot.itemBitmap.size.x,
             slot.itemBitmap.position.y + slot.itemBitmap.size.y
@@ -809,14 +809,14 @@ void Inventory::RenderSlot(const InventorySlot& slot)
         );
         //  std::cout << " slot.itemBitmap:Opacity" << slot.itemBitmap.opacity << endl;
 
-          // 3. 아이템 개수 텍스트
+          // 3. ?�이??개수 ?�스??
         if (slot.item.count > 1)
         {
             std::wstring countText = std::to_wstring(slot.item.count);
-            // 텍스트 위치를 슬롯 우측 하단에 배치 (예시)
+            // ?�스???�치�??�롯 ?�측 ?�단??배치 (?�시)
             D2D1_RECT_F textRect = D2D1::RectF(
-                slot.bounds.x + slot.bounds.width - 30, // 우측 정렬
-                slot.bounds.y + slot.bounds.height - 20, // 하단 정렬
+                slot.bounds.x + slot.bounds.width - 30, // ?�측 ?�렬
+                slot.bounds.y + slot.bounds.height - 20, // ?�단 ?�렬
                 slot.bounds.x + slot.bounds.width,
                 slot.bounds.y + slot.bounds.height
             );
@@ -831,7 +831,7 @@ void Inventory::RenderSlot(const InventorySlot& slot)
     }
 }
 
-void Inventory::UpdateSlotPositions() // -> widndow 기준으로 되고 있지 않아요 
+void Inventory::UpdateSlotPositions() // -> widndow 기�??�로 ?�고 ?��? ?�아??
 {
     float slotSize = 74.0f;
     float padding_x = 13.0f;
@@ -843,7 +843,7 @@ void Inventory::UpdateSlotPositions() // -> widndow 기준으로 되고 있지 �
     float totalSlotDimension_x = slotSize + padding_x;
     float totalSlotDimension_y = slotSize + padding_y;
 
-    // Regions의 bounds를 창의 현재 위치를 기준으로 업데이트
+    // Regions??bounds�?창의 ?�재 ?�치�?기�??�로 ?�데?�트
     float currentRegionX = m_position.x + 68.0f;
     regions[0].bounds = Rect(
         currentRegionX,
@@ -881,14 +881,14 @@ void Inventory::UpdateSlotPositions() // -> widndow 기준으로 되고 있지 �
                 {
                     InventorySlot& slot = slots[key];
 
-                    // 슬롯 위치는 해당 Region의 bounds를 기준으로 계산 (regions.bounds는 InitializeRegions에서 windowPosition에 따라 이미 결정됨)
+                    // ?�롯 ?�치???�당 Region??bounds�?기�??�로 계산 (regions.bounds??InitializeRegions?�서 windowPosition???�라 ?��? 결정??
                     //float slotX = region.bounds.x + x * totalSlotDimension_x;
                     //float slotY = region.bounds.y + y * totalSlotDimension_y;
 
                     //float slotX = m_bound.x + RegionOffset[regionId].x + x * totalSlotDimension_x;
                     //float slotY = m_bound.y + RegionOffset[regionId].y + y * totalSlotDimension_y+ 64.0f;
 
-                    // region.bounds.x와 region.bounds.y로 슬롯 위치 계산해야함.
+                    // region.bounds.x?� region.bounds.y�??�롯 ?�치 계산?�야??
                     float slotX = region.bounds.x + x * totalSlotDimension_x;
                     float slotY = region.bounds.y + y * totalSlotDimension_y;
 
@@ -899,25 +899,25 @@ void Inventory::UpdateSlotPositions() // -> widndow 기준으로 되고 있지 �
     }
 }
 
-// 슬롯은 비워지는데 장비창에 있는게 어떻게 꼬일지 모른다. 
-// 일단은 만들기만했지 아무것도 추가 안했으니까.
+// ?�롯?� 비워지?�데 ?�비창에 ?�는�??�떻�?꼬일지 모른?? 
+// ?�단?� 만들기만?��? ?�무것도 추�? ?�했?�니�?
 void Inventory::ClearAllSlots()
 {
-    // 모든 슬롯 순회하면서 초기화
+    // 모든 ?�롯 ?�회?�면??초기??
     for (auto& [key, slot] : slots)
     {
-        // 슬롯 내용 클리어
+        // ?�롯 ?�용 ?�리??
         slot.Clear();
 
-        // 아이템 비트맵 업데이트 (빈 슬롯으로)
+        // ?�이??비트�??�데?�트 (�??�롯?�로)
         slot.UpdateItemBitmap(&controller, &m_itemDatabase);
 
-        // 배경 비트맵 업데이트 (기본 상태로)
+        // 배경 비트�??�데?�트 (기본 ?�태�?
         slot.UpdateBackgroundBitmap(&controller);
     }
     m_itemDatabase.ClearAllItems();
 
-    std::cout << "[Inventory] 모든 슬롯이 초기화되었습니다." << std::endl;
+    std::cout << "[Inventory] 모든 ?�롯??초기?�되?�습?�다." << std::endl;
 }
 
 ItemDatabase& Inventory::GetItemBase()
@@ -925,7 +925,7 @@ ItemDatabase& Inventory::GetItemBase()
     return m_itemDatabase;
 }
 
-void Inventory::PackItem() //현재 database에 있는 모든 Item을 Slot에 넣어줌 
+void Inventory::PackItem() //?�재 database???�는 모든 Item??Slot???�어�?
 {
     for (const auto& [Id, Item] : m_itemDatabase.GetMap())
     {
@@ -934,12 +934,12 @@ void Inventory::PackItem() //현재 database에 있는 모든 Item을 Slot에 �
     }
 }
 
-void Inventory::SetDatabase(unique_ptr<ItemDatabase> database) //외부에서 만들고 넣어버릴래/
+void Inventory::SetDatabase(unique_ptr<ItemDatabase> database) //?��??�서 만들�??�어버릴??
 {
-    //LoadItemDatabase 버전을 일단 쓰기로 함.
+    //LoadItemDatabase 버전???�단 ?�기�???
 
-    //UI_Manager에서 어떻게 Init 할지는 모르겠다만, Scene Index 받고, Database에 넣는 거는 
-    //GiveItem을 통해서 받으면 되가지고 상관 없긴 해 일단 버전 1로 두자고 
+    //UI_Manager?�서 ?�떻�?Init ?��???모르겠다�? Scene Index 받고, Database???�는 거는 
+    //GiveItem???�해??받으�??��?지�??��? ?�긴 ???�단 버전 1�??�자�?
   //  this->itemDatabase = std::move(database);
 }
 
@@ -948,8 +948,8 @@ void Inventory::LoadUIBitmaps()
 
 
     windowBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("InvenBg").Get();
-    tooltipBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("SlotDisabled").Get(); //임의
-    tooltipBackground.srcRect = D2D1::RectF(0, 0, 234, 345); // 예시. -> Tooltip 
+    tooltipBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("SlotDisabled").Get(); //?�의
+    tooltipBackground.srcRect = D2D1::RectF(0, 0, 234, 345); // ?�시. -> Tooltip 
 
     closeButton.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("CloseButton").Get();
     //TitleBar.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("TitleBar").Get();

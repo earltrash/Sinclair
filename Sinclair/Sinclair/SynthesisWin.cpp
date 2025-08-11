@@ -34,7 +34,7 @@ bool SynthesisWin::HandleMouseHover(Vec2 mousePos) //hover?
 		return true;
 	}
 
-	else 
+	else
 	{
 		// 슬롯에 마우스 오버 시 툴팁 표시
 		SynSlot whichSlot = SlotInit(mousePos);
@@ -61,7 +61,7 @@ bool SynthesisWin::HandleMouseHover(Vec2 mousePos) //hover?
 			return false;
 		}
 	}
-	
+
 
 	CursorManager::Get().HoveredReleased(); //추적 금지 
 	UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //해제
@@ -95,6 +95,7 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 		{
 			m_slot_Item[whichSlot] = nullptr;
 		}
+
 		return true; // 드래그 시작 시에는 무조건 true 반환
 	}
 
@@ -112,10 +113,9 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 			{
 				auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 				inventoryWindow->AddItem(item->m_data.id, 1); //안 쓸거면 인벤에 넣을래요 
-
-
 			}
 		}
+
 		// cancel 누르면 둘 다 반환. 
 		m_slot_Item[SynSlot::Result] = nullptr;
 		m_slot_Item[SynSlot::Slot1] = nullptr;
@@ -147,64 +147,97 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 
 	//  현재 아이템을 드래그 중인지 확인
 	if (!CursorManager::Get().IsDragging()) return false;
-	
-		// 드래그 중인 아이템과 소스 정보 가져오기
-		Item* draggedItem = CursorManager::Get().GetDraggedItem();
-		DragSource dragSource = CursorManager::Get().GetDragSource();
-		SynSlot whichSlot = SlotInit(mousePos);
+
+	// 드래그 중인 아이템과 소스 정보 가져오기
+	Item* draggedItem = CursorManager::Get().GetDraggedItem();
+	DragSource dragSource = CursorManager::Get().GetDragSource();
+	SynSlot whichSlot = SlotInit(mousePos);
 
 
-		if (whichSlot == SynSlot::Result && draggedItem != nullptr)
+	if (whichSlot == SynSlot::Result && draggedItem != nullptr)
+	{
+		auto* inventoryWindow = dynamic_cast<Inventory*>(
+			UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+
+		// 기존 아이템 복귀
+		Item* previousItem = m_slot_Item[whichSlot];
+		if (previousItem != nullptr) {
+			inventoryWindow->AddItem(previousItem->m_data.id, 1);
+		}
+
+		// 드롭한 아이템도 복귀
+		inventoryWindow->AddItem(draggedItem->m_data.id, 1);
+
+		// 결과 슬롯 비우기
+		m_slot_Item[whichSlot] = nullptr;
+
+		CursorManager::Get().EndItemDrag();
+		return true;
+	}
+	// 일반 슬롯에 드롭하는 경우
+	else if (whichSlot != SynSlot::Nothing && draggedItem != nullptr)
+	{
+		Item* previousItem = m_slot_Item[whichSlot];
+		m_slot_Item[whichSlot] = draggedItem;
+
+		if (previousItem)
 		{
 			auto* inventoryWindow = dynamic_cast<Inventory*>(
 				UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-
-			// 기존 아이템 복귀
-			Item* previousItem = m_slot_Item[whichSlot];
-			if (previousItem != nullptr) {
-				inventoryWindow->AddItem(previousItem->m_data.id, 1);
-			}
-
-			// 드롭한 아이템도 복귀
-			inventoryWindow->AddItem(draggedItem->m_data.id, 1);
-
-			// 결과 슬롯 비우기
-			m_slot_Item[whichSlot] = nullptr;
-
-			CursorManager::Get().EndItemDrag();
-			return true;
+			inventoryWindow->AddItem(previousItem->m_data.id, 1);
 		}
 
-		else if (whichSlot != SynSlot::Nothing && draggedItem != nullptr)
-		{
-			Item* previousItem = m_slot_Item[whichSlot];
-			m_slot_Item[whichSlot] = draggedItem;
+		CursorManager::Get().EndItemDrag();
 
-			if (previousItem)
+		// 드롭한 아이템을 바로 hover 상태로
+		CursorManager::Get().SetHoveredItem(draggedItem);
+		UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, mousePos + Vec2(10, 10));
+
+		return true;
+	}
+	// 합성창 영역 내에서 빈 공간에 드롭한 경우
+	else if (IsInBounds(mousePos) && draggedItem != nullptr)
+	{
+		// 합성창 내부의 빈 공간이므로 HandleDropFailure 호출
+		bool handled = HandleDropFailure(mousePos, draggedItem, dragSource);
+		CursorManager::Get().EndItemDrag();
+		return handled;
+	}
+	// 합성창 밖으로 드롭한 경우 - 여기가 핵심 수정 부분
+	else if (!IsInBounds(mousePos) && draggedItem != nullptr)
+	{
+		// 다른 창에 드롭을 시도하고 실패했을 경우에만 복구
+		bool handledByOtherWindow = false;
+
+		// 다른 창들이 처리할 수 있는지 확인
+		auto windows = {
+				UIWindowType::InventoryWindow,
+				UIWindowType::EquipmentWindow,
+				UIWindowType::EnhancementWindow
+		};
+
+		for (auto windowType : windows)
+		{
+			UIWindow* window = UIManager::Get().GetWindow(windowType);
+			if (window && window->IsActive() && window->IsInBounds(mousePos))
 			{
-				auto* inventoryWindow = dynamic_cast<Inventory*>(
-					UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-				inventoryWindow->AddItem(previousItem->m_data.id, 1);
+				// 다른 창이 처리할 수 있으므로 합성창에서는 처리하지 않음
+				handledByOtherWindow = true;
+				break;
 			}
-
-			CursorManager::Get().EndItemDrag();
-
-			// 드롭한 아이템을 바로 hover 상태로
-			CursorManager::Get().SetHoveredItem(draggedItem);
-			UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, mousePos + Vec2(10, 10));
-
-			return true;
 		}
 
-		
-
-
-		else //부적절한 Slot이거나, 다른 창인 경우도 봐야 겠죠? 
+		// 다른 창이 처리하지 않는 경우에만 복구 처리
+		if (!handledByOtherWindow)
 		{
+			bool handled = HandleDropFailure(mousePos, draggedItem, dragSource);
 			CursorManager::Get().EndItemDrag();
-			return HandleDropFailure(mousePos, draggedItem, dragSource);
+			return handled;
 		}
-	
+
+		// 다른 창이 처리할 예정이므로 false 반환 (UIManager가 처리하도록)
+		return false;
+	}
 
 	CursorManager::Get().HoveredReleased();
 	return false;
@@ -217,12 +250,12 @@ bool SynthesisWin::HandleDoubleClick(Vec2 mousePos) //swap 정도? sort도 필요할 �
 
 bool SynthesisWin::HandleMouseRight(Vec2 mousePos) //slot 위치에 mousepos -> 1 2 번째인 경우에만. 
 {
-	
+
 	SynSlot whichSlot = SlotInit(mousePos); //마우스 오른쪽 클릭된 슬롯 
 
 	if (whichSlot != SynSlot::Nothing)
 	{
-		Item* Clicked_Item = m_slot_Item[whichSlot]; 
+		Item* Clicked_Item = m_slot_Item[whichSlot];
 
 		if (Clicked_Item != nullptr)
 		{
@@ -370,70 +403,17 @@ bool SynthesisWin::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSourc
 {
 	if (!draggedItem) return false;
 
-	// 다른 창 내부에 있는지 확인
-	bool isInOtherWindow = false;
+	// 소스별로 적절한 위치로 복구
+	auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+	if (!inventoryWindow) return false;
 
-	// 인벤토리 창 내부 확인
-	UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
-	if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
+	// 드래그 소스가 합성창인 경우 인벤토리로 복구
+	if (source == DragSource::Equipment || source == DragSource::Enhancement ||
+		source == DragSource::Inventory)
 	{
-		isInOtherWindow = true;
-	}
-
-	// 장비 창 내부 확인
-	UIWindow* equipmentWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
-	if (equipmentWindow && equipmentWindow->IsActive() && equipmentWindow->IsInBounds(mousePos))
-	{
-		isInOtherWindow = true;
-	}
-
-	// 강화 창 내부 확인
-	UIWindow* enhancementWindow = UIManager::Get().GetWindow(UIWindowType::EnhancementWindow);
-	if (enhancementWindow && enhancementWindow->IsActive() && enhancementWindow->IsInBounds(mousePos))
-	{
-		isInOtherWindow = true;
-	}
-
-	// 다른 창 내부라면 해당 창에서 처리하도록 넘김
-	if (isInOtherWindow)
-	{
-		return false;
-	}
-
-	// 어느 창 내부도 아니면 원래 위치로 복귀
-	if (source == DragSource::Inventory)
-	{
-		// 인벤토리에서 온 아이템이라면 인벤토리로 복귀
-		auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-		if (inventory && inventory->AddItem(draggedItem->m_data.id, 1))
+		if (inventoryWindow->AddItem(draggedItem->m_data.id, 1))
 		{
-			std::cout << "합성 불가능한 아이템을 인벤토리로 복귀: " << draggedItem->m_data.id << std::endl;
-			return true;
-		}
-	}
-	else if (source == DragSource::Equipment)
-	{
-		// 장비창에서 온 아이템이라면 장비창으로 복귀
-		auto* equipment = dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
-		if (equipment)
-		{
-			// 장비창에 원래 슬롯이 있다면 해당 슬롯으로 복귀
-			// 현재 CursorManager에서 원래 슬롯 정보를 관리하는지 확인 필요
-			auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-			if (inventory && inventory->AddItem(draggedItem->m_data.id, 1))
-			{
-				std::cout << "합성 불가능한 장비 아이템을 인벤토리로 이동: " << draggedItem->m_data.id << std::endl;
-				return true;
-			}
-		}
-	}
-	else if (source == DragSource::Enhancement)
-	{
-		// 강화창에서 온 아이템이라면 인벤토리로 복귀
-		auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-		if (inventory && inventory->AddItem(draggedItem->m_data.id, 1))
-		{
-			std::cout << "합성 불가능한 강화 아이템을 인벤토리로 복귀: " << draggedItem->m_data.id << std::endl;
+			std::cout << "합성 불가능한 아이템을 인벤토리로 복구: " << draggedItem->m_data.id << std::endl;
 			return true;
 		}
 	}
@@ -456,7 +436,7 @@ void SynthesisWin::PerformSynthesis()
 	// 두 아이템 모두 합성 가능한지 확인
 
 	//이건 테이블로 확인 해야 함. 
-	
+
 	if (!item1->m_data.synthesizable || !item2->m_data.synthesizable)
 	{
 		std::cout << "합성 불가능한 아이템이 포함되어 있습니다." << std::endl;
@@ -473,7 +453,7 @@ void SynthesisWin::PerformSynthesis()
 
 	if (result != "F") //성공인 경우 
 	{
-		unique_ptr<Item> resultitem  = ResourceManager::Get().Get_ItemBank().Get_Item_Status(result);
+		unique_ptr<Item> resultitem = ResourceManager::Get().Get_ItemBank().Get_Item_Status(result);
 
 		Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 		if (inven != nullptr)
@@ -484,7 +464,7 @@ void SynthesisWin::PerformSynthesis()
 			m_slot_Item[SynSlot::Slot2] = nullptr;
 		}
 
-		
+
 	}
 	else
 	{
@@ -495,30 +475,30 @@ void SynthesisWin::PerformSynthesis()
 
 void SynthesisWin::ReturnItemToInventory()
 {
-		auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-		if (!inventoryWindow) return;
+	auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+	if (!inventoryWindow) return;
 
-		// 합성창의 모든 슬롯에 있는 아이템들을 인벤토리로 반환
+	// 합성창의 모든 슬롯에 있는 아이템들을 인벤토리로 반환
 
-		if (m_slot_Item[SynSlot::Result] != nullptr)
-		{
-				inventoryWindow->AddItem(m_slot_Item[SynSlot::Result]->m_data.id, 1);
-				m_slot_Item[SynSlot::Result] = nullptr;
-		}
+	if (m_slot_Item[SynSlot::Result] != nullptr)
+	{
+		inventoryWindow->AddItem(m_slot_Item[SynSlot::Result]->m_data.id, 1);
+		m_slot_Item[SynSlot::Result] = nullptr;
+	}
 
-		if (m_slot_Item[SynSlot::Slot1] != nullptr)
-		{
-				inventoryWindow->AddItem(m_slot_Item[SynSlot::Slot1]->m_data.id, 1);
-				m_slot_Item[SynSlot::Slot1] = nullptr;
-		}
+	if (m_slot_Item[SynSlot::Slot1] != nullptr)
+	{
+		inventoryWindow->AddItem(m_slot_Item[SynSlot::Slot1]->m_data.id, 1);
+		m_slot_Item[SynSlot::Slot1] = nullptr;
+	}
 
-		if (m_slot_Item[SynSlot::Slot2] != nullptr)
-		{
-				inventoryWindow->AddItem(m_slot_Item[SynSlot::Slot2]->m_data.id, 1);
-				m_slot_Item[SynSlot::Slot2] = nullptr;
-		}
+	if (m_slot_Item[SynSlot::Slot2] != nullptr)
+	{
+		inventoryWindow->AddItem(m_slot_Item[SynSlot::Slot2]->m_data.id, 1);
+		m_slot_Item[SynSlot::Slot2] = nullptr;
+	}
 
-		std::cout << "합성창 닫기 전 모든 아이템 인벤토리로 반환 완료" << std::endl;
+	std::cout << "합성창 닫기 전 모든 아이템 인벤토리로 반환 완료" << std::endl;
 }
 
 void SynthesisWin::Update()
@@ -543,8 +523,8 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 			D2DRenderer::Get().DrawBitmap(backgroundBitmap, destRect);
 		}
 
-		float rightMargin = 47;  // 65.0f에서 47.0f로 변경
-		Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };  // +36에서 +7로 변경
+		float rightMargin = 65;  // 65.0f에서 47.0f로 변경
+		Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 35 };  // +36에서 +7로 변경
 		Vec2 closeButtonSize = { 35, 35 };  // 35x35에서 27x27로 변경
 		D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 
@@ -565,6 +545,8 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 
 			if (item != nullptr)
 			{
+
+
 				ID2D1Bitmap1* SlotBitmap = (type == SynSlot::Result) ? uiRenderer->GetBitmap("Syn_Result").Get() : uiRenderer->GetBitmap("Syn_Slot").Get();
 				D2DRenderer::Get().DrawBitmap(SlotBitmap, DEST);
 

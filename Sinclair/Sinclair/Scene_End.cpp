@@ -34,15 +34,21 @@ void Scene_End::Initalize()
 void Scene_End::Enter()
 {
 	ebm = GameManager::Get().AftAdv();
-	Initalize();
 
-	// 게임매니저에서 엔딩 잘 갖고 와. 지금은 임시야. 
-	
+
+	m_textShown = true;
+
+
+	Initalize();
 
 }
 
 void Scene_End::Exit()
 {
+
+	m_textShown = false;
+	m_titleShown = false;
+	m_scriptShown = false;
 
 	Clean();
 }
@@ -73,6 +79,28 @@ void Scene_End::Update()
 
 		}
 	}
+
+	if (m_textShown)
+	{
+		m_currentShowingDelay += 0.016f;
+		if (m_currentShowingDelay >= m_showingDelay)
+		{
+			if(m_scriptShown == false)
+			{
+				m_scriptShown = true;
+				m_currentShowingDelay = 0.f;
+			}
+			else
+			{
+				m_titleShown = true;
+				m_currentShowingDelay = 0.f;
+				m_textShown = false;
+			}
+		}
+	}
+
+
+
 }
 
 void Scene_End::LogicUpdate(float delta)
@@ -133,20 +161,23 @@ void Scene_End::Render()
 			return e.ID == targetID;
 		});
 	
-	std::wstring job;
+	static std::wstring job;
 	if (it != EndingVector.end())
 	{
 		job = StrToWstr(it->job);
 	}
 	else
 	{
-		job = L"쉽지 않네";
+	
 	}
-	D2DRenderer::Get().DrawMessageCenter(job.c_str(),
-		1080.f, 120.f, 1920.f - 1080.f, 255.f - 120.f, D2D1::ColorF::White);
+	if(m_titleShown)
+	{
+		D2DRenderer::Get().DrawMessageCenter(job.c_str(),
+			1080.f, 120.f, 1920.f - 1080.f, 255.f - 120.f, D2D1::ColorF::White);
+	}
 
 	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
-	std::wstring text;
+	static std::wstring text;
 	if (it != EndingVector.end())
 	{
 		auto txt = ResourceManager::Get().Get_TextBank().replaceGeneration(it->endingText, gen);
@@ -154,10 +185,13 @@ void Scene_End::Render()
 	}
 	else
 	{
-		text = L"쉽지 않네";
+
 	}
-	D2DRenderer::Get().DrawMessageCenter(text.c_str(),
-		1223.f, 255.f, 564.f, 1080.f - 255.f, D2D1::ColorF::White);
+	if(m_scriptShown)
+	{
+		D2DRenderer::Get().DrawMessageCenter(text.c_str(),
+			1223.f, 255.f, 564.f, 1080.f - 255.f, D2D1::ColorF::White);
+	}
 }
 
 void Scene_End::CreateObj()

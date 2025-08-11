@@ -49,6 +49,17 @@ bool StatWindow::HandleMouseUp(Vec2 mousePos)
     // 창 내부 클릭 이벤트 처리 완료. 그래서 화면 최상단으로 올리기.
     if (IsInBounds(mousePos))
     {
+        // 창 영역 내에서 드래그된 아이템이 있으면 인벤토리로 반환
+        if (CursorManager::Get().IsDragging())
+        {
+            Item* draggedItem = CursorManager::Get().GetDraggedItem();
+            if (draggedItem)
+            {
+                DragSource source = CursorManager::Get().GetDragSource();
+                HandleDropFailure(mousePos, draggedItem, source);
+            }
+        }
+
         UIManager::Get().OpenWindow(m_windowType);
         return true;
     }
@@ -58,9 +69,24 @@ bool StatWindow::HandleMouseUp(Vec2 mousePos)
 
 bool StatWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
 {
+    if (!draggedItem) return false;
+
+    // 다른 창들의 영역인지 확인
+    bool isInOtherWindow = false;
+
+    // 인벤창 영역 확인
+    UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
+    if (inventoryWindow)
+    {
+        DragSource source = CursorManager::Get().GetDragSource();
+        Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+        inven->AddItem(draggedItem->m_data.id, 1);
+        CursorManager::Get().EndItemDrag();
+        return true;
+    }
+
     return false;
 }
-
 bool StatWindow::HandleMouseRight(Vec2 mousePos)
 {
     return false;
@@ -161,9 +187,9 @@ void StatWindow::RenderTitleBar()
 void StatWindow::RenderCloseButton()
 {
     UI_Renderer* uiRenderer = GetComponent<UI_Renderer>();
-    float rightMargin = 47.0f;
-    Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
-    Vec2 closeButtonSize = { 27.0f, 27.0f };
+    float rightMargin = 65;
+    Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 35 };
+    Vec2 closeButtonSize = { 35, 35 };
     D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
 
     if (uiRenderer)
@@ -343,7 +369,7 @@ float StatWindow::NormalizeStat(float statValue, float min, float max)
 
 void StatWindow::StatUpdate(Status_fundamental stat, int Much)
 {
-    switch(stat)
+    switch (stat)
     {
     case Status_fundamental::power:
         m_potionFundamentalStats.power += Much;

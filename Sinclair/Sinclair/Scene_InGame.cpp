@@ -134,7 +134,7 @@ void Scene_InGame::CreateObj()
 	/////////////////////
 	/////////////////////
 	/////////////////////
-	// [1] 설정 버튼
+	// [1] 뒤로가기 버튼
 
 	// 1. 이미지 갖고 오기
 	auto 뒤로가기 = ResourceManager::Get().GetTexture("뒤로가기");
@@ -583,7 +583,7 @@ void Scene_InGame::CreateObj()
 		backComp->SetOnClickCallback([this]() {
 			std::cout << "닫기 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
 			isSETTING = !isSETTING;
-			SafeChangeScene("OutGame");
+			SafeChangeScene("InGame");
 			});
 
 		/// 9

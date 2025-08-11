@@ -99,6 +99,7 @@ public:
 						btn->BitmapPush("hover", slot);
 						btn->BitmapPush("pressed", slot);
 						btn->BitmapPush("disabled", slot);
+						btn->SetCurrentBitmap("normal");
 				}
 				m_rightArrowButton->SetPosition(Vec2(454, 305));
 				

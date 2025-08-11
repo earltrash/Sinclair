@@ -4,8 +4,8 @@
 #include <fstream>       // ifstream
 #include <filesystem>    // std::filesystem
 
-//void SoundBank::SoundAssetLoad(string path) //Sound 로 고정 
-//{
+void SoundBank::SoundAssetLoad(string path) //Sound 로 고정 
+{
     //namespace fs = std::filesystem;
     //fs::path base = fs::current_path();
     //fs::path resourceFolder = base.parent_path() / path;
@@ -68,4 +68,4 @@
 
 
 
-//}
+}

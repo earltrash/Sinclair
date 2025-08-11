@@ -5,7 +5,7 @@ void UIManager::Initialize()
 
 
     AddComponent<MouseListenerComponent>(
-            [this](const MSG& msg) { OnInput(msg); }
+        [this](const MSG& msg) { OnInput(msg); }
     );
 
     try
@@ -22,9 +22,9 @@ void UIManager::Initialize()
         {
             window->SetActivate(false);
         }
-      //  m_activeWindowOrder.push_back(UIWindowType::InventoryWindow);
+        //  m_activeWindowOrder.push_back(UIWindowType::InventoryWindow);
 
-         
+
         m_allWindows.emplace(UIWindowType::InventoryTooltip, std::make_unique<ToolTip>());
         if (auto* window = GetWindow(UIWindowType::InventoryTooltip))
         {
@@ -45,7 +45,7 @@ void UIManager::Initialize()
         m_allWindows.emplace(UIWindowType::StatsWindow, std::make_unique<StatWindow>());
         if (auto* window = GetWindow(UIWindowType::StatsWindow))
         {
-            window->SetActivate(true);
+            window->SetActivate(false);
         }
         //m_activeWindowOrder.push_back(UIWindowType::StatsWindow);
 
@@ -63,16 +63,16 @@ void UIManager::Initialize()
         {
             window->SetActivate(false);
         }
-       // m_activeWindowOrder.push_back(UIWindowType::SynthesisWindow);
+        // m_activeWindowOrder.push_back(UIWindowType::SynthesisWindow);
 
-        //// StatPotionUseWindow
+         //// StatPotionUseWindow
 
         m_allWindows.emplace(UIWindowType::StatPotionUseWindow, std::make_unique<UIPotion>());
         if (auto* window = GetWindow(UIWindowType::StatPotionUseWindow))
         {
             window->SetActivate(false);
         }
-       // m_activeWindowOrder.push_back(UIWindowType::StatPotionUseWindow);
+        // m_activeWindowOrder.push_back(UIWindowType::StatPotionUseWindow);
 
 
 
@@ -174,6 +174,19 @@ void UIManager::OnInput(const MSG& msg)
             }
 
             // 모든 창에서 드롭 처리가 실패했을 경우 아이템 다시 복귀시킬거임.
+            if (CursorManager::Get().IsDragging())
+            {
+                Item* draggedItem = CursorManager::Get().GetDraggedItem();
+                if (draggedItem)
+                {
+                    DragSource source = CursorManager::Get().GetDragSource();
+                    if (auto* inventory = dynamic_cast<Inventory*>(GetWindow(UIWindowType::InventoryWindow)))
+                    {
+                        inventory->AddItem(draggedItem->m_data.id, 1);
+                        std::cout << "창 외부 드롭으로 인해 인벤토리로 반환: " << draggedItem->m_data.name << std::endl;
+                    }
+                }
+            }
             CursorManager::Get().EndItemDrag();
             return;
         }
@@ -212,7 +225,7 @@ void UIManager::OnInput(const MSG& msg)
     //    return;
     //}
 
-        auto orderSnapshot = m_activeWindowOrder;
+    auto orderSnapshot = m_activeWindowOrder;
 
     for (auto it = orderSnapshot.rbegin(); it != orderSnapshot.rend(); ++it)
     {
@@ -364,7 +377,7 @@ void UIManager::HandleSceneObjectInput(const MSG& msg)
         //    obj.get()->GetComponent<ButtonComponent>()->CheckCollision(msg);
         //    obj.get()->GetComponent<ButtonComponent>()->Worked(msg);
         //}
-        
+
         if (obj.get()->GetComponent<MouseListenerComponent>())
         {
             obj.get()->GetComponent<MouseListenerComponent>()->_OnEvent(msg);

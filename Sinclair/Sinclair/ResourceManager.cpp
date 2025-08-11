@@ -20,16 +20,24 @@ void ResourceManager::GameAssetLoad()
     m_UI_Bank.Load_UI_Image("Resource/UI"); // Single / Multi Bitmap
     m_ItemBank.LoadItemStatus("Item_S"); //Status Only
     m_ItemBank.LoadItemRect("Item_A"); //Atlas랑 정확히는 Item 별 srect 
-
-    // 효제: 현재는 한 파일이지만 결국 위처럼 로드 함수를 만들어야 함.
-    m_TextBank.parseTSV_Ending("../Resource/text/SinclairEnding.txt");
 }
 
 void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std::string& directory)
 {
     namespace fs = std::filesystem;
     fs::path base = fs::current_path();
-    fs::path resourcePath = base.parent_path() / "Resource";
+
+
+#ifdef _DEBUG
+    fs::path resourcePath = base.parent_path() / "Resource" / directory;
+
+#else NDEBUG 
+    fs::path resourcePath = base.parent_path().parent_path() / "Resource" / directory;
+
+#endif
+  //  fs::path resourcePath = base.parent_path() / "Resource" / directory;
+
+    //fs::path resourcePath = base.parent_path() / "Resource";
 
     std::cout << "리소스 경로: " << resourcePath << std::endl;
 
@@ -199,8 +207,25 @@ std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ResourceMa
 
     std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> result;
 
+
+
+
     // ending/<id> 경로 생성
     fs::path base = fs::current_path();
+
+
+#ifdef _DEBUG
+    fs::path resourcePath = base.parent_path() / "ending" / id;
+
+#else NDEBUG 
+    fs::path resourcePath = base.parent_path().parent_path() / "ending" / id;
+
+#endif
+    //  fs::path resourcePath = base.parent_path() / "Resource" / directory;
+
+
+
+
     fs::path folderPath = base.parent_path() / "ending" / id;
 
     if (!fs::exists(folderPath) || !fs::is_directory(folderPath))
