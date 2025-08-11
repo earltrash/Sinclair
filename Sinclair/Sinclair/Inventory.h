@@ -37,6 +37,13 @@ public:
     void UnlockRegion(int regionId);
 
     void Update() override;
+    void FixedUpdate(float dt) override
+    {
+        for (const auto& [key, slot] : slots)
+        {
+            slot.itemBitmap.item->FixedUpdate(dt);
+        }
+    }
     void Render() override;
 
     bool HandleMouseHover(Vec2 mousePos) override;

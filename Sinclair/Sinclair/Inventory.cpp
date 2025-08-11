@@ -5,23 +5,24 @@
 #include "InvenMem.h"
 #include "Potion.h"
 
-//: UI_Object(MWP) //»ı¼ºÀÚ·Î ¿µ¿ªÀº ÀÏ´Ü ¼³Á¤ÇÔ (Inven ÀÚ±â ¿µ¿ª ¸»ÀÓ)
+//: UI_Object(MWP) //ìƒì„±ìë¡œ ì˜ì—­ì€ ì¼ë‹¨ ì„¤ì •í•¨ (Inven ìê¸° ì˜ì—­ ë§ì„)
 Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
 {
 
-    m_bound = { 0,0,1208,825 }; // ÃÊ±â À§Ä¡  
+    m_bound = { 0,0,1208,825 }; // ì´ˆê¸° ìœ„ì¹˜  
 
     windowPosition = { m_bound.x,m_bound.y };
 
     InitializeRegions();
-  //  std::cout << "[Inventory] Regions ÃÊ±âÈ­ ¿Ï·á" << std::endl;
-    LoadUIBitmaps(); //¸â¹ö·Î °®°í ÀÖ´Â ´İ±â¶û À­ ºÎºĞ (ÀÌ°Ç InvenÀÌ¶û °°ÀÌÇÒ °¡´É¼ºµµ ÀÖÀ½) 
-   // std::cout << "[Inventory] UI ºñÆ®¸Ê ·Îµù ¿Ï·á" << std::endl;
+  //  std::cout << "[Inventory] Regions ì´ˆê¸°í™” ì™„ë£Œ" << std::endl;
+    LoadUIBitmaps(); //ë©¤ë²„ë¡œ ê°–ê³  ìˆëŠ” ë‹«ê¸°ë‘ ìœ— ë¶€ë¶„ (ì´ê±´ Invenì´ë‘ ê°™ì´í•  ê°€ëŠ¥ì„±ë„ ìˆìŒ) 
+   // std::cout << "[Inventory] UI ë¹„íŠ¸ë§µ ë¡œë”© ì™„ë£Œ" << std::endl;
 
     InitializeSlots();
-    std::cout << "[Inventory] ½½·Ô ÃÊ±âÈ­ ¿Ï·á" << std::endl; // ¡ç ¿©±â ¾È ³ª¿À¸é ±× ¾È¿¡¼­ ÅÍÁø °Å
+    std::cout << "[Inventory] ìŠ¬ë¡¯ ì´ˆê¸°í™” ì™„ë£Œ" << std::endl; // â† ì—¬ê¸° ì•ˆ ë‚˜ì˜¤ë©´ ê·¸ ì•ˆì—ì„œ í„°ì§„ ê±°
 
    LoadItemDatabase(Need_Moment::Gen_2);
+
 
    // LoadItemDatabase(Need_Moment::Adv);
     //LoadItemDatabase(Need_Moment::Syn);
@@ -34,11 +35,11 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }
 
     PackItem();
 
-    dragState.isDragging = false; // µå·¡±× »óÅÂ ÃÊ±âÈ­
+    dragState.isDragging = false; // ë“œë˜ê·¸ ìƒíƒœ ì´ˆê¸°í™”
 
     //0. slot Init
-    //1. ºñÆ®¸Ê ·Îµå
-    //2. Item µ¥ÀÌÅÍ ³Ö±â
+    //1. ë¹„íŠ¸ë§µ ë¡œë“œ
+    //2. Item ë°ì´í„° ë„£ê¸°
 
      //3. Update
      //4. Render
@@ -48,12 +49,12 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }
 
 void Inventory::InitializeRegions()
 {
-    regions.resize(3); // 3°³ÀÇ ¿µ¿ª (4x8, 4x8, 4x8)
+    regions.resize(3); // 3ê°œì˜ ì˜ì—­ (4x8, 4x8, 4x8)
 
-    //Å¸ÀÌÆ² ¹Ù ¿µ¿ª, À§Ä¡¸¸ Á¸ÀçÇÑ´Ù°í »ı°¢ÇÏ¼À 
+    //íƒ€ì´í‹€ ë°” ì˜ì—­, ìœ„ì¹˜ë§Œ ì¡´ì¬í•œë‹¤ê³  ìƒê°í•˜ì…ˆ 
     titleBarBounds = Rect(m_position.x, m_position.y, m_size.x, 42.0f);  //7+35
 
-    //´İ±â ¹öÆ° ¿µ¿ª
+    //ë‹«ê¸° ë²„íŠ¼ ì˜ì—­
     float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
         m_position.x + m_size.x - (closeButtonSize + 59), //14
@@ -61,7 +62,7 @@ void Inventory::InitializeRegions()
         closeButtonSize,
         closeButtonSize);
 
-    //Inven À§Ä¡ 
+    //Inven ìœ„ì¹˜ 
     windowBackground.position = m_position;
     windowBackground.size = Vec2(m_size.x, m_size.y);
     windowBackground.srcRect = D2D1::RectF(
@@ -70,10 +71,10 @@ void Inventory::InitializeRegions()
         static_cast<float>(m_size.y)
     );
 
-    //´İ±â ¹öÆ° ·£´õ À§Ä¡ 
+    //ë‹«ê¸° ë²„íŠ¼ ëœë” ìœ„ì¹˜ 
     closeButton.position = Vec2(closeButtonBounds.x, closeButtonBounds.y);
     closeButton.size = Vec2(closeButtonBounds.width, closeButtonBounds.height);
-    closeButton.srcRect = D2D1::RectF(0, 0, closeButtonSize, closeButtonSize); // ´İ±â ¹öÆ° ÀÌ¹ÌÁö Å©±â
+    closeButton.srcRect = D2D1::RectF(0, 0, closeButtonSize, closeButtonSize); // ë‹«ê¸° ë²„íŠ¼ ì´ë¯¸ì§€ í¬ê¸°
 
     TitleBar.srcRect = D2D1::RectF(m_position.x, m_position.y, m_size.x, 42.0f);
 
@@ -84,25 +85,25 @@ void Inventory::InitializeRegions()
     float totalSlotDimension_x = slotSize + padding_x;
     float totalSlotDimension_y = slotSize + padding_y;
 
-    // windowBoundsÀÇ ³»ºÎ ¿µ¿ªÀ» ±âÁØÀ¸·Î ¹èÄ¡
-    float currentRegionX = m_position.x + 68.0f; // À©µµ¿ì ÁÂÃø ¿©¹é
+    // windowBoundsì˜ ë‚´ë¶€ ì˜ì—­ì„ ê¸°ì¤€ìœ¼ë¡œ ë°°ì¹˜
+    float currentRegionX = m_position.x + 68.0f; // ìœˆë„ìš° ì¢Œì¸¡ ì—¬ë°±
     RegionOffset.push_back({ currentRegionX , m_bound.y });
-    // Region 0: ±âº» ÇØ±İ ¿µ¿ª (4x8)
+    // Region 0: ê¸°ë³¸ í•´ê¸ˆ ì˜ì—­ (4x8)
     regions[0].id = 0;
     regions[0].isEnabled = true;
-    regions[0].gridSize = Vec2{ 4, 8 }; //4¿­ 8Çà
+    regions[0].gridSize = Vec2{ 4, 8 }; //4ì—´ 8í–‰
     regions[0].bounds = Rect(
         currentRegionX,
-        m_bound.y + 64.0f, // À©µµ¿ì »ó´Ü ¿©¹é + Å¸ÀÌÆ²¹Ù °ø°£
+        m_bound.y + 64.0f, // ìœˆë„ìš° ìƒë‹¨ ì—¬ë°± + íƒ€ì´í‹€ë°” ê³µê°„
         regions[0].gridSize.x * totalSlotDimension_x,
         regions[0].gridSize.y * totalSlotDimension_y
     );
-    currentRegionX += (regions[0].bounds.width) + 24.0f; // ´ÙÀ½ ¿µ¿ª ½ÃÀÛ X
+    currentRegionX += (regions[0].bounds.width) + 24.0f; // ë‹¤ìŒ ì˜ì—­ ì‹œì‘ X
     RegionOffset.push_back({ currentRegionX, m_bound.y });
 
-    // Region 1: Áß°£ Àá±İ ¿µ¿ª (4x8)
+    // Region 1: ì¤‘ê°„ ì ê¸ˆ ì˜ì—­ (4x8)
     regions[1].id = 1;
-    regions[1].isEnabled = true; // Àá±İ
+    regions[1].isEnabled = true; // ì ê¸ˆ
     regions[1].gridSize = Vec2{ 4, 8 };
     regions[1].bounds = Rect(
         currentRegionX,
@@ -113,9 +114,9 @@ void Inventory::InitializeRegions()
     currentRegionX += regions[1].bounds.width + 24.0f;
     RegionOffset.push_back({ currentRegionX, m_bound.y });
 
-    // Region 2: ¿À¸¥ÂÊ Àá±İ ¿µ¿ª (4x8)
+    // Region 2: ì˜¤ë¥¸ìª½ ì ê¸ˆ ì˜ì—­ (4x8)
     regions[2].id = 2;
-    regions[2].isEnabled = true; // Àá±İ
+    regions[2].isEnabled = true; // ì ê¸ˆ
     regions[2].gridSize = Vec2{ 4, 8 };
     regions[2].bounds = Rect(
         currentRegionX,
@@ -147,13 +148,13 @@ void Inventory::InitializeSlots()
 
                 InventorySlot& slot = slots[key];
 
-                // ½½·Ô À§Ä¡´Â ÇØ´ç RegionÀÇ bounds¸¦ ±âÁØÀ¸·Î °è»ê
+                // ìŠ¬ë¡¯ ìœ„ì¹˜ëŠ” í•´ë‹¹ Regionì˜ boundsë¥¼ ê¸°ì¤€ìœ¼ë¡œ ê³„ì‚°
                 float slotX = region.bounds.x + x * totalSlotDimension_x;
                 float slotY = region.bounds.y + y * totalSlotDimension_y;
 
                 slot.SetBounds(Rect(slotX, slotY, slotSize, slotSize));
-                slot.isEnabled = region.isEnabled; // ¿µ¿ªÀÇ È°¼ºÈ­ »óÅÂ¿¡ µû¶ó ½½·Ô È°¼ºÈ­ ¼³Á¤
-                slot.UpdateBackgroundBitmap(&controller); // ÃÊ±â ¹è°æ ¼³Á¤
+                slot.isEnabled = region.isEnabled; // ì˜ì—­ì˜ í™œì„±í™” ìƒíƒœì— ë”°ë¼ ìŠ¬ë¡¯ í™œì„±í™” ì„¤ì •
+                slot.UpdateBackgroundBitmap(&controller); // ì´ˆê¸° ë°°ê²½ ì„¤ì •
             }
         }
     }
@@ -166,16 +167,16 @@ bool Inventory::AddItem(string itemId, int count)
     const Item* itemData = m_itemDatabase.GetItemData(itemId);
     if (!itemData) return false;
 
-    // ºó ½½·Ô Ã£±â
+    // ë¹ˆ ìŠ¬ë¡¯ ì°¾ê¸°
     for (auto& [key, slot] : slots)
     {
-        if (!slot.isEnabled) continue; // ºñÈ°¼ºÈ­µÈ ½½·Ô¿¡´Â Ãß°¡ ºÒ°¡
+        if (!slot.isEnabled) continue; // ë¹„í™œì„±í™”ëœ ìŠ¬ë¡¯ì—ëŠ” ì¶”ê°€ ë¶ˆê°€
 
-        // ½ºÅÃ °¡´ÉÇÑ ¾ÆÀÌÅÛÀÌ¶ó¸é ±âÁ¸ ½½·Ô¿¡ ÇÕÄ¡±â ½Ãµµ (¿¹½Ã)
-        if (itemData->IsStackable() && slot.item.id == itemId && (slot.item.count + count) <= itemData->maxCount) //maxCount´Â 10À¸·Î ÇÏ±ä ÇÔ. 
+        // ìŠ¤íƒ ê°€ëŠ¥í•œ ì•„ì´í…œì´ë¼ë©´ ê¸°ì¡´ ìŠ¬ë¡¯ì— í•©ì¹˜ê¸° ì‹œë„ (ì˜ˆì‹œ)
+        if (itemData->IsStackable() && slot.item.id == itemId && (slot.item.count + count) <= itemData->maxCount) //maxCountëŠ” 10ìœ¼ë¡œ í•˜ê¸´ í•¨. 
         {
             slot.item.count += count;
-            slot.UpdateItemBitmap(&controller, &m_itemDatabase); // °³¼ö º¯°æÀº ºñÆ®¸Ê º¯°æÀÌ ¾øÁö¸¸, È¤½Ã ¸ğ¸¦ °æ¿ì È£Ãâ
+            slot.UpdateItemBitmap(&controller, &m_itemDatabase); // ê°œìˆ˜ ë³€ê²½ì€ ë¹„íŠ¸ë§µ ë³€ê²½ì´ ì—†ì§€ë§Œ, í˜¹ì‹œ ëª¨ë¥¼ ê²½ìš° í˜¸ì¶œ
             return true;
         }
 
@@ -209,12 +210,18 @@ void Inventory::UnlockRegion(int regionId)
     }
 }
 
-void Inventory::Update() //ÀÔ·ÂÃ³¸®¸¦ ¹ŞÀº ´ÙÀ½¿¡ ÇØ¾ßÇÏ´Â °ÅÀİ¾Æ? //Â÷ÇÇ ÀÌ°Å´Â ÀÇ¹Ì ¾øÀ» µí ÇÔ? ¤·¤· ÀÔ·Â Ã³¸® ¹ŞÀ¸¸é ¾Ë¾Æ¼­ º¯°æ µÉ ºÎºĞÀÌ¶ó. 
+void Inventory::Update() //ì…ë ¥ì²˜ë¦¬ë¥¼ ë°›ì€ ë‹¤ìŒì— í•´ì•¼í•˜ëŠ” ê±°ì–ì•„? //ì°¨í”¼ ì´ê±°ëŠ” ì˜ë¯¸ ì—†ì„ ë“¯ í•¨? ã…‡ã…‡ ì…ë ¥ ì²˜ë¦¬ ë°›ìœ¼ë©´ ì•Œì•„ì„œ ë³€ê²½ ë  ë¶€ë¶„ì´ë¼. 
 {
-    // effect°¡ ÇÊ¿äÇÏ´Ù¸é ¿©±â¼­ Update ÇÏ´Â °Ô ¸Â¾Æ. 
+    // effectê°€ í•„ìš”í•˜ë‹¤ë©´ ì—¬ê¸°ì„œ Update í•˜ëŠ” ê²Œ ë§ì•„. 
     if (!m_isActive) return;
+    // ì´í™íŠ¸ ì»´í¬ë„ŒíŠ¸ ì—…ë°ì´íŠ¸
+    for (const auto& [key, slot] : slots)
+    {
+        if (slot.itemBitmap.item == nullptr) continue;
+        slot.itemBitmap.item->Update();
+    }
 
-    // Ã¢ À§Ä¡°¡ º¯°æµÉ ¶§¸¶´Ù Å¸ÀÌÆ²¹Ù ¹× ´İ±â ¹öÆ°ÀÇ À§Ä¡µµ ¾÷µ¥ÀÌÆ®
+    // ì°½ ìœ„ì¹˜ê°€ ë³€ê²½ë  ë•Œë§ˆë‹¤ íƒ€ì´í‹€ë°” ë° ë‹«ê¸° ë²„íŠ¼ì˜ ìœ„ì¹˜ë„ ì—…ë°ì´íŠ¸
     titleBarBounds = Rect(m_position.x, m_position.y, m_size.x, 42.0f);
     float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
@@ -225,17 +232,17 @@ void Inventory::Update() //ÀÔ·ÂÃ³¸®¸¦ ¹ŞÀº ´ÙÀ½¿¡ ÇØ¾ßÇÏ´Â °ÅÀİ¾Æ? //Â÷ÇÇ ÀÌ°Å´Â
 
     UpdateSlotPositions();
 
-    // À©µµ¿ì ¹è°æ ÀÌ¹ÌÁö À§Ä¡ ¾÷µ¥ÀÌÆ®
+    // ìœˆë„ìš° ë°°ê²½ ì´ë¯¸ì§€ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
     windowBackground.position = m_position;
 }
 
 void Inventory::Render()
 {
-    // ÀÌ°Å ¾ÈÇÏ¸é °è¼Ó ±×·ÁÁü.
+    // ì´ê±° ì•ˆí•˜ë©´ ê³„ì† ê·¸ë ¤ì§.
 
     if (!m_isActive) return;
 
-    // 1. À©µµ¿ì ¹è°æ ·»´õ¸µ
+    // 1. ìœˆë„ìš° ë°°ê²½ ë Œë”ë§
     if (windowBackground.bitmap)
     {
         D2D1_RECT_F destRect = D2D1::RectF(
@@ -253,11 +260,11 @@ void Inventory::Render()
     //std::cout << " slot.windowBackground:Opacity" << windowBackground.opacity << endl;
 
 
-    // 2. Å¸ÀÌÆ²¹Ù ¹× ´İ±â ¹öÆ° ·»´õ¸µ
+    // 2. íƒ€ì´í‹€ë°” ë° ë‹«ê¸° ë²„íŠ¼ ë Œë”ë§
    // RenderTitleBar();
     RenderCloseButton();
 
-    // 3. ¸ğµç ½½·Ô ·»´õ¸µ
+    // 3. ëª¨ë“  ìŠ¬ë¡¯ ë Œë”ë§
     for (const auto& [key, slot] : slots)
     {
         RenderSlot(slot);
@@ -266,7 +273,7 @@ void Inventory::Render()
     //if (dragState.isDragging && dragState.dragBitmap.bitmap)
     //{
     //    D2D1_RECT_F dragDestRect = D2D1::RectF(
-    //        dragState.mousePos.x - dragState.dragBitmap.size.x / 2.0f, // ¸¶¿ì½º Áß¾Ó¿¡ ¿Àµµ·Ï
+    //        dragState.mousePos.x - dragState.dragBitmap.size.x / 2.0f, // ë§ˆìš°ìŠ¤ ì¤‘ì•™ì— ì˜¤ë„ë¡
     //        dragState.mousePos.y - dragState.dragBitmap.size.y / 2.0f,
     //        dragState.mousePos.x + dragState.dragBitmap.size.x / 2.0f,
     //        dragState.mousePos.y + dragState.dragBitmap.size.y / 2.0f
@@ -276,7 +283,7 @@ void Inventory::Render()
     //        dragDestRect, dragState.dragBitmap.srcRect, 1.0f);
     //}
 
-    // 5. ÅøÆÁ ·»´õ¸µ (°¡Àå ¸¶Áö¸·¿¡ ·»´õ¸µÇÏ¿© ´Ù¸¥ UI À§¿¡ Ç¥½Ã)
+    // 5. íˆ´íŒ ë Œë”ë§ (ê°€ì¥ ë§ˆì§€ë§‰ì— ë Œë”ë§í•˜ì—¬ ë‹¤ë¥¸ UI ìœ„ì— í‘œì‹œ)
    /* if (showTooltip)
     {
         RenderTooltip(renderTarget);
@@ -293,7 +300,7 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
         return false;
     }
 
-    // À©µµ¿ì µå·¡±× ÁßÀÏ ¶§
+    // ìœˆë„ìš° ë“œë˜ê·¸ ì¤‘ì¼ ë•Œ
     if (isWindowDragging) // 
     {
         float deltaX = mousePos.x - dragStartMousePos.x;
@@ -301,9 +308,9 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
 
         windowPosition = Vec2(dragStartWindowPos.x + deltaX, dragStartWindowPos.y + deltaY);
 
-        m_position = Vec2(dragStartWindowPos.x + deltaX, dragStartWindowPos.y + deltaY); //ºÎ¸ğÇÑÅ× ³Ñ°ÜÁÙ °ª. -> »ç½Ç 
+        m_position = Vec2(dragStartWindowPos.x + deltaX, dragStartWindowPos.y + deltaY); //ë¶€ëª¨í•œí…Œ ë„˜ê²¨ì¤„ ê°’. -> ì‚¬ì‹¤ 
 
-        // À©µµ¿ì ¹Ù¿îµå, Å¸ÀÌÆ²¹Ù, ´İ±â ¹öÆ° ¹Ù¿îµå ¾÷µ¥ÀÌÆ®
+        // ìœˆë„ìš° ë°”ìš´ë“œ, íƒ€ì´í‹€ë°”, ë‹«ê¸° ë²„íŠ¼ ë°”ìš´ë“œ ì—…ë°ì´íŠ¸
         m_bound.x = windowPosition.x;
         m_bound.y = windowPosition.y;
         titleBarBounds.x = windowPosition.x;
@@ -314,24 +321,24 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
         closeButtonBounds.x = windowPosition.x + m_bound.width - (closeButtonSize + 14);
         closeButtonBounds.y = windowPosition.y + 5;
 
-        // ½½·ÔµéÀÇ À§Ä¡µµ ¾÷µ¥ÀÌÆ®ÇØ¾ß ÇÔ
+        // ìŠ¬ë¡¯ë“¤ì˜ ìœ„ì¹˜ë„ ì—…ë°ì´íŠ¸í•´ì•¼ í•¨
         UpdateSlotPositions();
 
         return true;
     }
-    else // À©µµ¿ì µå·¡±× ÁßÀÌ ¾Æ´Ò ¶§¸¸ ½½·Ô È£¹ö ¹× ÅøÆÁ Ã³¸®
+    else // ìœˆë„ìš° ë“œë˜ê·¸ ì¤‘ì´ ì•„ë‹ ë•Œë§Œ ìŠ¬ë¡¯ í˜¸ë²„ ë° íˆ´íŒ ì²˜ë¦¬
     {
         //showTooltip = false;
         InventorySlot* hoveredSlot = nullptr;
 
-        // ½½·Ô È£¹ö »óÅÂ ¾÷µ¥ÀÌÆ®
+        // ìŠ¬ë¡¯ í˜¸ë²„ ìƒíƒœ ì—…ë°ì´íŠ¸
         for (auto& [key, slot] : slots)
         {
             bool wasHovered = slot.isHovered;
-            // ½½·ÔÀÇ ÇöÀç ·»´õ¸µ À§Ä¡(ÀÌµ¿µÈ Ã¢¿¡ µû¶ó ´Ş¶óÁü)¸¦ ±âÁØÀ¸·Î Contains Ã¼Å©
-            // slot.bounds´Â ÀÌ¹Ì UpdateSlotPositions¿¡ ÀÇÇØ ÇöÀç Ã¢ À§Ä¡¿¡ ¸Â°Ô ¾÷µ¥ÀÌÆ®µÊ (È¤Àº ÀÌ¹Ì ÃÊ±âÈ­ ½Ã ¿Ã¹Ù¸£°Ô ¼³Á¤µÊ)
+            // ìŠ¬ë¡¯ì˜ í˜„ì¬ ë Œë”ë§ ìœ„ì¹˜(ì´ë™ëœ ì°½ì— ë”°ë¼ ë‹¬ë¼ì§)ë¥¼ ê¸°ì¤€ìœ¼ë¡œ Contains ì²´í¬
+            // slot.boundsëŠ” ì´ë¯¸ UpdateSlotPositionsì— ì˜í•´ í˜„ì¬ ì°½ ìœ„ì¹˜ì— ë§ê²Œ ì—…ë°ì´íŠ¸ë¨ (í˜¹ì€ ì´ë¯¸ ì´ˆê¸°í™” ì‹œ ì˜¬ë°”ë¥´ê²Œ ì„¤ì •ë¨)
 
-            slot.isHovered = slot.bounds.Contains(mousePos); //¾È¿¡ ÀÖÀ¸¸é hovered ÀÎµ¥, ¿©±â¼­ »ç½Ç ·»´õ°¡ ¾ÈµÇ¾ß ÇÏ°Åµç 
+            slot.isHovered = slot.bounds.Contains(mousePos); //ì•ˆì— ìˆìœ¼ë©´ hovered ì¸ë°, ì—¬ê¸°ì„œ ì‚¬ì‹¤ ë Œë”ê°€ ì•ˆë˜ì•¼ í•˜ê±°ë“  
 
             if (wasHovered != slot.isHovered)
             {
@@ -340,14 +347,14 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
 
             if (slot.isHovered && !slot.IsEmpty())  //-> 
             {
-                hoveredSlot = &slot; // ÇöÀç ¸¶¿ì½º°¡ ¿Ã¶ó°£ ½½·Ô
+                hoveredSlot = &slot; // í˜„ì¬ ë§ˆìš°ìŠ¤ê°€ ì˜¬ë¼ê°„ ìŠ¬ë¡¯
             }
         }
 
-        // ÅøÆÁ Á¤º¸ ¾÷µ¥ÀÌÆ®
+        // íˆ´íŒ ì •ë³´ ì—…ë°ì´íŠ¸
         if (hoveredSlot != nullptr)
         {
-             Item* data = m_itemDatabase.GetItemData(hoveredSlot->item.id); // ±× ÀúÀåµÈ ¾ÆÀÌÅÛ Á¤º¸ °¡Á®¿À´Â °ÅÀÓ. ¤·¤· 
+             Item* data = m_itemDatabase.GetItemData(hoveredSlot->item.id); // ê·¸ ì €ì¥ëœ ì•„ì´í…œ ì •ë³´ ê°€ì ¸ì˜¤ëŠ” ê±°ì„. ã…‡ã…‡ 
              //Item* data = hoveredSlot->item.
 
 
@@ -356,16 +363,16 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
                 CursorManager::Get().SetHoveredItem(data); 
                 Vec2 tooltipPos = mousePos + Vec2(10, 10);
 
-                UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //À§Ä¡ º¯°æ½ÃÅ°°í, È°¼ºÈ­±îÁö 
+                UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //ìœ„ì¹˜ ë³€ê²½ì‹œí‚¤ê³ , í™œì„±í™”ê¹Œì§€ 
             }
             return true;
 
         }
 
-        else //ÀÌÁ¦´Â ¹¹ ³ª°£°Å°ÚÁÒ...
+        else //ì´ì œëŠ” ë­ ë‚˜ê°„ê±°ê² ì£ ...
         {
-            CursorManager::Get().HoveredReleased(); //ÃßÀû ±İÁö 
-            UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //ÇØÁ¦
+            CursorManager::Get().HoveredReleased(); //ì¶”ì  ê¸ˆì§€ 
+            UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //í•´ì œ
             return true;
 
         }
@@ -373,31 +380,31 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
 
     }
 
-    // ¾ÆÀÌÅÛ µå·¡±× ÁßÀÏ ¶§ (¸¶¿ì½º À§Ä¡ ¾÷µ¥ÀÌÆ®)
+    // ì•„ì´í…œ ë“œë˜ê·¸ ì¤‘ì¼ ë•Œ (ë§ˆìš°ìŠ¤ ìœ„ì¹˜ ì—…ë°ì´íŠ¸)
     if (dragState.isDragging)
     {
         dragState.mousePos = mousePos;
     }
 }
 
-bool Inventory::HandleMouseDown(Vec2 mousePos) //¾îÂ÷ÇÇ Inven À§Ä¡ ³»¿¡ ÀÖ¾î¾ß ÀÌ°Ô Ã³¸®°¡ µÇ´Â °Å´Ï±ñ 
+bool Inventory::HandleMouseDown(Vec2 mousePos) //ì–´ì°¨í”¼ Inven ìœ„ì¹˜ ë‚´ì— ìˆì–´ì•¼ ì´ê²Œ ì²˜ë¦¬ê°€ ë˜ëŠ” ê±°ë‹ˆê¹ 
 {
     if (!m_isActive) return false;
 
     InventorySlot* slot = GetSlotAt(mousePos);
     if (slot && !slot->IsEmpty() && slot->isEnabled)
     {
-        // CursorManager¸¦ ÅëÇØ Àü¿ªÀûÀ¸·Î ¾ÆÀÌÅÛ µå·¡±× ½ÃÀÛ
+        // CursorManagerë¥¼ í†µí•´ ì „ì—­ì ìœ¼ë¡œ ì•„ì´í…œ ë“œë˜ê·¸ ì‹œì‘
         CursorManager::Get().StartItemDrag(slot->item.id, DragSource::Inventory, slot);
-        CursorManager::Get().SetDraggedItem(m_itemDatabase.GetItemData(slot->item.id)); // ½ÇÁ¦ Item* Àü´Ş
+        CursorManager::Get().SetDraggedItem(m_itemDatabase.GetItemData(slot->item.id)); // ì‹¤ì œ Item* ì „ë‹¬
 
-        // ¾ÆÀÌÅÛ Á¤º¸¸¸ CursorManager¿¡ ³Ñ±â°í ½½·Ô ºñ¿ì±â.
+        // ì•„ì´í…œ ì •ë³´ë§Œ CursorManagerì— ë„˜ê¸°ê³  ìŠ¬ë¡¯ ë¹„ìš°ê¸°.
         slot->Clear();
         slot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
-        return true; // ÀÔ·Â Ã³¸® ¿Ï·á
+        return true; // ì…ë ¥ ì²˜ë¦¬ ì™„ë£Œ
     }
-    // ¿µ¿ª ¾È Å¬¸¯ ½Ã ÃÖ»ó´ÜÀ¸·Î.
+    // ì˜ì—­ ì•ˆ í´ë¦­ ì‹œ ìµœìƒë‹¨ìœ¼ë¡œ.
     if (IsInBounds(mousePos))
     {
         UIManager::Get().OpenWindow(m_windowType);
@@ -407,16 +414,16 @@ bool Inventory::HandleMouseDown(Vec2 mousePos) //¾îÂ÷ÇÇ Inven À§Ä¡ ³»¿¡ ÀÖ¾î¾ß À
     return false;
 }
 
-bool Inventory::HandleMouseUp(Vec2 mousePos) //±× ³õÀº À§Ä¡¿¡ ´ëÇÑ ¿¹¿ÜÃ³¸®¸¦ ÇØ¾ß ÇÔ. ´©°¡ ½ÃÀÛ Çß´ÂÁö ¾Ë¾Æ¾ß ÇÒ µí 
+bool Inventory::HandleMouseUp(Vec2 mousePos) //ê·¸ ë†“ì€ ìœ„ì¹˜ì— ëŒ€í•œ ì˜ˆì™¸ì²˜ë¦¬ë¥¼ í•´ì•¼ í•¨. ëˆ„ê°€ ì‹œì‘ í–ˆëŠ”ì§€ ì•Œì•„ì•¼ í•  ë“¯ 
 {
     if (!m_isActive) return false;
 
-    // CursorManager¿¡¼­ µå·¡±× ÁßÀÎ ¾ÆÀÌÅÛÀÌ ÀÖ´ÂÁö È®ÀÎ
-    InventorySlot* targetSlot = GetSlotAt(mousePos); // ÇöÀç ¸¶¿ì½º À§Ä¡ÀÇ ½½·ÔÀ» ´Ù½Ã Ã£À½
-    Item* draggedItemData = CursorManager::Get().GetDraggedItem(); // CursorManager¿¡¼­ µå·¡±× ÁßÀÎ ¾ÆÀÌÅÛ °¡Á®¿À±â
+    // CursorManagerì—ì„œ ë“œë˜ê·¸ ì¤‘ì¸ ì•„ì´í…œì´ ìˆëŠ”ì§€ í™•ì¸
+    InventorySlot* targetSlot = GetSlotAt(mousePos); // í˜„ì¬ ë§ˆìš°ìŠ¤ ìœ„ì¹˜ì˜ ìŠ¬ë¡¯ì„ ë‹¤ì‹œ ì°¾ìŒ
+    Item* draggedItemData = CursorManager::Get().GetDraggedItem(); // CursorManagerì—ì„œ ë“œë˜ê·¸ ì¤‘ì¸ ì•„ì´í…œ ê°€ì ¸ì˜¤ê¸°
     DragSource dragSource = CursorManager::Get().GetDragSource();
 
-    // ¸¸¾à ÀåºñÃ¢¿¡¼­ ¿Â°Å¸é ½ºÅÈ ¾÷µ¥ÀÌÆ®
+    // ë§Œì•½ ì¥ë¹„ì°½ì—ì„œ ì˜¨ê±°ë©´ ìŠ¤íƒ¯ ì—…ë°ì´íŠ¸
     if (dragSource == DragSource::Equipment)
     {
         if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
@@ -429,38 +436,38 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //±× ³õÀº À§Ä¡¿¡ ´ëÇÑ ¿¹¿ÜÃ³¸®¸¦ ÇØ
 
     if (targetSlot && targetSlot->isEnabled && draggedItemData)
     {
-        // ½ºÅÃ °¡´ÉÇÑ ¾ÆÀÌÅÛÀÌ¶ó¸é ÇÕÄ¡±â ½Ãµµ
+        // ìŠ¤íƒ ê°€ëŠ¥í•œ ì•„ì´í…œì´ë¼ë©´ í•©ì¹˜ê¸° ì‹œë„
         if (draggedItemData->IsStackable() &&
             targetSlot->item.id == draggedItemData->m_data.id &&
-            (targetSlot->item.count + 1) <= draggedItemData->maxCount) // count´Â CursorManager¿¡¼­ °ü¸®ÇØ¾ß ÇÔ
+            (targetSlot->item.count + 1) <= draggedItemData->maxCount) // countëŠ” CursorManagerì—ì„œ ê´€ë¦¬í•´ì•¼ í•¨
         {
-            //std::cout << "½ºÅÃ °¡´É. ¾ÆÀÌÅÛ ÇÕÄ¥°ÅÀÓ." << std::endl; Á¶°ÇÀº ¸Â°Ô µé¾î¿È.
-            targetSlot->item.count += 1; // µå·¡±×µÈ ¾ÆÀÌÅÛÀÇ ½ÇÁ¦ count¸¦ ´õÇØ¾ß ÇÔ
+            //std::cout << "ìŠ¤íƒ ê°€ëŠ¥. ì•„ì´í…œ í•©ì¹ ê±°ì„." << std::endl; ì¡°ê±´ì€ ë§ê²Œ ë“¤ì–´ì˜´.
+            targetSlot->item.count += 1; // ë“œë˜ê·¸ëœ ì•„ì´í…œì˜ ì‹¤ì œ countë¥¼ ë”í•´ì•¼ í•¨
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
             placed = true;
         }
         else if (targetSlot->IsEmpty())
         {
-            // ºó ½½·Ô¿¡ µå·Ó
-            targetSlot->SetItem(draggedItemData->m_data.id, 1); // count´Â CursorManager¿¡¼­ °ü¸®ÇØ¾ß ÇÔ
+            // ë¹ˆ ìŠ¬ë¡¯ì— ë“œë¡­
+            targetSlot->SetItem(draggedItemData->m_data.id, 1); // countëŠ” CursorManagerì—ì„œ ê´€ë¦¬í•´ì•¼ í•¨
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
             placed = true;
         }
-        else // ½½·ÔÀÌ ºñ¾îÀÖÁö ¾Ê°í ½ºÅÃ ºÒ°¡´ÉÇÏ°Å³ª ´Ù¸¥ ¾ÆÀÌÅÛÀÎ °æ¿ì (±³È¯ ·ÎÁ÷)
+        else // ìŠ¬ë¡¯ì´ ë¹„ì–´ìˆì§€ ì•Šê³  ìŠ¤íƒ ë¶ˆê°€ëŠ¥í•˜ê±°ë‚˜ ë‹¤ë¥¸ ì•„ì´í…œì¸ ê²½ìš° (êµí™˜ ë¡œì§)
         {
-            // ¿øº» ½½·Ô Á¤º¸ °¡Á®¿À±â
+            // ì›ë³¸ ìŠ¬ë¡¯ ì •ë³´ ê°€ì ¸ì˜¤ê¸°
             InventorySlot* sourceSlot = CursorManager::Get().GetSourceSlot();
 
             if (sourceSlot)
             {
-                // ÇöÀç Å¸°Ù ½½·ÔÀÇ ¾ÆÀÌÅÛÀ» ÀÓ½Ã ÀúÀå
+                // í˜„ì¬ íƒ€ê²Ÿ ìŠ¬ë¡¯ì˜ ì•„ì´í…œì„ ì„ì‹œ ì €ì¥
                 ItemInstance tempItem = targetSlot->item;
 
-                // Å¸°Ù ½½·Ô¿¡ µå·¡±×µÈ ¾ÆÀÌÅÛ ³õ±â
+                // íƒ€ê²Ÿ ìŠ¬ë¡¯ì— ë“œë˜ê·¸ëœ ì•„ì´í…œ ë†“ê¸°
                 targetSlot->SetItem(draggedItemData->m_data.id, 1);
                 targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
-                // ¿øº» ½½·Ô¿¡ ±³È¯µÈ ¾ÆÀÌÅÛ ³õ±â
+                // ì›ë³¸ ìŠ¬ë¡¯ì— êµí™˜ëœ ì•„ì´í…œ ë†“ê¸°
                 sourceSlot->SetItem(tempItem.id, tempItem.count);
                 sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
@@ -468,7 +475,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //±× ³õÀº À§Ä¡¿¡ ´ëÇÑ ¿¹¿ÜÃ³¸®¸¦ ÇØ
             }
             else
             {
-                // ºó ½½·Ô¿¡ Ãß°¡
+                // ë¹ˆ ìŠ¬ë¡¯ì— ì¶”ê°€
                 ItemInstance tempItem = targetSlot->item;
                 targetSlot->SetItem(draggedItemData->m_data.id, 1);
                 targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
@@ -483,7 +490,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //±× ³õÀº À§Ä¡¿¡ ´ëÇÑ ¿¹¿ÜÃ³¸®¸¦ ÇØ
     }
     if (placed)
     {
-        CursorManager::Get().EndItemDrag(); // µå·Ó ¼º°ø ½Ã µå·¡±× Á¾·á
+        CursorManager::Get().EndItemDrag(); // ë“œë¡­ ì„±ê³µ ì‹œ ë“œë˜ê·¸ ì¢…ë£Œ
         return true;
     }
     else
@@ -491,7 +498,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //±× ³õÀº À§Ä¡¿¡ ´ëÇÑ ¿¹¿ÜÃ³¸®¸¦ ÇØ
         return HandleDropFailure(mousePos, draggedItemData, dragSource);
     }
 
-    // ¿µ¿ª ¾È Å¬¸¯ ½Ã ÃÖ»ó´ÜÀ¸·Î.
+    // ì˜ì—­ ì•ˆ í´ë¦­ ì‹œ ìµœìƒë‹¨ìœ¼ë¡œ.
 
 
     return placed;
@@ -501,73 +508,73 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
 {
     if (!draggedItem) return false;
 
-    // 1. ´Ù¸¥ Ã¢µéÀÇ ¿µ¿ªÀÎÁö È®ÀÎ
+    // 1. ë‹¤ë¥¸ ì°½ë“¤ì˜ ì˜ì—­ì¸ì§€ í™•ì¸
     bool isInOtherWindow = false;
 
-    // ÀåºñÃ¢ ¿µ¿ª È®ÀÎ
+    // ì¥ë¹„ì°½ ì˜ì—­ í™•ì¸
     UIWindow* equipWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
     if (equipWindow && equipWindow->IsActive() && equipWindow->IsInBounds(mousePos))
     {
         isInOtherWindow = true;
     }
 
-    // °­È­Ã¢ ¿µ¿ª È®ÀÎ (È°¼ºÈ­µÇ¾î ÀÖ´Ù¸é)
+    // ê°•í™”ì°½ ì˜ì—­ í™•ì¸ (í™œì„±í™”ë˜ì–´ ìˆë‹¤ë©´)
     UIWindow* enhanceWindow = UIManager::Get().GetWindow(UIWindowType::EnhancementWindow);
     if (enhanceWindow && enhanceWindow->IsActive() && enhanceWindow->IsInBounds(mousePos))
     {
         isInOtherWindow = true;
     }
 
-    // ÇÕ¼ºÃ¢ ¿µ¿ª È®ÀÎ (È°¼ºÈ­µÇ¾î ÀÖ´Ù¸é)
+    // í•©ì„±ì°½ ì˜ì—­ í™•ì¸ (í™œì„±í™”ë˜ì–´ ìˆë‹¤ë©´)
     UIWindow* synthesisWindow = UIManager::Get().GetWindow(UIWindowType::SynthesisWindow);
     if (synthesisWindow && synthesisWindow->IsActive() && synthesisWindow->IsInBounds(mousePos))
     {
         isInOtherWindow = true;
     }
 
-    // 2. ´Ù¸¥ Ã¢ ¿µ¿ªÀÌ¸é ÇØ´ç Ã¢¿¡¼­ Ã³¸®ÇÏµµ·Ï ³Ñ±è (µå·¡±× »óÅÂ À¯Áö)
+    // 2. ë‹¤ë¥¸ ì°½ ì˜ì—­ì´ë©´ í•´ë‹¹ ì°½ì—ì„œ ì²˜ë¦¬í•˜ë„ë¡ ë„˜ê¹€ (ë“œë˜ê·¸ ìƒíƒœ ìœ ì§€)
     if (isInOtherWindow)
     {
-        return false; // ´Ù¸¥ Ã¢¿¡¼­ Ã³¸®ÇÏµµ·Ï ³Ñ±è
+        return false; // ë‹¤ë¥¸ ì°½ì—ì„œ ì²˜ë¦¬í•˜ë„ë¡ ë„˜ê¹€
     }
 
-    // 3. ¾î¶² Ã¢ ¿µ¿ªµµ ¾Æ´Ï¸é ¿ø·¡ ÀÎº¥Åä¸®·Î º¹±¸
+    // 3. ì–´ë–¤ ì°½ ì˜ì—­ë„ ì•„ë‹ˆë©´ ì›ë˜ ì¸ë²¤í† ë¦¬ë¡œ ë³µêµ¬
     if (source == DragSource::Inventory)
     {
-        // ÀÎº¥Åä¸®¿¡¼­ ³ª¿Â ¾ÆÀÌÅÛÀÌ¹Ç·Î ºó ½½·Ô¿¡ ´Ù½Ã ³Ö±â ½Ãµµ
+        // ì¸ë²¤í† ë¦¬ì—ì„œ ë‚˜ì˜¨ ì•„ì´í…œì´ë¯€ë¡œ ë¹ˆ ìŠ¬ë¡¯ì— ë‹¤ì‹œ ë„£ê¸° ì‹œë„
         if (AddItem(draggedItem->m_data.id, 1))
         {
-            std::cout << "¾ÆÀÌÅÛÀ» ÀÎº¥Åä¸®·Î º¹±¸Çß½À´Ï´Ù: " << draggedItem->m_data.name << std::endl;
+            std::cout << "ì•„ì´í…œì„ ì¸ë²¤í† ë¦¬ë¡œ ë³µêµ¬í–ˆìŠµë‹ˆë‹¤: " << draggedItem->m_data.name << std::endl;
             CursorManager::Get().EndItemDrag();
             return true;
         }
         else
         {
-            std::cout << "ÀÎº¥Åä¸®°¡ °¡µæ Âü. ¾ÆÀÌÅÛ º¹±¸ ½ÇÆĞ." << std::endl;
-            // ÀÎº¥Åä¸®°¡ °¡µæ Âù °æ¿ì¿¡µµ µå·¡±× Á¾·á (¾ÆÀÌÅÛ ¼Ò½Ç ¹æÁö¸¦ À§ÇØ ·Î±× Ãâ·Â)
+            std::cout << "ì¸ë²¤í† ë¦¬ê°€ ê°€ë“ ì°¸. ì•„ì´í…œ ë³µêµ¬ ì‹¤íŒ¨." << std::endl;
+            // ì¸ë²¤í† ë¦¬ê°€ ê°€ë“ ì°¬ ê²½ìš°ì—ë„ ë“œë˜ê·¸ ì¢…ë£Œ (ì•„ì´í…œ ì†Œì‹¤ ë°©ì§€ë¥¼ ìœ„í•´ ë¡œê·¸ ì¶œë ¥)
             CursorManager::Get().EndItemDrag();
             return true;
         }
     }
     else if (source == DragSource::Equipment)
     {
-        // ÀåºñÃ¢¿¡¼­ ³ª¿Â ¾ÆÀÌÅÛÀÌ¹Ç·Î ÀÎº¥Åä¸®·Î ÀÌµ¿
+        // ì¥ë¹„ì°½ì—ì„œ ë‚˜ì˜¨ ì•„ì´í…œì´ë¯€ë¡œ ì¸ë²¤í† ë¦¬ë¡œ ì´ë™
         if (AddItem(draggedItem->m_data.id, 1))
         {
-            std::cout << "Àåºñ ¾ÆÀÌÅÛÀ» ÀÎº¥Åä¸®·Î ÀÌµ¿Çß½À´Ï´Ù: " << draggedItem->m_data.name << std::endl;
+            std::cout << "ì¥ë¹„ ì•„ì´í…œì„ ì¸ë²¤í† ë¦¬ë¡œ ì´ë™í–ˆìŠµë‹ˆë‹¤: " << draggedItem->m_data.name << std::endl;
             CursorManager::Get().EndItemDrag();
             return true;
         }
         else
         {
-            std::cout << "ÀÎº¥Åä¸®°¡ °¡µæ Âü. Àåºñ¸¦ ¿ø·¡ ½½·ÔÀ¸·Î º¹±¸ÇÕ´Ï´Ù." << std::endl;
-            // ÀÎº¥Åä¸®°¡ °¡µæ Â÷¸é ¿ø·¡ Àåºñ ½½·ÔÀ¸·Î º¹±¸ÇØ¾ß ÇÔ
-            // ÀÌ´Â EquipmentWindow¿¡¼­ Ã³¸®ÇØ¾ß ÇÒ ·ÎÁ÷
+            std::cout << "ì¸ë²¤í† ë¦¬ê°€ ê°€ë“ ì°¸. ì¥ë¹„ë¥¼ ì›ë˜ ìŠ¬ë¡¯ìœ¼ë¡œ ë³µêµ¬í•©ë‹ˆë‹¤." << std::endl;
+            // ì¸ë²¤í† ë¦¬ê°€ ê°€ë“ ì°¨ë©´ ì›ë˜ ì¥ë¹„ ìŠ¬ë¡¯ìœ¼ë¡œ ë³µêµ¬í•´ì•¼ í•¨
+            // ì´ëŠ” EquipmentWindowì—ì„œ ì²˜ë¦¬í•´ì•¼ í•  ë¡œì§
             return false;
         }
     }
 
-    // ±âº»ÀûÀ¸·Î µå·¡±× Á¾·á
+    // ê¸°ë³¸ì ìœ¼ë¡œ ë“œë˜ê·¸ ì¢…ë£Œ
     CursorManager::Get().EndItemDrag();
     return true;
 }
@@ -576,16 +583,16 @@ bool Inventory::ConsumePendingPotion()
 {
     if (!m_pendingPotionSlot) return false;
 
-    // ½½·Ô/¾ÆÀÌÅÛ À¯È¿¼º Ã¼Å©
+    // ìŠ¬ë¡¯/ì•„ì´í…œ ìœ íš¨ì„± ì²´í¬
     if (m_pendingPotionSlot->IsEmpty()) { m_pendingPotionSlot = nullptr; return false; } 
 
     Item* data = m_itemDatabase.GetItemData(m_pendingPotionSlot->item.id);
     if (!data || dynamic_cast<Potion*>(data) == nullptr) { m_pendingPotionSlot = nullptr; return false; }
 
-    // ½ºÅÃ 1 °¨¼Ò ¡æ 0ÀÌ¸é ºñ¿ì±â ¡æ ºñÆ®¸Ê °»½Å
+    // ìŠ¤íƒ 1 ê°ì†Œ â†’ 0ì´ë©´ ë¹„ìš°ê¸° â†’ ë¹„íŠ¸ë§µ ê°±ì‹ 
     m_pendingPotionSlot->item.count -= 1;
     if (m_pendingPotionSlot->item.count <= 0)
-        m_pendingPotionSlot->Clear(); //Æ÷ÀÎÅÍ´Â ¾È ¾ø¾Ú 
+        m_pendingPotionSlot->Clear(); //í¬ì¸í„°ëŠ” ì•ˆ ì—†ì•° 
 
     m_pendingPotionSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
     m_pendingPotionSlot = nullptr;
@@ -600,7 +607,7 @@ bool Inventory::HandleDoubleClick(Vec2 mousePos)
     return false;
 }
 
-bool Inventory::HandleMouseRight(Vec2 mousePos) //»ç¿ëÇÑ ¾ÆÀÌÅÛÀÇ Æ÷ÀÎÅÍ¸¦ ¹Ş¾Æ¿Í¼­ ¾ø¾Ö´Â ½ÄÀ¸·Î ÁøÇàÇØ¾ß ÇÒµí. 
+bool Inventory::HandleMouseRight(Vec2 mousePos) //ì‚¬ìš©í•œ ì•„ì´í…œì˜ í¬ì¸í„°ë¥¼ ë°›ì•„ì™€ì„œ ì—†ì• ëŠ” ì‹ìœ¼ë¡œ ì§„í–‰í•´ì•¼ í• ë“¯. 
 {
     InventorySlot* slot = GetSlotAt(mousePos);
 
@@ -611,9 +618,9 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //»ç¿ëÇÑ ¾ÆÀÌÅÛÀÇ Æ÷ÀÎÅÍ¸¦ ¹Ş¾Æ¿
         if (item != nullptr)
         {
             int much  = item->GetMuch() -1 ;
-            m_pendingPotionSlot = slot; //  ±â¾ï
+            m_pendingPotionSlot = slot; //  ê¸°ì–µ
 
-            UIManager::Get().ShowPotionWindow(much); //Æ÷Áö¼Çµµ ¸ÂÃç ¹ö·È´Ù°í 
+            UIManager::Get().ShowPotionWindow(much); //í¬ì§€ì…˜ë„ ë§ì¶° ë²„ë ¸ë‹¤ê³  
 
         }
 
@@ -621,7 +628,7 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //»ç¿ëÇÑ ¾ÆÀÌÅÛÀÇ Æ÷ÀÎÅÍ¸¦ ¹Ş¾Æ¿
         if (wear != nullptr)
         {
 
-            UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow); //È°¼ºÈ­ ½Ãµµ 
+            UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow); //í™œì„±í™” ì‹œë„ 
 
             auto* EQUIPWIN = dynamic_cast<EquipmentWindow*>(
                 UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
@@ -635,7 +642,7 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //»ç¿ëÇÑ ¾ÆÀÌÅÛÀÇ Æ÷ÀÎÅÍ¸¦ ¹Ş¾Æ¿
                 statWindow->UpdateTotalStats();
             }
 
-           //ÀåºñÀÎ °æ¿ì¿¡´Â ÀåÂøÇÏ·Á°í ÇÔ. 
+           //ì¥ë¹„ì¸ ê²½ìš°ì—ëŠ” ì¥ì°©í•˜ë ¤ê³  í•¨. 
 
         }
 
@@ -652,11 +659,11 @@ UIWindowType Inventory::GetType()
 
 InventorySlot* Inventory::GetSlotAt(const Vec2& pos)
 {
-    if (!m_isActive || isWindowDragging) return nullptr; // À©µµ¿ì ºñÈ°¼º ¶Ç´Â µå·¡±× Áß¿¡´Â ½½·Ô Å¬¸¯ ºÒ°¡
+    if (!m_isActive || isWindowDragging) return nullptr; // ìœˆë„ìš° ë¹„í™œì„± ë˜ëŠ” ë“œë˜ê·¸ ì¤‘ì—ëŠ” ìŠ¬ë¡¯ í´ë¦­ ë¶ˆê°€
 
     for (auto& [key, slot] : slots)
     {
-        // ½½·ÔÀÇ bounds´Â ÀÌ¹Ì UpdateSlotPositions¿¡ ÀÇÇØ ÇöÀç Ã¢ À§Ä¡¿¡ ¸Â°Ô ¾÷µ¥ÀÌÆ®µÇ¾î ÀÖÀ½
+        // ìŠ¬ë¡¯ì˜ boundsëŠ” ì´ë¯¸ UpdateSlotPositionsì— ì˜í•´ í˜„ì¬ ì°½ ìœ„ì¹˜ì— ë§ê²Œ ì—…ë°ì´íŠ¸ë˜ì–´ ìˆìŒ
         if (slot.bounds.Contains(pos))
         {
             return &slot;
@@ -672,7 +679,7 @@ void Inventory::RenderTitleBar()
 
     if (context)
     {
-        // 1. Å¸ÀÌÆ²¹Ù ¿µ¿ª »ö»ó Ãâ·Â (°íÁ¤ »ö ºê·¯½Ã »ç¿ë)
+        // 1. íƒ€ì´í‹€ë°” ì˜ì—­ ìƒ‰ìƒ ì¶œë ¥ (ê³ ì • ìƒ‰ ë¸ŒëŸ¬ì‹œ ì‚¬ìš©)
         ComPtr<ID2D1SolidColorBrush> darkBrush;
         context->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::DarkSlateGray, 0.7f), &darkBrush);
 
@@ -683,7 +690,7 @@ void Inventory::RenderTitleBar()
         D2DRenderer::Get().DrawBitmap(static_cast<ID2D1Bitmap1*>(TitleBar.bitmap), rect, TitleBar.srcRect, 1.0f);
 
     }
-    // 2. ÅØ½ºÆ® Ãâ·Â
+    // 2. í…ìŠ¤íŠ¸ ì¶œë ¥
     auto textBrush = renderer.GetTBrush();
     auto textFormat = renderer.GetTFormat();
 
@@ -708,7 +715,7 @@ void Inventory::RenderCloseButton()
 {
     if (closeButton.bitmap)
     {
-        // ´İ±â ¹öÆ° À§Ä¡¸¦ ÇöÀç Ã¢ À§Ä¡¿¡ µû¶ó ¾÷µ¥ÀÌÆ®
+        // ë‹«ê¸° ë²„íŠ¼ ìœ„ì¹˜ë¥¼ í˜„ì¬ ì°½ ìœ„ì¹˜ì— ë”°ë¼ ì—…ë°ì´íŠ¸
         float rightMargin = 47.0f;
         Vec2 currentCloseButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
 
@@ -728,7 +735,7 @@ void Inventory::RenderCloseButton()
 
 void Inventory::RenderSlot(const InventorySlot& slot)
 {
-    // ½½·Ô ¹è°æ ·»´õ¸µ
+    // ìŠ¬ë¡¯ ë°°ê²½ ë Œë”ë§
     if (slot.backgroundBitmap.bitmap)
     {
         D2D1_RECT_F destRect = D2D1::RectF(
@@ -745,23 +752,53 @@ void Inventory::RenderSlot(const InventorySlot& slot)
             slot.backgroundBitmap.opacity);
     }
 
-    // ºñÈ°¼ºÈ­µÈ ½½·ÔÀº ºóslotÀÌ¹ÌÁö ±×¸².
+    // ë¹„í™œì„±í™”ëœ ìŠ¬ë¡¯ì€ ë¹ˆslotì´ë¯¸ì§€ ê·¸ë¦¼.
     if (!slot.isEnabled)
     {
-        //std::cout << "ºñÈ°¼ºÈ­µÈ ½½·ÔÀÌ¹Ç·Î ¹è°æ¸¸ ·»´õ¸µÇÏ°í Á¾·á" << std::endl;
+        //std::cout << "ë¹„í™œì„±í™”ëœ ìŠ¬ë¡¯ì´ë¯€ë¡œ ë°°ê²½ë§Œ ë Œë”ë§í•˜ê³  ì¢…ë£Œ" << std::endl;
         return;
     }
 
-    // 2. ¾ÆÀÌÅÛ ¾ÆÀÌÄÜ ·»´õ¸µ
-    if (!slot.IsEmpty() && slot.itemBitmap.bitmap)
+    // 2. ì•„ì´í…œ ì•„ì´ì½˜ ë Œë”ë§
+    if (!slot.IsEmpty() && slot.itemBitmap.item != nullptr)
+    {
+        auto info = slot.itemBitmap.item->GetRenderInfo();
+        slot.itemBitmap.item->SetPosition({ slot.itemBitmap.position.x - 128.f * 0.8f + 35.f, slot.itemBitmap.position.y - 128.f * 0.8f + 35.f });
+        D2DRenderer::Get().DrawBitmap(info->GetRenderInfo());
+
+        // 3. ì•„ì´í…œ ê°œìˆ˜ í…ìŠ¤íŠ¸
+        if (slot.item.count > 1)
+        {
+            std::wstring countText = std::to_wstring(slot.item.count);
+            // í…ìŠ¤íŠ¸ ìœ„ì¹˜ë¥¼ ìŠ¬ë¡¯ ìš°ì¸¡ í•˜ë‹¨ì— ë°°ì¹˜ (ì˜ˆì‹œ)
+            D2D1_RECT_F textRect = D2D1::RectF(
+                slot.bounds.x + slot.bounds.width - 30, // ìš°ì¸¡ ì •ë ¬
+                slot.bounds.y + slot.bounds.height - 20, // í•˜ë‹¨ ì •ë ¬
+                slot.bounds.x + slot.bounds.width,
+                slot.bounds.y + slot.bounds.height
+            );
+            D2DRenderer::Get().GetContext()->DrawText(
+                countText.c_str(),
+                static_cast<UINT32>(countText.length()),
+                D2DRenderer::Get().GetTFormat().Get(),
+                &textRect,
+                D2DRenderer::Get().GetTBrush().Get()
+            );
+        }
+    }
+    else if (!slot.IsEmpty() && slot.itemBitmap.bitmap)
     {
         D2D1_RECT_F itemDestRect = D2D1::RectF(
-            slot.itemBitmap.position.x, // itemBitmap.positionÀº SetBounds¿¡¼­ ÀÌ¹Ì ½½·Ô bounds¿¡ ¸ÂÃç ¼³Á¤µÊ
+            slot.itemBitmap.position.x, // itemBitmap.positionì€ SetBoundsì—ì„œ ì´ë¯¸ ìŠ¬ë¡¯ boundsì— ë§ì¶° ì„¤ì •ë¨
             slot.itemBitmap.position.y,
             slot.itemBitmap.position.x + slot.itemBitmap.size.x,
             slot.itemBitmap.position.y + slot.itemBitmap.size.y
         );
         D2D1_RECT_F itemSrcRect = slot.itemBitmap.srcRect;
+        itemSrcRect.left = itemSrcRect.left + 85.f;
+        itemSrcRect.top = itemSrcRect.top + 85.f;
+        itemSrcRect.right = itemSrcRect.right - 85.f;
+        itemSrcRect.bottom = itemSrcRect.bottom - 85.f;
 
         D2DRenderer::Get().DrawBitmap(
             static_cast<ID2D1Bitmap1*>(slot.itemBitmap.bitmap),
@@ -772,15 +809,14 @@ void Inventory::RenderSlot(const InventorySlot& slot)
         );
         //  std::cout << " slot.itemBitmap:Opacity" << slot.itemBitmap.opacity << endl;
 
-
-          // 3. ¾ÆÀÌÅÛ °³¼ö ÅØ½ºÆ®
+          // 3. ì•„ì´í…œ ê°œìˆ˜ í…ìŠ¤íŠ¸
         if (slot.item.count > 1)
         {
             std::wstring countText = std::to_wstring(slot.item.count);
-            // ÅØ½ºÆ® À§Ä¡¸¦ ½½·Ô ¿ìÃø ÇÏ´Ü¿¡ ¹èÄ¡ (¿¹½Ã)
+            // í…ìŠ¤íŠ¸ ìœ„ì¹˜ë¥¼ ìŠ¬ë¡¯ ìš°ì¸¡ í•˜ë‹¨ì— ë°°ì¹˜ (ì˜ˆì‹œ)
             D2D1_RECT_F textRect = D2D1::RectF(
-                slot.bounds.x + slot.bounds.width - 30, // ¿ìÃø Á¤·Ä
-                slot.bounds.y + slot.bounds.height - 20, // ÇÏ´Ü Á¤·Ä
+                slot.bounds.x + slot.bounds.width - 30, // ìš°ì¸¡ ì •ë ¬
+                slot.bounds.y + slot.bounds.height - 20, // í•˜ë‹¨ ì •ë ¬
                 slot.bounds.x + slot.bounds.width,
                 slot.bounds.y + slot.bounds.height
             );
@@ -795,7 +831,7 @@ void Inventory::RenderSlot(const InventorySlot& slot)
     }
 }
 
-void Inventory::UpdateSlotPositions() // -> widndow ±âÁØÀ¸·Î µÇ°í ÀÖÁö ¾Ê¾Æ¿ä 
+void Inventory::UpdateSlotPositions() // -> widndow ê¸°ì¤€ìœ¼ë¡œ ë˜ê³  ìˆì§€ ì•Šì•„ìš” 
 {
     float slotSize = 74.0f;
     float padding_x = 13.0f;
@@ -807,7 +843,7 @@ void Inventory::UpdateSlotPositions() // -> widndow ±âÁØÀ¸·Î µÇ°í ÀÖÁö ¾Ê¾Æ¿ä
     float totalSlotDimension_x = slotSize + padding_x;
     float totalSlotDimension_y = slotSize + padding_y;
 
-    // RegionsÀÇ bounds¸¦ Ã¢ÀÇ ÇöÀç À§Ä¡¸¦ ±âÁØÀ¸·Î ¾÷µ¥ÀÌÆ®
+    // Regionsì˜ boundsë¥¼ ì°½ì˜ í˜„ì¬ ìœ„ì¹˜ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì—…ë°ì´íŠ¸
     float currentRegionX = m_position.x + 68.0f;
     regions[0].bounds = Rect(
         currentRegionX,
@@ -845,14 +881,14 @@ void Inventory::UpdateSlotPositions() // -> widndow ±âÁØÀ¸·Î µÇ°í ÀÖÁö ¾Ê¾Æ¿ä
                 {
                     InventorySlot& slot = slots[key];
 
-                    // ½½·Ô À§Ä¡´Â ÇØ´ç RegionÀÇ bounds¸¦ ±âÁØÀ¸·Î °è»ê (regions.bounds´Â InitializeRegions¿¡¼­ windowPosition¿¡ µû¶ó ÀÌ¹Ì °áÁ¤µÊ)
+                    // ìŠ¬ë¡¯ ìœ„ì¹˜ëŠ” í•´ë‹¹ Regionì˜ boundsë¥¼ ê¸°ì¤€ìœ¼ë¡œ ê³„ì‚° (regions.boundsëŠ” InitializeRegionsì—ì„œ windowPositionì— ë”°ë¼ ì´ë¯¸ ê²°ì •ë¨)
                     //float slotX = region.bounds.x + x * totalSlotDimension_x;
                     //float slotY = region.bounds.y + y * totalSlotDimension_y;
 
                     //float slotX = m_bound.x + RegionOffset[regionId].x + x * totalSlotDimension_x;
                     //float slotY = m_bound.y + RegionOffset[regionId].y + y * totalSlotDimension_y+ 64.0f;
 
-                    // region.bounds.x¿Í region.bounds.y·Î ½½·Ô À§Ä¡ °è»êÇØ¾ßÇÔ.
+                    // region.bounds.xì™€ region.bounds.yë¡œ ìŠ¬ë¡¯ ìœ„ì¹˜ ê³„ì‚°í•´ì•¼í•¨.
                     float slotX = region.bounds.x + x * totalSlotDimension_x;
                     float slotY = region.bounds.y + y * totalSlotDimension_y;
 
@@ -863,25 +899,25 @@ void Inventory::UpdateSlotPositions() // -> widndow ±âÁØÀ¸·Î µÇ°í ÀÖÁö ¾Ê¾Æ¿ä
     }
 }
 
-// ½½·ÔÀº ºñ¿öÁö´Âµ¥ ÀåºñÃ¢¿¡ ÀÖ´Â°Ô ¾î¶»°Ô ²¿ÀÏÁö ¸ğ¸¥´Ù. 
-// ÀÏ´ÜÀº ¸¸µé±â¸¸ÇßÁö ¾Æ¹«°Íµµ Ãß°¡ ¾ÈÇßÀ¸´Ï±î.
+// ìŠ¬ë¡¯ì€ ë¹„ì›Œì§€ëŠ”ë° ì¥ë¹„ì°½ì— ìˆëŠ”ê²Œ ì–´ë–»ê²Œ ê¼¬ì¼ì§€ ëª¨ë¥¸ë‹¤. 
+// ì¼ë‹¨ì€ ë§Œë“¤ê¸°ë§Œí–ˆì§€ ì•„ë¬´ê²ƒë„ ì¶”ê°€ ì•ˆí–ˆìœ¼ë‹ˆê¹Œ.
 void Inventory::ClearAllSlots()
 {
-    // ¸ğµç ½½·Ô ¼øÈ¸ÇÏ¸é¼­ ÃÊ±âÈ­
+    // ëª¨ë“  ìŠ¬ë¡¯ ìˆœíšŒí•˜ë©´ì„œ ì´ˆê¸°í™”
     for (auto& [key, slot] : slots)
     {
-        // ½½·Ô ³»¿ë Å¬¸®¾î
+        // ìŠ¬ë¡¯ ë‚´ìš© í´ë¦¬ì–´
         slot.Clear();
 
-        // ¾ÆÀÌÅÛ ºñÆ®¸Ê ¾÷µ¥ÀÌÆ® (ºó ½½·ÔÀ¸·Î)
+        // ì•„ì´í…œ ë¹„íŠ¸ë§µ ì—…ë°ì´íŠ¸ (ë¹ˆ ìŠ¬ë¡¯ìœ¼ë¡œ)
         slot.UpdateItemBitmap(&controller, &m_itemDatabase);
 
-        // ¹è°æ ºñÆ®¸Ê ¾÷µ¥ÀÌÆ® (±âº» »óÅÂ·Î)
+        // ë°°ê²½ ë¹„íŠ¸ë§µ ì—…ë°ì´íŠ¸ (ê¸°ë³¸ ìƒíƒœë¡œ)
         slot.UpdateBackgroundBitmap(&controller);
     }
     m_itemDatabase.ClearAllItems();
 
-    std::cout << "[Inventory] ¸ğµç ½½·ÔÀÌ ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù." << std::endl;
+    std::cout << "[Inventory] ëª¨ë“  ìŠ¬ë¡¯ì´ ì´ˆê¸°í™”ë˜ì—ˆìŠµë‹ˆë‹¤." << std::endl;
 }
 
 ItemDatabase& Inventory::GetItemBase()
@@ -889,7 +925,7 @@ ItemDatabase& Inventory::GetItemBase()
     return m_itemDatabase;
 }
 
-void Inventory::PackItem() //ÇöÀç database¿¡ ÀÖ´Â ¸ğµç ItemÀ» Slot¿¡ ³Ö¾îÁÜ 
+void Inventory::PackItem() //í˜„ì¬ databaseì— ìˆëŠ” ëª¨ë“  Itemì„ Slotì— ë„£ì–´ì¤Œ 
 {
     for (const auto& [Id, Item] : m_itemDatabase.GetMap())
     {
@@ -898,12 +934,12 @@ void Inventory::PackItem() //ÇöÀç database¿¡ ÀÖ´Â ¸ğµç ItemÀ» Slot¿¡ ³Ö¾îÁÜ
     }
 }
 
-void Inventory::SetDatabase(unique_ptr<ItemDatabase> database) //¿ÜºÎ¿¡¼­ ¸¸µé°í ³Ö¾î¹ö¸±·¡/
+void Inventory::SetDatabase(unique_ptr<ItemDatabase> database) //ì™¸ë¶€ì—ì„œ ë§Œë“¤ê³  ë„£ì–´ë²„ë¦´ë˜/
 {
-    //LoadItemDatabase ¹öÀüÀ» ÀÏ´Ü ¾²±â·Î ÇÔ.
+    //LoadItemDatabase ë²„ì „ì„ ì¼ë‹¨ ì“°ê¸°ë¡œ í•¨.
 
-    //UI_Manager¿¡¼­ ¾î¶»°Ô Init ÇÒÁö´Â ¸ğ¸£°Ú´Ù¸¸, Scene Index ¹Ş°í, Database¿¡ ³Ö´Â °Å´Â 
-    //GiveItemÀ» ÅëÇØ¼­ ¹ŞÀ¸¸é µÇ°¡Áö°í »ó°ü ¾ø±ä ÇØ ÀÏ´Ü ¹öÀü 1·Î µÎÀÚ°í 
+    //UI_Managerì—ì„œ ì–´ë–»ê²Œ Init í• ì§€ëŠ” ëª¨ë¥´ê² ë‹¤ë§Œ, Scene Index ë°›ê³ , Databaseì— ë„£ëŠ” ê±°ëŠ” 
+    //GiveItemì„ í†µí•´ì„œ ë°›ìœ¼ë©´ ë˜ê°€ì§€ê³  ìƒê´€ ì—†ê¸´ í•´ ì¼ë‹¨ ë²„ì „ 1ë¡œ ë‘ìê³  
   //  this->itemDatabase = std::move(database);
 }
 
@@ -912,8 +948,8 @@ void Inventory::LoadUIBitmaps()
 
 
     windowBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("InvenBg").Get();
-    tooltipBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("SlotDisabled").Get(); //ÀÓÀÇ
-    tooltipBackground.srcRect = D2D1::RectF(0, 0, 234, 345); // ¿¹½Ã. -> Tooltip 
+    tooltipBackground.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("SlotDisabled").Get(); //ì„ì˜
+    tooltipBackground.srcRect = D2D1::RectF(0, 0, 234, 345); // ì˜ˆì‹œ. -> Tooltip 
 
     closeButton.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("CloseButton").Get();
     //TitleBar.bitmap = ResourceManager::Get().Get_UIBank().Get_Image("TitleBar").Get();

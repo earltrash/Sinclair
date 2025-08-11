@@ -21,16 +21,28 @@ struct Region
 struct UIBitmap
 {
     ID2D1Bitmap* bitmap;
+    Item* item;
     D2D_RECT_F srcRect;
     Vec2 position;
     Vec2 size;
     float opacity;
 
     UIBitmap() : bitmap(nullptr),
+        item(nullptr),
         srcRect{ 0,0,0,0 },
         position{ 0,0 },
         size{ 0,0 },
         opacity(1.0f) {}
+
+    void Clear()
+    {
+        bitmap = nullptr;
+        item = nullptr;
+        srcRect = { 0.f,0.f,0.f,0.f };
+        position = { 0.f, 0.f };
+        size = { 0.f, 0.f };
+        opacity = 1.f;
+    }
 
 };
 
@@ -97,6 +109,7 @@ public:
 
     void SetBounds(const Rect& rect);
     void UpdateItemBitmap(SlotBitmapController* controller, ItemDatabase* itemDB);
+    void ProcessItem(Item* data, D2D1_VECTOR_4F color);
     void UpdateBackgroundBitmap(SlotBitmapController* bitmapManager);
     bool IsEmpty() const;
     void SetItem(std::string itemId, int count);
