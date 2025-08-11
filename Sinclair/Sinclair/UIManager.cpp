@@ -359,10 +359,15 @@ void UIManager::HandleSceneObjectInput(const MSG& msg)
 {
     for (auto& obj : m_currentSceneObjects)
     {
-        if (obj.get()->GetComponent<ButtonComponent>())
+        //if (obj.get()->GetComponent<ButtonComponent>())
+        //{
+        //    obj.get()->GetComponent<ButtonComponent>()->CheckCollision(msg);
+        //    obj.get()->GetComponent<ButtonComponent>()->Worked(msg);
+        //}
+        
+        if (obj.get()->GetComponent<MouseListenerComponent>())
         {
-            obj.get()->GetComponent<ButtonComponent>()->CheckCollision(msg);
-            obj.get()->GetComponent<ButtonComponent>()->Worked(msg);
+            obj.get()->GetComponent<MouseListenerComponent>()->_OnEvent(msg);
         }
     }
 }
