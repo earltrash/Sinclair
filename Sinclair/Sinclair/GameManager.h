@@ -119,6 +119,19 @@ public:// get set 만들기 전
      { 7, { {"I013", 3}, {"I014", 3}, {"I015", 3} } }
     };
     
+
+
+    string GetStatName(Status_Total stat) {
+        switch (stat) {
+        case Status_Total::Strength: return "근력";
+        case Status_Total::Magic_Power: return "마력";
+        case Status_Total::Health: return "건강";
+        case Status_Total::Knowledge: return "지식";
+        case Status_Total::Charm: return "매력";
+        default: return "없음";
+        }
+    }
+
     // 엔딩에 필요한 숫자
     std::array<int, 3> arrEndingID{};
     std::array<int, 3> arrFame{};

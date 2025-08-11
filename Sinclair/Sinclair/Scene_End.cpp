@@ -34,10 +34,9 @@ void Scene_End::Initalize()
 void Scene_End::Enter()
 {
 	ebm = GameManager::Get().AftAdv();
-	Initalize();
 
-	// 게임매니저에서 엔딩 잘 갖고 와. 지금은 임시야. 
-	
+
+	Initalize();
 
 }
 
@@ -140,7 +139,7 @@ void Scene_End::Render()
 	}
 	else
 	{
-		job = L"쉽지 않네";
+		job = L"이거 엔터로 뺴야 함";
 	}
 	D2DRenderer::Get().DrawMessageCenter(job.c_str(),
 		1080.f, 120.f, 1920.f - 1080.f, 255.f - 120.f, D2D1::ColorF::White);
@@ -154,7 +153,7 @@ void Scene_End::Render()
 	}
 	else
 	{
-		text = L"쉽지 않네";
+		text = L"이거 엔터로 뺴야 함";
 	}
 	D2DRenderer::Get().DrawMessageCenter(text.c_str(),
 		1223.f, 255.f, 564.f, 1080.f - 255.f, D2D1::ColorF::White);

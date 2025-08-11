@@ -718,8 +718,6 @@ void Inventory::RenderCloseButton()
         // 닫기 버튼 위치를 현재 창 위치에 따라 업데이트
         float rightMargin = 75; // 원래 65
         Vec2 currentCloseButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 30 };
-        // ?リ린 踰꾪듉 ?꾩튂瑜??꾩옱 李??꾩튂???곕씪 ?낅뜲?댄듃
-        float rightMargin = 47.0f;
 
         D2D1_RECT_F destRect = D2D1::RectF(
             currentCloseButtonPos.x, currentCloseButtonPos.y,

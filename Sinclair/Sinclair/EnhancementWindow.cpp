@@ -31,16 +31,12 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 
 	if (!m_isActive) return false;
 
-	// 메세지 만들어서 던지기.
-	MSG msg{};
-	msg.message = WM_LBUTTONDOWN;
-
-	// 상대좌표로 이미 계산함 머지 겹쳐서 자동머지로 터진거임
-	Vec2 relativePos = mousePos - m_position;
-	msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-
-	std::cout << "HandleMouseDown - 마우스 위치: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
-	/*	if (m_statSelectionButton)
+		// 메세지 만들어서 던지기.
+		MSG msg{};
+		msg.message = WM_LBUTTONDOWN;
+		Vec2 relativePos = mousePos - m_position;
+		msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
+		if (m_statSelectionButton)
 		{
 			Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
 			Vec2 btnScreenPos = m_position + btnPos;
@@ -57,7 +53,7 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 			Vec2 btnPos = m_rightArrowButton->GetTransform().GetPosition();
 			Vec2 btnScreenPos = m_position + btnPos;
 			std::cout << "right 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
-		}*/
+		}
 		// 스탯 버튼 영역.
 	if (IsMouseOverObject(mousePos, m_statSelectionButton.get()))
 	{
