@@ -10,11 +10,6 @@
 #include "UIManager.h"
 #include "SliderHandleComponent.h"
 
-
-// 랜덤
-#include <random>
-#include <iterator>
-
 Scene_Outgame::Scene_Outgame(string name)
 {
 		m_name = name;
@@ -705,33 +700,9 @@ void Scene_Outgame::CreateObj()
 
 		/// 9
 		m_gameObjects.emplace("크레딧_뒤로가기", std::move(뒤로));
-
 	}
-
-
 }
 
-std::string Scene_Outgame::getRandomText()
-{
-	auto range = outGameTextTable.equal_range(m_state);
-
-	if (range.first == range.second) {
-		return "텍스트 없음"; // ID가 없는 경우
-	}
-
-	// 해당 ID의 모든 텍스트를 벡터로 복사
-	std::vector<std::string> texts;
-	for (auto it = range.first; it != range.second; ++it) {
-		texts.push_back(it->second);
-	}
-
-	// 랜덤 선택
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dist(0, texts.size() - 1);
-
-	return texts[dist(gen)];
-}
 
 void Scene_Outgame::SetupCharacterAndBackground()
 {	
@@ -761,7 +732,7 @@ void Scene_Outgame::ChangeState(State newState)
 	{
 	case FIRST_ENTER:
 	{
-		curText = getRandomText();
+		curText = stringFIRST_ENTER[index];
 
 		// '다음' 버튼을 보여주고 '예' 버튼은 숨깁니다.
 		yesButton->SetCurrentBitmap("transparent");
@@ -769,8 +740,16 @@ void Scene_Outgame::ChangeState(State newState)
 
 		// '다음' 버튼의 콜백을 설정하여, 다음 텍스트를 보여주거나 상태를 80002로 변경하도록 합니다.
 		noButton->SetOnClickCallback([this]() {
-			m_state = CHOICE_MENU;
-			SafeChangeScene("Tutorial");
+			if (index < 2)
+			{
+				index++;
+				curText = stringFIRST_ENTER[index];
+			}
+			else
+			{
+				m_state = CHOICE_MENU;
+				SafeChangeScene("Tutorial");
+			}
 		});
 
 		changoButton->SetOnClickCallback([this]() {
@@ -782,13 +761,7 @@ void Scene_Outgame::ChangeState(State newState)
 
 	case CHOICE_MENU: // 분리할 수도 있음
 	{
-		curText = outGameTextTable.find(m_state)->second; 
-		// "> 창고로 이동한다.\n> 모험을 떠난다."
-		// '창고', '모험' 버튼을 보여주고 콜백을 설정해야 합니다.
-		// 현재는 '예/아니오' 버튼만 있으므로, 이들을 재활용하거나 새로 만들어야 합니다.
-		// 예시: '예' 버튼을 '창고' 버튼으로 사용
-		// 투명 버튼 어려움!
-		// 비활성화도 어려움
+		curText = stringCHOICE_MENU;
 
 		yesButton->SetCurrentBitmap("transparent");
 		noButton->SetCurrentBitmap("transparent");
@@ -812,7 +785,7 @@ void Scene_Outgame::ChangeState(State newState)
 
 	case ENTER_OUTGAME:
 	{
-		curText = outGameTextTable.find(m_state)->second; // "창고에 들어가시겠습니까?..."
+		curText = stringENTER_OUTGAME; 
 
 		yesButton->SetCurrentBitmap("yes");
 		noButton->SetCurrentBitmap("no");
@@ -836,7 +809,7 @@ void Scene_Outgame::ChangeState(State newState)
 
 	case ENTER_END:
 	{
-		curText = outGameTextTable.find(m_state)->second; // "여행을 떠나시겠습니까?..."
+		curText = stringENTER_END; // "여행을 떠나시겠습니까?..."
 
 		yesButton->SetCurrentBitmap("yes");
 		noButton->SetCurrentBitmap("no");

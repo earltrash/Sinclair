@@ -25,7 +25,6 @@ public:
 		virtual void Render()override;
 private:
 	void CreateObj();
-	std::string getRandomText();
 
 
 	void SetupCharacterAndBackground();
@@ -59,14 +58,16 @@ private:
 	State m_state = FIRST_ENTER;
 	bool wasInGame = false;
 
-	std::multimap<State, std::string> outGameTextTable = {
-	{FIRST_ENTER , "늘 나도 언젠가는 아버지처럼\n모험을 떠나고 싶다고 생각해왔어."},
-	{FIRST_ENTER , "이제는 때가 된 것 같아.\n하지만… 장비는 어떡하지 ?"},
-	{FIRST_ENTER , "분명 아버지도 이해해주실거야.\n아버지의 창고에 들어가볼까 ?"},
-	{CHOICE_MENU , "> 창고로 이동한다.\n> 모험을 떠난다."},
-	{ENTER_OUTGAME , "창고에 들어가시겠습니까?"},
-	{ENTER_END , "여행을 떠나시겠습니까?\n(주의.한번 모험을 떠나면 되돌릴 수 없습니다)"}
+	vector<string> stringFIRST_ENTER{ "늘 나도 언젠가는 아버지처럼\n모험을 떠나고 싶다고 생각해왔어." ,
+		"이제는 때가 된 것 같아.\n하지만… 장비는 어떡하지 ?",
+		"분명 아버지도 이해해주실거야.\n아버지의 창고에 들어가볼까 ?"
 	};
+	int index = 0;
+	string stringCHOICE_MENU{ "> 창고로 이동한다.\n> 모험을 떠난다." };
+	string stringENTER_OUTGAME{ "창고에 들어가시겠습니까?" };
+	string stringENTER_END{ "여행을 떠나시겠습니까?\n(주의.한번 모험을 떠나면 되돌릴 수 없습니다)" };
+
+
 
 	std::string curText;
 
