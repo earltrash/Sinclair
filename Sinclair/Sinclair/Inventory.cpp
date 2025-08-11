@@ -21,12 +21,12 @@ Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }
     InitializeSlots();
     std::cout << "[Inventory] 슬롯 초기화 완료" << std::endl; // ← 여기 안 나오면 그 안에서 터진 거
 
-   LoadItemDatabase(Need_Moment::Syn);
+    LoadItemDatabase(Need_Moment::Syn);
 
     LoadItemDatabase(Need_Moment::Adv);
     //LoadItemDatabase(Need_Moment::Syn);
 
-    //LoadItemDatabase(Need_Moment::Gen_2);
+    LoadItemDatabase(Need_Moment::Gen_2);
 
     //LoadItemDatabase(Need_Moment::Gen_3);
     //LoadItemDatabase(Need_Moment::Gen_4);
@@ -480,6 +480,16 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
     }
     if (IsInBounds(mousePos))
     {
+        // 창 영역 내에서 드래그된 아이템이 있으면 인벤토리로 반환
+        if (CursorManager::Get().IsDragging())
+        {
+            Item* draggedItem = CursorManager::Get().GetDraggedItem();
+            if (draggedItem)
+            {
+                DragSource source = CursorManager::Get().GetDragSource();
+                HandleDropFailure(mousePos, draggedItem, source);
+            }
+        }
         UIManager::Get().OpenWindow(m_windowType);
     }
     if (placed)
@@ -532,45 +542,8 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
         return false; // 다른 창에서 처리하도록 넘김
     }
 
-    // 3. 어떤 창 영역도 아니면 원래 인벤토리로 복구
-    if (source == DragSource::Inventory)
-    {
-        // 인벤토리에서 나온 아이템이므로 빈 슬롯에 다시 넣기 시도
-        if (AddItem(draggedItem->m_data.id, 1))
-        {
-            std::cout << "아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
-            CursorManager::Get().EndItemDrag();
-            return true;
-        }
-        else
-        {
-            std::cout << "인벤토리가 가득 참. 아이템 복구 실패." << std::endl;
-            // 인벤토리가 가득 찬 경우에도 드래그 종료 (아이템 소실 방지를 위해 로그 출력)
-            CursorManager::Get().EndItemDrag();
-            return true;
-        }
-    }
-    else if (source == DragSource::Equipment)
-    {
-        // 장비창에서 나온 아이템이므로 인벤토리로 이동
-        if (AddItem(draggedItem->m_data.id, 1))
-        {
-            std::cout << "장비 아이템을 인벤토리로 이동했습니다: " << draggedItem->m_data.name << std::endl;
-            CursorManager::Get().EndItemDrag();
-            return true;
-        }
-        else
-        {
-            std::cout << "인벤토리가 가득 참. 장비를 원래 슬롯으로 복구합니다." << std::endl;
-            // 인벤토리가 가득 차면 원래 장비 슬롯으로 복구해야 함
-            // 이는 EquipmentWindow에서 처리해야 할 로직
-            return false;
-        }
-    }
-
-    // 기본적으로 드래그 종료
-    CursorManager::Get().EndItemDrag();
-    return true;
+   
+    return false;
 }
 
 
@@ -594,12 +567,7 @@ bool Inventory::HandleMouseRight(Vec2 mousePos)
             UIManager::Get().ShowPotionWindow(much); //포지션도 맞춰 버렸다고 
 
         }
-
-
-
     }
-
-
     return false;
 }
 

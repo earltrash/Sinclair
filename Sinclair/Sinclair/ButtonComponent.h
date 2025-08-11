@@ -60,6 +60,7 @@ private:
 
 	RenderInfo* m_renderInfo;
 
-	bool wasInside = false;
-	bool isInside = false;
+	
+	bool wasInside = false;		// 이게 호버때문이고
+	bool isInside = false;		// 이게 그냥 들어오는지 체크.
 };

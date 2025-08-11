@@ -48,6 +48,17 @@ bool StatWindow::HandleMouseUp(Vec2 mousePos)
     // 창 내부 클릭 이벤트 처리 완료. 그래서 화면 최상단으로 올리기.
     if (IsInBounds(mousePos))
     {
+        // 창 영역 내에서 드래그된 아이템이 있으면 인벤토리로 반환
+        if (CursorManager::Get().IsDragging())
+        {
+            Item* draggedItem = CursorManager::Get().GetDraggedItem();
+            if (draggedItem)
+            {
+                DragSource source = CursorManager::Get().GetDragSource();
+                HandleDropFailure(mousePos, draggedItem, source);
+            }
+        }
+
         UIManager::Get().OpenWindow(m_windowType);
         return true;
     }
@@ -57,6 +68,23 @@ bool StatWindow::HandleMouseUp(Vec2 mousePos)
 
 bool StatWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
 {
+    	if (!draggedItem) return false;
+
+		// 다른 창들의 영역인지 확인
+		bool isInOtherWindow = false;
+
+		// 인벤창 영역 확인
+		UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
+		if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
+		{
+				
+        DragSource source = CursorManager::Get().GetDragSource();
+        Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+        inven->AddItem(draggedItem->m_data.id, 1);\
+        CursorManager::Get().EndItemDrag();
+        return true;
+		}
+
     return false;
 }
 

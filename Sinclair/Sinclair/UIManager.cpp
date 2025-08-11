@@ -174,6 +174,19 @@ void UIManager::OnInput(const MSG& msg)
             }
 
             // 모든 창에서 드롭 처리가 실패했을 경우 아이템 다시 복귀시킬거임.
+            if (CursorManager::Get().IsDragging())
+            {
+                Item* draggedItem = CursorManager::Get().GetDraggedItem();
+                if (draggedItem)
+                {
+                    DragSource source = CursorManager::Get().GetDragSource();
+                    if (auto* inventory = dynamic_cast<Inventory*>(GetWindow(UIWindowType::InventoryWindow)))
+                    {
+                        inventory->AddItem(draggedItem->m_data.id, 1);
+                        std::cout << "창 외부 드롭으로 인해 인벤토리로 반환: " << draggedItem->m_data.name << std::endl;
+                    }
+                }
+            }
             CursorManager::Get().EndItemDrag();
             return;
         }

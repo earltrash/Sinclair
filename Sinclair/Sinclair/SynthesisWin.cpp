@@ -95,6 +95,7 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 		{
 			m_slot_Item[whichSlot] = nullptr;
 		}
+
 		return true; // 드래그 시작 시에는 무조건 true 반환
 	}
 
@@ -112,10 +113,9 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 			{
 				auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 				inventoryWindow->AddItem(item->m_data.id, 1); //안 쓸거면 인벤에 넣을래요 
-
-
 			}
 		}
+
 		// cancel 누르면 둘 다 반환. 
 		m_slot_Item[SynSlot::Result] = nullptr;
 		m_slot_Item[SynSlot::Slot1] = nullptr;
@@ -174,7 +174,7 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 			CursorManager::Get().EndItemDrag();
 			return true;
 		}
-
+		// 일반 슬롯에 드롭하는 경우
 		else if (whichSlot != SynSlot::Nothing && draggedItem != nullptr)
 		{
 			Item* previousItem = m_slot_Item[whichSlot];
@@ -195,19 +195,52 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 
 			return true;
 		}
-
-		
-
-
-		else //부적절한 Slot이거나, 다른 창인 경우도 봐야 겠죠? 
+		// 합성창 영역 내에서 빈 공간에 드롭한 경우
+		else if (IsInBounds(mousePos) && draggedItem != nullptr)
 		{
-			CursorManager::Get().EndItemDrag();
-			return HandleDropFailure(mousePos, draggedItem, dragSource);
+				// 합성창 내부의 빈 공간이므로 HandleDropFailure 호출
+				bool handled = HandleDropFailure(mousePos, draggedItem, dragSource);
+				CursorManager::Get().EndItemDrag();
+				return handled;
 		}
-	
+		// 합성창 밖으로 드롭한 경우 - 여기가 핵심 수정 부분
+		else if (!IsInBounds(mousePos) && draggedItem != nullptr)
+		{
+				// 다른 창에 드롭을 시도하고 실패했을 경우에만 복구
+				bool handledByOtherWindow = false;
 
-	CursorManager::Get().HoveredReleased();
-	return false;
+				// 다른 창들이 처리할 수 있는지 확인
+				auto windows = {
+						UIWindowType::InventoryWindow,
+						UIWindowType::EquipmentWindow,
+						UIWindowType::EnhancementWindow
+				};
+
+				for (auto windowType : windows)
+				{
+						UIWindow* window = UIManager::Get().GetWindow(windowType);
+						if (window && window->IsActive() && window->IsInBounds(mousePos))
+						{
+								// 다른 창이 처리할 수 있으므로 합성창에서는 처리하지 않음
+								handledByOtherWindow = true;
+								break;
+						}
+				}
+
+				// 다른 창이 처리하지 않는 경우에만 복구 처리
+				if (!handledByOtherWindow)
+				{
+						bool handled = HandleDropFailure(mousePos, draggedItem, dragSource);
+						CursorManager::Get().EndItemDrag();
+						return handled;
+				}
+
+				// 다른 창이 처리할 예정이므로 false 반환 (UIManager가 처리하도록)
+				return false;
+		}
+
+		CursorManager::Get().HoveredReleased();
+		return false;
 }
 
 bool SynthesisWin::HandleDoubleClick(Vec2 mousePos) //swap 정도? sort도 필요할 거 같음. Inven이 비활 되었어도 접근 가능해야 할 듯 ㅇㅇ 
@@ -368,77 +401,24 @@ SynSlot SynthesisWin::SlotInit(Vec2 mpos)
 
 bool SynthesisWin::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
 {
-	if (!draggedItem) return false;
+		if (!draggedItem) return false;
 
-	// 다른 창 내부에 있는지 확인
-	bool isInOtherWindow = false;
+		// 소스별로 적절한 위치로 복구
+		auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+		if (!inventoryWindow) return false;
 
-	// 인벤토리 창 내부 확인
-	UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
-	if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
-	{
-		isInOtherWindow = true;
-	}
+		// 드래그 소스가 합성창인 경우 인벤토리로 복구
+		if (source == DragSource::Equipment || source == DragSource::Enhancement ||
+				source == DragSource::Inventory)
+		{
+				if (inventoryWindow->AddItem(draggedItem->m_data.id, 1))
+				{
+						std::cout << "합성 불가능한 아이템을 인벤토리로 복구: " << draggedItem->m_data.id << std::endl;
+						return true;
+				}
+		}
 
-	// 장비 창 내부 확인
-	UIWindow* equipmentWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
-	if (equipmentWindow && equipmentWindow->IsActive() && equipmentWindow->IsInBounds(mousePos))
-	{
-		isInOtherWindow = true;
-	}
-
-	// 강화 창 내부 확인
-	UIWindow* enhancementWindow = UIManager::Get().GetWindow(UIWindowType::EnhancementWindow);
-	if (enhancementWindow && enhancementWindow->IsActive() && enhancementWindow->IsInBounds(mousePos))
-	{
-		isInOtherWindow = true;
-	}
-
-	// 다른 창 내부라면 해당 창에서 처리하도록 넘김
-	if (isInOtherWindow)
-	{
 		return false;
-	}
-
-	// 어느 창 내부도 아니면 원래 위치로 복귀
-	if (source == DragSource::Inventory)
-	{
-		// 인벤토리에서 온 아이템이라면 인벤토리로 복귀
-		auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-		if (inventory && inventory->AddItem(draggedItem->m_data.id, 1))
-		{
-			std::cout << "합성 불가능한 아이템을 인벤토리로 복귀: " << draggedItem->m_data.id << std::endl;
-			return true;
-		}
-	}
-	else if (source == DragSource::Equipment)
-	{
-		// 장비창에서 온 아이템이라면 장비창으로 복귀
-		auto* equipment = dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
-		if (equipment)
-		{
-			// 장비창에 원래 슬롯이 있다면 해당 슬롯으로 복귀
-			// 현재 CursorManager에서 원래 슬롯 정보를 관리하는지 확인 필요
-			auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-			if (inventory && inventory->AddItem(draggedItem->m_data.id, 1))
-			{
-				std::cout << "합성 불가능한 장비 아이템을 인벤토리로 이동: " << draggedItem->m_data.id << std::endl;
-				return true;
-			}
-		}
-	}
-	else if (source == DragSource::Enhancement)
-	{
-		// 강화창에서 온 아이템이라면 인벤토리로 복귀
-		auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-		if (inventory && inventory->AddItem(draggedItem->m_data.id, 1))
-		{
-			std::cout << "합성 불가능한 강화 아이템을 인벤토리로 복귀: " << draggedItem->m_data.id << std::endl;
-			return true;
-		}
-	}
-
-	return false;
 }
 
 void SynthesisWin::PerformSynthesis()

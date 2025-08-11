@@ -26,7 +26,7 @@ void EnhancementWindow::Render()
 
 bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 {
-	std::cout << "HandleMouseDown - 마우스 위치: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
+		std::cout << "HandleMouseDown - 마우스 위치: (" << mousePos.x << ", " << mousePos.y << ")" << std::endl;
 		if (!m_isActive) return false;
 
 		// 메세지 만들어서 던지기.
@@ -34,31 +34,33 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 		msg.message = WM_LBUTTONDOWN;
 		Vec2 relativePos = mousePos - m_position;
 		msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-		if (m_statSelectionButton)
-		{
-			Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
-			Vec2 btnScreenPos = m_position + btnPos;
-			std::cout << "스탯 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
-		}
-		if (m_leftArrowButton)
-		{
-			Vec2 btnPos = m_leftArrowButton->GetTransform().GetPosition();
-			Vec2 btnScreenPos = m_position + btnPos;
-			std::cout << "left 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
-		}
-		if (m_rightArrowButton)
-		{
-			Vec2 btnPos = m_rightArrowButton->GetTransform().GetPosition();
-			Vec2 btnScreenPos = m_position + btnPos;
-			std::cout << "right 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
-		}
+		//if (m_statSelectionButton)
+		//{
+		//	Vec2 btnPos = m_statSelectionButton->GetTransform().GetPosition();
+		//	Vec2 btnScreenPos = m_position + btnPos;
+		//	std::cout << "스탯 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
+		//}
+		//if (m_leftArrowButton)
+		//{
+		//	Vec2 btnPos = m_leftArrowButton->GetTransform().GetPosition();
+		//	Vec2 btnScreenPos = m_position + btnPos;
+		//	std::cout << "left 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
+		//}
+		//if (m_rightArrowButton)
+		//{
+		//	Vec2 btnPos = m_rightArrowButton->GetTransform().GetPosition();
+		//	Vec2 btnScreenPos = m_position + btnPos;
+		//	std::cout << "right 버튼 화면 위치: (" << btnScreenPos.x << ", " << btnScreenPos.y << ")" << std::endl;
+		//}
 		// 스탯 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_statSelectionButton.get()))
 		{
 				// 상대 좌표로 변환
 				Vec2 relativePos = mousePos + m_position;
 				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-				m_statSelectionButton->GetComponent<ButtonComponent>()->Worked(msg);
+
+				m_statSelectionButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
+				m_statSelectionButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
 		}
 
 		// left 버튼 영역.
@@ -66,7 +68,9 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 		{
 				Vec2 relativePos = mousePos + m_position;
 				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-				m_leftArrowButton->GetComponent<ButtonComponent>()->Worked(msg);
+				
+				m_leftArrowButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
+				m_leftArrowButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
 		}
 
 		// right 버튼 영역.
@@ -74,7 +78,9 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 		{
 				Vec2 relativePos = mousePos + m_position;
 				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-				m_rightArrowButton->GetComponent<ButtonComponent>()->Worked(msg);
+
+				m_rightArrowButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
+				m_rightArrowButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
 		}
 
 		// 주문서 버튼 영역.
@@ -84,7 +90,9 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 				{
 						Vec2 relativePos = mousePos + m_position;
 						msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
-						btn->GetComponent<ButtonComponent>()->Worked(msg);
+
+						btn->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
+						btn->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
 				}
 						
 		}
@@ -125,23 +133,57 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 {
 		if (!m_isActive) return false;
+
+		// 메세지 만들어서 던지기.
 		MSG msg{};
 		msg.message = WM_LBUTTONUP;
-		msg.lParam = MAKELPARAM((int)mousePos.x, (int)mousePos.y);
+		Vec2 relativePos = mousePos - m_position;
+		msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 
 		// 버튼 클릭 처리
 		if (IsMouseOverObject(mousePos, m_statSelectionButton.get()))
-				m_statSelectionButton->GetComponent<ButtonComponent>()->Worked(msg);
+		{
+				// 상대 좌표로 변환
+				Vec2 relativePos = mousePos + m_position;
+				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 
+				m_statSelectionButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
+				m_statSelectionButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
+		}
+
+		// left 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_leftArrowButton.get()))
-				m_leftArrowButton->GetComponent<ButtonComponent>()->Worked(msg);
+		{
+				Vec2 relativePos = mousePos + m_position;
+				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 
+				m_leftArrowButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
+				m_leftArrowButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
+		}
+
+		// right 버튼 영역.
 		if (IsMouseOverObject(mousePos, m_rightArrowButton.get()))
-				m_rightArrowButton->GetComponent<ButtonComponent>()->Worked(msg);
+		{
+				Vec2 relativePos = mousePos + m_position;
+				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 
+				m_rightArrowButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
+				m_rightArrowButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
+		}
+
+		// 주문서 버튼 영역.
 		for (auto& btn : m_enhancementButtons)
+		{
 				if (IsMouseOverObject(mousePos, btn.get()))
-						btn->GetComponent<ButtonComponent>()->Worked(msg);
+				{
+						Vec2 relativePos = mousePos + m_position;
+						msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
+
+						btn->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
+						btn->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
+				}
+
+		}
 
 		// 슬롯 화면 좌표 계산
 		Vec2 slotScreen = m_position + m_enhancementSlot->GetTransform().GetPosition();
@@ -192,6 +234,18 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 
 		if (IsInBounds(mousePos))
 		{
+				// 창 영역 내에서 드래그된 아이템이 있으면 인벤토리로 반환
+				if (CursorManager::Get().IsDragging())
+				{
+						Item* draggedItem = CursorManager::Get().GetDraggedItem();
+						if (draggedItem)
+						{
+								DragSource source = CursorManager::Get().GetDragSource();
+								HandleDropFailure(mousePos, draggedItem, source);
+								return true;
+						}
+				}
+
 				UIManager::Get().OpenWindow(m_windowType);
 				return true;
 		}
@@ -379,45 +433,17 @@ void EnhancementWindow::RenderSheetImages()
 		size_t count = m_sheetImages.size();
 		size_t renderCount = std::min(static_cast<size_t>(m_renderSheetCount), count);
 
-		
-		//// 역순으로 렌더링 (5->4->3->2->1)
-		//for (int i = renderCount - 1; i >= 0; --i)
-		//{
-		//		auto& sheet = m_sheetImages[i];
-		//		auto bgComp = sheet->GetComponent<BackgroundComponent>();
-		//		if (!bgComp) continue;
-		//		// 상태별 비트맵 선택
-		//		switch (enchResults[i])
-		//		{
-		//		case EnchancerType::Default:
-		//				bgComp->SetCurrentBitmap("Normal");
-		//				break;
-		//		case EnchancerType::Sucess:
-		//				bgComp->SetCurrentBitmap("Success");
-		//				break;
-		//		case EnchancerType::Fail:
-		//				bgComp->SetCurrentBitmap("Fail");
-		//				break;
-		//		default:
-		//				continue;
-		//		}
+		size_t startIndex = (wearableItem->Getpart() == Wearable_part::Weapon) ? 0 : 1;
 
-		//		// 화면에 렌더링
-		//		ID2D1Bitmap1* bmp = sheet->GetRenderInfo()->GetRenderInfo().bitmap;
-		//		Vec2 pos = m_position + sheet->GetTransform().GetPosition();
-
-		//		if (bmp)
-		//		{
-		//				D2D1_SIZE_F size = bmp->GetSize();
-		//				D2D1_RECT_F dest = { pos.x, pos.y, pos.x + size.width, pos.y + size.height };
-		//				D2DRenderer::Get().DrawBitmap(bmp, dest);
-		//		}
-		//}
 
 		// 정순으로 렌더링 (0->1->2->3->4)
 		for (size_t i = 0; i < renderCount; ++i)
 		{
-				auto& sheet = m_sheetImages[i];
+				// 방어구면 시작 인덱스 1 추가.
+				size_t sheetIndex = startIndex + i;
+				if (sheetIndex >= m_sheetImages.size()) break;
+
+				auto& sheet = m_sheetImages[sheetIndex];
 				auto bgComp = sheet->GetComponent<BackgroundComponent>();
 				if (!bgComp) continue;
 

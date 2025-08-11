@@ -113,6 +113,17 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
     //  창 내부 클릭 시 최상단으로 올리기 (드래그 드롭 로직 이후에 처리)
     if (IsInBounds(mousePos))
     {
+        // 창 영역 내에서 드래그된 아이템이 있으면 인벤토리로 반환
+        if (CursorManager::Get().IsDragging())
+        {
+            Item* draggedItem = CursorManager::Get().GetDraggedItem();
+            if (draggedItem)
+            {
+                DragSource source = CursorManager::Get().GetDragSource();
+                HandleDropFailure(mousePos, draggedItem, source);
+            }
+        }
+
         UIManager::Get().OpenWindow(m_windowType);
         return true;
     }
