@@ -71,6 +71,7 @@ void M_Core::GameLoop() //event state function render
 void M_Core::FixedUpdate() //시간 처리 
 {
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->LogicUpdate(m_timer->DeltaTime());
+    // 예시로 여기에.
 }
 
 void M_Core::Update()

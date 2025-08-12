@@ -45,6 +45,7 @@ public:
     // m_activeWindowOrder 순서대로 Update 호출.
     void Update();
 
+    void FixedUpdate(float deltatime);
     // m_activeWindowOrder 순서대로 Render 호출.
     void Render();
 

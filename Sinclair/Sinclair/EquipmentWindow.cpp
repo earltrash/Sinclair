@@ -136,22 +136,6 @@ bool EquipmentWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSo
 {
     if (!draggedItem) return false;
 
-    // 다른 창들의 영역인지 확인
-    bool isInOtherWindow = false;
-
-    // 인벤창 영역 확인
-    UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
-    if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
-    {
-        isInOtherWindow = true;
-    }
-
-    // 다른 창 영역이면 해당 창에서 처리하도록 넘김
-    if (isInOtherWindow)
-    {
-        return false;
-    }
-
     // 어떤 창 영역도 아니면 원래 위치로 복구
     if (source == DragSource::Equipment)
     {

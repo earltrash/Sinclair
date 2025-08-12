@@ -219,13 +219,10 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 										UIManager::Get().OpenWindow(m_windowType);
 										return true;
 								}
-								else
-								{
-										// Wearable이 아니면 원래 창으로 반환
-										DragSource source = CursorManager::Get().GetDragSource();
-										return HandleDropFailure(mousePos, dragged, source);
-								}
 						}
+						// 위에 조건 안들어왔으면 창으로 반환.
+						DragSource source = CursorManager::Get().GetDragSource();
+						return HandleDropFailure(mousePos, dragged, source);
 				}
 		}
 
@@ -256,22 +253,55 @@ bool EnhancementWindow::HandleMouseHover(Vec2 mousePos)
 		msg.lParam = MAKELPARAM((int)mousePos.x, (int)mousePos.y);
 
 		if (IsMouseOverObject(mousePos, m_statSelectionButton.get()))
+		{
+				Vec2 relativePos = mousePos - m_position;
+				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
+				m_statSelectionButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
 				m_statSelectionButton->GetComponent<ButtonComponent>()->Worked(msg);
+		}
+			
 
 		if (IsMouseOverObject(mousePos, m_leftArrowButton.get()))
+		{
+				Vec2 relativePos = mousePos - m_position;
+				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
+				m_leftArrowButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
 				m_leftArrowButton->GetComponent<ButtonComponent>()->Worked(msg);
+		}
+				
 
 		if (IsMouseOverObject(mousePos, m_rightArrowButton.get()))
+		{
+				Vec2 relativePos = mousePos - m_position;
+				msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
+				m_rightArrowButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
 				m_rightArrowButton->GetComponent<ButtonComponent>()->Worked(msg);
+		}
+				
 
 		for (auto& btn : m_enhancementButtons)
+		{
 				if (IsMouseOverObject(mousePos, btn.get()))
+				{
+						Vec2 relativePos = mousePos - m_position;
+						msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
+						btn->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
 						btn->GetComponent<ButtonComponent>()->Worked(msg);
+				}
+		}
+				
 
 		for (auto& btn : m_enhancementButtons)
+		{
 				if (IsMouseOverButton(mousePos, btn.get()))
+				{
+						Vec2 relativePos = mousePos - m_position;
+						msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
+						btn->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
 						btn->GetComponent<ButtonComponent>()->Worked(msg);
-
+				}
+		}
+		
 		return true;
 }
 
@@ -279,28 +309,22 @@ bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, Drag
 {
 		if (!draggedItem) return false;
 
-		// 다른 창들의 영역인지 확인
-		bool isInOtherWindow = false;
+		//// 다른 창들의 영역인지 확인
+		//bool isInOtherWindow = false;
 
-		// 인벤창 영역 확인
-		UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
-		if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
-		{
-				isInOtherWindow = true;
-		}
+		//// 인벤창 영역 확인
+		//UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
+		//if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
+		//{
+		//		isInOtherWindow = true;
+		//}
 
-		// 장비창 영역 확인
-		UIWindow* equipmentWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
-		if (equipmentWindow && equipmentWindow->IsActive() && equipmentWindow->IsInBounds(mousePos))
-		{
-				isInOtherWindow = true;
-		}
-
-		// 다른 창 영역이면 해당 창에서 처리하도록 넘김
-		if (isInOtherWindow)
-		{
-				return false;
-		}
+		//// 장비창 영역 확인
+		//UIWindow* equipmentWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
+		//if (equipmentWindow && equipmentWindow->IsActive() && equipmentWindow->IsInBounds(mousePos))
+		//{
+		//		isInOtherWindow = true;
+		//}
 
 		// 어떤 창 영역도 아니면 원래 위치로 복구
 		if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
@@ -751,17 +775,19 @@ void EnhancementWindow::SetupButtonCallbacks()
 void EnhancementWindow::OnStatSelectionButtonClick()
 {
 	std::cout << "스탯 강화 버튼 클릭됨" << std::endl;
-	if (!m_targetItem->m_data.enchantable)
-	{
 
-		std::cout << "강화 불가능 아이템." << std::endl;
-		return;
-	}
 
 	if (!m_targetItem)
 	{
 		std::cout << "강화할 아이템이 없습니다" << std::endl;
 		return;
+	}
+
+	if (!m_targetItem->m_data.enchantable)
+	{
+
+			std::cout << "강화 불가능 아이템." << std::endl;
+			return;
 	}
 
 	if (m_selectedScrollIndex >= m_enhancementButtons.size())

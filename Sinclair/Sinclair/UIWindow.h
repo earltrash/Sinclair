@@ -17,13 +17,13 @@ class UIWindow : public Object
 {
 public:
 	UIWindow(UIWindowType type, Vec2 pos, Vec2 size)
-		: Object(), m_windowType(type), m_position(pos), m_size(size) {
-	} // Object 생성자 호출
+		: Object(), m_windowType(type), m_position(pos), m_size(size) {} // Object 생성자 호출
 	virtual ~UIWindow() = default;
 
 	virtual void Update() override {};
+	void FixedUpdate(float dt) override {};
 	virtual void Render() override = 0;
-
+	
 	// 마우스 인풋 관련 함수들.
 	virtual bool HandleMouseHover(Vec2 mousePos) = 0;
 	virtual bool HandleMouseDown(Vec2 mousePos) = 0;
