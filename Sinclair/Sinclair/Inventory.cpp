@@ -641,7 +641,12 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //?ъ슜???꾩씠?쒖쓽 ?ъ씤?곕? 諛
             }
 
             //장비인 경우에는 장착하려고 함. 
-
+            
+            // 슬롯 전부 다시 가져와서 다시 계산해주기.
+            if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
+            {
+                statWindow->UpdateTotalStats();
+            }
         }
         return true;
     }

@@ -1,4 +1,7 @@
 #include "SoundManager.h"
+/*
+
+
 
 SoundManager& SoundManager::Instance()
 {
@@ -205,3 +208,4 @@ FMOD_RESULT SoundManager::PauseBGM(int index, bool pause)
     {
         Shutdown();
     }
+*/

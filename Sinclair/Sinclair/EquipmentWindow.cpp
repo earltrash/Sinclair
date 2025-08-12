@@ -112,6 +112,7 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
 
 
             }
+
             // 슬롯 전부 다시 가져와서 다시 계산해주기.
             if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
             {

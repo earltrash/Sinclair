@@ -104,14 +104,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\M_E\M_E ; C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\inc </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\M_E\M_E ;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\core\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -180,8 +180,14 @@
     <ClInclude Include="Scene_Tutorial.h" />
     <ClInclude Include="SimpleMathHelper.h" />
     <ClInclude Include="SliderHandleComponent.h" />
-    <ClInclude Include="SoundBank.h" />
-    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="SoundBank.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Status.h" />
     <ClInclude Include="SynthesisWin.h" />
@@ -231,8 +237,14 @@
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Scene_Tutorial.cpp" />
-    <ClCompile Include="SoundBank.cpp" />
-    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="SoundBank.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StatWindow.cpp" />
     <ClCompile Include="SynthesisWin.cpp" />

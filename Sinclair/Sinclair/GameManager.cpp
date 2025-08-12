@@ -568,11 +568,11 @@ void GameManager::SaveEndingBgm(int id)
 {
 
    auto st_id = std::to_string(id);
-   endingBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //그냥 멤버에 담아두었다가 해제 식
+   //endingBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //그냥 멤버에 담아두었다가 해제 식
 
    if (GetCurrentGen() == 4)
    {
-       historyBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //일단 임시값 
+       //historyBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //일단 임시값 
    }
 
 }

@@ -9,7 +9,7 @@
 #include "UIManager.h"
 #include "GameManager.h"
 
-#include "SoundManager.h"
+//#include "SoundManager.h"
 
 using namespace std;
 
@@ -130,7 +130,7 @@ bool M_Core::ModuleInit()
     std::wcout << L"[exe 위치] " << exePath << std::endl;
 
 
-    SoundManager::Instance().Init(); //리소스 전에 있어야 함.
+    //SoundManager::Instance().Init(); //리소스 전에 있어야 함.
 
 
     InputManager::Get().m_broadcaster = make_unique<EventDispatcher>(); //이거 디버깅 하나 만들자 
