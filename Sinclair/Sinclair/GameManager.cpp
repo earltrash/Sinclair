@@ -5,7 +5,7 @@
 #include "ItemBank.h"
 #include "TextBank.h"
 #include "ResourceManager.h"
-
+#include "SoundBank.h"
 #include <random>
 #include <algorithm>
 
@@ -145,8 +145,15 @@ std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> GameManage
     FindEnding();
     int index = GetCurrentGen() - 2;
     int id = arrEndingID[index];
+
+
+
+  SaveEndingBgm(id);
+  
+  //-> 얘를 이제 사운드 매니저한테 보내줘야 하는 건가 
+
     
-    //SceneManager로 엔딩씬을 받아옴? -> 멤버에다가 담아줌? 
+    
 
     std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ending_bitmap =
         ResourceManager::Get().GetEndingBitmap(std::to_string(id));
@@ -551,9 +558,21 @@ void GameManager::FindEnding()
     // 매칭되는 엔딩이 없으면 기본 엔딩 (중)
     arrTotalFam[curGen - 2] = 2;
     arrEndingID[curGen - 2] = 3021;
-    if(debug)
+    if (debug)
     {
         cout << "결과: 기본 중간 엔딩 (3021 - 모험가) - 매칭 실패" << endl;
     }
+}
+
+void GameManager::SaveEndingBgm(int id)
+{
+
+   auto st_id = std::to_string(id);
+   endingBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //그냥 멤버에 담아두었다가 해제 식
+
+   if (GetCurrentGen() == 4)
+   {
+       historyBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //일단 임시값 
+   }
 
 }

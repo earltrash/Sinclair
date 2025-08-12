@@ -3,8 +3,12 @@
 #include "status.h"
 #include <array>
 #include "Item.h"
+#include "fmod.h"
+
 
 using namespace std;
+
+class FMOD_SOUND;
 
 class GameManager
 {
@@ -33,6 +37,8 @@ public:
     std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> AftAdv(); // ->string에 해당하는 장비 넘겨주기
     //엔딩 구하려고 함
     void FindEnding();
+
+    void SaveEndingBgm(int id);
 
     void PotionUsed(Status_fundamental stat, int Much);
 
@@ -133,5 +139,8 @@ public:// get set 만들기 전
         }
     }
 
+
+    FMOD_SOUND* endingBgm;
+    FMOD_SOUND* historyBgm;
 
 };

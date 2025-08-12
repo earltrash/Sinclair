@@ -20,6 +20,7 @@ void ResourceManager::GameAssetLoad()
     m_UI_Bank.Load_UI_Image("Resource/UI"); // Single / Multi Bitmap
     m_ItemBank.LoadItemStatus("Item_S"); //Status Only
     m_ItemBank.LoadItemRect("Item_A"); //Atlas랑 정확히는 Item 별 srect 
+    m_SoundBank.SoundAssetLoad("Sound");
 }
 
 void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std::string& directory)
@@ -199,6 +200,11 @@ ItemBank& ResourceManager::Get_ItemBank()
 TextBank& ResourceManager::Get_TextBank()
 {
     return m_TextBank;
+}
+
+SoundBank& ResourceManager::Get_SoundBank()
+{
+    return m_SoundBank;
 }
 
 std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ResourceManager::GetEndingBitmap(string id )
