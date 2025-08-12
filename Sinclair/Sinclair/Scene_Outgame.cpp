@@ -56,7 +56,8 @@ void Scene_Outgame::Enter()
 	 else {
 		 m_state = State::CHOICE_MENU;
 	 }
-
+	 
+	 characterName = L"싱클레어 " + std::to_wstring(GameManager::Get().curGen) + L"세";
 
 	// 우선 초기 상태로 진입
 	ChangeState(m_state);
@@ -101,9 +102,7 @@ void Scene_Outgame::Render()
 
 
 	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 36.0f);
-	std::wstring characterName = L"싱클레어 " + std::to_wstring(GameManager::Get().curGen) + L"세";
 	D2DRenderer::Get().DrawMessage(characterName.c_str(), 481.74f, 828.38f, 1300.f, 1000.f, D2D1::ColorF::White);
-
 	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Regular", DWRITE_FONT_WEIGHT_NORMAL, 24.0f);
 	// 상태에 따른 메인 텍스트 렌더링
 	if (!curText.empty())
@@ -156,8 +155,6 @@ void Scene_Outgame::Render()
 			std::wstring wCurText = StrToWstr(curText);
 			D2DRenderer::Get().DrawMessage(wCurText.c_str(), 768.21f, 828.38f, 1300.f, 1000.f, D2D1::ColorF::White);
 		}
-		//std::wstring wCurText = StrToWstr(curText);
-		//D2DRenderer::Get().DrawMessage(wCurText.c_str(), 768.21f, 828.38f, 1300.f, 1000.f, D2D1::ColorF::White);
 	}
 
 
@@ -761,7 +758,7 @@ void Scene_Outgame::ChangeState(State newState)
 
 	case CHOICE_MENU: // 분리할 수도 있음
 	{
-		curText = stringCHOICE_MENU;
+		//curText = stringCHOICE_MENU;
 
 		yesButton->SetCurrentBitmap("transparent");
 		noButton->SetCurrentBitmap("transparent");

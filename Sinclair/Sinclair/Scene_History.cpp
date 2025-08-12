@@ -100,14 +100,22 @@ void Scene_History::Update()
 
 
 	// 순차적 텍스트 표시
-	if (m_allTextsShown && index < m_targetTextCount)
+	if (m_allTextsShown)
 	{
-		m_currentShowingDelay += 0.016f;
-		if (m_currentShowingDelay >= m_showingDelay)
+		if(index < m_targetTextCount)
 		{
-			ActivateSingleText(index + 1);
-			index++;
-			m_currentShowingDelay = 0.f; // 다음 텍스트 타이머 리셋
+			m_currentShowingDelay += 0.016f;
+			if (m_currentShowingDelay >= m_showingDelay)
+			{
+				ActivateSingleText(index + 1);
+				index++;
+				m_currentShowingDelay = 0.f; // 다음 텍스트 타이머 리셋
+			}
+		}
+		else 
+		{
+			m_allTextsShown = false;
+			m_gameObjects["스킵버튼"]->GetComponent<ButtonComponent>()->SetCurrentBitmap("스킵");
 		}
 	}
 }
@@ -130,6 +138,11 @@ void Scene_History::Render()
 
 void Scene_History::CreateObj()
 {
+	//////////////////////
+	// 투명 이미지 갖고 오기
+	auto transparentImg = ResourceManager::Get().GetTexture("transparent");
+
+
 	//////////////////////
 	//////////////////////
 	//////////////////////
@@ -242,7 +255,8 @@ void Scene_History::CreateObj()
 
 	// 4. 버튼 비트맵 설정
 	스킵컴포넌트->BitmapPush("스킵", History4);
-	스킵컴포넌트->SetCurrentBitmap("스킵");
+	스킵컴포넌트->BitmapPush("transparent", transparentImg);
+	스킵컴포넌트->SetCurrentBitmap("transparent");
 
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 스킵리스너 = 스킵버튼->AddComponent<MouseListenerComponent>(
@@ -285,12 +299,6 @@ void Scene_History::CreateObj()
 
 	/// 9
 	m_gameObjects.emplace("바", std::move(바));
-
-
-	//////////////////////
-	// 1.투명 이미지 갖고 오기
-	// 순차적으로 그리기 위한
-	auto transparentImg = ResourceManager::Get().GetTexture("transparent");
 
 
 	switch (m_History)
@@ -913,67 +921,7 @@ void Scene_History::CreateObj()
 	}
 	break;
 	}
-
-
-
-
-
 }
-//
-//void Scene_History::ActivateAllTexts()
-//{
-//	try
-//	{
-//		if (m_History == History::H2)
-//		{
-//			for (int i = 1; i <= 6; i++)
-//			{
-//				string objName = to_string(i);
-//				auto it = m_gameObjects.find(objName);
-//				if (it != m_gameObjects.end())
-//				{
-//					auto bgComp = it->second->GetComponent<BackgroundComponent>();
-//					if (bgComp)
-//					{
-//						bgComp->SetCurrentBitmap("Background");
-//						cout << "H2 텍스트 " << i << " 활성화됨" << endl;
-//					}
-//				}
-//				else
-//				{
-//					cout << "경고: 오브젝트 " << objName << "를 찾을 수 없습니다" << endl;
-//				}
-//			}
-//		}
-//		else
-//		{
-//			for (int i = 1; i <= 5; i++)
-//			{
-//				string objName = to_string(i);
-//				auto it = m_gameObjects.find(objName);
-//				if (it != m_gameObjects.end())
-//				{
-//					auto bgComp = it->second->GetComponent<BackgroundComponent>();
-//					if (bgComp)
-//					{
-//						bgComp->SetCurrentBitmap("Background");
-//						cout << "텍스트 " << i << " 활성화됨" << endl;
-//					}
-//				}
-//				else
-//				{
-//					cout << "경고: 오브젝트 " << objName << "를 찾을 수 없습니다" << endl;
-//				}
-//			}
-//		}
-//
-//		cout << "모든 텍스트 활성화 완료!" << endl;
-//	}
-//	catch (const exception& e)
-//	{
-//		cout << "텍스트 활성화 중 오류: " << e.what() << endl;
-//	}
-//}
 
 void Scene_History::DeactivateAllTexts()
 {
