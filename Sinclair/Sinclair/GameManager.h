@@ -3,7 +3,7 @@
 #include "status.h"
 #include <array>
 #include "Item.h"
-#include "fmod.h"
+//#include "fmod.h"
 
 
 using namespace std;
@@ -70,7 +70,8 @@ public:// get set 만들기 전
     float bgmValue = 1.0f;
     float sfxValue = 1.0f;
     
-
+    // 엔딩에 필요한 숫자
+    std::array<int, 3> arrEndingID{};
     std::array<TotalStatus, 3> arrTotalStatus{};
     std::array<int, 3> arrTotalFam{};
     vector<bool> adv_wepon;
@@ -129,9 +130,19 @@ public:// get set 만들기 전
      { 7, { {"I013", 3}, {"I014", 3}, {"I015", 3} } }
     };
     
-    // 엔딩에 필요한 숫자
-    std::array<int, 3> arrEndingID{};
-    std::array<int, 3> arrFame{};
+
+
+    string GetStatName(Status_Total stat) {
+        switch (stat) {
+        case Status_Total::Strength: return "근력";
+        case Status_Total::Magic_Power: return "마력";
+        case Status_Total::Health: return "건강";
+        case Status_Total::Knowledge: return "지식";
+        case Status_Total::Charm: return "매력";
+        default: return "없음";
+        }
+    }
+
 
     FMOD_SOUND* endingBgm;
     FMOD_SOUND* historyBgm;

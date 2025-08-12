@@ -47,7 +47,8 @@ public:
 
 	void SetOpacity(float o) { m_renderInfo->SetOpacity(o); }
 
-
+	bool wasInside = false;		// 이게 호버때문이고
+	bool isInside = false;		// 이게 그냥 들어오는지 체크.
 
 private:
 	// 버튼을 갈아끼우는 용도
@@ -61,6 +62,6 @@ private:
 
 	RenderInfo* m_renderInfo;
 
-	bool wasInside = false;
-	bool isInside = false;
+	
+
 };

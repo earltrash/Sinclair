@@ -24,9 +24,6 @@ enum class SynSlot
 
 class SynthesisWin : public UIWindow
 {
-
-
-
 public:
     SynthesisWin();
     ~SynthesisWin();
@@ -60,6 +57,9 @@ public:
 
     // 아이템 인벤토리로 반환.
     void ReturnItemToInventory();
+
+    // 합성창에서 드래그한거 막기 위한 함수 추가.
+
 private:
 
     // size?, bound는 여기에 다 있긴 함. 
@@ -72,6 +72,4 @@ private:
     std::map<SynButton, Vec2>m_but;
 
     //얘는 뭐라고 불러야 할 까 
-
-
 };

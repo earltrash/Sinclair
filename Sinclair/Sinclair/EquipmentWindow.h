@@ -10,6 +10,8 @@
 
 #include "ItemManager.h"
 
+#include "Object.h"
+
 class EquipmentWindow : public UIWindow
 {
 public:
@@ -69,11 +71,91 @@ public:
 			uiRenderer->SetBitmap("icon_earring_slot", ResourceManager::Get().GetTexture("Slotearring"));
 			uiRenderer->SetBitmap("icon_cape_slot", ResourceManager::Get().GetTexture("SlotCape"));
 		}
+		
 		m_itemDatabase = std::make_unique<ItemDatabase>();
 		m_itemBank = std::make_unique<ItemBank>();
-	}
 
+		// «Ô∏‰ ΩΩ∑‘
+		auto helmet_slot = std::make_unique<Object>();
+		auto hInfo = helmet_slot->GetRenderInfo();
+		hInfo->SetBitmap(ResourceManager::Get().GetTexture("SlotHelmet").Get());
+		helmet_slot->GetTransform().SetPosition({ 222, 138 });
+		AddEffect(helmet_slot.get());
+		m_slots.emplace(Wearable_part::Helmet, std::move(helmet_slot));
+
+		// π´±‚ ΩΩ∑‘
+		auto weapon_slot = std::make_unique<Object>();
+		auto wInfo = weapon_slot->GetRenderInfo();
+		wInfo->SetBitmap(ResourceManager::Get().GetTexture("SlotWeapon").Get());
+		weapon_slot->GetTransform().SetPosition({ 370, 517 });
+		AddEffect(weapon_slot.get());
+		m_slots.emplace(Wearable_part::Weapon, std::move(weapon_slot));
+
+		// ªÛ¿« ΩΩ∑‘
+		auto upper_slot = std::make_unique<Object>();
+		auto upInfo = upper_slot->GetRenderInfo();
+		upInfo->SetBitmap(ResourceManager::Get().GetTexture("SlotArmor").Get());
+		upper_slot->GetTransform().SetPosition({ 222, 290 });
+		AddEffect(upper_slot.get());
+		m_slots.emplace(Wearable_part::Upper, std::move(upper_slot));
+
+		// ¿Â∞© ΩΩ∑‘
+		auto glove_slot = std::make_unique<Object>();
+		auto gInfo = glove_slot->GetRenderInfo();
+		gInfo->SetBitmap(ResourceManager::Get().GetTexture("SlotGlove").Get());
+		glove_slot->GetTransform().SetPosition({ 74, 365 });
+		AddEffect(glove_slot.get());
+		m_slots.emplace(Wearable_part::Glove, std::move(glove_slot));
+
+		// «œ¿« ΩΩ∑‘
+		auto under_slot = std::make_unique<Object>();
+		auto underInfo = under_slot->GetRenderInfo();
+		underInfo->SetBitmap(ResourceManager::Get().GetTexture("SlotPants").Get());
+		under_slot->GetTransform().SetPosition({ 222, 442 });
+		AddEffect(under_slot.get());
+		m_slots.emplace(Wearable_part::Under, std::move(under_slot));
+
+		// Ω≈πﬂ ΩΩ∑‘
+		auto shoes_slot = std::make_unique<Object>();
+		auto sInfo = shoes_slot->GetRenderInfo();
+		sInfo->SetBitmap(ResourceManager::Get().GetTexture("SlotShoes").Get());
+		shoes_slot->GetTransform().SetPosition({ 222, 593 });
+		AddEffect(shoes_slot.get());
+		m_slots.emplace(Wearable_part::Shoes, std::move(shoes_slot));
+
+		// ∏¡≈‰ ΩΩ∑‘
+		auto cape_slot = std::make_unique<Object>();
+		auto cInfo = cape_slot->GetRenderInfo();
+		cInfo->SetBitmap(ResourceManager::Get().GetTexture("SlotCape").Get());
+		cape_slot->GetTransform().SetPosition({ 370, 365 });
+		AddEffect(cape_slot.get());
+		m_slots.emplace(Wearable_part::Cape, std::move(cape_slot));
+
+		// π›¡ˆ ΩΩ∑‘
+		auto ring_slot = std::make_unique<Object>();
+		auto rInfo = ring_slot->GetRenderInfo();
+		rInfo->SetBitmap(ResourceManager::Get().GetTexture("Slotearring").Get());
+		ring_slot->GetTransform().SetPosition({ 74, 214 });
+		AddEffect(ring_slot.get());
+		m_slots.emplace(Wearable_part::Ring, std::move(ring_slot));
+
+		// ∏Ò∞…¿Ã ΩΩ∑‘
+		auto neck_slot = std::make_unique<Object>();
+		auto nInfo = neck_slot->GetRenderInfo();
+		nInfo->SetBitmap(ResourceManager::Get().GetTexture("SlotNecklace").Get());
+		neck_slot->GetTransform().SetPosition({ 370, 214 });
+		AddEffect(neck_slot.get());
+		m_slots.emplace(Wearable_part::Neckless, std::move(neck_slot));
+	}
+	void AddEffect(Object* slot);
 	void Update() override;
+	void FixedUpdate(float dt) override
+	{
+		for (auto& slot : m_slots)
+		{
+			slot.second->FixedUpdate(dt);
+		}
+	}
 	void Render() override;
 
 	UIWindowType GetType() override { return UIWindowType::EquipmentWindow; }
@@ -115,8 +197,14 @@ public:
 	bool IsItemTypeMatch(const std::string& itemId, Wearable_part slotType) const;
 
 	bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
+
+	void SendEventToComponent(const std::string& ev, Wearable_part part)
+	{
+		m_slots[part]->OnEvent(ev);
+	}
 private:
 	std::unordered_map<Wearable_part, Item*> m_equippedItems;
+	std::unordered_map<Wearable_part, std::shared_ptr<Object>> m_slots;
 	std::unordered_map<Wearable_part, Vec2> m_slotPositions;
 	std::unordered_map<Wearable_part, Vec2> m_slotSizes;
 

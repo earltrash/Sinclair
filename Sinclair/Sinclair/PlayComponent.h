@@ -63,6 +63,7 @@ private:
 class Blink_Effect : public Component
 {
 public:
+	// minOpacity 쓰임 사라짐;;
 	Blink_Effect(RenderInfo* renderInfo, float minOpacity, float totalSecond, ID2D1Effect* effect);
 	Blink_Effect(RenderInfo* renderInfo, float minOpacity, float totalSecond, ID2D1Bitmap1* bitmap);
 	~Blink_Effect() { m_opacityEffect.Reset(); }
@@ -71,10 +72,14 @@ public:
 
 	void FixedUpdate(float dt) override;
 
+	void OnEvent(const std::string& ev) override;
+
 	float Graph(float x)
 	{
-		float a = 4.f * (1.f - m_minOpacity);
-		float result = (a * x * x) / (m_totalSecond * m_totalSecond) - ((a * x) / m_totalSecond) + 1.f;
+		//float a = 4.f * (1.f - m_minOpacity);
+		//float result = (a * x * x) / (m_totalSecond * m_totalSecond) - ((a * x) / m_totalSecond) + 1.f;
+
+		float result = -(2.f / m_totalSecond * x - 1.f) * (2.f / m_totalSecond * x - 1.f) + 1.f;
 
 		return result;
 	}
@@ -87,7 +92,7 @@ private:
 	float m_totalSecond = 0.f;	// 애니메이션 총 시간
 	float m_minOpacity = 0.f;	// 최소밝기
 
-	bool isStop = false;
+	bool isStop = true;
 
 	ID2D1Effect* m_effect = nullptr;
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;

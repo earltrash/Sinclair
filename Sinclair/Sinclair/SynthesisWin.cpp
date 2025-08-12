@@ -82,7 +82,7 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 		if (Clicked_Item == nullptr)
 			return false; // 빈 슬롯이면 드래그 안 함
 
-		CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Equipment);
+		CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Synthesis);
 		CursorManager::Get().SetDraggedItem(Clicked_Item);
 
 		if (whichSlot == SynSlot::Result) //아이템이 있는 result 슬롯을 누르면 다 반환시킨다라 
@@ -239,8 +239,8 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 		return false;
 	}
 
-	CursorManager::Get().HoveredReleased();
-	return false;
+		CursorManager::Get().HoveredReleased();
+		return false;
 }
 
 bool SynthesisWin::HandleDoubleClick(Vec2 mousePos) //swap 정도? sort도 필요할 거 같음. Inven이 비활 되었어도 접근 가능해야 할 듯 ㅇㅇ 
@@ -401,23 +401,33 @@ SynSlot SynthesisWin::SlotInit(Vec2 mpos)
 
 bool SynthesisWin::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
 {
-	if (!draggedItem) return false;
+		if (!draggedItem) return false;
 
 	// 소스별로 적절한 위치로 복구
 	auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 	if (!inventoryWindow) return false;
 
+<<<<<<< HEAD
 	// 드래그 소스가 합성창인 경우 인벤토리로 복구
 	if (source == DragSource::Equipment || source == DragSource::Inventory   ||source == DragSource::Enhancement || source == DragSource::Synthesis)
 	{
 		if (inventoryWindow->AddItem(draggedItem->m_data.id, 1))
+=======
+		// 드래그 소스가 합성창인 경우 인벤토리로 복구
+		if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
+>>>>>>> 50469216f3c0727c1b5c15d31d7ee5ac66baf19a
 		{
-			std::cout << "합성 불가능한 아이템을 인벤토리로 복구: " << draggedItem->m_data.id << std::endl;
-			return true;
-		}
-	}
+				if (inventoryWindow->AddItem(draggedItem->m_data.id, 1))
+				{
+						std::cout << "합성 불가능한 아이템을 인벤토리로 복구: " << draggedItem->m_data.id << std::endl;
+						
+						return true;
+				}
 
-	return false;
+				CursorManager::Get().EndItemDrag();
+		}
+
+		return false;
 }
 
 void SynthesisWin::PerformSynthesis()

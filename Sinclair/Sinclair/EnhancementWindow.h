@@ -24,6 +24,8 @@ enum class Stat
 		LUK
 };
 
+#define SlotSize 74.0f
+
 enum class SheetImageType
 {
 		Normal,
@@ -99,6 +101,7 @@ public:
 						btn->BitmapPush("hover", slot);
 						btn->BitmapPush("pressed", slot);
 						btn->BitmapPush("disabled", slot);
+						btn->SetCurrentBitmap("normal");
 				}
 				m_rightArrowButton->SetPosition(Vec2(454, 305));
 				
@@ -259,6 +262,9 @@ public:
 
 		// 닫기 버튼 시 
 		void ReturnItemToInventory();
+
+		// 호버 띄울려고함.
+		SynSlot SlotInit(Vec2 pos);
 private:
 
 		std::unique_ptr<Object> m_enhancementSlot;									     // 슬롯.

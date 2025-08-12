@@ -104,7 +104,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+<<<<<<< HEAD
       <AdditionalIncludeDirectories>$(SolutionDir)..\M_E\M_E </AdditionalIncludeDirectories>
+=======
+      <AdditionalIncludeDirectories>$(SolutionDir)..\M_E\M_E ;</AdditionalIncludeDirectories>
+>>>>>>> 50469216f3c0727c1b5c15d31d7ee5ac66baf19a
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -180,8 +184,14 @@
     <ClInclude Include="Scene_Tutorial.h" />
     <ClInclude Include="SimpleMathHelper.h" />
     <ClInclude Include="SliderHandleComponent.h" />
-    <ClInclude Include="SoundBank.h" />
-    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="SoundBank.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Status.h" />
     <ClInclude Include="SynthesisWin.h" />
@@ -231,8 +241,14 @@
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Scene_Tutorial.cpp" />
-    <ClCompile Include="SoundBank.cpp" />
-    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="SoundBank.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SpriteRenderer.cpp" />
     <ClCompile Include="StatWindow.cpp" />
     <ClCompile Include="SynthesisWin.cpp" />

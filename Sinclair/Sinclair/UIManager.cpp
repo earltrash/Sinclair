@@ -98,6 +98,19 @@ void UIManager::Update()
     }
 }
 
+void UIManager::FixedUpdate(float deltatime)
+{
+    for (UIWindowType type : m_activeWindowOrder)
+    {
+        auto* window = GetWindow(type);
+
+        if (!window || !window->IsActive())
+            continue;
+
+        window->FixedUpdate(deltatime);
+    }
+}
+
 void UIManager::Render()
 {
     for (UIWindowType type : m_activeWindowOrder)

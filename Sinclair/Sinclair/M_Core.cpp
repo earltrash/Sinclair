@@ -9,7 +9,7 @@
 #include "UIManager.h"
 #include "GameManager.h"
 
-#include "SoundManager.h"
+//#include "SoundManager.h"
 
 using namespace std;
 
@@ -74,6 +74,7 @@ void M_Core::GameLoop() //event state function render
 void M_Core::FixedUpdate() //시간 처리 
 {
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->LogicUpdate(m_timer->DeltaTime());
+    UIManager::Get().FixedUpdate(m_timer->DeltaTime());
 }
 
 void M_Core::Update()
@@ -129,7 +130,7 @@ bool M_Core::ModuleInit()
     std::wcout << L"[exe 위치] " << exePath << std::endl;
 
 
-    SoundManager::Instance().Init(); //리소스 전에 있어야 함.
+    //SoundManager::Instance().Init(); //리소스 전에 있어야 함.
 
 
     InputManager::Get().m_broadcaster = make_unique<EventDispatcher>(); //이거 디버깅 하나 만들자 

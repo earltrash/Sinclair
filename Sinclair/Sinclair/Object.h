@@ -30,6 +30,14 @@ public:
 		}
 		virtual void Render() {};
 
+		virtual void OnEvent(const std::string& ev)
+		{
+			for (auto& compo : m_Components)
+			{
+				compo->OnEvent(ev);
+			}
+		}
+
 		void SetActive(bool b) { activated = b; };
 		bool isActive() { return activated; }
 public:

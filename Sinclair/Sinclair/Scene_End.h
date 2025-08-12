@@ -37,5 +37,14 @@ public:
 private:
 	// 엔딩의 텍스트 테이블은 아웃게임의 테이블하고 다르게 
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ebm;
+
+
+
+	bool  m_textShown = false;
+	bool  m_titleShown = false;
+	bool  m_scriptShown = false;
+	float m_currentShowingDelay = 0.f;
+	float m_showingDelay = 2.0f;			// 텍스트 간격
+	int   index = 0;
 };
 

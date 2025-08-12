@@ -43,6 +43,7 @@ public:
     {
         for (const auto& [key, slot] : slots)
         {
+            if (slot.itemBitmap.item == nullptr) continue;
             slot.itemBitmap.item->FixedUpdate(dt);
         }
     }

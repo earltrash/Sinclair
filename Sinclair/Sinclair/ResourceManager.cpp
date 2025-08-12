@@ -20,9 +20,7 @@ void ResourceManager::GameAssetLoad()
     m_UI_Bank.Load_UI_Image("Resource/UI"); // Single / Multi Bitmap
     m_ItemBank.LoadItemStatus("Item_S"); //Status Only
     m_ItemBank.LoadItemRect("Item_A"); //Atlas랑 정확히는 Item 별 srect 
-    m_SoundBank.SoundAssetLoad("Sound");
-    // 효제: 현재는 한 파일이지만 결국 위처럼 로드 함수를 만들어야 함.
-    m_TextBank.parseTSV_Ending("../Resource/text/SinclairEnding.txt");
+    //m_SoundBank.SoundAssetLoad("Sound");
 }
 
 void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std::string& directory)
@@ -204,10 +202,10 @@ TextBank& ResourceManager::Get_TextBank()
     return m_TextBank;
 }
 
-SoundBank& ResourceManager::Get_SoundBank()
-{
-    return m_SoundBank;
-}
+//SoundBank& ResourceManager::Get_SoundBank()
+//{
+//    return m_SoundBank;
+//}
 
 std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ResourceManager::GetEndingBitmap(string id )
 {
