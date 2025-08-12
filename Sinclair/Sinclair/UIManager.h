@@ -45,18 +45,8 @@ public:
     // m_activeWindowOrder 순서대로 Update 호출.
     void Update();
 
-    void FixedUpdate(float dt)
-    {
-        for (UIWindowType type : m_activeWindowOrder)
-        {
-            auto* window = GetWindow(type);
-
-            if (!window || !window->IsActive())
-                continue;
-
-            window->FixedUpdate(dt);
-        }
-    }
+    void FixedUpdate(float dt);
+   
 
     // m_activeWindowOrder 순서대로 Render 호출.
     void Render();

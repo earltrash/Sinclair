@@ -132,6 +132,17 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
     //  창 내부 클릭 시 최상단으로 올리기 (드래그 드롭 로직 이후에 처리)
     if (IsInBounds(mousePos))
     {
+        // 창 영역 내에서 드래그된 아이템이 있으면 인벤토리로 반환
+        if (CursorManager::Get().IsDragging())
+        {
+            Item* draggedItem = CursorManager::Get().GetDraggedItem();
+            if (draggedItem)
+            {
+                DragSource source = CursorManager::Get().GetDragSource();
+                HandleDropFailure(mousePos, draggedItem, source);
+            }
+        }
+
         UIManager::Get().OpenWindow(m_windowType);
         return true;
     }
@@ -578,8 +589,8 @@ Wearable_part EquipmentWindow::GetSlotTypeAt(Vec2 mousePos) const
         float slot_bottom = slot_top + slotSize.y;
 
         // 마우스 위치가 슬롯 영역 내에 있는지 확인
-        if (mousePos.x >= slot_left && mousePos.x <= slot_right &&
-            mousePos.y >= slot_top && mousePos.y <= slot_bottom)
+        if (mousePos.x >= slotPos.x && mousePos.x <= slot_right &&
+            mousePos.y >= slotPos.y && mousePos.y <= slot_bottom)
         {
             return slotType; // 일치하는 슬롯을 찾으면 해당 슬롯 타입을 반환
         }

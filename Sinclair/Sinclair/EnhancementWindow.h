@@ -24,6 +24,8 @@ enum class Stat
 		LUK
 };
 
+#define SlotSize 74.0f
+
 enum class SheetImageType
 {
 		Normal,
@@ -260,6 +262,9 @@ public:
 
 		// ´Ý±â ¹öÆ° ½Ã 
 		void ReturnItemToInventory();
+
+		// È£¹ö ¶ç¿ï·Á°íÇÔ.
+		SynSlot SlotInit(Vec2 pos);
 private:
 
 		std::unique_ptr<Object> m_enhancementSlot;									     // ½½·Ô.

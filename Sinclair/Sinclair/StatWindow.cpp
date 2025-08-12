@@ -46,6 +46,7 @@ bool StatWindow::HandleMouseDown(Vec2 mousePos)
 
 bool StatWindow::HandleMouseUp(Vec2 mousePos)
 {
+    std::cout << "바운드 체크 " << std::endl;
     // 창 내부 클릭 이벤트 처리 완료. 그래서 화면 최상단으로 올리기.
     if (IsInBounds(mousePos))
     {
