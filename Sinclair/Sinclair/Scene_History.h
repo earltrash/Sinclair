@@ -45,7 +45,7 @@ public:
 
 	bool  m_allTextsShown = false;
 	float m_currentShowingDelay = 0.f;
-	float m_showingDelay = 3.0f;			// 텍스트 간격
+	float m_showingDelay = 2.0f;			// 텍스트 간격
 	int   index = 0;
 	int   m_targetTextCount = 6;				// H2면 6, 아니면 5
 };
