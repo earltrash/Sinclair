@@ -39,12 +39,19 @@ private:
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ebm;
 
 
+	bool  m_fadeStarted = false;
+	bool  after_fadeStarted = false;
+	float m_image1Opacity = 0.f;  // 첫 번째 이미지 opacity
+	float m_image2Opacity = 0.f;  // 두 번째 이미지 opacity  
+	float m_image3Opacity = 0.f;  // 세 번째 이미지 opacity
+	float m_currentTime = 0.f;
+	float m_fadeDuration = 1.5f;   // 페이드 지속시간
+	float m_intervalTime = 1.5f;   // 이미지 간 간격
 
-	bool  m_textShown = false;
-	bool  m_titleShown = false;
-	bool  m_scriptShown = false;
-	float m_currentShowingDelay = 0.f;
-	float m_showingDelay = 1.5f;			// 텍스트 간격
-	int   index = 0;
+
+
+	std::wstring job;
+	std::wstring text;
+
 };
 

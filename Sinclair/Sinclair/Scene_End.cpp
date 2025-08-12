@@ -36,20 +36,46 @@ void Scene_End::Enter()
 	ebm = GameManager::Get().AftAdv();
 
 
-	m_textShown = true;
+	m_fadeStarted = true;
 
 
 	Initalize();
 
+	int gen = GameManager::Get().curGen;
+	int targetID = GameManager::Get().arrEndingID[gen - 2];
+	auto& EndingVector = ResourceManager::Get().Get_TextBank().EndingVector;
+	auto it = std::find_if(EndingVector.begin(), EndingVector.end(),
+		[targetID](const TextBank::Ending& e) {
+			return e.ID == targetID;
+		});
+
+
+	if (it != EndingVector.end())
+	{
+		job = StrToWstr(it->job);
+	}
+	else
+	{
+		job = L"없는뎁숑";
+	}
+	if (it != EndingVector.end())
+	{
+		auto txt = ResourceManager::Get().Get_TextBank().replaceGeneration(it->endingText, gen);
+		text = StrToWstr(txt);
+	}
+	else
+	{
+		text = L"없는뎁숑";
+	}
 }
 
 void Scene_End::Exit()
 {
 
-	m_textShown = false;
-	m_titleShown = false;
-	m_scriptShown = false;
-
+	m_image1Opacity = 0.f;
+	m_image2Opacity = 0.f;
+	m_image3Opacity = 0.f;
+	after_fadeStarted = false;
 	Clean();
 }
 
@@ -80,26 +106,36 @@ void Scene_End::Update()
 		}
 	}
 
-	if (m_textShown)
+	if (m_fadeStarted)
 	{
-		m_currentShowingDelay += 0.016f;
-		if (m_currentShowingDelay >= m_showingDelay)
+		m_currentTime += 0.016f;
+
+		// 첫 번째 이미지: 0초~1.5초 페이드인, 3초~4.5초 페이드아웃
+		if (m_currentTime <= m_fadeDuration)
 		{
-			if(m_scriptShown == false)
-			{
-				m_scriptShown = true;
-				m_currentShowingDelay = 0.f;
-			}
-			else
-			{
-				m_titleShown = true;
-				m_currentShowingDelay = 0.f;
-				m_textShown = false;
-				m_gameObjects["스킵버튼"]->GetComponent<ButtonComponent>()->SetCurrentBitmap("스킵");
-			}
+			m_image1Opacity = std::clamp(m_currentTime / m_fadeDuration, 0.f, 1.f);
+		}
+
+		// 두 번째 이미지: 0.5초~2초 페이드인, 3.5초~5초 페이드아웃  
+		if (m_currentTime >= m_intervalTime && m_currentTime <= m_intervalTime + m_fadeDuration)
+		{
+			m_image2Opacity = std::clamp((m_currentTime - m_intervalTime) / m_fadeDuration, 0.f, 1.f);
+		}
+
+		// 세 번째 이미지: 1초~2.5초 페이드인, 4초~5.5초 페이드아웃
+		if (m_currentTime >= m_intervalTime * 2 && m_currentTime <= m_intervalTime * 2 + m_fadeDuration)
+		{
+			m_image3Opacity = std::clamp((m_currentTime - m_intervalTime * 2) / m_fadeDuration, 0.f, 1.f);
+		}
+
+		// 모든 페이드 완료 체크
+		if (m_currentTime >= 5.5f)
+		{
+			m_fadeStarted = false;
+			m_gameObjects["스킵버튼"]->GetComponent<ButtonComponent>()->SetCurrentBitmap("스킵");
+			after_fadeStarted = true;
 		}
 	}
-
 
 
 }
@@ -124,7 +160,8 @@ void Scene_End::Render()
 		// 하나만 있을 때 → 그냥 렌더
 		const auto& [Name, obj] = *ebm.begin();
 		D2D1_RECT_F rect{ 17, 22, 1024 + 17, 1024 +22 };
-		D2DRenderer::Get().DrawBitmap(obj.Get(), rect);
+		D2D1_RECT_F srcRect{ 0, 0, 1024 , 1024 };
+		D2DRenderer::Get().DrawBitmap(obj.Get(), rect, srcRect, m_image1Opacity);
 	}
 	else if (ebm.size() == 2)
 	{
@@ -132,16 +169,18 @@ void Scene_End::Render()
 		for (const auto& [Name, obj] : ebm) // -> 임시로 하고 일단 
 		{
 			D2D1_RECT_F rect{ 17, 22, 1024 + 17, 1024 + 22 };
+			D2D1_RECT_F srcRect{ 0, 0, 1024 , 1024 };
 
 			if (Name.find("_good") != std::string::npos)
 			{
 				// good일 때 처리
-				D2DRenderer::Get().DrawBitmap(obj.Get(), rect);
+				D2DRenderer::Get().DrawBitmap(obj.Get(), rect, srcRect, m_image1Opacity);
+
 			}
 			else if (Name.find("_bad") != std::string::npos)
 			{
 				// bad일 때 처리
-				D2DRenderer::Get().DrawBitmap(obj.Get(), rect);
+				D2DRenderer::Get().DrawBitmap(obj.Get(), rect, srcRect, m_image1Opacity);
 			}
 			else
 			{
@@ -154,45 +193,18 @@ void Scene_End::Render()
 	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 90.0f);
 	// 벡터로 순회해서 찾기
 
-	int gen = GameManager::Get().curGen;
-	int targetID = GameManager::Get().arrEndingID[gen - 2];
-	auto& EndingVector = ResourceManager::Get().Get_TextBank().EndingVector;
-	auto it = std::find_if(EndingVector.begin(), EndingVector.end(),
-		[targetID](const TextBank::Ending& e) {
-			return e.ID == targetID;
-		});
+
+
+	D2DRenderer::Get().DrawMessageCenter(job.c_str(),
+		1080.f, 120.f, 1920.f - 1080.f, 255.f - 120.f, D2D1::ColorF::White, m_image3Opacity);
 	
-	static std::wstring job;
-	if (it != EndingVector.end())
-	{
-		job = StrToWstr(it->job);
-	}
-	else
-	{
-	
-	}
-	if(m_titleShown)
-	{
-		D2DRenderer::Get().DrawMessageCenter(job.c_str(),
-			1080.f, 120.f, 1920.f - 1080.f, 255.f - 120.f, D2D1::ColorF::White);
-	}
 
 	D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
-	static std::wstring text;
-	if (it != EndingVector.end())
-	{
-		auto txt = ResourceManager::Get().Get_TextBank().replaceGeneration(it->endingText, gen);
-		text = StrToWstr(txt);
-	}
-	else
-	{
+	
 
-	}
-	if(m_scriptShown)
-	{
-		D2DRenderer::Get().DrawMessageCenter(text.c_str(),
-			1223.f, 255.f, 564.f, 1080.f - 255.f, D2D1::ColorF::White);
-	}
+	D2DRenderer::Get().DrawMessageCenter(text.c_str(),
+		1223.f, 255.f, 564.f, 1080.f - 255.f, D2D1::ColorF::White, m_image2Opacity);
+	
 }
 
 void Scene_End::CreateObj()
@@ -283,7 +295,7 @@ void Scene_End::CreateObj()
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 스킵리스너 = 스킵버튼->AddComponent<MouseListenerComponent>(
 		[스킵컴포넌트, this](const MSG& msg) {
-			if(m_scriptShown)
+			if(after_fadeStarted)
 			{
 				스킵컴포넌트->CheckCollision(msg);
 				스킵컴포넌트->Worked(msg);
