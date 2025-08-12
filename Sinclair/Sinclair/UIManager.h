@@ -56,7 +56,7 @@ public:
     const char* UIWindowTypeToString(UIWindowType type);
 
     void OnInput(const MSG& msg); //MSG -> CLICK DOUBCLICK UP DOWN 
-   
+    void HandleKeyboardInput(WPARAM& msg);
 
     // 윈도우타입의 창을 키거나 끌거임.
     void ToggleWindow(UIWindowType type);

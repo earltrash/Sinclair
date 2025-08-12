@@ -29,6 +29,12 @@ public:
 		m_totalStats.Magic_Power = 0;
 		m_totalStats.Charm = 0;
 
+		m_RenderStat.Strength = 0;
+		m_RenderStat.Knowledge = 0;
+		m_RenderStat.Health = 0;
+		m_RenderStat.Magic_Power = 0;
+		m_RenderStat.Charm = 0;
+
 		m_statBase = ResourceManager::Get().Get_UIBank().Get_Image("StatBase").Get();
 		m_backgroundBitmap = ResourceManager::Get().Get_UIBank().Get_Image("StatBG").Get();
 		m_closeButton = ResourceManager::Get().Get_UIBank().Get_Image("CloseButton").Get();
@@ -82,7 +88,7 @@ private:
 	TotalStatus m_totalStats;						    // 최종 2차 스탯을 담을 구조체
 	Vec2 m_statPoints[5];								// 오각형 꼭짓점 위치 저장
 
-
+	TotalStatus m_RenderStat;                            // 스탯 그릴 구조체임.
 	ComPtr<ID2D1Bitmap1> m_closeButton;
 	ComPtr<ID2D1Bitmap1> m_backgroundBitmap;
 	ComPtr<ID2D1Bitmap1> m_statBase;

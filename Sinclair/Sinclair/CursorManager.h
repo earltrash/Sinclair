@@ -63,6 +63,9 @@ public:
     // 원본 슬롯 정보 가져오기
     InventorySlot* GetSourceSlot() const { return m_sourceSlot; }
     
+    int  GetItemCount() { return m_draggedItem_Count;  }
+    void SetItemCount(int count) { m_draggedItem_Count = count; }
+    void RE_ItemCount() { m_draggedItem_Count = 0; }
 
 private:
     CursorManager() = default;
@@ -77,6 +80,8 @@ private:
     Item* m_draggedItem = nullptr;
     Item* m_hoveredItem = nullptr;
     Item* m_stopDraggingItem = nullptr;
+
+    int m_draggedItem_Count = 1;
 
     DragSource m_dragSource = DragSource::None;
     CursorType m_currentCursor = CursorType::Normal;

@@ -401,33 +401,23 @@ SynSlot SynthesisWin::SlotInit(Vec2 mpos)
 
 bool SynthesisWin::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
 {
-		if (!draggedItem) return false;
+	if (!draggedItem) return false;
 
 	// 소스별로 적절한 위치로 복구
 	auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 	if (!inventoryWindow) return false;
 
-<<<<<<< HEAD
 	// 드래그 소스가 합성창인 경우 인벤토리로 복구
-	if (source == DragSource::Equipment || source == DragSource::Inventory   ||source == DragSource::Enhancement || source == DragSource::Synthesis)
+	if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
 	{
 		if (inventoryWindow->AddItem(draggedItem->m_data.id, 1))
-=======
-		// 드래그 소스가 합성창인 경우 인벤토리로 복구
-		if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
->>>>>>> 50469216f3c0727c1b5c15d31d7ee5ac66baf19a
 		{
-				if (inventoryWindow->AddItem(draggedItem->m_data.id, 1))
-				{
-						std::cout << "합성 불가능한 아이템을 인벤토리로 복구: " << draggedItem->m_data.id << std::endl;
-						
-						return true;
-				}
-
-				CursorManager::Get().EndItemDrag();
+			std::cout << "합성 불가능한 아이템을 인벤토리로 복구: " << draggedItem->m_data.id << std::endl;
+			return true;
 		}
+	}
 
-		return false;
+	return false;
 }
 
 void SynthesisWin::PerformSynthesis()

@@ -299,11 +299,11 @@ void StatWindow::RenderRadarChart()
 
     float stats[5] =
     {
-        m_totalStats.Strength,
-        m_totalStats.Magic_Power,
-        m_totalStats.Health,
-        m_totalStats.Knowledge,
-        m_totalStats.Charm
+        m_RenderStat.Strength,
+        m_RenderStat.Magic_Power,
+        m_RenderStat.Health,
+        m_RenderStat.Knowledge,
+        m_RenderStat.Charm
     };
 
     // 5개의 스탯 포인트를 계산
@@ -422,11 +422,18 @@ void StatWindow::UpdateTotalStats()
     totalFundamentalStats.luck = m_equipmentFundamentalStats.luck + m_potionFundamentalStats.luck;
 
     // 4. 2차 스탯 계산
-    m_totalStats.Strength = totalFundamentalStats.power * 2 + totalFundamentalStats.agile * 1;
-    m_totalStats.Magic_Power = totalFundamentalStats.intelligence * 3;
-    m_totalStats.Health = static_cast<int>(totalFundamentalStats.power * 1 + totalFundamentalStats.intelligence * 0.5f);
-    m_totalStats.Knowledge = totalFundamentalStats.intelligence * 2 + totalFundamentalStats.luck * 1;
-    m_totalStats.Charm = totalFundamentalStats.luck * 3 + totalFundamentalStats.agile * 1;
+    m_totalStats.Strength = totalFundamentalStats.power * 0.7f + totalFundamentalStats.agile * 0.3f;
+    m_totalStats.Magic_Power = totalFundamentalStats.intelligence * 1;
+    m_totalStats.Health = totalFundamentalStats.power * 1;
+    m_totalStats.Knowledge = totalFundamentalStats.intelligence * 0.7f + totalFundamentalStats.luck * 0.3f;
+    m_totalStats.Charm = totalFundamentalStats.luck * 0.7f + totalFundamentalStats.agile * 0.3f;
+
+    // 실제 그릴 용도임.
+    m_RenderStat.Strength = totalFundamentalStats.power * 2 + totalFundamentalStats.agile * 1;
+    m_RenderStat.Magic_Power = totalFundamentalStats.intelligence * 3;
+    m_RenderStat.Health = static_cast<int>(totalFundamentalStats.power * 1 + totalFundamentalStats.intelligence * 0.5f);
+    m_RenderStat.Knowledge = totalFundamentalStats.intelligence * 2 + totalFundamentalStats.luck * 1;
+    m_RenderStat.Charm = totalFundamentalStats.luck * 3 + totalFundamentalStats.agile * 1;
 }
 
 // 무기 고유 id로 체크할거임.

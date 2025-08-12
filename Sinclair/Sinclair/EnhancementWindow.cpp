@@ -339,26 +339,25 @@ bool EnhancementWindow::HandleMouseHover(Vec2 mousePos)
 
 bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
 {
-		if (!draggedItem) return false;
+	if (!draggedItem) return false;
 
-		//// 다른 창들의 영역인지 확인
-		//bool isInOtherWindow = false;
+	// 다른 창들의 영역인지 확인
+	bool isInOtherWindow = false;
 
-		//// 인벤창 영역 확인
-		//UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
-		//if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
-		//{
-		//		isInOtherWindow = true;
-		//}
+	// 인벤창 영역 확인
+	UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
+	if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
+	{
+		isInOtherWindow = true;
+	}
 
-		//// 장비창 영역 확인
-		//UIWindow* equipmentWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
-		//if (equipmentWindow && equipmentWindow->IsActive() && equipmentWindow->IsInBounds(mousePos))
-		//{
-		//		isInOtherWindow = true;
-		//}
+	// 장비창 영역 확인
+	UIWindow* equipmentWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
+	if (equipmentWindow && equipmentWindow->IsActive() && equipmentWindow->IsInBounds(mousePos))
+	{
+		isInOtherWindow = true;
+	}
 
-<<<<<<< HEAD
 	// 다른 창 영역이면 해당 창에서 처리하도록 넘김
 	if (isInOtherWindow)
 	{
@@ -366,7 +365,7 @@ bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, Drag
 	}
 
 	// 어떤 창 영역도 아니면 원래 위치로 복구
-	if (source == DragSource::Equipment || source == DragSource::Inventory ||  source == DragSource::Enhancement || source == DragSource::Synthesis)
+	if (source == DragSource::Equipment  || source == DragSource::Inventory  || source == DragSource::Enhancement || source == DragSource::Synthesis)
 	{
 		// sheetimage 다시 render 해야해서 그냥 inven으로 복구.
 		auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
@@ -376,25 +375,16 @@ bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, Drag
 			std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
 		}
 	}
-=======
-		// 어떤 창 영역도 아니면 원래 위치로 복구
-		if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
-		{
-				// sheetimage 다시 render 해야해서 그냥 inven으로 복구.
-				auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-				if (inventoryWindow)
-				{
-						inventoryWindow->AddItem(draggedItem->m_data.id, 1);
-						std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
-				}
-		}
->>>>>>> 50469216f3c0727c1b5c15d31d7ee5ac66baf19a
 
 	CursorManager::Get().EndItemDrag();
 	return true;
 }
 bool EnhancementWindow::HandleMouseRight(Vec2 mousePos)
 {
+	if (!IsInBounds(mousePos)) return false;
+	
+
+
 		Item* item = m_targetItem;
 
 		Wearable* wearableItem = dynamic_cast<Wearable*>(item);

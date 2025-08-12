@@ -26,6 +26,9 @@ bool InputManager::MsgCheck(MSG& msg)
     switch (msg.message)
     {
     case WM_KEYDOWN:
+        UIManager::Get().HandleKeyboardInput(msg.wParam);
+        return true;
+        break;
     case WM_KEYUP:
     case WM_MOUSEMOVE:
     case WM_LBUTTONDOWN:

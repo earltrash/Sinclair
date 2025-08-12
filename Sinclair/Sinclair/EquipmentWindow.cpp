@@ -589,8 +589,8 @@ Wearable_part EquipmentWindow::GetSlotTypeAt(Vec2 mousePos) const
         float slot_bottom = slot_top + slotSize.y;
 
         // 마우스 위치가 슬롯 영역 내에 있는지 확인
-        if (mousePos.x >= slotPos.x && mousePos.x <= slot_right &&
-            mousePos.y >= slotPos.y && mousePos.y <= slot_bottom)
+        if (mousePos.x >= slot_left && mousePos.x <= slot_right &&
+            mousePos.y >= slot_top && mousePos.y <= slot_bottom)
         {
             return slotType; // 일치하는 슬롯을 찾으면 해당 슬롯 타입을 반환
         }

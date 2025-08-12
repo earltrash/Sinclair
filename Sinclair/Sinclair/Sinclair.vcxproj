@@ -104,11 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-<<<<<<< HEAD
-      <AdditionalIncludeDirectories>$(SolutionDir)..\M_E\M_E </AdditionalIncludeDirectories>
-=======
       <AdditionalIncludeDirectories>$(SolutionDir)..\M_E\M_E ;</AdditionalIncludeDirectories>
->>>>>>> 50469216f3c0727c1b5c15d31d7ee5ac66baf19a
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

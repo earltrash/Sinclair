@@ -143,6 +143,7 @@ string GameManager::Synthesis(const string& id1, const string& id2)
 //ending Scene 들어가기 전 -> endingScene에 필요한게 bitmap = id // stat 처리를 다 해서 id를 구해오는 과정 
 void GameManager::PreAdv() 
 {
+    FindEnding();
 
     //1. 스탯을 받아옴
     //2. 기존 장비를 정리함.
@@ -158,16 +159,14 @@ void GameManager::PreAdv()
     }
     UsedEquipedClean(); // temp에다가 저장, 기존 인벤은 싹다 정리함.
     AdvResult(); //명성치와 세대에 따른 인벤 & 임시 vector 업데이트 함. ㅇㅇ 
-
-
-    TempToNext(); //최종적으로 아이템을 인벤에 넣어둠. 
-   // Default_Item_TO_Inven(GetCurrentGen()); 이제 기본템 없잖슴 
-
-    // 명성치랑 엔딩에 던져줄 string id 값 준비하기 
-    
-    // -> ending id를 통해서 명성치까지 계산해야 함. 
-
+    TempToNext(); 
    
+
+  
+
+
+
+
 }
 
 
@@ -177,7 +176,7 @@ void GameManager::PreAdv()
 
 std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> GameManager::AftAdv() //ending scene -> endingScene의 id를 받을거고 ? 
 {
-    FindEnding();
+   
     int index = GetCurrentGen() - 2;
     int id = arrEndingID[index];
 
@@ -278,18 +277,16 @@ void GameManager::AdvResult_Wep(string itemkey) //
 
 void GameManager::AdvResult()
 {
-    //int this_Gen_Fam = GetCurrentFam();
+    
 
-    //int gen = GetCurrentGen(); //현재 세대의 값 2 3 4 -> 
+    int this_Gen_Fam = GetCurrentFam();
 
-    int this_Gen_Fam =2;
+    int Gen = GetCurrentGen();
 
-    int gen = 2;
-    //
 
     AdvResult_Potion(this_Gen_Fam);
 
-    switch(gen)
+    switch(Gen)
     {
     case 2:
         AdvResult_Item_Gen2_Gen3(this_Gen_Fam);
@@ -380,7 +377,7 @@ void GameManager::TempToNext()
     m_tempItem.clear();
 }
 
-void GameManager::Default_Item_TO_Inven(int GEN)
+void GameManager::Default_Item_TO_Inven(int GEN) //폐기
 {
     if (GEN == 2) //기본 3 
     {
