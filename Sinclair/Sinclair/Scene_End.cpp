@@ -123,7 +123,7 @@ void Scene_End::Render()
 	{
 		// 하나만 있을 때 → 그냥 렌더
 		const auto& [Name, obj] = *ebm.begin();
-		D2D1_RECT_F rect{ 0, 0, 1024, 1024 };
+		D2D1_RECT_F rect{ 17, 22, 1024 + 17, 1024 +22 };
 		D2DRenderer::Get().DrawBitmap(obj.Get(), rect);
 	}
 	else if (ebm.size() == 2)

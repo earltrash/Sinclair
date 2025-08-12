@@ -161,13 +161,9 @@ void GameManager::PreAdv()
     AdvResult(); //명성치와 세대에 따른 인벤 & 임시 vector 업데이트 함. ㅇㅇ 
     TempToNext(); 
    
-
-  
-
-
-
-
 }
+
+
 
 
 //EndingScene의 Enter 부분인가 
@@ -192,6 +188,18 @@ std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> GameManage
     std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ending_bitmap =
         ResourceManager::Get().GetEndingBitmap(std::to_string(id));
     
+    if (ending_bitmap.size() == 1)
+    {
+        auto it = ending_bitmap.begin();
+        arrTotalEndingImg[index] = it->second;
+    }
+    else if (ending_bitmap.size() == 2)
+    {
+        auto it = ending_bitmap.begin();
+        ++it;
+        arrTotalEndingImg[index] = it->second;
+    }
+
   //  UpdateGen(); 
 
     return ending_bitmap;

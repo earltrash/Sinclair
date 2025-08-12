@@ -20,9 +20,8 @@ public:
 public:
 	void CreateObj();
 
-	//void ActivateAllTexts();
-	void DeactivateAllTexts();
-	void ActivateSingleText(int idx);
+	void DeactivateAllImgs();
+	void ActivateSingleImg(int idx);
 
 
 	// 이거 3곳에서 쓰이는 데.. 유틸리티로..
@@ -45,8 +44,8 @@ public:
 
 	bool  m_allTextsShown = false;
 	float m_currentShowingDelay = 0.f;
-	float m_showingDelay = 2.0f;			// 텍스트 간격
-	int   index = 0;
+	float m_showingDelay = 1.3f;			// 텍스트 간격
+	int   index = -4;
 	int   m_targetTextCount = 6;				// H2면 6, 아니면 5
 };
 

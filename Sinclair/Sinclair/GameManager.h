@@ -74,6 +74,7 @@ public:// get set 만들기 전
     std::array<int, 3> arrEndingID{};
     std::array<TotalStatus, 3> arrTotalStatus{};
     std::array<int, 3> arrTotalFam{};
+    std::array<Microsoft::WRL::ComPtr<ID2D1Bitmap1>, 3> arrTotalEndingImg{};
     vector<bool> adv_wepon;
 
     std::vector <unique_ptr<Item>> m_tempItem;
