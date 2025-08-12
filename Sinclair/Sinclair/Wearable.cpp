@@ -6,17 +6,17 @@ Wearable::Wearable(const ItemCommonData& data, const json& j) : Item(data)
     {
         std::string statName = s["stat"]; //¿Ã∞≈ enum¿∏∑Œ πŸ≤„æﬂ «“ µÌ. §∑§∑ 
         float amount = s["amount"];
-       SetStat(StringToF(statName), amount);
+        SetStat(StringToF(statName), amount);
     }
 
     if (j.contains("part"))
     {
         std::string part = j["part"];
         m_part = StringToWP(part);
-
+        m_data.wearablePart = m_part;
 
         Enchan_Count = (m_part == Wearable_part::Weapon) ? 5 : 3; //±Ú≤˚«œ¥Ÿ
-         
+
         m_EnchanceResult.assign(Enchan_Count, EnchancerType::Default);
 
     }

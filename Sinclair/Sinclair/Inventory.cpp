@@ -6,7 +6,7 @@
 #include "Potion.h"
 #include "Wearable.h"
 //: UI_Object(MWP) //?ùÏÑ±?êÎ°ú ?ÅÏó≠?Ä ?ºÎã® ?§Ï†ï??(Inven ?êÍ∏∞ ?ÅÏó≠ ÎßêÏûÑ)
-Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
+Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 400,100 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
 {
 
     m_bound = { 0,0,1208,825 }; // Ï¥àÍ∏∞ ?ÑÏπò  
@@ -930,7 +930,7 @@ ItemDatabase& Inventory::GetItemBase()
     return m_itemDatabase;
 }
 
-void Inventory::PackItem() //?ÑÏû¨ database???àÎäî Î™®Îì† Item??Slot???£Ïñ¥Ï§?
+void Inventory::PackItem() 
 {
     for (const auto& [Id, Item] : m_itemDatabase.GetMap())
     {
@@ -938,6 +938,18 @@ void Inventory::PackItem() //?ÑÏû¨ database???àÎäî Î™®Îì† Item??Slot???£Ïñ¥Ï§?
         AddItem(Item->m_data.id, 1);
     }
 }
+
+
+void Inventory::PackItem_withoutItem()
+{
+    for (const auto& [Id, Item] : m_itemDatabase.GetMap())
+    {
+        if(dynamic_cast<Potion*>(Item.get()) !=nullptr)
+        AddItem(Item->m_data.id, 1);
+    }
+}
+
+
 
 void Inventory::SetDatabase(unique_ptr<ItemDatabase> database) //?∏Î??êÏÑú ÎßåÎì§Í≥??£Ïñ¥Î≤ÑÎ¶¥??
 {

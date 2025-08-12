@@ -24,7 +24,8 @@ public:
     static GameManager& Get();
 
     std::vector<std::string> GetRandomItemsByFam( int fam,
-        const std::unordered_map<int, std::vector<PoolCount>>& poolMap);
+        const std::unordered_map<int, std::vector<PoolCount>>& poolMap
+    ,  std::unordered_set<std::string>& alreadyPicked);
 
     void FamValue();
 
@@ -72,10 +73,11 @@ public:// get set 만들기 전
 
     std::array<TotalStatus, 3> arrTotalStatus{};
     std::array<int, 3> arrTotalFam{};
-    
+    vector<bool> adv_wepon;
 
     std::vector <unique_ptr<Item>> m_tempItem;
     std::vector<Recipe> m_SynTable;
+    std::vector<bool> m_wearable_part;
 
         std::unordered_map<std::string, std::string> weaponMap = {
         { "W001", "I016" },
@@ -87,10 +89,12 @@ public:// get set 만들기 전
         { "W007", "I022" },
         { "W008", "I023" },
         { "W009", "I024" },
-        { "W010", "I025" }
+        { "W010", "I025" },
+        { "W016", "I016" }
     };
 
     std::unordered_map<Need_Moment, std::vector<std::string>> poolItems;
+    std::unordered_set<std::string> alreadyPicked;
 
     std::unordered_map<int, std::vector<PoolCount>> famToPoolCounts_Gen2to3{
     { 1, { { Need_Moment::Fam3_a, 1 }, { Need_Moment::Fam3_b, 0 } } },

@@ -10,6 +10,7 @@ public:
 		: Item(other)      // Item 복사 생성자 호출 → Object는 기본 생성
 		, much(other.much) // 자기 멤버 복사
 	{
+		m_data.Momnet = (other.Momnet);
 	}
 
 	int GetMuch() { return much; }

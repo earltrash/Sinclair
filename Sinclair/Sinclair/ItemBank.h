@@ -46,4 +46,8 @@ private:
 
 	//Load 할 떄만 사용함. 혹은 디버깅용 
 	unordered_map<std::string, ComPtr<ID2D1Bitmap1>> m_LoadedAtlases; //리소스 캐시를 아끼기 위한 map 
+
+	
+
+
 };

@@ -15,6 +15,10 @@
 
 void GameManager::Initalize()
 {
+
+    adv_wepon.assign(11, false); //  -> 이거 4->2로 갈 때 다시 초기화 해야 함. 
+    m_wearable_part.assign(static_cast<int>(Wearable_part::UnKnown), false); // 명셩-아이템 풀 관련 
+
     SyntableInit();
     PoolInit();
 
@@ -51,14 +55,18 @@ void GameManager::PoolInit()
 
 GameManager& GameManager::Get()
 {
-    static GameManager resourcemanager;
-    return resourcemanager;
+    static GameManager Gamemanager;
+    return Gamemanager;
 }
 
 
-std::vector<std::string> GameManager::GetRandomItemsByFam(
+std::vector<std::string> GameManager::GetRandomItemsByFam
+(
     int fam,
-    const std::unordered_map<int, std::vector<PoolCount>>& poolMap)
+    const std::unordered_map<int, std::vector<PoolCount>>& poolMap,
+     std::unordered_set<std::string>& alreadyPicked // 이미 뽑힌 아이템들
+) 
+
 {
     std::vector<std::string> result;
 
@@ -68,19 +76,46 @@ std::vector<std::string> GameManager::GetRandomItemsByFam(
     static std::random_device rd;
     static std::mt19937 gen(rd());
 
-    for (auto& pc : famIt->second)
-    {
+    for (auto& pc : famIt->second) {
         auto poolIt = poolItems.find(pc.pool);
         if (poolIt == poolItems.end() || poolIt->second.empty()) continue;
 
         std::vector<std::string> temp = poolIt->second;
-        std::shuffle(temp.begin(), temp.end(), gen);
 
-        int count = std::min(pc.count, (int)temp.size());
-        result.insert(result.end(), temp.begin(), temp.begin() + count);
+        int count = pc.count;
+        while (count > 0 && !temp.empty()) {
+            std::shuffle(temp.begin(), temp.end(), gen);
+            bool found = false;
+
+            for (auto it = temp.begin(); it != temp.end();) {
+                if (alreadyPicked.find(*it) == alreadyPicked.end()) {
+                    int index_num = static_cast<int>(
+                        ResourceManager::Get().Get_ItemBank().CreateItem(*it)->m_data.wearablePart
+                        );
+                    if (!m_wearable_part[index_num]) {
+                        result.push_back(*it);
+                        alreadyPicked.insert(*it);
+                        m_wearable_part[index_num] = true;
+                        count--;
+                        it = temp.erase(it);
+                        found = true;
+                        if (count == 0) break;
+                    }
+                    else {
+                        ++it; // 파츠 중복이면 다음 후보
+                    }
+                }
+                else {
+                    ++it; // 아이템 중복이면 다음 후보
+                }
+            }
+            if (!found) break; // 이번 라운드에서 아무것도 못 뽑았으면 종료
+        }
     }
+    std::fill(m_wearable_part.begin(), m_wearable_part.end(), false);
     return result;
 }
+
 
 void GameManager::FamValue()
 {
@@ -126,7 +161,7 @@ void GameManager::PreAdv()
 
 
     TempToNext(); //최종적으로 아이템을 인벤에 넣어둠. 
-    Default_Item_TO_Inven(GetCurrentGen());
+   // Default_Item_TO_Inven(GetCurrentGen()); 이제 기본템 없잖슴 
 
     // 명성치랑 엔딩에 던져줄 string id 값 준비하기 
     
@@ -205,13 +240,12 @@ void GameManager::UsedEquipedClean() //청소하는 김에 추가까지 해버릴래 .
 
         std::string id = equipped->m_data.id;
 
-        auto it = invenDB.find(id);
+        auto it = invenDB.find(id); //결국에 장비창 id도 인벤이 갖고 있으니깐 그거는 인벤에서 가져오는 거고 
         if (it != invenDB.end())
         {
-            // 소유권 이전
             m_tempItem.push_back(std::move(it->second));
             AdvResult_Wep(id); // -> 그 겸사 넣은 거긴 한데, 특정 아이템 들고 모험 나가면 특수한 아이템 넣는 거 그거 한 거임. 
-            invenDB.erase(it);
+            invenDB.erase(it); //임시에 넣었으니깐 지웠다는 거잖아 
             equipmentWindow->ClearSlot((Wearable_part)i);
 
         }
@@ -222,16 +256,23 @@ void GameManager::UsedEquipedClean() //청소하는 김에 추가까지 해버릴래 .
 
 }
 
-void GameManager::AdvResult_Wep(string itemkey)
+void GameManager::AdvResult_Wep(string itemkey) //
 {
-    for (const auto& [key, val] : weaponMap) //val이 곧 아이템임. 
+    Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+
+    int idx = 0;
+    for (const auto& [key, val] : weaponMap) // val이 곧 아이템
     {
-        if (key == itemkey)
+        if (key == itemkey && adv_wepon[idx] != true ) //true 인경우에는 치울게요 
         {
-            m_tempItem.push_back(ResourceManager::Get().Get_ItemBank().CreateItem(val));
+            inven->GetItemBase().AddItemData(std::move(ResourceManager::Get().Get_ItemBank().CreateItem(val)
+));
+
+            if (idx >= 0 && idx < adv_wepon.size()) 
+                adv_wepon[idx] = true;
+            break; 
         }
-
-
+        ++idx;
     }
 }
 
@@ -241,7 +282,7 @@ void GameManager::AdvResult()
 
     //int gen = GetCurrentGen(); //현재 세대의 값 2 3 4 -> 
 
-    int this_Gen_Fam = 5;
+    int this_Gen_Fam =2;
 
     int gen = 2;
     //
@@ -274,12 +315,17 @@ void GameManager::SpawnItemsByFame(int fame)
 
     auto& bank = ResourceManager::Get().Get_ItemBank();
 
+    Inventory* inven = dynamic_cast<Inventory*>(
+        UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+
     for (auto& [id, count] : it->second)
     {
         for (int i = 0; i < count; ++i)
         {
             auto item = bank.CreateItem(id); // unique_ptr<Item> 반환한다고 가정
-            m_tempItem.push_back(std::move(item));
+            string id = (item->m_data.id);
+            inven->GetItemBase().AddItemData(std::move(item));
+            inven->AddItem(id, 1);
         }
     }
 }
@@ -290,12 +336,12 @@ void GameManager::AdvResult_Item_Gen2_Gen3(int Fam)
         UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
     if (!inven) return;
 
-    auto items = GetRandomItemsByFam(Fam , famToPoolCounts_Gen2to3); //id를 받은거고 
+    auto items = GetRandomItemsByFam(Fam , famToPoolCounts_Gen2to3 , alreadyPicked); //id를 받은거고 
     for (auto& id : items)
     {
         inven->GetItemBase().AddItemData(ResourceManager::Get().Get_ItemBank().CreateItem(id));
     }
-    inven->PackItem();
+    //inven->PackItem();
 }
 
 void GameManager::AdvResult_Item_Gen3_Gen4(int Fam)
@@ -304,13 +350,13 @@ void GameManager::AdvResult_Item_Gen3_Gen4(int Fam)
         UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
     if (!inven) return;
 
-    auto items = GetRandomItemsByFam(Fam, famToPoolCounts_Gen3to4);
+    auto items = GetRandomItemsByFam(Fam, famToPoolCounts_Gen3to4, alreadyPicked);
     for (auto& id : items)
         //inven->AddItem(id);
     {
         inven->GetItemBase().AddItemData(ResourceManager::Get().Get_ItemBank().CreateItem(id));
     }
-    inven->PackItem();
+   // inven->PackItem();
 
 }
 
@@ -328,7 +374,7 @@ void GameManager::TempToNext()
         for (auto& item : m_tempItem)
         {
             inven->GetItemBase().AddItemData(std::move(item));
-        }
+       }
         inven->PackItem();
     }
     m_tempItem.clear();

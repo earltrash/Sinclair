@@ -30,11 +30,13 @@ public:
     void LoadUIBitmaps();
     void LoadItemDatabase(Need_Moment Moment);
 
+    void PackItem_withoutItem();
     void PackItem();
     void SetDatabase(unique_ptr<ItemDatabase> database);
 
     // Scene 넘어갈 때 
     void UnlockRegion(int regionId);
+
 
     void Update() override;
     void FixedUpdate(float dt) override

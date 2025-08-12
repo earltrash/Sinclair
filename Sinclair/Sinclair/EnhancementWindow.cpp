@@ -302,21 +302,7 @@ bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, Drag
 	}
 
 	// 어떤 창 영역도 아니면 원래 위치로 복구
-	if (source == DragSource::Equipment)
-	{
-		// 장비창에서 나온 아이템이므로 다시 착용
-		Wearable* wearableItem = dynamic_cast<Wearable*>(draggedItem);
-		if (wearableItem)
-		{
-			auto* equipWindow = dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
-			if (equipWindow)
-			{
-				equipWindow->EquipItem(draggedItem);
-				std::cout << "장비 아이템을 원래 슬롯으로 복구했습니다: " << draggedItem->m_data.name << std::endl;
-			}
-		}
-	}
-	else if (source == DragSource::Inventory || source == DragSource::Enhancement)
+	if (source == DragSource::Equipment || source == DragSource::Inventory ||  source == DragSource::Enhancement || source == DragSource::Synthesis)
 	{
 		// sheetimage 다시 render 해야해서 그냥 inven으로 복구.
 		auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));

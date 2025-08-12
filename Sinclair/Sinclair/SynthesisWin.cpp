@@ -408,8 +408,7 @@ bool SynthesisWin::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSourc
 	if (!inventoryWindow) return false;
 
 	// 드래그 소스가 합성창인 경우 인벤토리로 복구
-	if (source == DragSource::Equipment || source == DragSource::Enhancement ||
-		source == DragSource::Inventory)
+	if (source == DragSource::Equipment || source == DragSource::Inventory   ||source == DragSource::Enhancement || source == DragSource::Synthesis)
 	{
 		if (inventoryWindow->AddItem(draggedItem->m_data.id, 1))
 		{
