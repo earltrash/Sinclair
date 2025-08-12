@@ -76,12 +76,11 @@ bool StatWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource 
 
 		// 인벤창 영역 확인
 		UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
-		if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
+		if (inventoryWindow)
 		{
-				
         DragSource source = CursorManager::Get().GetDragSource();
         Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-        inven->AddItem(draggedItem->m_data.id, 1);\
+        inven->AddItem(draggedItem->m_data.id, 1);
         CursorManager::Get().EndItemDrag();
         return true;
 		}

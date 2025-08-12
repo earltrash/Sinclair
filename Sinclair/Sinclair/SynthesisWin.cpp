@@ -82,7 +82,7 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 		if (Clicked_Item == nullptr)
 			return false; // 빈 슬롯이면 드래그 안 함
 
-		CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Equipment);
+		CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Synthesis);
 		CursorManager::Get().SetDraggedItem(Clicked_Item);
 
 		if (whichSlot == SynSlot::Result) //아이템이 있는 result 슬롯을 누르면 다 반환시킨다라 
@@ -408,8 +408,7 @@ bool SynthesisWin::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSourc
 		if (!inventoryWindow) return false;
 
 		// 드래그 소스가 합성창인 경우 인벤토리로 복구
-		if (source == DragSource::Equipment || source == DragSource::Enhancement ||
-				source == DragSource::Inventory)
+		if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
 		{
 				if (inventoryWindow->AddItem(draggedItem->m_data.id, 1))
 				{

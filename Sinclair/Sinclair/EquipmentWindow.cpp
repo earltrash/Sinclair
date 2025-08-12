@@ -76,7 +76,7 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
         // 유효한 슬롯에, 장착 가능한 아이템을 드롭했는지 조건 체크
         if (slotType != Wearable_part::UnKnown && wearableItem && IsItemTypeMatch(wearableItem->Getpart(), slotType))
         {
-            //std::cout << "DEBUG: 장비 장착 조건 만족. 아이템을 장착합니다." << std::endl;
+            std::cout << "DEBUG: 장비 장착 조건 만족. 아이템을 장착합니다." << std::endl;
             // 장비 착용 성공
             // 스탯창 가져오기.
             auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow));
@@ -164,7 +164,7 @@ bool EquipmentWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSo
         }
         std::cout << "장비 아이템을 원래 슬롯으로 복구했습니다: " << draggedItem->m_data.name << std::endl;
     }
-    else if (source == DragSource::Inventory)
+    else if (source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
     {
         // 인벤토리에서 온 아이템이므로 인벤토리로 복구
         auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
@@ -206,6 +206,15 @@ bool EquipmentWindow::HandleMouseHover(Vec2 mousePos)
 
     if (!m_isActive) return false;
 
+    // 마우스가 장비창의 경계 안에 있는지 먼저 확인
+    if (!IsInBounds(mousePos))
+    {
+        // 경계 밖에 있다면 툴팁을 비활성화하고 함수 종료
+        CursorManager::Get().HoveredReleased();
+        UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip);
+        return false;
+    }
+
     if (m_isDragging)
     {
         m_position = mousePos - m_dragOffset;
@@ -231,14 +240,12 @@ bool EquipmentWindow::HandleMouseHover(Vec2 mousePos)
             return true;
         }
     }
-    else
-    {
-        CursorManager::Get().HoveredReleased(); //추적 금지 
-        UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //해제
-        return true;
-    }
-
-    return false;
+    
+    // 마우스가 장비창 경계 안, 슬롯 바깥에 있는 경우
+    // 또는 슬롯에 있지만 아이템이 없는 경우
+    CursorManager::Get().HoveredReleased(); //추적 금지 
+    UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip); //해제
+    return true;
 }
 
 bool EquipmentWindow::HandleMouseRight(Vec2 mousePos)
@@ -572,8 +579,8 @@ Wearable_part EquipmentWindow::GetSlotTypeAt(Vec2 mousePos) const
         float slot_bottom = slot_top + slotSize.y;
 
         // 마우스 위치가 슬롯 영역 내에 있는지 확인
-        if (mousePos.x >= slotPos.x && mousePos.x <= slot_right &&
-            mousePos.y >= slotPos.y && mousePos.y <= slot_bottom)
+        if (mousePos.x >= slot_left && mousePos.x <= slot_right &&
+            mousePos.y >= slot_top && mousePos.y <= slot_bottom)
         {
             return slotType; // 일치하는 슬롯을 찾으면 해당 슬롯 타입을 반환
         }

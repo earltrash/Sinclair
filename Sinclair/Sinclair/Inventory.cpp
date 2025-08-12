@@ -6,7 +6,7 @@
 #include "Potion.h"
 
 //: UI_Object(MWP) //생성자로 영역은 일단 설정함 (Inven 자기 영역 말임)
-Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 1000,500 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
+Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 500,100 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
 {
 
     m_bound = { 0,0,1208,825 }; // 초기 위치  
@@ -541,6 +541,19 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
         return false; // 다른 창에서 처리하도록 넘김
     }
 
+
+
+    if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
+    {
+        // sheetimage 다시 render 해야해서 그냥 inven으로 복구.
+        auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+        if (inventoryWindow)
+        {
+            inventoryWindow->AddItem(draggedItem->m_data.id, 1);
+            std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
+        }
+    }
+
    
     return false;
 }
@@ -609,7 +622,7 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아�
            //장비인 경우에는 장착하려고 함. 
 
         }
-
+        return true;
     }
 
 
@@ -904,6 +917,3 @@ void Inventory::LoadItemDatabase(Need_Moment Moment)
 {
     ResourceManager::Get().Get_ItemBank().GiveItem(Moment, m_itemDatabase);
 }
-
-
-//

@@ -303,35 +303,15 @@ bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, Drag
 		}
 
 		// 어떤 창 영역도 아니면 원래 위치로 복구
-		if (source == DragSource::Equipment)
+		if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
 		{
-				// 장비창에서 나온 아이템이므로 다시 착용
-				Wearable* wearableItem = dynamic_cast<Wearable*>(draggedItem);
-				if (wearableItem)
-				{
-						auto* equipWindow = dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
-						if (equipWindow)
-						{
-								equipWindow->EquipItem(draggedItem);
-								std::cout << "장비 아이템을 원래 슬롯으로 복구했습니다: " << draggedItem->m_data.name << std::endl;
-						}
-				}
-		}
-		else if (source == DragSource::Inventory)
-		{
-				// 인벤토리에서 온 아이템이므로 인벤토리로 복구
+				// sheetimage 다시 render 해야해서 그냥 inven으로 복구.
 				auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 				if (inventoryWindow)
 				{
 						inventoryWindow->AddItem(draggedItem->m_data.id, 1);
 						std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
 				}
-		}
-		else if (source == DragSource::Enhancement)
-		{
-				// 강화창 슬롯에서 온 아이템이므로 다시 슬롯에 배치
-				m_targetItem = draggedItem;
-				std::cout << "강화창 아이템을 슬롯으로 복구했습니다: " << draggedItem->m_data.name << std::endl;
 		}
 
 		CursorManager::Get().EndItemDrag();
@@ -511,7 +491,7 @@ void EnhancementWindow::RenderStatSelectionButtons()
 void EnhancementWindow::RenderStatText()
 {
 		Vec2 buttonPos = m_position + m_statSelectionButton->GetTransform().GetPosition();
-		Vec2 textPos = { buttonPos.x + 150, buttonPos.y + 15 }; // 버튼 중앙에 텍스트 배치
+		Vec2 textPos = { buttonPos.x + 135, buttonPos.y + 15 }; // 버튼 중앙에 텍스트 배치
 
 		std::wstring statText;
 		int statValue = GetSelectedStatValue();
@@ -551,7 +531,7 @@ void EnhancementWindow::RenderScrollButtons()
 			D2D1_RECT_F dest = { screenPos.x, screenPos.y, screenPos.x + size.width, screenPos.y + size.height };
 			D2DRenderer::Get().DrawBitmap(bmp, dest);
 		}
-	}
+	} 
 }
 
 

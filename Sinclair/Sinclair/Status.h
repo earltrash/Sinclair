@@ -104,6 +104,7 @@ enum class DragSource
 		Inventory,
 		Equipment,
 		Enhancement,
+		Synthesis,
 		None
 };
 
