@@ -36,6 +36,7 @@ void Scene_History::Enter()
 {
 	//여기서 히스토리 계산
 	int resultFame = GameManager::Get().GetResultFam();
+	index = -4;
 	if (resultFame >= 19)
 	{
 		m_History = History::H1;
@@ -67,7 +68,7 @@ void Scene_History::Enter()
 
 void Scene_History::Exit()
 {
-	DeactivateAllTexts();
+	DeactivateAllImgs();
 	Clean();
 }
 
@@ -105,9 +106,9 @@ void Scene_History::Update()
 		if(index < m_targetTextCount)
 		{
 			m_currentShowingDelay += 0.016f;
+			ActivateSingleText(index + 1);
 			if (m_currentShowingDelay >= m_showingDelay)
 			{
-				ActivateSingleText(index + 1);
 				index++;
 				m_currentShowingDelay = 0.f; // 다음 텍스트 타이머 리셋
 			}
@@ -116,6 +117,7 @@ void Scene_History::Update()
 		{
 			m_allTextsShown = false;
 			m_gameObjects["스킵버튼"]->GetComponent<ButtonComponent>()->SetCurrentBitmap("스킵");
+
 		}
 	}
 }
@@ -166,17 +168,15 @@ void Scene_History::CreateObj()
 	좌측창Comp->SetCurrentBitmap("좌측창");
 
 	/// 9
-	m_gameObjects.emplace("aa좌측창", std::move(좌측창));
+	m_gameObjects.emplace("---", std::move(좌측창));
 
 	//////////////////////
 	//////////////////////
 	//////////////////////
-	// [2] 이미지
+	// [2] 히스토리 이미지 + 엔딩 이미지 3장
 	// 효제 : 이거 어떻게 해야할지 고민하기
 
 	// 1. 이미지 갖고 오기
-	
-	
 	ComPtr<ID2D1Bitmap1> History2;
 	if(m_History == History::H1)
 	{
@@ -200,16 +200,96 @@ void Scene_History::CreateObj()
 
 	auto 이미지info = 이미지->GetRenderInfo();
 	이미지info->SetBitmap(History2.Get());
+	이미지info->GetRenderInfo().opacity = 0.f;
 	// 3. 배경 컴포넌트 만들기
 	auto 이미지Comp = 이미지->AddComponent<BackgroundComponent>(이미지info);
 	이미지Comp->SetWidth(1036);
 	이미지Comp->SetHeight(1036);
-	이미지Comp->BitmapPush("이미지", History2);
-	이미지Comp->SetCurrentBitmap("이미지");
-
+	이미지Comp->BitmapPush("Background", History2);
+	이미지Comp->SetCurrentBitmap("Background");
 
 	/// 9
-	m_gameObjects.emplace("이미지", std::move(이미지));
+	m_gameObjects.emplace("0", std::move(이미지));
+
+
+//////////////////////
+//////////////////////
+// 엔딩 이미지 
+	// 1. 이미지를 받기 위한 
+	auto imgs = GameManager::Get().arrTotalEndingImg;
+
+	if (imgs[0].Get() == nullptr) {
+		cout << "엔딩 이미지 없음" << endl;
+	}
+
+	///////////////////////////////////
+	// 2. 오브젝트 만들기
+	auto Ending2 = std::make_unique<Object>();
+	Ending2->SetPosition(Vec2(17, 22));
+
+	auto Ending2info = Ending2->GetRenderInfo();
+	Ending2info->SetBitmap( imgs[0].Get() );
+	Ending2info->GetRenderInfo().opacity = 0;
+	Ending2info->GetRenderInfo().srcRect = D2D1_RECT_F{ 341, 0 , 681, 1024 };
+
+	// 3. 배경 컴포넌트 만들기
+	auto Ending2Comp = Ending2->AddComponent<BackgroundComponent>(Ending2info);
+	Ending2Comp->SetWidth(341);
+	Ending2Comp->SetHeight(1024);
+	D2D1_RECT_F d = { 340, 0 , 681, 1024 };
+	Ending2Comp->BitmapPush("Background", imgs[0].Get());
+	Ending2Comp->SetCurrentBitmap("Background");
+	Ending2Comp->SetSrcRect(d);
+
+	/// 9
+	m_gameObjects.emplace("-3", std::move(Ending2));
+
+	////////////////////////////////
+	// 2. 오브젝트 만들기
+	auto Ending3 = std::make_unique<Object>();
+	Ending3->SetPosition(Vec2(17 + 341, 22));
+
+	auto Ending3info = Ending3->GetRenderInfo();
+	Ending3info->SetBitmap(imgs[1].Get());
+	Ending3info->GetRenderInfo().opacity = 0;
+	Ending3info->GetRenderInfo().srcRect = { 341, 0 , 681, 1024 };
+
+	// 3. 배경 컴포넌트 만들기
+	auto Ending3Comp = Ending3->AddComponent<BackgroundComponent>(Ending3info);
+	Ending3Comp->SetWidth(340);
+	Ending3Comp->SetHeight(1024);
+	D2D1_RECT_F d1 = { 341, 0 , 681, 1024 };
+	Ending3Comp->BitmapPush("Background", imgs[1].Get());
+	Ending3Comp->SetCurrentBitmap("Background");
+	Ending3Comp->SetSrcRect(d1);
+
+	/// 9
+	m_gameObjects.emplace("-2", std::move(Ending3));
+
+
+	///////////////////////////////////
+	// 2. 오브젝트 만들기
+	auto Ending4 = std::make_unique<Object>();
+	Ending4->SetPosition(Vec2(17 + 341 + 340, 22));
+
+	auto Ending4info = Ending4->GetRenderInfo();
+	Ending4info->SetBitmap(imgs[2].Get());
+	Ending4info->GetRenderInfo().opacity = 0;
+	Ending4info->GetRenderInfo().srcRect = { 341, 0 , 681, 1024 };
+
+	// 3. 배경 컴포넌트 만들기
+	auto Ending4Comp = Ending4->AddComponent<BackgroundComponent>(Ending4info);
+	Ending4Comp->SetWidth(341);
+	Ending4Comp->SetHeight(1024);
+
+	Ending4Comp->BitmapPush("Background", imgs[2].Get());
+	Ending4Comp->SetCurrentBitmap("Background");
+	Ending4Comp->SetSrcRect(d);
+
+	/// 9
+	m_gameObjects.emplace("-1", std::move(Ending4));
+
+
 
 	//////////////////////
 	//////////////////////
@@ -232,7 +312,7 @@ void Scene_History::CreateObj()
 	우측창Comp->SetCurrentBitmap("우측창");
 
 	/// 9
-	m_gameObjects.emplace("0a우측창", std::move(우측창));
+	m_gameObjects.emplace("--", std::move(우측창));
 
 	//////////////////////
 	//////////////////////
@@ -256,7 +336,8 @@ void Scene_History::CreateObj()
 	// 4. 버튼 비트맵 설정
 	스킵컴포넌트->BitmapPush("스킵", History4);
 	스킵컴포넌트->BitmapPush("transparent", transparentImg);
-	스킵컴포넌트->SetCurrentBitmap("transparent");
+	//스킵컴포넌트->SetCurrentBitmap("transparent");
+	스킵컴포넌트->SetCurrentBitmap("스킵");
 
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 스킵리스너 = 스킵버튼->AddComponent<MouseListenerComponent>(
@@ -320,6 +401,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h101Info = h101Obj->GetRenderInfo();
 		h101Info->SetBitmap(h101Img.Get());
+		h101Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h101Comp = h101Obj->AddComponent<BackgroundComponent>(h101Info);
@@ -328,7 +410,8 @@ void Scene_History::CreateObj()
 		h101Comp->SetWidth(1264); h101Comp->SetHeight(142);
 		h101Comp->BitmapPush("Background", h101Img);
 		h101Comp->BitmapPush("transparent", transparentImg);
-		h101Comp->SetCurrentBitmap("transparent");
+		//h101Comp->SetCurrentBitmap("transparent");
+		h101Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("1", std::move(h101Obj));
@@ -349,6 +432,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h102Info = h102Obj->GetRenderInfo();
 		h102Info->SetBitmap(h102Img.Get());
+		h102Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h102Comp = h102Obj->AddComponent<BackgroundComponent>(h102Info);
@@ -357,7 +441,8 @@ void Scene_History::CreateObj()
 		h102Comp->SetWidth(560 ); h102Comp->SetHeight(31);
 		h102Comp->BitmapPush("Background", h102Img);
 		h102Comp->BitmapPush("transparent", transparentImg);
-		h102Comp->SetCurrentBitmap("transparent");
+		//h102Comp->SetCurrentBitmap("transparent");
+		h102Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("2", std::move(h102Obj));
@@ -378,6 +463,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h103Info = h103Obj->GetRenderInfo();
 		h103Info->SetBitmap(h103Img.Get());
+		h103Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h103Comp = h103Obj->AddComponent<BackgroundComponent>(h103Info);
@@ -386,7 +472,8 @@ void Scene_History::CreateObj()
 		h103Comp->SetWidth(388 ); h103Comp->SetHeight(80);
 		h103Comp->BitmapPush("Background", h103Img);
 		h103Comp->BitmapPush("transparent", transparentImg);
-		h103Comp->SetCurrentBitmap("transparent");
+		//h103Comp->SetCurrentBitmap("transparent");
+		h103Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("3", std::move(h103Obj));
@@ -407,6 +494,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h104Info = h104Obj->GetRenderInfo();
 		h104Info->SetBitmap(h104Img.Get());
+		h104Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h104Comp = h104Obj->AddComponent<BackgroundComponent>(h104Info);
@@ -415,7 +503,8 @@ void Scene_History::CreateObj()
 		h104Comp->SetWidth(588); h104Comp->SetHeight(127);
 		h104Comp->BitmapPush("Background", h104Img);
 		h104Comp->BitmapPush("transparent", transparentImg);
-		h104Comp->SetCurrentBitmap("transparent");
+		//h104Comp->SetCurrentBitmap("transparent");
+		h104Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("4", std::move(h104Obj));
@@ -436,6 +525,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h105Info = h105Obj->GetRenderInfo();
 		h105Info->SetBitmap(h105Img.Get());
+		h105Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h105Comp = h105Obj->AddComponent<BackgroundComponent>(h105Info);
@@ -444,7 +534,8 @@ void Scene_History::CreateObj()
 		h105Comp->SetWidth(481); h105Comp->SetHeight(79);
 		h105Comp->BitmapPush("Background", h105Img);
 		h105Comp->BitmapPush("transparent", transparentImg);
-		h105Comp->SetCurrentBitmap("transparent");
+		//h105Comp->SetCurrentBitmap("transparent");
+		h105Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("5", std::move(h105Obj));
@@ -467,6 +558,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h201Info = h201Obj->GetRenderInfo();
 		h201Info->SetBitmap(h201Img.Get());
+		h201Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h201Comp = h201Obj->AddComponent<BackgroundComponent>(h201Info);
@@ -475,7 +567,8 @@ void Scene_History::CreateObj()
 		h201Comp->SetWidth(559); h201Comp->SetHeight(49);
 		h201Comp->BitmapPush("Background", h201Img);
 		h201Comp->BitmapPush("transparent", transparentImg);
-		h201Comp->SetCurrentBitmap("transparent");
+		//h201Comp->SetCurrentBitmap("transparent");
+		h201Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("1", std::move(h201Obj));
@@ -496,6 +589,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h202Info = h202Obj->GetRenderInfo();
 		h202Info->SetBitmap(h202Img.Get());
+		h202Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h202Comp = h202Obj->AddComponent<BackgroundComponent>(h202Info);
@@ -504,7 +598,8 @@ void Scene_History::CreateObj()
 		h202Comp->SetWidth(417); h202Comp->SetHeight(32);
 		h202Comp->BitmapPush("Background", h202Img);
 		h202Comp->BitmapPush("transparent", transparentImg);
-		h202Comp->SetCurrentBitmap("transparent");
+		//h202Comp->SetCurrentBitmap("transparent");
+		h202Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("2", std::move(h202Obj));
@@ -525,6 +620,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h203Info = h203Obj->GetRenderInfo();
 		h203Info->SetBitmap(h203Img.Get());
+		h203Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h203Comp = h203Obj->AddComponent<BackgroundComponent>(h203Info);
@@ -533,7 +629,8 @@ void Scene_History::CreateObj()
 		h203Comp->SetWidth(494); h203Comp->SetHeight(79);
 		h203Comp->BitmapPush("Background", h203Img);
 		h203Comp->BitmapPush("transparent", transparentImg);
-		h203Comp->SetCurrentBitmap("transparent");
+		//h203Comp->SetCurrentBitmap("transparent");
+		h203Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("3", std::move(h203Obj));
@@ -554,6 +651,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h204Info = h204Obj->GetRenderInfo();
 		h204Info->SetBitmap(h204Img.Get());
+		h204Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h204Comp = h204Obj->AddComponent<BackgroundComponent>(h204Info);
@@ -562,7 +660,8 @@ void Scene_History::CreateObj()
 		h204Comp->SetWidth(611); h204Comp->SetHeight(127);
 		h204Comp->BitmapPush("Background", h204Img);
 		h204Comp->BitmapPush("transparent", transparentImg);
-		h204Comp->SetCurrentBitmap("transparent");
+		//h204Comp->SetCurrentBitmap("transparent");
+		h204Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("4", std::move(h204Obj));
@@ -583,6 +682,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h205Info = h205Obj->GetRenderInfo();
 		h205Info->SetBitmap(h205Img.Get());
+		h205Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h205Comp = h205Obj->AddComponent<BackgroundComponent>(h205Info);
@@ -591,7 +691,8 @@ void Scene_History::CreateObj()
 		h205Comp->SetWidth(582); h205Comp->SetHeight(33);
 		h205Comp->BitmapPush("Background", h205Img);
 		h205Comp->BitmapPush("transparent", transparentImg);
-		h205Comp->SetCurrentBitmap("transparent");
+		//h205Comp->SetCurrentBitmap("transparent");
+		h205Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("5", std::move(h205Obj));
@@ -611,6 +712,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h206Info = h206Obj->GetRenderInfo();
 		h206Info->SetBitmap(h206Img.Get());
+		h206Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h206Comp = h206Obj->AddComponent<BackgroundComponent>(h206Info);
@@ -619,7 +721,8 @@ void Scene_History::CreateObj()
 		h206Comp->SetWidth(529); h206Comp->SetHeight(79);
 		h206Comp->BitmapPush("Background", h206Img);
 		h206Comp->BitmapPush("transparent", transparentImg);
-		h206Comp->SetCurrentBitmap("transparent");
+		//h206Comp->SetCurrentBitmap("transparent");
+		h206Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("6", std::move(h206Obj));
@@ -643,6 +746,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h301Info = h301Obj->GetRenderInfo();
 		h301Info->SetBitmap(h301Img.Get());
+		h301Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h301Comp = h301Obj->AddComponent<BackgroundComponent>(h301Info);
@@ -651,7 +755,8 @@ void Scene_History::CreateObj()
 		h301Comp->SetWidth(559); h301Comp->SetHeight(50);
 		h301Comp->BitmapPush("Background", h301Img);
 		h301Comp->BitmapPush("transparent", transparentImg);
-		h301Comp->SetCurrentBitmap("transparent");
+		//h301Comp->SetCurrentBitmap("transparent");
+		h301Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("1", std::move(h301Obj));
@@ -672,6 +777,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h302Info = h302Obj->GetRenderInfo();
 		h302Info->SetBitmap(h302Img.Get());
+		h302Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h302Comp = h302Obj->AddComponent<BackgroundComponent>(h302Info);
@@ -680,7 +786,8 @@ void Scene_History::CreateObj()
 		h302Comp->SetWidth(551); h302Comp->SetHeight(31);
 		h302Comp->BitmapPush("Background", h302Img);
 		h302Comp->BitmapPush("transparent", transparentImg);
-		h302Comp->SetCurrentBitmap("transparent");
+		//h302Comp->SetCurrentBitmap("transparent");
+		h302Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("2", std::move(h302Obj));
@@ -701,6 +808,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h303Info = h303Obj->GetRenderInfo();
 		h303Info->SetBitmap(h303Img.Get());
+		h303Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h303Comp = h303Obj->AddComponent<BackgroundComponent>(h303Info);
@@ -710,6 +818,7 @@ void Scene_History::CreateObj()
 		h303Comp->BitmapPush("Background", h303Img);
 		h303Comp->BitmapPush("transparent", transparentImg);
 		h303Comp->SetCurrentBitmap("transparent");
+		h303Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("3", std::move(h303Obj));
@@ -730,6 +839,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h304Info = h304Obj->GetRenderInfo();
 		h304Info->SetBitmap(h304Img.Get());
+		h304Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h304Comp = h304Obj->AddComponent<BackgroundComponent>(h304Info);
@@ -738,7 +848,8 @@ void Scene_History::CreateObj()
 		h304Comp->SetWidth(365); h304Comp->SetHeight(80);
 		h304Comp->BitmapPush("Background", h304Img);
 		h304Comp->BitmapPush("transparent", transparentImg);
-		h304Comp->SetCurrentBitmap("transparent");
+		//h304Comp->SetCurrentBitmap("transparent");
+		h304Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("4", std::move(h304Obj));
@@ -759,6 +870,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h305Info = h305Obj->GetRenderInfo();
 		h305Info->SetBitmap(h305Img.Get());
+		h305Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h305Comp = h305Obj->AddComponent<BackgroundComponent>(h305Info);
@@ -767,7 +879,8 @@ void Scene_History::CreateObj()
 		h305Comp->SetWidth(455); h305Comp->SetHeight(79);
 		h305Comp->BitmapPush("Background", h305Img);
 		h305Comp->BitmapPush("transparent", transparentImg);
-		h305Comp->SetCurrentBitmap("transparent");
+		//h305Comp->SetCurrentBitmap("transparent");
+		h305Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("5", std::move(h305Obj));
@@ -790,6 +903,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h401Info = h401Obj->GetRenderInfo();
 		h401Info->SetBitmap(h401Img.Get());
+		h401Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h401Comp = h401Obj->AddComponent<BackgroundComponent>(h401Info);
@@ -798,7 +912,8 @@ void Scene_History::CreateObj()
 		h401Comp->SetWidth(419); h401Comp->SetHeight(124);
 		h401Comp->BitmapPush("Background", h401Img);
 		h401Comp->BitmapPush("transparent", transparentImg);
-		h401Comp->SetCurrentBitmap("transparent");
+		//h401Comp->SetCurrentBitmap("transparent");
+		h401Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("1", std::move(h401Obj));
@@ -819,6 +934,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h402Info = h402Obj->GetRenderInfo();
 		h402Info->SetBitmap(h402Img.Get());
+		h402Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h402Comp = h402Obj->AddComponent<BackgroundComponent>(h402Info);
@@ -827,7 +943,8 @@ void Scene_History::CreateObj()
 		h402Comp->SetWidth(397); h402Comp->SetHeight(32);
 		h402Comp->BitmapPush("Background", h402Img);
 		h402Comp->BitmapPush("transparent", transparentImg);
-		h402Comp->SetCurrentBitmap("transparent");
+		//h402Comp->SetCurrentBitmap("transparent");
+		h402Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("2", std::move(h402Obj));
@@ -848,6 +965,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h403Info = h403Obj->GetRenderInfo();
 		h403Info->SetBitmap(h403Img.Get());
+		h403Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h403Comp = h403Obj->AddComponent<BackgroundComponent>(h403Info);
@@ -856,7 +974,8 @@ void Scene_History::CreateObj()
 		h403Comp->SetWidth(573); h403Comp->SetHeight(31);
 		h403Comp->BitmapPush("Background", h403Img);
 		h403Comp->BitmapPush("transparent", transparentImg);
-		h403Comp->SetCurrentBitmap("transparent");
+		//h403Comp->SetCurrentBitmap("transparent");
+		h403Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("3", std::move(h403Obj));
@@ -877,6 +996,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h404Info = h404Obj->GetRenderInfo();
 		h404Info->SetBitmap(h404Img.Get());
+		h404Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h404Comp = h404Obj->AddComponent<BackgroundComponent>(h404Info);
@@ -885,7 +1005,8 @@ void Scene_History::CreateObj()
 		h404Comp->SetWidth(574); h404Comp->SetHeight(79);
 		h404Comp->BitmapPush("Background", h404Img);
 		h404Comp->BitmapPush("transparent", transparentImg);
-		h404Comp->SetCurrentBitmap("transparent");
+		//h404Comp->SetCurrentBitmap("transparent");
+		h404Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("4", std::move(h404Obj));
@@ -906,6 +1027,7 @@ void Scene_History::CreateObj()
 		// 3.0. 랜더 인포 컴포넌트
 		auto h405Info = h405Obj->GetRenderInfo();
 		h405Info->SetBitmap(h405Img.Get());
+		h405Info->GetRenderInfo().opacity = 0.f;
 
 		// 3. 배경 컴포넌트 만들기
 		auto h405Comp = h405Obj->AddComponent<BackgroundComponent>(h405Info);
@@ -914,7 +1036,8 @@ void Scene_History::CreateObj()
 		h405Comp->SetWidth(589); h405Comp->SetHeight(79);
 		h405Comp->BitmapPush("Background", h405Img);
 		h405Comp->BitmapPush("transparent", transparentImg);
-		h405Comp->SetCurrentBitmap("transparent");
+		//h405Comp->SetCurrentBitmap("transparent");
+		h405Comp->SetCurrentBitmap("Background");
 
 		// 9. 게임 오브젝트들에 집어넣기
 		m_gameObjects.emplace("5", std::move(h405Obj));
@@ -923,13 +1046,13 @@ void Scene_History::CreateObj()
 	}
 }
 
-void Scene_History::DeactivateAllTexts()
+void Scene_History::DeactivateAllImgs()
 {
 	try
 	{
 		if (m_History == History::H2)
 		{
-			for (int i = 1; i <= 6; i++)
+			for (int i = -3; i <= 6; i++)
 			{
 				string objName = to_string(i);
 				auto it = m_gameObjects.find(objName);
@@ -938,8 +1061,9 @@ void Scene_History::DeactivateAllTexts()
 					auto bgComp = it->second->GetComponent<BackgroundComponent>();
 					if (bgComp)
 					{
-						bgComp->SetCurrentBitmap("transparent");
-						cout << "H2 텍스트 " << i << " 비활성화됨" << endl;
+						bgComp->SetOpacity(0);
+						//bgComp->SetCurrentBitmap("transparent");
+						//cout << "H2 텍스트 " << i << " 비활성화됨" << endl;
 					}
 				}
 				else
@@ -950,7 +1074,7 @@ void Scene_History::DeactivateAllTexts()
 		}
 		else
 		{
-			for (int i = 1; i <= 5; i++)
+			for (int i = -3; i <= 5; i++)
 			{
 				string objName = to_string(i);
 				auto it = m_gameObjects.find(objName);
@@ -959,8 +1083,9 @@ void Scene_History::DeactivateAllTexts()
 					auto bgComp = it->second->GetComponent<BackgroundComponent>();
 					if (bgComp)
 					{
-						bgComp->SetCurrentBitmap("transparent");
-						cout << "텍스트 " << i << " 비활성화됨" << endl;
+						bgComp->SetOpacity(0);
+						//bgComp->SetCurrentBitmap("transparent");
+						//cout << "텍스트 " << i << " 비활성화됨" << endl;
 					}
 				}
 				else
@@ -987,7 +1112,9 @@ void Scene_History::ActivateSingleText(int idx)
 		auto bgComp = it->second->GetComponent<BackgroundComponent>();
 		if (bgComp)
 		{
-			bgComp->SetCurrentBitmap("Background");
+			float o = std::clamp(m_currentShowingDelay, 0.0f, 1.0f);
+			bgComp->SetOpacity(o);
+			//bgComp->SetCurrentBitmap("Background");
 			cout << idx << "번 텍스트 활성화됨" << endl;
 		}
 	}

@@ -101,26 +101,26 @@ void SceneStandard::Render() //UI 렌더
 
 void SceneStandard::AssetMapping() 
 {
-		for (auto& [name, obj] : m_gameObjects) { //map의 auto 반복문은 이런 구조...
-				for (const auto& asset : SceneAssets) {
-						if (asset.Name == name) {
-								{
-										if (obj->GetComponent<SpriteRenderer>() != nullptr)
-										{
-												obj->GetComponent<SpriteRenderer>()->AddClip(asset.Ani_Name, asset.clip);
-												if (asset.Ani_Name == "Idle")
-														obj->GetComponent<SpriteRenderer>()->SetCurrentClip(&asset.clip);
-										}
-										else if (obj->GetComponent<UI_Renderer>() != nullptr)
-										{
-												obj->GetComponent<UI_Renderer>()->SetBitmap(asset.clip.GetBitmap()); //아 근데 이건 고민해 봐야 할 듯, 버튼도 여러개일 거니깐 
-										}
+	for (auto& [name, obj] : m_gameObjects) { //map의 auto 반복문은 이런 구조...
+		for (const auto& asset : SceneAssets) {
+			if (asset.Name == name) {
+				{
+					if (obj->GetComponent<SpriteRenderer>() != nullptr)
+					{
+						obj->GetComponent<SpriteRenderer>()->AddClip(asset.Ani_Name, asset.clip);
+						if (asset.Ani_Name == "Idle")
+							obj->GetComponent<SpriteRenderer>()->SetCurrentClip(&asset.clip);
+					}
+					else if (obj->GetComponent<UI_Renderer>() != nullptr)
+					{
+						obj->GetComponent<UI_Renderer>()->SetBitmap(asset.clip.GetBitmap()); //아 근데 이건 고민해 봐야 할 듯, 버튼도 여러개일 거니깐 
+					}
 
-								}
-						}
 				}
-				return;
+			}
 		}
+		return;
+	}
 }
 
 // 안전한 씬 전환을 위한 헬퍼 함수

@@ -33,6 +33,9 @@ public:
 	void SetWidth(float w) { width = w; m_renderInfo->SetDestRight(width); }
 	void SetHeight(float h) { height = h; m_renderInfo->SetDestBottom(height); }
 
+	void SetOpacity(float o) { m_renderInfo->SetOpacity(o); }
+	void SetSrcRect(D2D1_RECT_F d) { m_renderInfo->SetSrcRect(d); }
+
 private:
 	RenderInfo* m_renderInfo;
 	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmaps;

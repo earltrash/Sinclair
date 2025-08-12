@@ -31,7 +31,11 @@ public:
 		NORMAL
 	};
 
+
+
 private:
-	Window m_window = NORMAL;
+	//Window m_window = NORMAL;
+
+	//bool m_windowChange = false;
 };
 

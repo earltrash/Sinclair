@@ -19,6 +19,6 @@ public:
 		void CreateObj();
 
 private:
-	bool isSETTING = false;
+
 };
 

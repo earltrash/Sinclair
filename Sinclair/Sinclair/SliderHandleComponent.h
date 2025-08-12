@@ -38,6 +38,19 @@ public:
         std::cout << "[SliderHandle] 외부 값 바인딩: " << externalValue << std::endl;
     }
 
+    // 이미지 담아놓기 위한 구조
+    unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmaps;
+
+    void BitmapPush(string NM, ComPtr<ID2D1Bitmap1> Bitmap)
+    {
+        m_Bitmaps.emplace(NM, Bitmap);
+    }
+
+    void SetCurrentBitmap(string Nm)
+    {
+        m_renderInfo->SetBitmap(m_Bitmaps[Nm].Get());
+    }
+
     void SetWidth(float w) {
         m_width = w;
         UpdateDestRect();

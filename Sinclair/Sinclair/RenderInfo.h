@@ -73,7 +73,7 @@ public:
 		return m_renderInfo.bitmap;
 	}
 
-	const renderInfo& GetRenderInfo()							// Scene - Render()에서 사용
+	renderInfo& GetRenderInfo()							// Scene - Render()에서 사용
 	{ 
 		return m_renderInfo; 
 	}

@@ -68,8 +68,5 @@ private:
 
 	std::wstring characterName;
 	std::string curText;
-
-	bool isSETTING = false;
-
 };
 
