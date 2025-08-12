@@ -22,12 +22,14 @@ void ToolTip::Update()
 	//폐지 예정 
 		Item* item = CursorManager::Get().GetHoveredItem(); //이거 말고 다른 거 가져와야 함. 
 
-		if (item != nullptr) //안될 리가 없음요!! 
+		if (item != nullptr) 
 		{
+				std::cout << "아이템 툴팁 보이게 할거임." << std::endl;
 				m_isActive = true;
 		}
 		else
 		{
+				std::cout << "아이템 툴팁 안보이게 할거임." << std::endl;
 				m_isActive = false;
 		}
 }

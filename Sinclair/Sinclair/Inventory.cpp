@@ -350,7 +350,6 @@ bool Inventory::HandleMouseHover(Vec2 mousePos)
              Item* data = m_itemDatabase.GetItemData(hoveredSlot->item.id); // 그 저장된 아이템 정보 가져오는 거임. ㅇㅇ 
              //Item* data = hoveredSlot->item.
 
-
             if (data)
             {
                 CursorManager::Get().SetHoveredItem(data); 
@@ -540,20 +539,6 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
     {
         return false; // 다른 창에서 처리하도록 넘김
     }
-
-
-
-    if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
-    {
-        // sheetimage 다시 render 해야해서 그냥 inven으로 복구.
-        auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-        if (inventoryWindow)
-        {
-            inventoryWindow->AddItem(draggedItem->m_data.id, 1);
-            std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
-        }
-    }
-
    
     return false;
 }

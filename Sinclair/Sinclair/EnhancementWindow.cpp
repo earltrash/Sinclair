@@ -302,6 +302,38 @@ bool EnhancementWindow::HandleMouseHover(Vec2 mousePos)
 				}
 		}
 		
+		if (!m_isDragging)
+		{
+				// 슬롯에 마우스 오버 시 툴팁 표시. 상대좌표로 변환
+				Vec2 relativePos = mousePos - m_position;
+				SynSlot whichSlot = SlotInit(relativePos);
+
+				if (whichSlot == SynSlot::Result)
+				{
+						std::cout << "슬롯에 위치해있음." << std::endl;
+						Item* Clicked_Item = m_targetItem;
+						if (Clicked_Item != nullptr)
+						{
+								CursorManager::Get().SetHoveredItem(Clicked_Item);
+								Vec2 tooltipPos = mousePos + Vec2(10, 10);
+
+								UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //위치 변경시키고, 활성화까지 
+								return true;
+						}
+						else
+								return true;
+
+				}
+				else
+				{
+
+						std::cout << "슬롯 아이템이 없거나 위치 아니여서 닫음." << std::endl;
+						UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip);
+						CursorManager::Get().HoveredReleased(); //추적 금지 
+						return false;
+				}
+		}
+
 		return true;
 }
 
@@ -890,6 +922,20 @@ void EnhancementWindow::ReturnItemToInventory()
 						m_renderSheetCount = 0;
 				}
 		}
+}
+
+SynSlot EnhancementWindow::SlotInit(Vec2 pos)
+{
+		// 슬롯 위치 return 있으면 result 없으면 nothing임.
+		// slot size 74
+		if (pos.x >= m_enhancementSlot.get()->GetTransform().GetPosition().x &&
+			  pos.x <= m_enhancementSlot.get()->GetTransform().GetPosition().x + SlotSize &&
+				pos.y >= m_enhancementSlot.get()->GetTransform().GetPosition().y &&
+				pos.y <= m_enhancementSlot.get()->GetTransform().GetPosition().y + SlotSize)
+		{
+				return SynSlot::Result;
+		}
+		return SynSlot::Nothing;
 }
 
 

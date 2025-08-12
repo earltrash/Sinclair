@@ -413,8 +413,11 @@ bool SynthesisWin::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSourc
 				if (inventoryWindow->AddItem(draggedItem->m_data.id, 1))
 				{
 						std::cout << "합성 불가능한 아이템을 인벤토리로 복구: " << draggedItem->m_data.id << std::endl;
+						
 						return true;
 				}
+
+				CursorManager::Get().EndItemDrag();
 		}
 
 		return false;
