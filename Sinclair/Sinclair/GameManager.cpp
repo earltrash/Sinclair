@@ -415,6 +415,7 @@ void GameManager::FindEnding()
     // 전체 상위 엔딩 (모든 스탯 50% 이상)
     if (positiveStats.size() >= 5) {
         arrEndingID[curGen - 2] = 3011;
+        arrTotalFam[curGen - 2] = 7;
         if (debug) cout << "결과: 전체 상위 엔딩 (3011 - 선택받은 자)" << endl;
         return;
     }
@@ -422,6 +423,7 @@ void GameManager::FindEnding()
     // 전체 하위 엔딩 (모든 스탯 20% 이하)
     if (negativeStats.size() >= 5) {
         arrEndingID[curGen - 2] = 3031;
+        arrTotalFam[curGen - 2] = 1;
         if (debug) cout << "결과: 전체 하위 엔딩 (3031 - 평범한 가정)" << endl;
         return;
     }
@@ -429,6 +431,7 @@ void GameManager::FindEnding()
     // positive가 없는 경우 중간 엔딩
     if (positiveStats.size() == 0) {
         arrEndingID[curGen - 2] = 3021;
+        arrTotalFam[curGen - 2] = 2;
         if (debug) cout << "결과: 중간 엔딩 (3021 - 모험가) - positive 스탯 없음" << endl;
         return;
     }
@@ -539,12 +542,14 @@ void GameManager::FindEnding()
 
         // 모든 조건이 매칭되면 해당 엔딩 선택
         arrEndingID[curGen - 2] = ending.ID;
+        arrTotalFam[curGen - 2] = ending.fame;
 
         if(debug) cout << "매칭된 엔딩: " << ending.ID << " - " << ending.job << endl;
         return;
     }
 
     // 매칭되는 엔딩이 없으면 기본 엔딩 (중)
+    arrTotalFam[curGen - 2] = 2;
     arrEndingID[curGen - 2] = 3021;
     if(debug)
     {

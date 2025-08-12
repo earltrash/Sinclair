@@ -63,7 +63,8 @@ public:// get set 만들기 전
     float bgmValue = 1.0f;
     float sfxValue = 1.0f;
     
-
+    // 엔딩에 필요한 숫자
+    std::array<int, 3> arrEndingID{};
     std::array<TotalStatus, 3> arrTotalStatus{};
     std::array<int, 3> arrTotalFam{};
     
@@ -132,8 +133,5 @@ public:// get set 만들기 전
         }
     }
 
-    // 엔딩에 필요한 숫자
-    std::array<int, 3> arrEndingID{};
-    std::array<int, 3> arrFame{};
 
 };
