@@ -165,7 +165,7 @@ void ToolTip::DrawMessageCenterHorizontal(const std::wstring& text, float topY, 
 		centerX,
 		topY,
 		textWidth+50,  // width는 "길이"로
-		fontSize,   // height는 폰트 크기 기반
+		fontSize + 10,   // height는 폰트 크기 기반
 		color
 	);
 }

@@ -421,7 +421,7 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 	}
 }
 
-		if (IsInBounds(mousePos))
+		if (IsInBounds(relativePos))
 		{
 				// 창 영역 내에서 드래그된 아이템이 있으면 인벤토리로 반환
 				if (CursorManager::Get().IsDragging())
@@ -892,7 +892,8 @@ void EnhancementWindow::TryEnhance(int successRate)
 		std::uniform_int_distribution<int> dist(1, 100);
 
 		int roll = dist(m_rng);
-		bool success = roll <= successRate;
+		//bool success = roll <= successRate;
+		bool success = true;
 		auto& results = wearableItem->GetEnchancResult();
 		int currentIndex = -1;
 

@@ -42,12 +42,25 @@ bool UIWindow::HandleInput(const MSG& msg)
 		if (!m_isActive)
 				return false;
 
+		auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 
 		Vec2 CORD = { static_cast<float>(F_GET_X_LPARAM(msg.lParam)), static_cast<float>(F_GET_Y_LPARAM(msg.lParam)) };
 
 		// 1. WM_LBUTTONUP은 드래그 상태를 해제해야 하므로 가장 먼저 처리
 		if (msg.message == WM_LBUTTONDOWN)
 		{
+				if (m_windowType == UIWindowType::InventoryWindow)
+				{
+						if (!inventory->IsInInventoryBounds(CORD)) return false;
+				}
+				else
+				{
+						if (!IsInBounds(CORD))
+						{
+								return false; // 영역 밖이면 바로 false 반환
+						}
+				}
+
 				// 닫기창이면 끔.
 				if (IsInCloseButton(CORD))
 				{

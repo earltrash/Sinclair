@@ -42,6 +42,8 @@ bool EquipmentWindow::HandleMouseDown(Vec2 mousePos)
 {
     if (!m_isActive) return false;
 
+    Vec2 localMousePos = mousePos - m_position;
+
     // 2. 슬롯 영역 클릭 체크
     Wearable_part clickedSlot = GetSlotTypeAt(mousePos);
     if (clickedSlot != Wearable_part::UnKnown)
@@ -60,7 +62,7 @@ bool EquipmentWindow::HandleMouseDown(Vec2 mousePos)
         return true;
     }
     // 창 내부 클릭 이벤트 처리 완료. 그래서 화면 최상단으로 올리기.
-    if (IsInBounds(mousePos))
+    if (IsInBounds(localMousePos))
     {
         UIManager::Get().OpenWindow(m_windowType);
         return true;

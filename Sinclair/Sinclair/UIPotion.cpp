@@ -135,6 +135,8 @@ bool UIPotion::HandleMouseDown(Vec2 mousePos)
                 }
             }
         }
+        UIManager::Get().OpenWindow(UIWindowType::StatPotionUseWindow);
+        return true;
     }
     
     return false;

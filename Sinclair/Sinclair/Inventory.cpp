@@ -6,7 +6,7 @@
 #include "Potion.h"
 #include "Wearable.h"
 //: UI_Object(MWP) //?ì„±?ë¡œ ?ì—­?€ ?¼ë‹¨ ?¤ì •??(Inven ?ê¸° ?ì—­ ë§ìž„)
-Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 400,100 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
+Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 0,0 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
 {
 
     m_bound = { 0,0,1208,825 }; // ì´ˆê¸° ?„ì¹˜  
@@ -390,7 +390,10 @@ bool Inventory::HandleMouseDown(Vec2 mousePos) //¾îÂ÷ÇÇ Inven À§Ä¡ ³»¿¡ ÀÖ¾î¾ß À
 {
     if (!m_isActive) return false;
 
+    //Vec2 localPos = mousePos - m_position;
+
     InventorySlot* slot = GetSlotAt(mousePos);
+
     if (slot && !slot->IsEmpty() && slot->isEnabled)
     {
 
@@ -411,14 +414,38 @@ bool Inventory::HandleMouseDown(Vec2 mousePos) //¾îÂ÷ÇÇ Inven À§Ä¡ ³»¿¡ ÀÖ¾î¾ß À
         return true; // ÀÔ·Â Ã³¸® ¿Ï·á
     }
     // ¿µ¿ª ¾È Å¬¸¯ ½Ã ÃÖ»ó´ÜÀ¸·Î.
-    if (IsInBounds(mousePos))
+    if (IsInInventoryBounds(mousePos))
     {
+        std::cout << "¹Ù¿îµå ¿µ¿ª ¾ÈÀÌ´Ï±î ÀÔ·ÂÃ³¸®Çß°í ³¡³½´Ù." << std::endl;
         UIManager::Get().OpenWindow(m_windowType);
         return true;
     }
 
     return false;
 }
+
+
+
+//bool Inventory::IsInBounds(const Vec2& screenPos) const
+//{
+//    // È­¸é ÁÂÇ¥ -> ·ÎÄÃ ÁÂÇ¥ º¯È¯
+//    Vec2 localPos = screenPos - m_position;
+//
+//    // µð¹ö±× Ãâ·Â
+//    std::cout << "[IsInBounds]  ScreenPos: (" << screenPos.x << ", " << screenPos.y << ")\n";
+//    std::cout << "              WindowPos: (" << m_position.x << ", " << m_position.y << ")\n";
+//    std::cout << "              LocalPos:  (" << localPos.x << ", " << localPos.y << ")\n";
+//    std::cout << "              Bound: L=" << m_bound.x << " T=" << m_bound.y << " x + width=" << m_bound.x + m_bound.width << " y + height=" << m_bound.y + m_bound.height << "\n";
+//
+//    bool inside = m_bound.Contains(localPos);
+//
+//    std::cout << "              Inside? " << (inside ? "YES" : "NO") << "\n\n";
+//
+//    return inside;
+//}
+
+
+
 
 bool Inventory::HandleMouseUp(Vec2 mousePos) //±× ³õÀº À§Ä¡¿¡ ´ëÇÑ ¿¹¿ÜÃ³¸®¸¦ ÇØ¾ß ÇÔ. ´©°¡ ½ÃÀÛ Çß´ÂÁö ¾Ë¾Æ¾ß ÇÒ µí 
 {
@@ -519,6 +546,11 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //±× ³õÀº À§Ä¡¿¡ ´ëÇÑ ¿¹¿ÜÃ³¸®¸¦ ÇØ
             // ÀÌ¶§¸¸ È£ÃâÇØ¾ßÇÔ.
             return false;
         }
+    }
+    if (IsInInventoryBounds(mousePos))
+    {
+        UIManager::Get().OpenWindow(m_windowType);
+        return true;
     }
 
     return false;
@@ -904,6 +936,20 @@ void Inventory::ClearAllSlots()
     m_itemDatabase.ClearAllItems();
 
     std::cout << "[Inventory] ¸ðµç ½½·ÔÀÌ ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù." << std::endl;
+}
+
+bool Inventory::IsInInventoryBounds(const Vec2& screenPos) const
+{
+    bool inside = screenPos.x >= m_position.x && screenPos.x <= m_position.x + m_size.x &&
+        screenPos.y >= m_position.y && screenPos.y <= m_position.y + m_size.y;
+
+    // µð¹ö±× Ãâ·Â
+    std::cout << "[IsInInventoryBounds] ScreenPos: (" << screenPos.x << ", " << screenPos.y << ")\n";
+    std::cout << "                     WindowPos: (" << m_position.x << ", " << m_position.y << ")\n";
+    std::cout << "                     WindowSize: (" << m_size.x << ", " << m_size.y << ")\n";
+    std::cout << "                     Inside? " << (inside ? "YES" : "NO") << "\n\n";
+
+    return inside;
 }
 
 ItemDatabase& Inventory::GetItemBase()
