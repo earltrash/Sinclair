@@ -264,8 +264,8 @@ void UIManager::HandleKeyboardInput(WPARAM& msg)
             if (enhancementWindow)
             {
                 enhancementWindow->ReturnItemToInventory();
-                CloseWindow(m_activeWindowOrder.back());
             }
+            CloseWindow(m_activeWindowOrder.back());
         }
         // 합성창인 경우 슬롯의 아이템들을 인벤토리로 반환
         else if (m_activeWindowOrder.back() == UIWindowType::SynthesisWindow)
@@ -274,8 +274,8 @@ void UIManager::HandleKeyboardInput(WPARAM& msg)
             if (synthesisWindow)
             {
                 synthesisWindow->ReturnItemToInventory();
-                CloseWindow(m_activeWindowOrder.back());
             }
+            CloseWindow(m_activeWindowOrder.back());
         }
         else
         {
