@@ -274,15 +274,7 @@ void Scene_Title::CreateObj()
 	gameSettingButton_buttonComp->SetCurrentBitmap("setting");
 
 	gameSettingButton_buttonComp->SetOnClickCallback([this]() {
-		//if (m_window != SETTING)
-		//{
-		//	m_window = SETTING;
-		//}
-		//else
-		//{
-		//	m_window = NORMAL;
-		//}
-		//m_windowChange = true;
+		UIManager::Get().OpenWindow(UIWindowType::SettingsWindow);
 		});
 
 	m_gameObjects.emplace("settingButton", std::move(settingButton));
@@ -319,8 +311,7 @@ void Scene_Title::CreateObj()
 	creditButton_buttonComp->SetCurrentBitmap("credit");
 
 	creditButton_buttonComp->SetOnClickCallback([this]() {
-		//std::cout << "The Å©·¹µ÷ button is pressed." << std::endl;
-
+		UIManager::Get().OpenWindow(UIWindowType::CreditWindow);
 		});
 
 	m_gameObjects.emplace("creditButton", std::move(creditButton));

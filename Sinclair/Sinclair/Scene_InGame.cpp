@@ -401,7 +401,7 @@ void Scene_InGame::CreateObj()
 	);
 
 	settingComp->SetOnClickCallback([this]() {
-
+		UIManager::Get().OpenWindow(UIWindowType::SettingsWindow);
 		});
 
 	/// 9

@@ -511,8 +511,7 @@ void Scene_Outgame::CreateObj()
 
 
 	settingComp->SetOnClickCallback([this]() {
-		std::cout << "¼³Á¤ ¹öÆ° Å¬¸¯µÊ - ÇöÀç ¾À: " << typeid(*this).name() << std::endl;
-
+		UIManager::Get().OpenWindow(UIWindowType::SettingsWindow);
 		});
 
 	/// 9

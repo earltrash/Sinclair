@@ -14,8 +14,8 @@
 #include "Inventory.h"
 #include "UIPotion.h"
 #include "EnhancementWindow.h"
-
-
+#include "SettingWindow.h"
+#include "CreditWindow.h"
 //GamerManager
 //SoundManager
 // 각각의 inventory, settingwindow, equipment, enhancement, synthesis, statpotionwindow include 하기. 
@@ -25,6 +25,8 @@ class InputManager;
 class CursorManager;
 class EquipmentWindow;
 class StatWindow;
+class Settingwindow;
+class CreditWindow;
 
 //class EquipmentWindow;
 //class Inventory;
