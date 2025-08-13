@@ -7,41 +7,35 @@ void CursorManager::Update()
     if (m_isDragging)
     {
         m_ghostImagePos = InputManager::Get().GetMousePosition();
-        // 약간의 오프셋으로 마우스 커서와 겹치지 않게
-        //m_ghostImagePos.x += 5;
-        //m_ghostImagePos.y += 5;
-    }
-    //드래그 중인 아이템 업데이트
-    if (m_isDragging && m_draggedItem)
-    {
-        m_draggedItem->Update();
-
-        // 장비창에 정보 보내기
-        auto part = m_draggedItem->m_data.wearablePart;
-        //bool isPopped = UIManager::Get().IsWindowActive(UIWindowType::EquipmentWindow);
-        //if (!isPopped) return;
-        //auto pWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
-        if (UIManager::Get().IsWindowActive(UIWindowType::EquipmentWindow))
+        if (m_draggedItem)
         {
-            EquipmentWindow* win =
-                dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
+            m_draggedItem->Update();
 
-            if (win->CanEquipItem(m_draggedItem, part));
-            win->SendEventToComponent("PLAY", part);
+            if (UIManager::Get().IsWindowActive(UIWindowType::EquipmentWindow))
+            {
+                EquipmentWindow* win = dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
+                if (win && win->CanEquipItem(m_draggedItem, m_draggedItem->m_data.wearablePart))
+                {
+                    win->SendEventToComponent("PLAY", m_draggedItem->m_data.wearablePart);
+                }
+            }
+            m_stopDraggingItem = m_draggedItem;
         }
-        m_stopDraggingItem = m_draggedItem;
     }
-    if (!m_isDragging && m_stopDraggingItem != nullptr)
+    // 드래그가 종료되었고, 이전에 드래그한 아이템이 있을 때
+    else if (m_stopDraggingItem != nullptr)
     {
         auto part = m_stopDraggingItem->m_data.wearablePart;
         if (UIManager::Get().IsWindowActive(UIWindowType::EquipmentWindow))
         {
-            EquipmentWindow* win =
-                dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
-
-            if (win->CanEquipItem(m_stopDraggingItem, part));
-            win->SendEventToComponent("STOP", part);
+            EquipmentWindow* win = dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
+            if (win && win->CanEquipItem(m_stopDraggingItem, part))
+            {
+                win->SendEventToComponent("STOP", part);
+            }
         }
+        // 이벤트 전송 후 포인터를 초기화하여 한 번만 실행되도록 함
+        m_stopDraggingItem = nullptr;
     }
 }
 

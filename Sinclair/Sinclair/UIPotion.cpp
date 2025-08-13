@@ -75,45 +75,60 @@ bool UIPotion::HandleMouseHover(Vec2 mousePos)
 {
     if (!m_isActive) return false;
 
-    bool hovered = false;
+    // 마우스가 포션 창의 바운드 안에 있는지 먼저 확인
+    if (IsInBounds(mousePos))
+    {
+        // 버튼 호버 처리
+        bool isButtonHovered = false;
+        for (int i = 0; i < m_button.size(); i++)
+        {
+            if (InButton(m_button[i], mousePos))
+            {
+                m_But_opacity[i] = 0.5f;
+                isButtonHovered = true;
+            }
+            else
+            {
+                m_But_opacity[i] = 1.f;
+            }
+        }
+        return true; // 창 영역 내에 있으므로 이벤트를 처리했음을 알림
+    }
+
+    // 포션 창 영역 밖을 벗어나면 투명도 초기화 후 false 반환
     for (int i = 0; i < m_button.size(); i++)
     {
-        if (InButton(m_button[i], mousePos))
-        {
-            m_But_opacity[i] = 0.5f;
-            hovered = true;
-        }
-        else
-        {
-            m_But_opacity[i] = 1.f;
-        }
+        m_But_opacity[i] = 1.f;
     }
-    return hovered;
+    return false;
 }
 
 bool UIPotion::HandleMouseDown(Vec2 mousePos)
 {
     if (!m_isActive) return false;
 
-    for (int i = 0; i < m_button.size(); i++)
+    if (IsInBounds(mousePos))
     {
-        if (InButton(m_button[i], mousePos))
+        for (int i = 0; i < m_button.size(); i++)
         {
-            m_Stat = static_cast<Status_fundamental>(i);
-            int Much = static_cast<int>(GetLevel()) + 1;
-
-            //스탯창의 스탯 수치를 올리는 식으로 진행 함. -> 이는 후에 최종적으로 gm으로
-            GameManager::Get().PotionUsed(m_Stat, Much); 
-
-            if (auto* inv = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
+            if (InButton(m_button[i], mousePos))
             {
-                if (inv->ConsumePendingPotion())
-                    UIManager::Get().CloseWindow(UIWindowType::StatPotionUseWindow);              
+                m_Stat = static_cast<Status_fundamental>(i);
+                int Much = static_cast<int>(GetLevel()) + 1;
+
+                //스탯창의 스탯 수치를 올리는 식으로 진행 함. -> 이는 후에 최종적으로 gm으로
+                GameManager::Get().PotionUsed(m_Stat, Much);
+
+                if (auto* inv = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
+                {
+                    if (inv->ConsumePendingPotion())
+                    UIManager::Get().CloseWindow(UIWindowType::StatPotionUseWindow);
+                    return true;
+                }
             }
-            
-            return true;
         }
     }
+    
     return false;
 }
 

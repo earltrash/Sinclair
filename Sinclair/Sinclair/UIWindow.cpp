@@ -71,7 +71,7 @@ bool UIWindow::HandleInput(const MSG& msg)
 										synthesisWindow->ReturnItemToInventory();
 								}
 						}
-
+						
 						UIManager::Get().CloseWindow(m_windowType);
 						return true;
 				}

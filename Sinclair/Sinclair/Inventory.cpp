@@ -592,37 +592,29 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아�
 
     if (slot && !slot->IsEmpty())
     {
-        Potion* item = dynamic_cast<Potion*>(m_itemDatabase.GetItemData(slot->item.id));
+        // 아이템 데이터베이스에서 아이템 포인터 가져오기
+        Item* itemData = m_itemDatabase.GetItemData(slot->item.id);
 
-        if (item != nullptr)
+        if (Potion* potion = dynamic_cast<Potion*>(itemData))
         {
-            int much = item->GetMuch() - 1;
-            m_pendingPotionSlot = slot; //  기억
-
-            UIManager::Get().ShowPotionWindow(much); //포지션도 맞춰 버렸다고 
-
+            // 포션 처리 로직
+            int much = potion->GetMuch() - 1;
+            m_pendingPotionSlot = slot;
+            UIManager::Get().ShowPotionWindow(much);
         }
-
-        Wearable* wear = dynamic_cast<Wearable*>(m_itemDatabase.GetItemData(slot->item.id));
-        if (wear != nullptr)
+        else if (Wearable* wear = dynamic_cast<Wearable*>(itemData))
         {
+            // 착용 아이템 처리 로직
+            UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow);
+            auto equipWindow = dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
 
-            UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow); //활성화 시도 
-
-            auto EQUIPWIN = dynamic_cast<EquipmentWindow*>(
-                UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));
-
-            if (EQUIPWIN != nullptr)
+            if (equipWindow)
             {
                 slot->Clear();
                 ItemDrop(wear);
-                EQUIPWIN->EquipItem(wear);
-                //slot->UpdateItemBitmap(&controller, &m_itemDatabase);
+                equipWindow->EquipItem(wear);
             }
 
-            //장비인 경우에는 장착하려고 함. 
-            
-            // 슬롯 전부 다시 가져와서 다시 계산해주기.
             if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
             {
                 statWindow->UpdateTotalStats();
@@ -630,11 +622,13 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아�
         }
         return true;
     }
-
+    if (IsInBounds(mousePos))
+    {
+        return true;
+    }
 
     return false;
-
-    }
+}
 
 
   
