@@ -324,13 +324,16 @@ void Scene_End::CreateObj()
 		{
 			temp = 2;
 			SafeChangeScene("History" , temp);
+
 			SoundManager::Instance().PauseBGM(cur_EDM_ID, true);
 		}
 		else
 		{
 			temp++;
 			SafeChangeScene("OutGame", temp);
-			SoundManager::Instance().PauseBGM(cur_EDM_ID, true);
+			//SoundManager::Instance().PauseBGM(cur_EDM_ID, true);
+			SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "OutGame", 2.5f);
+
 			Inventory* statwin = dynamic_cast<Inventory*>(UIManager::
 				Get().GetWindow(UIWindowType::InventoryWindow));
 

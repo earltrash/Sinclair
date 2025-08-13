@@ -29,7 +29,7 @@ void Scene_Tutorial::Initalize()
 	{
 		UIManager::Get().AddSceneObject(obj);
 	}
-	SoundManager::Instance().PlayBGM("TIM", false);
+	//SoundManager::Instance().PlayBGM("TIM", false);
 
 }
 
@@ -201,8 +201,15 @@ void Scene_Tutorial::CreateObj()
 
 	tutorialButton1Comp->SetOnClickCallback([this]() {
 		cout << "건너뛰기" << endl;
-		SoundManager::Instance().PauseBGM("TIM", true);
+		//SoundManager::Instance().PauseBGM("TIM", true);
 		SafeChangeScene("InGame");
+
+
+		//개귀찮게 현재 fade out -> play를 해야하는 거임? 
+
+		//SoundManager::Instance().p
+		//SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "TIM", 2.5f);
+
 		});
 
 	tutorialButton2Comp->SetOnClickCallback([this, bgComp]() {
@@ -217,7 +224,8 @@ void Scene_Tutorial::CreateObj()
 		{
 			cout << "17번 건너뛰기" << endl;
 			SafeChangeScene("InGame");
-			SoundManager::Instance().PauseBGM("TIM", true);
+			//SoundManager::Instance().PauseBGM("TIM", true);
+			//SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "TIM", 2.5f);
 
 		}
 

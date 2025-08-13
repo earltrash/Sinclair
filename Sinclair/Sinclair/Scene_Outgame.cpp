@@ -29,7 +29,7 @@ void Scene_Outgame::Initalize()
 	{
 		UIManager::Get().AddSceneObject(obj);
 	}
-	SoundManager::Instance().PlayBGM("OutGame", false);
+	//SoundManager::Instance().PlayBGM("OutGame", false);
 	dirty = true;
 }
 
@@ -391,7 +391,7 @@ void Scene_Outgame::CreateObj()
 
 		std::cout << "버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
 		SafeChangeScene("Title");
-
+		SoundManager::Instance().PauseBGM(SoundManager::Instance().Get_Playing_Key(), true); //title은 생성자에서 해야 함.
 		});
 
 	/// 9
@@ -563,8 +563,10 @@ void Scene_Outgame::ChangeState(State newState)
 			}
 			else
 			{
+				SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "TIM", 2.5f);
+
 				SafeChangeScene("Tutorial");
-				SoundManager::Instance().PauseBGM("OutGame", true);
+				//SoundManager::Instance().PauseBGM("OutGame", true);
 
 			}
 			});
@@ -609,7 +611,9 @@ void Scene_Outgame::ChangeState(State newState)
 
 		yesButton->SetOnClickCallback([this]() {
 			cout << "창고에 들어가시겠습니까?..." << endl;
-			SoundManager::Instance().PauseBGM("OutGame", true);
+			//SoundManager::Instance().PauseBGM("OutGame", true);
+
+			SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "TIM", 2.5f);
 			SafeChangeScene("InGame");
 			});
 
@@ -636,7 +640,12 @@ void Scene_Outgame::ChangeState(State newState)
 			cout << "여행을 떠나시겠습니까?..." << endl;
 			GameManager::Get().PreAdv();
 			SafeChangeScene("End");
-			SoundManager::Instance().PauseBGM("OutGame", true);
+			//SoundManager::Instance().PauseBGM("OutGame", true);
+			
+			int id = GameManager::Get().arrEndingID[GameManager::Get().GetCurrentGen()-2];
+			string fid = to_string(id);
+			std::cout << fid;
+			SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), fid, 2.5f);
 
 			});
 

@@ -32,11 +32,14 @@ void SettingWindow::Update()
     if (m_draggingBGM && m_bgmHandleComponent) 
     {
         m_bgmHandleComponent->UpdateValueFromMousePos(mousePos);
+        SoundManager::Instance().SetBGMVal(m_bgmHandleComponent->GetValue());
     }
 
     if (m_draggingSFX && m_sfxHandleComponent) 
     {
         m_sfxHandleComponent->UpdateValueFromMousePos(mousePos);
+        m_sfxCurrentValue = m_sfxHandleComponent->GetValue();
+        SoundManager::Instance().SetSFXVal(m_sfxHandleComponent->GetValue());
     }
 
     if (m_bgmHandleObject) m_bgmHandleObject->Update();
@@ -181,6 +184,7 @@ void SettingWindow::CreateSliderHandle()
     m_bgmHandleComponent = m_bgmHandleObject->AddComponent<SliderHandleComponent>(bgmRenderInfo, m_bgmMinX, m_bgmMaxX, m_bgmCurrentValue);
     m_bgmHandleComponent->SetWidth(handleWidth);
     m_bgmHandleComponent->SetHeight(handleHeight);
+
     m_bgmHandleComponent->SetOnValueChanged([this](float normalizedValue) {
         m_bgmCurrentValue = m_minValue + normalizedValue * (m_maxValue - m_minValue);
         if (m_onBGMValueChanged) { m_onBGMValueChanged(m_bgmCurrentValue); }
@@ -303,6 +307,9 @@ void SettingWindow::MoveHandles(Vec2 delta)
         normalizedBGM = std::clamp(normalizedBGM, 0.0f, 1.0f);
         m_bgmCurrentValue = m_minValue + normalizedBGM * (m_maxValue - m_minValue);
 
+
+
+
         // 컴포넌트 내부 값만 직접 업데이트 (위치는 이미 이동했으므로)
         m_bgmHandleComponent->UpdateValueOnly(normalizedBGM);
     }
@@ -314,7 +321,10 @@ void SettingWindow::MoveHandles(Vec2 delta)
         Vec2 sfxPos = m_sfxHandleObject->GetTransform().GetPosition();
         float normalizedSFX = (sfxPos.x - m_sfxMinX) / (m_sfxMaxX - m_sfxMinX);
         normalizedSFX = std::clamp(normalizedSFX, 0.0f, 1.0f);
+
         m_sfxCurrentValue = m_minValue + normalizedSFX * (m_maxValue - m_minValue);
+
+
 
         // 컴포넌트 내부 값만 직접 업데이트 (위치는 이미 이동했으므로)
         m_sfxHandleComponent->UpdateValueOnly(normalizedSFX);

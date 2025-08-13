@@ -166,7 +166,13 @@ void UIWindow::ItemDrop(Item* item)
 {
 	ES sound = item->m_data.Sound;
 	string sound_Id = ESToString(sound);
-	SoundManager::Instance().PlaySFX(sound_Id);
+
+	SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+	if (SETWin)
+	{
+		float val = SETWin->GetSFXValue();
+		SoundManager::Instance().PlaySFX(sound_Id, val);
+	}
 	std::cout << " ID:" << sound_Id << endl;
 
 

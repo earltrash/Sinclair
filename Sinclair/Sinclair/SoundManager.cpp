@@ -2,6 +2,11 @@
 #include "SoundBank_.h"
 #include "ResourceManager.h"
 
+#include "UIManager.h"
+#include "SettingWindow.h"
+
+#undef max
+#undef min
 
 SoundManager& SoundManager::Instance()
 {
@@ -69,9 +74,10 @@ FMOD_RESULT SoundManager::PlayBGM(int index, bool fadeIn)
         0, false, &bgmChannels[index]);
 
     if (result == FMOD_OK && fadeIn) {
-        FMOD_Channel_SetVolume(bgmChannels[index], 0.0f);
+        FMOD_Channel_SetVolume(bgmChannels[index], 0.0f); //
+       
     }
-
+    
     return result;
 }
 
@@ -90,6 +96,11 @@ FMOD_RESULT SoundManager::PlaySFX(int index, float volume)
     }
 
     return result;
+}
+
+FMOD_RESULT SoundManager::StopSFX(int index)
+{
+    return FMOD_RESULT();
 }
 
 FMOD_RESULT SoundManager::StopBGM(int index)
@@ -111,6 +122,7 @@ FMOD_RESULT SoundManager::SetBGMVolume(int index, float volume)
         return FMOD_ERR_INVALID_PARAM;
 
     if (bgmChannels[index]) {
+
         return FMOD_Channel_SetVolume(bgmChannels[index], volume);
     }
     return FMOD_ERR_INVALID_HANDLE;
@@ -152,6 +164,45 @@ FMOD_RESULT SoundManager::PauseBGM(int index, bool pause)
     FMOD_RESULT SoundManager::Update()
     {
         if (!initialized) return FMOD_ERR_UNINITIALIZED;
+
+        if (m_crossfade.crossfadeActive)
+        {
+            // 고정 프레임 가정(60fps): 다른 곳에서도 0.016f 사용 중이므로 동일 적용
+            m_crossfade.crossElapsed += 0.016f;
+
+            float t = m_crossfade.crossElapsed / m_crossfade.crossFadeTime;
+
+            SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+            float& val = SETWin->getBgmCurrentValue();
+
+            if (t > 1.0f) t = 1.0f;
+
+            // from(기존) 볼륨 ↓
+            if (m_crossfade.crossFrom >= 0 && m_crossfade.crossFrom < static_cast<int>(bgmChannels.size()) && bgmChannels[m_crossfade.crossFrom]) {
+                FMOD_Channel_SetVolume(bgmChannels[m_crossfade.crossFrom], m_crossfade.crossFromStartVol * (1.0f - t));
+            }
+
+            // to(새로운) 볼륨 ↑
+            if (m_crossfade.crossTo >= 0 && m_crossfade.crossTo < static_cast<int>(bgmChannels.size()) && bgmChannels[m_crossfade.crossTo]) {
+                FMOD_Channel_SetVolume(bgmChannels[m_crossfade.crossTo], m_crossfade.crossToStartVol + (1.0f - m_crossfade.crossToStartVol) * t);
+            }
+
+            // 완료 처리
+            if (t >= 1.0f)
+            {
+                if (m_crossfade.crossFrom >= 0 && m_crossfade.crossFrom < static_cast<int>(bgmChannels.size()) && bgmChannels[m_crossfade.crossFrom]) {
+                    FMOD_Channel_Stop(bgmChannels[m_crossfade.crossFrom]);
+                    bgmChannels[m_crossfade.crossFrom] = nullptr;
+                }
+                m_crossfade.crossfadeActive = false;
+                m_crossfade.crossFrom = -1;
+                m_crossfade.crossTo = -1;
+                m_crossfade.crossFadeTime = 0.f;
+                m_crossfade.crossElapsed = 0.f;
+            }
+        }
+
+
 
         CleanupFinishedSFX();  // 매 업데이트마다 정리
         return FMOD_System_Update(system);
@@ -218,6 +269,68 @@ FMOD_RESULT SoundManager::PauseBGM(int index, bool pause)
         Shutdown();
     }
 
+    FMOD_RESULT SoundManager::CrossfadeBGM(const std::string& fromKey, const std::string& tokey, float fadeTime)
+    {
+        auto itTo = bgmKeyMap.find(tokey);
+        if (itTo == bgmKeyMap.end()) return FMOD_ERR_INVALID_PARAM;
+
+        int idxTo = itTo->second;
+
+        // fromKey는 없을 수도 있으므로 선택적으로 처리
+        int idxFrom = -1;
+        auto itFrom = bgmKeyMap.find(fromKey);
+        if (itFrom != bgmKeyMap.end())
+            idxFrom = itFrom->second;
+
+        // 대상 BGM이 재생 중이 아니면 0 볼륨으로 시작
+        FMOD_RESULT r = FMOD_OK;
+        FMOD_BOOL isPlaying = 0;
+
+        Set_Playing_Key(tokey);
+
+        //Playing_key = toKey;
+        std::cout << "cross 현재 key" << Playing_key << endl;
+
+        if (idxTo < 0 || idxTo >= static_cast<int>(bgms.size()))
+            return FMOD_ERR_INVALID_PARAM;
+
+        if (!bgmChannels[idxTo]) {
+            r = PlayBGM(idxTo, /*fadeIn=*/true); // 내부에서 volume 0으로 시작
+            if (r != FMOD_OK) return r;
+        }
+        else {
+            FMOD_Channel_IsPlaying(bgmChannels[idxTo], &isPlaying);
+            if (!isPlaying) {
+                r = PlayBGM(idxTo, /*fadeIn=*/true);
+                if (r != FMOD_OK) return r;
+            }
+            else {
+                // 이미 재생 중이면 볼륨만 0으로 내리고 시작
+                FMOD_Channel_SetVolume(bgmChannels[idxTo], 0.0f);
+            }
+        }
+
+        // from의 시작 볼륨 확보 (없으면 0으로 간주)
+        float fromStartVol = 0.0f;
+        if (idxFrom >= 0 && idxFrom < static_cast<int>(bgmChannels.size()) && bgmChannels[idxFrom]) {
+            FMOD_Channel_GetVolume(bgmChannels[idxFrom], &fromStartVol);
+        }
+        
+        // 크로스페이드 상태 등록
+        m_crossfade.crossFrom = idxFrom;
+        m_crossfade.crossTo = idxTo;
+        m_crossfade.crossFadeTime = std::max(0.001f, fadeTime);
+        m_crossfade.crossElapsed = 0.f;
+        m_crossfade.crossFromStartVol = fromStartVol;
+        m_crossfade.crossToStartVol = 0.0f; // PlayBGM(fadeIn=true)로 이미 0으로 시작
+        m_crossfade. crossfadeActive = true;
+
+        // 현재 재생 키 갱신(의도: toKey를 논리적 '현재'로 간주)
+        Playing_key = tokey;
+
+        return FMOD_OK;
+    }
+
 
     FMOD_RESULT SoundManager::AddBGM(const std::string& key, FMOD_SOUND* sound)
     {
@@ -238,6 +351,10 @@ FMOD_RESULT SoundManager::PauseBGM(int index, bool pause)
     {
         auto it = bgmKeyMap.find(key);
         if (it == bgmKeyMap.end()) return FMOD_ERR_INVALID_PARAM;
+
+        Set_Playing_Key(key);
+
+        std::cout<<"현재 key" << Playing_key << endl;
         return PlayBGM(it->second, fadeIn);
     }
 
@@ -288,6 +405,28 @@ FMOD_RESULT SoundManager::PauseBGM(int index, bool pause)
         return FMOD_OK;
     }
 
+    void SoundManager::SetBGMVal(float val)
+    {
+        string key = Get_Playing_Key();
+
+        int result = bgmKeyMap[key];
+
+
+        FMOD_Channel_SetVolume(bgmChannels[result], val);
+
+    }
+
+    void SoundManager::SetSFXVal(float val)
+    {
+        for (auto channel : activeSfxChannels)
+        {
+            if (channel) {
+                FMOD_Channel_SetVolume(channel, val);
+            }
+        }
+
+    }
+ 
     void SoundManager::TakeAllClip()
     {
         auto map = ResourceManager::Get().Get_SoundBank().Get_EDM_MAP();

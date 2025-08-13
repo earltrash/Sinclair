@@ -4,6 +4,7 @@
 #include "ResourceManager.h"
 #include "GameManager_2.h"
 
+#include "SoundManager.h"
 
 UIPotion::UIPotion()
     : UIWindow(UIWindowType::StatPotionUseWindow, Vec2{ 0,0 }, Vec2{ 524,766 })
@@ -75,6 +76,9 @@ bool UIPotion::HandleMouseHover(Vec2 mousePos)
 {
     if (!m_isActive) return false;
 
+
+    
+
     bool hovered = false;
     for (int i = 0; i < m_button.size(); i++)
     {
@@ -82,13 +86,17 @@ bool UIPotion::HandleMouseHover(Vec2 mousePos)
         {
             m_But_opacity[i] = 0.5f;
             hovered = true;
+            return hovered;
         }
         else
         {
             m_But_opacity[i] = 1.f;
         }
     }
-    return hovered;
+   
+
+    return (IsInBounds(mousePos));
+
 }
 
 bool UIPotion::HandleMouseDown(Vec2 mousePos)
@@ -105,6 +113,13 @@ bool UIPotion::HandleMouseDown(Vec2 mousePos)
             //스탯창의 스탯 수치를 올리는 식으로 진행 함. -> 이는 후에 최종적으로 gm으로
             GameManager::Get().PotionUsed(m_Stat, Much); 
 
+            SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+            if (SETWin)
+            {
+                float val = SETWin->GetSFXValue();
+                SoundManager::Instance().PlaySFX("BC", val);
+            }
+
             if (auto* inv = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
             {
                 if (inv->ConsumePendingPotion())
@@ -117,7 +132,7 @@ bool UIPotion::HandleMouseDown(Vec2 mousePos)
     return false;
 }
 
-bool UIPotion::HandleMouseUp(Vec2) { return false; }
+bool UIPotion::HandleMouseUp(Vec2 pos) { return IsInBounds(pos); }
 bool UIPotion::HandleDoubleClick(Vec2) { return false; }
 bool UIPotion::HandleMouseRight(Vec2) { return false; }
 

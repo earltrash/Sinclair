@@ -127,7 +127,12 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 	{
 		//뭐 합성이겠지 
 		PerformSynthesis();
-		SoundManager::Instance().PlaySFX("SY");
+		SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+		if (SETWin)
+		{
+			float val = SETWin->GetSFXValue();
+			SoundManager::Instance().PlaySFX("SY", val);
+		}
 
 		return true;
 
@@ -460,7 +465,12 @@ void SynthesisWin::PerformSynthesis()
 
 	if (result != "F") //성공인 경우 
 	{
-		SoundManager::Instance().PlaySFX("SS");
+		SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+		if (SETWin)
+		{
+			float val = SETWin->GetSFXValue();
+			SoundManager::Instance().PlaySFX("SS", val);
+		}
 		unique_ptr<Item> resultitem = ResourceManager::Get().Get_ItemBank().Get_Item_Status(result);
 
 		Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
@@ -476,7 +486,12 @@ void SynthesisWin::PerformSynthesis()
 	}
 	else
 	{
-		SoundManager::Instance().PlaySFX("SN");
+		SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+		if (SETWin)
+		{
+			float val = SETWin->GetSFXValue();
+			SoundManager::Instance().PlaySFX("SN", val);
+		}
 
 	}
 
