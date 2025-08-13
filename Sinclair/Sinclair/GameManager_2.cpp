@@ -282,22 +282,51 @@ void GameManager::UsedEquipedClean() //청소하는 김에 추가까지 해버릴래 .
 
         std::string id = equipped->m_data.id;
 
+       
+
         auto it = invenDB.find(id); //결국에 장비창 id도 인벤이 갖고 있으니깐 그거는 인벤에서 가져오는 거고 
         if (it != invenDB.end())
         {
             m_tempItem.push_back(std::move(it->second));
-            AdvResult_Wep(id); // -> 그 겸사 넣은 거긴 한데, 특정 아이템 들고 모험 나가면 특수한 아이템 넣는 거 그거 한 거임. 
             invenDB.erase(it); //임시에 넣었으니깐 지웠다는 거잖아 
             equipmentWindow->ClearSlot((Wearable_part)i);
+            AdvResult_Wep(id); // -> 그 겸사 넣은 거긴 한데, 특정 아이템 들고 모험 나가면 특수한 아이템 넣는 거 그거 한 거임. 
+            
 
         }
     }
 
+
+
+   
+    ExceptItem();
     // 인벤토리 비우기
     inven->ClearAllSlots();
 
+
 }
 
+void GameManager::ExceptItem()
+{
+    auto* inven = dynamic_cast<Inventory*>(
+        UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+
+    auto& invenDB = inven->GetItemBase().GetMap();
+
+    for (auto& [id, item] : invenDB)
+    {
+        const std::string& itemId = item->m_data.id;
+
+        if (itemId == "W001" || itemId == "W002" || itemId == "W003" ||
+            itemId == "W004" || itemId == "W005" || itemId == "W006" ||
+            itemId == "W007" || itemId == "W008" || itemId == "W009" ||
+            itemId == "W010")
+        {
+            m_tempItem.push_back(std::move(item));
+        }
+    }
+
+}
 void GameManager::AdvResult_Wep(string itemkey) //
 {
     Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
@@ -322,6 +351,30 @@ void GameManager::AdvResult_Wep(string itemkey) //
         ++idx;
     }
 }
+
+string GameManager::GetHistory()
+{
+    int resultFame = GameManager::Get().GetResultFam();
+
+    if (resultFame >= 19)
+    {
+        return "1";
+    }
+    else if (resultFame >= 15)
+    {
+        return "2";
+    }
+    else if (resultFame >= 10)
+    {
+        return "3";
+    }
+    else
+    {
+        return "4";
+    }
+}
+
+
 
 void GameManager::AdvResult()
 {

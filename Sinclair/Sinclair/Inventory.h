@@ -17,6 +17,9 @@ constexpr float SLOT_PADDING = 4.0f;
 class Inventory : public UIWindow
 {
 public:
+
+    //bool IsInBounds(const Vec2& screenPos) const;
+
     //크기는 1097 *  766 // Rect {0,0 1097,766}
     //이 오브젝트의 전체 Rect, Object 형식이 어떻게 될지ㅣ 몰라서 
     Inventory();
@@ -71,6 +74,9 @@ public:
 
     // 슬롯 초기화
     void ClearAllSlots();
+
+    // 슬롯 포함 전체크기.
+    bool IsInInventoryBounds(const Vec2& screenPos) const;
 private:
 
     InventorySlot* m_pendingPotionSlot = nullptr;

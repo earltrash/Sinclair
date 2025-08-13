@@ -645,7 +645,7 @@ void Scene_Outgame::ChangeState(State newState)
 			int id = GameManager::Get().arrEndingID[GameManager::Get().GetCurrentGen()-2];
 			string fid = to_string(id);
 			std::cout << fid;
-			SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), fid, 2.5f);
+			SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), fid, 1.8f);
 
 			});
 

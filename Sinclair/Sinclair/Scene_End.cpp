@@ -330,8 +330,9 @@ void Scene_End::CreateObj()
 		{
 			temp = 2;
 			SafeChangeScene("History" , temp);
-
-			SoundManager::Instance().PauseBGM(cur_EDM_ID, true);
+			string key = GameManager::Get().GetHistory();
+			//SoundManager::Instance().PauseBGM(cur_EDM_ID, true);
+			SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), key , 2.5f);
 		}
 		else
 		{
