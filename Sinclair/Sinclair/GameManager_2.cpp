@@ -180,6 +180,7 @@ void GameManager::PreAdv()
 
     UsedEquipedClean(); // temp에다가 저장, 기존 인벤은 싹다 정리함.
     AdvResult(); //명성치와 세대에 따른 인벤 & 임시 vector 업데이트 함. ㅇㅇ 
+    Default_Item_TO_Inven(GetCurrentGen());
     TempToNext();
 
 
@@ -426,7 +427,7 @@ void GameManager::Default_Item_TO_Inven(int GEN) //폐기
         if (inven != nullptr)
         {
             inven->LoadItemDatabase(Need_Moment::Gen_3);
-            inven->PackItem();
+           // inven->PackItem();
 
         }
     }
@@ -437,7 +438,7 @@ void GameManager::Default_Item_TO_Inven(int GEN) //폐기
         if (inven != nullptr)
         {
             inven->LoadItemDatabase(Need_Moment::Gen_4);
-            inven->PackItem();
+           // inven->PackItem();
 
         }
     }
