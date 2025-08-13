@@ -291,6 +291,11 @@ FMOD_RESULT SoundManager::CrossfadeBGM(const std::string& fromKey, const std::st
 
 FMOD_RESULT SoundManager::AddBGM(const std::string& key, FMOD_SOUND* sound)
 {
+    if (!sound) return FMOD_ERR_INVALID_PARAM; // 안전을 위한 방어 코드
+
+    // FMOD_Sound_SetMode를 사용해 루프 속성을 강제로 설정합니다.
+    FMOD_Sound_SetMode(sound, FMOD_LOOP_NORMAL);
+
     bgmKeyMap[key] = static_cast<int>(bgms.size());
     bgms.push_back(sound);
     bgmChannels.push_back(nullptr);

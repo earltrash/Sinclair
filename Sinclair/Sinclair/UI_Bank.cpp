@@ -13,7 +13,8 @@ void UI_Bank::Load_UI_Image(const string& path) // 자동 매핑이긴 함.
     fs::path resourcePath = base.parent_path() / path; //path == "UI" -> 
 
 #else NDEBUG
-    fs::path resourcePath = base.parent_path().parent_path() / path; //path == "UI" -> 
+    //fs::path resourcePath = base.parent_path().parent_path() / path; //path == "UI" -> 
+    fs::path resourcePath = base.parent_path() / path; //path == "UI" -> 
 
 #endif
 

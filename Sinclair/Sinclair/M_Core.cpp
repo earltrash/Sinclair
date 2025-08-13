@@ -16,8 +16,8 @@ using namespace std;
 
 void M_Core::Init()
 {
-    const wchar_t* className = L"MK_00";
-    const wchar_t* windowName = L"Do_Flight";
+    const wchar_t* className = L"Sinclair";
+    const wchar_t* windowName = L"Sinclair";
 
     HRESULT hr = __super::Create(className, windowName, 1920, 1080);
     assert(SUCCEEDED(hr));

@@ -53,7 +53,7 @@ void CreditWindow::RenderCreditText()
 				float planNamesX = m_position.x + 225;
 				float planNamesY = m_position.y + 266;
 				D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
-				D2DRenderer::Get().DrawMessage(L"김유진\n문상진\n이주원", planNamesX, planNamesY, 100, 30.0f, D2D1::ColorF(0xffe6d8));
+				D2DRenderer::Get().DrawMessage(L"김유진\n문상진\n이주연", planNamesX, planNamesY, 100, 30.0f, D2D1::ColorF(0xffe6d8));
 
 				// 프로그래밍 텍스트
 				float progTitleX = m_position.x + 612;
@@ -65,7 +65,7 @@ void CreditWindow::RenderCreditText()
 				float progNamesX = m_position.x + 689;
 				float progNamesY = m_position.y + 242;
 				D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
-				D2DRenderer::Get().DrawMessage(L"김민경\n김법진\n정효제\n전경식", progNamesX, progNamesY, 100, 30.0f, D2D1::ColorF(0xffe6d8));
+				D2DRenderer::Get().DrawMessage(L"김민경\n김범진\n장효제\n전경석", progNamesX, progNamesY, 100, 30.0f, D2D1::ColorF(0xffe6d8));
 		}
 }
 
