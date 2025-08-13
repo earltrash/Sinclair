@@ -180,50 +180,22 @@ void UIManager::OnInput(const MSG& msg)
                 if (draggedItem)
                 {
                     DragSource source = CursorManager::Get().GetDragSource();
+                    // 인벤토리 창의 HandleDropFailure 함수를 직접 호출하여 처리 위임
                     if (auto* inventory = dynamic_cast<Inventory*>(GetWindow(UIWindowType::InventoryWindow)))
                     {
-                        inventory->AddItem(draggedItem->m_data.id, 1);
-                        std::cout << "창 외부 드롭으로 인해 인벤토리로 반환: " << draggedItem->m_data.name << std::endl;
+                        // HandleDropFailure가 아이템 복원 및 드래그 종료까지 처리
+                        if (inventory->HandleDropFailure(mousePos, draggedItem, source))
+                        {
+                            CursorManager::Get().EndItemDrag();
+                            // 성공적으로 처리되었으면 여기서 함수 종료
+                            return;
+                        }
                     }
                 }
             }
-            CursorManager::Get().EndItemDrag();
-            return;
         }
 
     }
-
-    // 창이 있으면 역순으로 순회 (최상단부터)
-    //for (auto it = m_activeWindowOrder.rbegin(); it != m_activeWindowOrder.rend(); ++it)
-    //{
-    //    if (auto* window = GetWindow(*it))
-    //    {
-    //        if (window->HandleInput(msg))
-    //        {
-    //            return; // 입력이 처리되면 종료
-    //        }
-    //    }
-    //}
-
-
-
-    //auto orderSnapshot = m_activeWindowOrder;
-
-    //if (msg.message == WM_MOUSEMOVE) {
-    //    Vec2 mousePos = { (float)GET_X_LPARAM(msg.lParam), (float)GET_Y_LPARAM(msg.lParam) };
-
-    //    // 기존 창 Hover 처리
-    //    for (auto it = orderSnapshot.rbegin(); it != orderSnapshot.rend(); ++it) {
-    //        if (auto* w = GetWindow(*it)) {
-    //            w->HandleMouseHover(mousePos);
-    //        }
-    //    }
-    //    // 툴팁은 예외적으로 항상 마지막에 호출
-    //    if (auto* tooltip = GetWindow(UIWindowType::InventoryTooltip)) {
-    //        tooltip->HandleMouseHover(mousePos);
-    //    }
-    //    return;
-    //}
 
     auto orderSnapshot = m_activeWindowOrder;
 
@@ -236,12 +208,11 @@ void UIManager::OnInput(const MSG& msg)
         }
     }
 
-
-
     HandleSceneObjectInput(msg);
 
     return;
 }
+
 
 void UIManager::ToggleWindow(UIWindowType type)
 {

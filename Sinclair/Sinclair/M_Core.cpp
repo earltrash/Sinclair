@@ -81,7 +81,6 @@ void M_Core::Update()
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Update();
     UIManager::Get().Update();
 
-
 }
 
 void M_Core::Render()

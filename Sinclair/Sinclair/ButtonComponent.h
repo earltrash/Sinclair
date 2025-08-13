@@ -39,7 +39,13 @@ public:
 	void OnClick() { if (m_onClick) m_onClick(); }
 
 	void CheckCollision(const MSG& MSG);
+	void SetCollision(bool isColiided) 
+	{
+		wasInside = isColiided? false : true;
+		isInside = isColiided;
+	}
 	void Worked(const MSG& MSG);
+	void Worked2(const MSG& MSG);
 
 	void SetWidth (float w)  { m_renderInfo->SetDestRight (w); }
 	void SetHeight(float h) { m_renderInfo->SetDestBottom(h); }
@@ -51,7 +57,6 @@ public:
 private:
 	// 버튼을 갈아끼우는 용도
 	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmaps;
-
 	ComPtr<ID2D1Bitmap1> m_curbm;
 
 	ButtonState m_currentState = ButtonState::Normal;
