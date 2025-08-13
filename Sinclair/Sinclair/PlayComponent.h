@@ -246,7 +246,7 @@ public:
 	ID2D1Effect* GetEffect() { return m_offsetEffect.Get(); }
 private:
 	std::string m_beforeState;
-	std::string m_currendState;
+	std::string m_currendState = "DORMANT";
 	float time = 0.f;
 	float x = 0.f;
 

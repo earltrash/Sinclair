@@ -1222,6 +1222,9 @@ void EnhancementWindow::OnStatSelectionButtonClick()
 
 	//auto runeFade = m_targetItem->GetComponent<Fade_Effect>();
 	//runeFade->OnEvent("HIDE");
+	auto success = m_targetItem->GetComponent<Increasing_Effect>();
+	auto state = success->GetCurrentState();
+	if (state != "DORMANT")	return;
 
 	if (!m_targetItem->m_data.enchantable)
 	{

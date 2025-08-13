@@ -68,6 +68,8 @@ public:
 
     void CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1** outBitmap);
 
+    //ComPtr<ID2D1Bitmap1> CloneBitmap(ID2D1Bitmap1* sourceBitmap);
+
     ID3D11Device* GetD3DDevice() const { return m_d3dDevice.Get(); }
 
     ID3D11DeviceContext* GetD3DContext() const { return m_d3dContext.Get(); }
