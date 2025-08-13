@@ -32,6 +32,6 @@ public:
 	};
 
 private:
-	Window m_window = NORMAL;
+	//Window m_window = NORMAL;
 };
 

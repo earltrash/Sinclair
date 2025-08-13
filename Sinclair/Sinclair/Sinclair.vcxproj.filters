@@ -218,6 +218,12 @@
     <ClInclude Include="GameManager_2.h">
       <Filter>Module</Filter>
     </ClInclude>
+    <ClInclude Include="SettingWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CreditWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -360,6 +366,12 @@
     </ClCompile>
     <ClCompile Include="GameManager_2.cpp">
       <Filter>Module</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CreditWindow.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

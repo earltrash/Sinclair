@@ -11,12 +11,20 @@ void UIManager::Initialize()
 
     try
     {
-        // SettingsWindow
-        //m_allWindows.emplace(UIWindowType::SettingsWindow, std::make_unique<SettingsWindow>());
-        //if (auto* window = GetWindow(UIWindowType::SettingsWindow))
-        //{
-        //    window->SetActivate(false);
-        //}
+        //setting
+        m_allWindows.emplace(UIWindowType::SettingsWindow, std::make_unique<SettingWindow>());
+        if (auto* window = GetWindow(UIWindowType::SettingsWindow))
+        {
+            window->SetActivate(false);
+        }
+
+        // credit
+        m_allWindows.emplace(UIWindowType::CreditWindow, std::make_unique<CreditWindow>());
+        if (auto* window = GetWindow(UIWindowType::CreditWindow))
+        {
+            window->SetActivate(false);
+        }
+
         // InventoryWindow
         m_allWindows.emplace(UIWindowType::InventoryWindow, std::make_unique<Inventory>());
         if (auto* window = GetWindow(UIWindowType::InventoryWindow))

@@ -73,6 +73,7 @@ void M_Core::GameLoop() //event state function render
 
 void M_Core::FixedUpdate() //시간 처리 
 {
+    SceneManager::Get().UpdateFade(m_timer->DeltaTime());
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->LogicUpdate(m_timer->DeltaTime());
     UIManager::Get().FixedUpdate(m_timer->DeltaTime());
 }
@@ -95,6 +96,7 @@ void M_Core::Render()
     m_Scene_map->at(SceneManager::Get().GetCurrentIndex())->Render();
     UIManager::Get().Render();
     CursorManager::Get().Render();
+    SceneManager::Get().RenderFade();
     D2DRenderer::Get().RenderEnd();
 }
 

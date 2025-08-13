@@ -13,7 +13,7 @@
 
 Scene_InGame::Scene_InGame(string name)
 {
-		m_name = name;
+	m_name = name;
 }
 
 Scene_InGame::~Scene_InGame()
@@ -89,21 +89,6 @@ void Scene_InGame::Render()
 		//D2DRenderer::Get().DrawRectangle(obj->GetRenderInfo()->GetRenderInfo().destRect, D2D1::ColorF::Red);
 	}
 
-	if (isSETTING)
-	{
-		// [설정 텍스트] 48pt 텍스트
-		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 48.0f);
-		D2DRenderer::Get().DrawMessage(L"설정", 528.77f, 343.0f, 528.77f + 200, 343.0f + 200, D2D1::ColorF(0xffe6d8));
-
-		// [배경음 텍스트] 30pt 텍스트
-		D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
-		D2DRenderer::Get().DrawMessage(L"배경음", 550.18f, 498.77f, 550.18f + 200, 498.77f + 200, D2D1::ColorF(0xffe6d8));
-
-		// [효과음 텍스트] 30pt 텍스트
-		D2DRenderer::Get().DrawMessage(L"효과음", 550.18f, 641.77f, 550.18f + 200, 641.77f + 200, D2D1::ColorF(0xffe6d8));
-
-	}
-
 }
 
 void Scene_InGame::CreateObj()
@@ -167,7 +152,7 @@ void Scene_InGame::CreateObj()
 
 	backComp->SetOnClickCallback([this]() {
 		std::cout << "뒤로가기 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
-		isSETTING = false;
+
 		UIManager::Get().CloseAllWindows();
 
 		SoundManager::Instance().PauseBGM("TIM", true);
@@ -202,7 +187,7 @@ void Scene_InGame::CreateObj()
 
 	//  4. 버튼 비트맵 설정
 	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
-	창고버튼->BitmapPush("창고",  인게임2  );
+	창고버튼->BitmapPush("창고", 인게임2);
 
 	창고버튼->SetCurrentBitmap("창고");
 
@@ -244,7 +229,7 @@ void Scene_InGame::CreateObj()
 
 	//  4. 버튼 비트맵 설정
 	// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
-	장비버튼->BitmapPush("장비버튼",  인게임3);
+	장비버튼->BitmapPush("장비버튼", 인게임3);
 	장비버튼->SetCurrentBitmap("장비버튼");
 
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
@@ -331,10 +316,9 @@ void Scene_InGame::CreateObj()
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 강화리스너 = 강화->AddComponent<MouseListenerComponent>(
 		[강화버튼, this](const MSG& msg) {
-			if (!isSETTING)
-			{
-				강화버튼->CheckCollision(msg);
-			}
+
+			강화버튼->CheckCollision(msg);
+
 			강화버튼->Worked(msg);
 		}
 	);
@@ -374,10 +358,9 @@ void Scene_InGame::CreateObj()
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 합성리스너 = 합성->AddComponent<MouseListenerComponent>(
 		[합성버튼, this](const MSG& msg) {
-			if(!isSETTING)
-			{
-				합성버튼->CheckCollision(msg);
-			}
+
+			합성버튼->CheckCollision(msg);
+
 			합성버튼->Worked(msg);
 		}
 	);
@@ -423,179 +406,10 @@ void Scene_InGame::CreateObj()
 	);
 
 	settingComp->SetOnClickCallback([this]() {
-		std::cout << "설정 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
-		isSETTING = !isSETTING;
-		SafeChangeScene("InGame");
+		UIManager::Get().OpenWindow(UIWindowType::SettingsWindow);
 		});
 
 	/// 9
 	m_gameObjects.emplace("설정", std::move(설정로));
-
-	if (isSETTING)
-	{
-		//////////////////////
-		//////////////////////
-		//////////////////////
-		// [6] [크레딧_01] 창 오브젝트
-		// 1. 이미지 갖고 오기
-		auto credit01Texture = ResourceManager::Get().GetTexture("크레딧", "01");
-		// 2. 오브젝트 만들기
-		auto Credit01 = std::make_unique<Object>();
-		Credit01->SetPosition(Vec2(431, 270));
-		auto credit01Info = Credit01->GetRenderInfo();
-		credit01Info->SetBitmap(credit01Texture.Get());
-		// 3. 배경 컴포넌트 만들기
-		auto credit01Comp = Credit01->AddComponent<BackgroundComponent>(credit01Info);
-		// 3.1.1 사이즈 설정
-		credit01Comp->SetWidth(1059.f);
-		credit01Comp->SetHeight(540.f);
-		credit01Comp->BitmapPush("크레딧_01", credit01Texture);
-		// 9. 게임 오브젝트들에 집어넣기
-		m_gameObjects.emplace("크레딧_01", std::move(Credit01));
-
-
-		//////////////////////
-		//////////////////////
-		//////////////////////
-		// [7] 배경음슬라이더_바   
-		// [8] 배경음슬라이더_핸들 
-		// [9] 효과음슬라이더_바   
-		// [10] 효과음슬라이더_핸들 
-
-		// 1. 이미지 리소스 가져오기
-		auto barImg = ResourceManager::Get().GetTexture("설정", "bar");
-		auto handleImg = ResourceManager::Get().GetTexture("설정", "handle");
-
-		// 2. 슬라이더 오브젝트 만들기
-		auto bgmBar = std::make_unique<Object>();
-		auto bgmHandle = std::make_unique<Object>();
-		auto sfxBar = std::make_unique<Object>();
-		auto sfxHandle = std::make_unique<Object>();
-
-
-		bgmBar->SetPosition(Vec2(729, 498));
-		auto bgmBarInfo = bgmBar->GetRenderInfo();
-		bgmBarInfo->SetBitmap(barImg.Get());
-
-		bgmHandle->SetPosition(Vec2(1347, 495));
-		auto bgmHandleInfo = bgmHandle->GetRenderInfo();
-		bgmHandleInfo->SetBitmap(handleImg.Get());
-
-		sfxBar->SetPosition(Vec2(729, 641));
-		auto sfxBarInfo = sfxBar->GetRenderInfo();
-		sfxBarInfo->SetBitmap(barImg.Get());
-
-		sfxHandle->SetPosition(Vec2(1347, 638));
-		auto sfxHandleInfo = sfxHandle->GetRenderInfo();
-		sfxHandleInfo->SetBitmap(handleImg.Get());
-
-
-		// 3. 배경/ 슬라이더핸들 컴포넌트 만들기
-		auto bgmBarComp = bgmBar->AddComponent<BackgroundComponent>(bgmBarInfo);
-		auto bgmHandleComp = bgmHandle->AddComponent<SliderHandleComponent>(bgmHandleInfo, 729.0f, 1347.0f, GameManager::Get().bgmValue);
-		auto sfxBarComp = sfxBar->AddComponent<BackgroundComponent>(sfxBarInfo);
-		auto sfxHandleComp = sfxHandle->AddComponent<SliderHandleComponent>(sfxHandleInfo, 729.0f, 1347.0f, GameManager::Get().sfxValue);
-
-		// 3.1.1 사이즈 설정 
-		bgmBarComp->SetWidth(630.f);
-		bgmBarComp->SetHeight(32.f);
-		bgmBarComp->BitmapPush("barImg", barImg);
-		bgmHandleComp->SetWidth(19.f);
-		bgmHandleComp->SetHeight(38.f);
-
-		sfxBarComp->SetWidth(630.f);
-		sfxBarComp->SetHeight(32.f);
-		sfxBarComp->BitmapPush("barImg", barImg);
-		sfxHandleComp->SetWidth(19.f);
-		sfxHandleComp->SetHeight(38.f);
-
-		// 4. 값 변경 콜백 설정
-		bgmHandleComp->SetOnValueChanged([](float value) {
-			std::cout << "슬라이더 값: " << value << " (0.0~1.0)" << std::endl;
-			// 예: 볼륨 설정
-			// SoundManager::Get().SetMasterVolume(value);
-			});
-
-		sfxHandleComp->SetOnValueChanged([](float value) {
-			std::cout << "슬라이더 값: " << value << " (0.0~1.0)" << std::endl;
-			// 예: 볼륨 설정
-			// SoundManager::Get().SetMasterVolume(value);
-			});
-
-
-		// 5. 마우스 리스너 컴포넌트
-		auto bgmHandle_mouseListener = bgmHandle->AddComponent<MouseListenerComponent>(
-			[bgmHandleComp](const MSG& msg) {
-				bgmHandleComp->HandleMouse(msg);
-			}
-		);
-
-		auto sfxHandle_mouseListener = sfxHandle->AddComponent<MouseListenerComponent>(
-			[sfxHandleComp](const MSG& msg) {
-				sfxHandleComp->HandleMouse(msg);
-			}
-		);
-
-		// 6. 초기값 설정 -> 임시로 게임 매니저 쪽에서 받게끔, 하자. 
-		// 사운드 매니저에서 받아오는 걸로 바꿔야 함.
-
-		bgmHandleComp->SetValue(GameManager::Get().bgmValue);
-		sfxHandleComp->SetValue(GameManager::Get().sfxValue);
-
-
-
-		// 6. 게임 오브젝트에 등록
-		m_gameObjects.emplace("크크_bgm바", std::move(bgmBar));
-		m_gameObjects.emplace("크크_bgm핸들", std::move(bgmHandle));
-		m_gameObjects.emplace("크크_sfx바", std::move(sfxBar));
-		m_gameObjects.emplace("크크_sfx핸들", std::move(sfxHandle));
-
-
-
-
-		/////////////////////
-		/////////////////////
-		/////////////////////
-		// [11] 뒤로가기 버튼
-
-		// 1. 이미지 갖고 오기
-		auto 뒤로가기 = ResourceManager::Get().GetTexture("닫기");
-		// 2. 오브젝트 만들기
-		auto 뒤로 = std::make_unique<Object>();
-		뒤로->SetPosition(Vec2(1393, 307));
-
-		auto 뒤로info = 뒤로->GetRenderInfo();
-		뒤로info->SetBitmap(뒤로가기.Get());
-		// 3. 버튼 컴포넌트 만들기
-		auto backComp = 뒤로->AddComponent<ButtonComponent>(뒤로info);
-		backComp->SetWidth(35);
-		backComp->SetHeight(35);
-
-		//  4. 버튼 비트맵 설정
-		// 투명도 기준이면 굳이 이렇게 할 필요 없긴 해. 
-		backComp->BitmapPush("back", 뒤로가기);
-
-		backComp->SetCurrentBitmap("back");
-
-		// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
-		auto Back_mouseListener = 뒤로->AddComponent<MouseListenerComponent>(
-			[backComp](const MSG& msg) {
-				backComp->CheckCollision(msg);
-				backComp->Worked(msg);
-			}
-		);
-
-		backComp->SetOnClickCallback([this]() {
-			std::cout << "닫기 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
-			isSETTING = !isSETTING;
-			SafeChangeScene("InGame");
-			});
-
-		/// 9
-		m_gameObjects.emplace("크레딧_뒤로가기", std::move(뒤로));
-
-	}
-
-
 
 }

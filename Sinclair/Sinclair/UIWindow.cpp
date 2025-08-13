@@ -1,5 +1,6 @@
 #include "UIWindow.h"
 #include "UIManager.h"
+#include "SettingWindow.h"
 
 //bool UIWindow::HandleInput(const MSG& msg)
 //{
@@ -118,7 +119,17 @@ bool UIWindow::HandleInput(const MSG& msg)
 
 		else if (m_isDragging && msg.message == WM_MOUSEMOVE) // ->  
 		{	
+				Vec2 oldPos = m_position;
 				m_position = CORD - m_dragOffset;
+				
+				Vec2 delta = m_position - oldPos;
+
+				// SettingWindow인 경우에만 핸들 위치 업데이트 함수 호출
+				if (m_windowType == UIWindowType::SettingsWindow)
+				{
+					auto* sw = dynamic_cast<SettingWindow*>(this);
+					if (sw) sw->MoveHandles(delta); // 핸들만 이동시키는 함수
+				}
 
 				if (GetType() == UIWindowType::InventoryWindow && 
 					CursorManager::Get().GetDraggedItem() != nullptr) //나 인벤이고, 커서매니저에 아이템 있는 경우 
@@ -133,6 +144,9 @@ bool UIWindow::HandleInput(const MSG& msg)
 						win->SendEventToComponent("PLAY", item->m_data.wearablePart);
 					}
 				}
+
+				
+
 				return true;
 		}
 

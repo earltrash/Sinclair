@@ -51,8 +51,12 @@ public:
     void DrawBitmap(const renderInfo& renderInfo);
 
     void DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color);
+
+    void DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color, float opacity);
     
     void DrawMessageCenter(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color);
+
+    void DrawMessageCenter(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color, float opacity);
 
     void SetTransform(const D2D1_MATRIX_3X2_F tm);
 

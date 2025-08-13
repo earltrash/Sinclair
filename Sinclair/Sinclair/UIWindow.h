@@ -77,6 +77,11 @@ public:
 				rightMargin = 75.0f; // x값
 				yOffset = 30.0f;     // y값
 			}
+			else if (m_windowType == UIWindowType::SettingsWindow || m_windowType == UIWindowType::CreditWindow)
+			{
+				rightMargin = 85.0f; // x값
+				yOffset = 35.0f;     // y값
+			}
 			else
 			{
 				rightMargin = 65.0f; // 일반적인 경우

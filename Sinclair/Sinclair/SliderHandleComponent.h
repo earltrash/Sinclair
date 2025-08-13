@@ -1,4 +1,3 @@
-// SliderHandleComponent.h (참조 기반 버전)
 #pragma once
 #include <pch.h>
 #include "Component.h"
@@ -15,28 +14,14 @@ class SliderHandleComponent : public Component
 public:
     enum class ButtonState { Normal, Hover, Pressed, Disabled };
 
-    // 방법 1: 참조로 외부 변수를 직접 연결
     SliderHandleComponent(RenderInfo* renderInfo, float minX, float maxX, float& externalValue)
         : m_renderInfo(renderInfo), m_minX(minX), m_maxX(maxX),
-        m_externalValue(externalValue), m_isDragging(false), m_currentState(ButtonState::Normal),
+        m_externalValue(externalValue), m_currentState(ButtonState::Normal),
         m_width(19.0f), m_height(38.0f)
     {
     }
 
-
-
     ~SliderHandleComponent() = default;
-
-    // 나중에 외부 참조를 연결하는 함수
-    void BindToExternalValue(float& externalValue)
-    {
-        // 현재 값을 외부 변수에 복사
-        externalValue = m_externalValue;
-
-        // 참조를 새로운 외부 변수로 연결 (C++에서 참조 재바인딩은 불가능하므로 포인터 사용)
-        m_externalValuePtr = &externalValue;
-        std::cout << "[SliderHandle] 외부 값 바인딩: " << externalValue << std::endl;
-    }
 
     void SetWidth(float w) {
         m_width = w;
@@ -49,14 +34,18 @@ public:
     }
 
     void SetOpacity(float o) {
-        m_renderInfo->SetOpacity(o);
+        if (m_renderInfo) {
+            m_renderInfo->SetOpacity(o);
+        }
     }
 
     void SetState(ButtonState state)
     {
         if (m_currentState != state) {
             m_currentState = state;
-            m_renderInfo->SetBitmap(GetBitmap().Get());
+            if (m_renderInfo) {
+                m_renderInfo->SetBitmap(GetBitmap().Get());
+            }
         }
     }
 
@@ -64,25 +53,20 @@ public:
     {
         switch (m_currentState)
         {
-        case ButtonState::Normal:   SetOpacity(1.0f); break;
-        case ButtonState::Hover:    SetOpacity(0.8f); break;
-        case ButtonState::Pressed:  SetOpacity(0.6f); break;
+        case ButtonState::Normal: SetOpacity(1.0f); break;
+        case ButtonState::Hover: SetOpacity(0.8f); break;
+        case ButtonState::Pressed: SetOpacity(0.6f); break;
         case ButtonState::Disabled: SetOpacity(0.3f); break;
         default: break;
         }
 
-        return m_renderInfo->GetRenderInfo().bitmap;
+        return m_renderInfo ? m_renderInfo->GetRenderInfo().bitmap : nullptr;
     }
 
-    // 값 설정 - 외부 변수도 함께 업데이트
-    void SetValue(float value)
+    void SetValue(float normalizedValue)
     {
-        float newValue = std::clamp(value, 0.0f, 1.0f);
-
-        // 외부 변수 업데이트
+        float newValue = std::clamp(normalizedValue, 0.0f, 1.0f);
         GetCurrentValueRef() = newValue;
-
-        std::cout << "[SliderHandle] 값 설정: " << newValue << std::endl;
         UpdatePosition();
 
         if (m_onValueChanged) {
@@ -90,7 +74,6 @@ public:
         }
     }
 
-    // 현재 값 반환 - 항상 외부 변수 값을 반환
     float GetValue() const
     {
         return GetCurrentValueRef();
@@ -100,66 +83,38 @@ public:
         m_onValueChanged = callback;
     }
 
-    bool IsPointInHandle(const Vec2& point, const Vec2& handlePos)
+    bool IsPointInHandle(const Vec2& point)
     {
-        auto destRect = m_renderInfo->GetRenderInfo().destRect;
-        return (point.x >= destRect.left && point.x <= destRect.right &&
-            point.y >= destRect.top && point.y <= destRect.bottom);
-    }
+        if (!m_Owner) return false;
 
-    void HandleMouse(const MSG& msg)
-    {
-        Vec2 mousePos = InputManager::Get().GetMousePosition();
         Vec2 handlePos = m_Owner->GetTransform().GetPosition();
-        bool mousePressed = InputManager::Get().IsMousePressed(MouseButton::Left);
-        bool pointInHandle = IsPointInHandle(mousePos, handlePos);
+        return (point.x >= handlePos.x && point.x <= handlePos.x + m_width &&
+            point.y >= handlePos.y && point.y <= handlePos.y + m_height);
+    }
 
-        switch (msg.message)
-        {
-        case WM_LBUTTONDOWN:
-            if (pointInHandle) {
-                m_isDragging = true;
-                m_dragOffset = mousePos - handlePos;
-                SetState(ButtonState::Pressed);
-                UpdateValueFromMousePos(mousePos);
-            }
-            break;
+    // 이 함수는 SettingWindow에서 호출됩니다. 마우스 드래그에 따른 값 업데이트를 처리합니다.
+    void UpdateValueFromMousePos(const Vec2& mousePos)
+    {
+        float newX = mousePos.x;
+        newX = std::clamp(newX, m_minX, m_maxX);
 
-        case WM_MOUSEMOVE:
-            if (m_isDragging && mousePressed) {
-                UpdateValueFromMousePos(mousePos);
-                SetState(ButtonState::Pressed);
-            }
-            else if (pointInHandle && !m_isDragging) {
-                SetState(ButtonState::Hover);
-            }
-            else if (!m_isDragging) {
-                SetState(ButtonState::Normal);
-            }
-            break;
+        float oldValue = GetCurrentValueRef();
+        float newValue = (newX - m_minX) / (m_maxX - m_minX);
 
-        case WM_LBUTTONUP:
-            if (m_isDragging) {
-                m_isDragging = false;
-                if (pointInHandle) {
-                    SetState(ButtonState::Hover);
-                }
-                else {
-                    SetState(ButtonState::Normal);
-                }
-            }
-            break;
+        if (std::abs(oldValue - newValue) > 0.001f) {
+            SetValue(newValue);
         }
     }
 
-private:
-    // 현재 값의 참조를 반환하는 헬퍼 함수
-    float& GetCurrentValueRef() const
+    void Update() override {
+        UpdateDestRect();
+    }
+
+    // UpdateRange는 minX, maxX 2개의 인자만 사용
+    void UpdateRange(float minX, float maxX)
     {
-        if (m_externalValuePtr) {
-            return *m_externalValuePtr;
-        }
-        return m_externalValue;
+        m_minX = minX;
+        m_maxX = maxX;        
     }
 
     void UpdateDestRect()
@@ -167,31 +122,18 @@ private:
         if (!m_Owner || !m_renderInfo) return;
 
         Vec2 pos = m_Owner->GetTransform().GetPosition();
-        m_renderInfo->SetDestLeft(pos.x);
-        m_renderInfo->SetDestTop(pos.y);
-        m_renderInfo->SetDestRight(m_width);
-        m_renderInfo->SetDestBottom(m_height);
+        D2D1_RECT_F destRect = {
+            pos.x,
+            pos.y,
+            pos.x + m_width,
+            pos.y + m_height
+        };
+        m_renderInfo->SetDestRect(destRect);
     }
 
-    void UpdateValueFromMousePos(const Vec2& mousePos)
+    float& GetCurrentValueRef() const
     {
-        float newX = mousePos.x - m_dragOffset.x;
-        newX = std::clamp(newX, m_minX, m_maxX);
-
-        Vec2 newPos = m_Owner->GetTransform().GetPosition();
-        newPos.x = newX;
-        m_Owner->SetPosition(newPos);
-        UpdateDestRect();
-
-        float oldValue = GetCurrentValueRef();
-        float newValue = (newX - m_minX) / (m_maxX - m_minX);
-
-        // 외부 변수 직접 업데이트
-        GetCurrentValueRef() = newValue;
-
-        if (std::abs(oldValue - newValue) > 0.001f && m_onValueChanged) {
-            m_onValueChanged(newValue);
-        }
+        return m_externalValue;
     }
 
     void UpdatePosition()
@@ -208,11 +150,7 @@ private:
     RenderInfo* m_renderInfo;
     float m_minX;
     float m_maxX;
-    float& m_externalValue;     // 외부 변수 참조
-    float* m_externalValuePtr;  // 나중에 바인딩하는 경우용 포인터
-    //float m_defaultValue;       // 기본값 (참조 초기화용)
-    bool m_isDragging;
-    Vec2 m_dragOffset;
+    float& m_externalValue;
     ButtonState m_currentState;
     float m_width;
     float m_height;

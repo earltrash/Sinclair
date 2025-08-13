@@ -87,7 +87,8 @@ enum class UIWindowType
 		StatsWindow,                // 스탯창
 		EnhancementWindow,          // 강화창
 		SynthesisWindow,            // 합성창
-		StatPotionUseWindow         // 스탯 증가 물약 사용창
+		StatPotionUseWindow,        // 스탯 증가 물약 사용창
+		CreditWindow
 };
 
 enum class CursorType
