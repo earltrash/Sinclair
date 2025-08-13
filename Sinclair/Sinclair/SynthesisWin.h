@@ -44,11 +44,13 @@ public:
 
     void UpdatePosition();
     void MemBitmapLoad();
+    void InitializeObj();
 
     void MemInit();
     void MemRender();
     SynButton ButtonInit(Vec2 pos);
     SynSlot SlotInit(Vec2 pos);
+    
 
     bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
 
@@ -70,6 +72,7 @@ private:
     std::map<SynSlot, Item*>m_slot_Item;
 
     std::map<SynButton, Vec2>m_but;
+    std::map<SynButton, unique_ptr<Object>> m_buttons;
 
     //¾ê´Â ¹¹¶ó°í ºÒ·¯¾ß ÇÒ ±î 
 };

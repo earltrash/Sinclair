@@ -12,6 +12,7 @@ SynthesisWin::SynthesisWin() :UIWindow(UIWindowType::SynthesisWindow, Vec2{ 0,0 
 
 	MemInit();
 	MemBitmapLoad();
+	InitializeObj();
 }
 
 SynthesisWin::~SynthesisWin()
@@ -23,6 +24,26 @@ bool SynthesisWin::HandleMouseHover(Vec2 mousePos) //hover?
 {
 	if (!m_isActive) return false;
 
+	MSG msg{};
+	msg.message = WM_MOUSEMOVE;
+
+	// 취소, 합성 버튼 이미지 변화
+	auto bType = ButtonInit(mousePos);
+	if (bType != SynButton::Nothing)
+	{
+		auto btCompo = m_buttons[bType]->GetComponent<ButtonComponent>();
+		btCompo->SetCollision(true);
+		btCompo->Worked(msg);
+	}
+	else
+	{
+		for (auto& [tyep, bt] : m_buttons)
+		{
+			auto btCompo = bt->GetComponent<ButtonComponent>();
+			btCompo->SetCollision(false);
+			btCompo->Worked(msg);
+		}
+	}
 
 	// 드래그 중이면 창 위치 업데이트
 	if (m_isDragging)
@@ -72,6 +93,27 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 {
 
 	if (!m_isActive) return false;
+
+	MSG msg{};
+	msg.message = WM_LBUTTONDOWN;
+
+	// 취소, 합성 버튼 이미지 변화
+	auto bType = ButtonInit(mousePos);
+	if (bType != SynButton::Nothing)
+	{
+		auto btCompo = m_buttons[bType]->GetComponent<ButtonComponent>();
+		btCompo->SetCollision(true);
+		btCompo->Worked(msg);
+	}
+	else
+	{
+		for (auto& [tyep, bt] : m_buttons)
+		{
+			auto btCompo = bt->GetComponent<ButtonComponent>();
+			btCompo->SetCollision(false);
+			btCompo->Worked(msg);
+		}
+	}
 
 	SynSlot whichSlot = SlotInit(mousePos);
 
@@ -151,6 +193,27 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리 
 {
 	if (!m_isActive) return false;
+
+	MSG msg{};
+	msg.message = WM_LBUTTONUP;
+
+	// 취소, 합성 버튼 이미지 변화
+	auto bType = ButtonInit(mousePos);
+	if (bType != SynButton::Nothing)
+	{
+		auto btCompo = m_buttons[bType]->GetComponent<ButtonComponent>();
+		btCompo->SetCollision(true);
+		btCompo->Worked(msg);
+	}
+	else
+	{
+		for (auto& [tyep, bt] : m_buttons)
+		{
+			auto btCompo = bt->GetComponent<ButtonComponent>();
+			btCompo->SetCollision(false);
+			btCompo->Worked(msg);
+		}
+	}
 
 	//  현재 아이템을 드래그 중인지 확인
 	if (!CursorManager::Get().IsDragging()) return false;
@@ -259,9 +322,39 @@ void SynthesisWin::MemBitmapLoad()
 
 		uiRenderer->SetBitmap("Cancle_But", ResourceManager::Get().GetTexture("CancleBut"));
 		uiRenderer->SetBitmap("Syn_But", ResourceManager::Get().GetTexture("SynBut"));
+
 	}
 
 
+}
+
+void SynthesisWin::InitializeObj()
+{
+	// 취소 버튼
+	auto cancleBM = ResourceManager::Get().GetTexture("CancleBut");
+	auto cancle = make_unique<Object>();
+	auto cInfo = cancle->GetRenderInfo();
+	cInfo->SetBitmap(cancleBM.Get());
+	auto cbutton = cancle->AddComponent<ButtonComponent>(cInfo);
+	cbutton->BitmapPush("normal", cancleBM);
+	cbutton->BitmapPush("hover", cancleBM);
+	cbutton->BitmapPush("pressed", cancleBM);
+	cbutton->BitmapPush("disabled", cancleBM);
+	
+	m_buttons.emplace(SynButton::Cancle, std::move(cancle));
+
+	// 합성 버튼
+	auto synBM = ResourceManager::Get().GetTexture("SynBut");
+	auto syn = make_unique<Object>();;
+	auto sInfo = syn->GetRenderInfo();
+	sInfo->SetBitmap(synBM.Get());
+	auto sbutton = syn->AddComponent<ButtonComponent>(sInfo);
+	sbutton->BitmapPush("normal", synBM);
+	sbutton->BitmapPush("hover", synBM);
+	sbutton->BitmapPush("pressed", synBM);
+	sbutton->BitmapPush("disabled", synBM);
+
+	m_buttons.emplace(SynButton::Syn, std::move(syn));
 }
 
 void SynthesisWin::MemInit() //0 1 2 -> 위치 넣어주고. 0은 제외하고 넣어주는 식으로 해야겠다.  
@@ -542,9 +635,12 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 
 		for (const auto& [type, pos] : m_but) //그냥
 		{
-			ID2D1Bitmap1* ButtonBitmap = (type == SynButton::Cancle) ? uiRenderer->GetBitmap("Cancle_But").Get() : uiRenderer->GetBitmap("Syn_But").Get();
+			//ID2D1Bitmap1* ButtonBitmap = (type == SynButton::Cancle) ? uiRenderer->GetBitmap("Cancle_But").Get() : uiRenderer->GetBitmap("Syn_But").Get();
+			auto info = m_buttons[type]->GetRenderInfo();
 			D2D1_RECT_F DEST = { pos.x,pos.y,pos.x + ButX,pos.y + ButY };
-			D2DRenderer::Get().DrawBitmap(ButtonBitmap, DEST);
+			info->SetDestRect(DEST);
+			//D2DRenderer::Get().DrawBitmap(ButtonBitmap, DEST);
+			D2DRenderer::Get().DrawBitmap(info->GetRenderInfo());
 		}
 
 

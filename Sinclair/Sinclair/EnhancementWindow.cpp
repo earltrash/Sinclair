@@ -285,11 +285,11 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 			m_renderSheetCount = 0;
 
 			// 주문서 버튼 normal state로 복귀
-			for (auto& scroll : m_enhancementButtons)
-			{
-				scroll->GetComponent<ButtonComponent>()->SetState(ButtonComponent::ButtonState::Normal);
+			//for (auto& scroll : m_enhancementButtons)
+			//{
+			//	scroll->GetComponent<ButtonComponent>()->SetState(ButtonComponent::ButtonState::Normal);
 
-			}
+			//}
 			return true;
 		}
 	}
@@ -1355,22 +1355,27 @@ int EnhancementWindow::GetSelectedStatValue() const
 
 void EnhancementWindow::ReturnItemToInventory()
 {
-		if (m_targetItem != nullptr)
+	if (m_targetItem != nullptr)
+	{
+		// 인벤토리로 아이템 반환
+		auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+		if (inventoryWindow)
 		{
-				// 인벤토리로 아이템 반환
-				auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-				if (inventoryWindow)
-				{
-						inventoryWindow->AddItem(m_targetItem->m_data.id, 1);
-						std::cout << "강화창 닫기 전 아이템 인벤토리로 반환: " << m_targetItem->m_data.name << std::endl;
+			inventoryWindow->AddItem(m_targetItem->m_data.id, 1);
+			std::cout << "강화창 닫기 전 아이템 인벤토리로 반환: " << m_targetItem->m_data.name << std::endl;
 
-						// 슬롯 비우기
-						m_targetItem = nullptr;
+			// 슬롯 비우기
+			m_targetItem = nullptr;
 
-						// 시트 이미지 초기화
-						m_renderSheetCount = 0;
-				}
+			// 시트 이미지 초기화						m_renderSheetCount = 0;
 		}
+	}
+	// 주문서 버튼 normal state로 복귀
+	for (auto& scroll : m_enhancementButtons)
+	{
+		scroll->GetComponent<ButtonComponent>()->SetState(ButtonComponent::ButtonState::Normal);
+
+	}
 }
 
 SynSlot EnhancementWindow::SlotInit(Vec2 pos)
