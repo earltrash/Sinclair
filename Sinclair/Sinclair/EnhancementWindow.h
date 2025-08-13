@@ -163,7 +163,7 @@ public:
 				// 5개 오브젝트 생성
 				for (int i = 0; i < 5; i++)
 				{
-						m_sheetPosition[i] = { 85.f + (i * 60.f), 180.f };
+						m_sheetPosition[i] = { 85.f + (i * 60.f), 185.f };
 
 						auto normalSheet = std::make_unique<Object>();
 						auto normalInfo = normalSheet->GetRenderInfo();

@@ -389,7 +389,8 @@ private:
 
 	float time = 0.f;
 	float x = 0.f;
-	float weight = 0.f;
+	float finalWeight = 0.f;
+	float weight = 0.04f;
 
 	int clipNum = 0;
 

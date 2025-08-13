@@ -331,6 +331,7 @@ void Increasing_Effect::FixedUpdate(float dt)
 		if (!isUp && scale <= m_maxScale)
 		{
 			isStop = true;
+			x = 0;
 		}
 		else if (isUp && scale >= m_maxScale + m_offset)
 		{
@@ -363,6 +364,7 @@ void Increasing_Effect::OnEvent(const std::string& ev)
 		isStop = true;
 		isDisappear = false;
 		SetScale(0.f);
+		x = 0;
 	}
 }
 
@@ -620,16 +622,16 @@ void Clip_Effect::FixedUpdate(float dt)
 		time -= FPS60;
 	x += FPS60;
 
-	weight += x;
+	finalWeight += weight;
 	if (clipNum == 0)
 	{
 		m_crossFadeEffect1->SetInput(1, m_bitmap1.Get());
 		m_crossFadeEffect1->SetInput(0, m_bitmap2.Get());
-		m_crossFadeEffect1->SetValue(D2D1_CROSSFADE_PROP_WEIGHT, weight);
+		m_crossFadeEffect1->SetValue(D2D1_CROSSFADE_PROP_WEIGHT, finalWeight);
 		m_renderInfo->SetEffect(m_crossFadeEffect1.Get());
-		if (weight >= 1.f)
+		if (finalWeight >= 1.f)
 		{
-			weight = 0.f;
+			finalWeight = 0.f;
 			clipNum++;
 			x = 0;
 		}
@@ -639,11 +641,11 @@ void Clip_Effect::FixedUpdate(float dt)
 	{
 		m_crossFadeEffect2->SetInputEffect(1, m_crossFadeEffect1.Get());
 		m_crossFadeEffect2->SetInput(0, m_bitmap3.Get());
-		m_crossFadeEffect2->SetValue(D2D1_CROSSFADE_PROP_WEIGHT, weight);
+		m_crossFadeEffect2->SetValue(D2D1_CROSSFADE_PROP_WEIGHT, finalWeight);
 		m_renderInfo->SetEffect(m_crossFadeEffect2.Get());
-		if (weight >= 1.f)
+		if (finalWeight >= 1.f)
 		{
-			weight = 0.f;
+			finalWeight = 0.f;
 			clipNum++;
 			x = 0;
 		}
@@ -653,11 +655,11 @@ void Clip_Effect::FixedUpdate(float dt)
 	{
 		m_crossFadeEffect3->SetInputEffect(1, m_crossFadeEffect2.Get());
 		m_crossFadeEffect3->SetInput(0, m_bitmap4.Get());
-		m_crossFadeEffect3->SetValue(D2D1_CROSSFADE_PROP_WEIGHT, weight);
+		m_crossFadeEffect3->SetValue(D2D1_CROSSFADE_PROP_WEIGHT, finalWeight);
 		m_renderInfo->SetEffect(m_crossFadeEffect3.Get());
-		if (weight >= 1.f)
+		if (finalWeight >= 1.f)
 		{
-			weight = 0.f;
+			finalWeight = 0.f;
 			clipNum++;
 			x = 0;
 		}
@@ -667,11 +669,11 @@ void Clip_Effect::FixedUpdate(float dt)
 	{
 		m_crossFadeEffect4->SetInputEffect(1, m_crossFadeEffect3.Get());
 		m_crossFadeEffect4->SetInput(0, m_bitmap5.Get());
-		m_crossFadeEffect4->SetValue(D2D1_CROSSFADE_PROP_WEIGHT, weight);
+		m_crossFadeEffect4->SetValue(D2D1_CROSSFADE_PROP_WEIGHT, finalWeight);
 		m_renderInfo->SetEffect(m_crossFadeEffect4.Get());
-		if (weight >= 1.f)
+		if (finalWeight >= 1.f)
 		{
-			weight = 0.f;
+			finalWeight = 0.f;
 			clipNum++;
 			x = 0;
 		}
@@ -694,7 +696,7 @@ void Clip_Effect::OnEvent(const std::string& ev)
 	if (ev == "PLAY")
 	{
 		isStop = false;
-		weight = 0.f;
+		finalWeight = 0.f;
 		clipNum = 0;
 		x = 0;
 	}

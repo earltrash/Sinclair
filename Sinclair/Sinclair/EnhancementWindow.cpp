@@ -14,13 +14,20 @@ void EnhancementWindow::Update()
 
 	if (m_targetItem == nullptr)	return;
 
-	auto clip = m_targetItem->GetComponent<Clip_Effect>();
+	auto clip = m_targetItem->GetComponent<Clip_Effect>();				// target item의 실패 효과 컴포넌트
 	auto failRotate = m_targetItem->GetComponent<Rotate3D_Effect>(17);
 	failRotate->SetInputEffect(clip->GetEffect());
 	auto failOffset = m_targetItem->GetComponent<Offset_Effect>(18);
 	failOffset->SetInputEffect(failRotate->GetEffect());
-	auto frontcompo = m_targetItem->GetComponent<Composite_Effect>(19);
-	frontcompo->SetInputEffect(1, failOffset->GetEffect());
+	auto failBlur1 = m_targetItem->GetComponent<GaussianBlur_Effect>(19);
+	failBlur1->SetInputEffect(failOffset->GetEffect());
+	auto failBlur2 = m_targetItem->GetComponent<GaussianBlur_Effect>(20);
+	failBlur2->SetInputEffect(failOffset->GetEffect());
+	auto failBlurCompo = m_targetItem->GetComponent<Composite_Effect>(21);
+	failBlurCompo->SetInputEffect(1, failBlur1->GetEffect());
+	failBlurCompo->SetInputEffect(0, failBlur2->GetEffect());
+	auto frontcompo = m_targetItem->GetComponent<Composite_Effect>(22);
+	frontcompo->SetInputEffect(1, failBlurCompo->GetEffect());
 
 	m_targetItem->Update();
 
@@ -45,8 +52,8 @@ void EnhancementWindow::Update()
 	auto enchResults = wearableItem->GetEnchancResult();
 	for (int i = 0; i < 5; i++)
 	{
-		auto explode = m_normalImages[i]->GetComponent<Explode_Effect>();
-		auto increase = m_targetItem->GetComponent<Increasing_Effect>();
+		auto explode = m_normalImages[i]->GetComponent<Explode_Effect>();	// sheet효과 컴포넌트
+		auto increase = m_targetItem->GetComponent<Increasing_Effect>();	// target item의 성공 효과 컴포넌트
 		
 		auto opacity = m_targetItem->GetComponent<Opacity_Effect>();
 
@@ -70,6 +77,8 @@ void EnhancementWindow::Update()
 					m_normalImages[i]->GetRenderInfo()->SetisActive(false);
 					m_successImages[i]->GetRenderInfo()->SetisActive(false);
 					m_failImages[i]->GetRenderInfo()->SetisActive(true);
+					if(increase->GetCurrentState() == "PLAY")
+						increase->OnEvent("DORMANT");
 					clip->OnEvent("PLAY");
 					break;
 				}
@@ -88,6 +97,8 @@ void EnhancementWindow::Update()
 					m_normalImages[i]->GetRenderInfo()->SetisActive(false);
 					m_successImages[i]->GetRenderInfo()->SetisActive(false);
 					m_failImages[i]->GetRenderInfo()->SetisActive(true);
+					if (increase->GetCurrentState() == "PLAY")
+						increase->OnEvent("DORMANT");
 					clip->OnEvent("PLAY");
 					break;
 				}
@@ -133,16 +144,17 @@ void EnhancementWindow::FixedUpdate(float dt)
 	if (m_targetItem == nullptr)	return;
 
 	m_targetItem->FixedUpdate(dt);
-	//auto increase = m_targetItem->GetComponent<Increasing_Effect>();
-	//if (increase->GetScale().x != 0.f && increase->GetisStop())	// increase != nullptr && 
-	//{
-	//	x += Timer(dt);
-	//	if (x >= 1.f)
-	//	{
-	//		increase->OnEvent("DISAPPEAR");
-	//		x = 0;
-	//	}
-	//}
+
+	auto increase = m_targetItem->GetComponent<Increasing_Effect>();
+	if (increase->GetScale().x != 0 && increase->GetisStop())	// increase != nullptr && 
+	{
+		x += dt;
+		if (x >= 1.f)
+		{
+			increase->OnEvent("DISAPPEAR");
+			x = 0;
+		}
+	}
 
 	for (auto& sheets : m_normalImages)
 	{
@@ -535,16 +547,25 @@ void EnhancementWindow::Check4ItemEffect()
 	//	if (state == ButtonComponent::ButtonState::Pressed)	return false;
 	//}
 	auto runeFade = m_targetItem->GetComponent<Fade_Effect>();
-	auto opacity = m_targetItem->GetComponent<Opacity_Effect>();
+	auto opacity = m_targetItem->GetComponent<Opacity_Effect>();	// item의 opacity
 	auto increase = m_targetItem->GetComponent<Increasing_Effect>();
 	auto failClip = m_targetItem->GetComponent<Clip_Effect>();
 	string state1 = increase->GetCurrentState();
 	string state2 = increase->GetBeforeState();
 	string state3 = failClip->GetCurrentState();
-	if (state1 == "DORMANT" && state2 == "DISAPPEAR")
+
+	if (state3 == "DORMANT")
 	{
 		runeFade->OnEvent("SHOW");
-		opacity->SetOpacity(0.7f);
+	}
+	else if (state1 == "DORMANT" && state2 == "DISAPPEAR")
+	{
+		runeFade->OnEvent("SHOW");
+	}
+
+	if (state3 == "PLAY")
+	{
+		runeFade->OnEvent("HIDE");
 	}
 	else if (state1 == "PLAY" && state2 == "DORMANT")
 	{
@@ -553,14 +574,6 @@ void EnhancementWindow::Check4ItemEffect()
 	else if (state1 == "PLAY" && state2.empty())
 	{
 		runeFade->OnEvent("HIDE");
-	}
-	else if (state3 == "PLAY")
-	{
-		runeFade->OnEvent("HIDE");
-	}
-	else if (state3 == "DORMANT")
-	{
-		runeFade->OnEvent("SHOW");
 	}
 }
 void EnhancementWindow::RenderBackground()
@@ -973,26 +986,29 @@ void EnhancementWindow::InitializeItemObject()
 	auto increase = m_targetItem->AddComponent<Increasing_Effect>(info, D2D1_POINT_2F{ rayBM->GetSize().width / 2.f, rayBM->GetSize().height / 2.f }, 1.5f, 1.f, rayBlur->GetEffect()); // 4
 	auto offsetRay = m_targetItem->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, increase->GetEffect()); // 5
 	
-	auto glowColor = m_targetItem->AddComponent<Color_Effect>(info, 0.f, 25.f / 255.f, 244.f / 255.f, 0.5f, glowBM.Get()); // 6
+	auto glowColor = m_targetItem->AddComponent<Color_Effect>(info, 0.f, 0.f, 0.f, 0.0f, glowBM.Get()); // 6
 	auto glowMove = m_targetItem->AddComponent<Sideway_Effect>(info, 2.f, 0.02f, 0.02f, glowColor->GetEffect()); // 7
 	auto glowOffset = m_targetItem->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, glowMove->GetEffect()); // 8
 
-	auto runeMove = m_targetItem->AddComponent<BackForth_Effect>(info, 5.f, 0.06f, 0.03f, runeBM.Get()); // 9
+	auto runeMove = m_targetItem->AddComponent<BackForth_Effect>(info, 0.f, 0.f, 0.f, runeBM.Get()); // 9
 	auto runeOffset = m_targetItem->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, runeMove->GetEffect()); // 10
 
 	auto glowruneCompo = m_targetItem->AddComponent<Composite_Effect>(info, runeOffset->GetEffect(), glowOffset->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 11
-	auto fade = m_targetItem->AddComponent<Fade_Effect>(info, 0.f, 0.6f, 0.1f, glowruneCompo->GetEffect()); // 12
+	auto fade = m_targetItem->AddComponent<Fade_Effect>(info, 0.f, 0.4f, 0.005f, glowruneCompo->GetEffect()); // 12
 	fade->OnEvent("SHOW");
 
 	auto rayGlowruneCompo = m_targetItem->AddComponent<Composite_Effect>(info, fade->GetEffect(), offsetRay->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 13
 	
-	auto itemOpacity = m_targetItem->AddComponent<Opacity_Effect>(info, 0.7f, info->GetBitmap()); // 14
+	auto itemOpacity = m_targetItem->AddComponent<Opacity_Effect>(info, 1.f, info->GetBitmap()); // 14
 	auto behindcompo = m_targetItem->AddComponent<Composite_Effect>(info, itemOpacity->GetEffect(), rayGlowruneCompo->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 15
 
 	auto fail = m_targetItem->AddComponent<Clip_Effect>(info, fail1BM.Get(), fail2BM.Get(), fail3BM.Get(), fail4BM.Get(), fail5BM.Get()); // 16
-	auto failRotate = m_targetItem->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, 1.5f, fail->GetEffect()); // 17
+	auto failRotate = m_targetItem->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, 3.f, fail->GetEffect()); // 17
 	auto failOffset = m_targetItem->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, failRotate->GetEffect()); // 18
-	auto frontcompo = m_targetItem->AddComponent<Composite_Effect>(info, failOffset->GetEffect(), behindcompo->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 19
+	auto failBlur1 = m_targetItem->AddComponent<GaussianBlur_Effect>(info, 1.f, failOffset->GetEffect()); // 19
+	auto failBlur2 = m_targetItem->AddComponent<GaussianBlur_Effect>(info, 3.f, failOffset->GetEffect()); // 20
+	auto failBlurcompo = m_targetItem->AddComponent<Composite_Effect>(info, failBlur1->GetEffect(), failBlur2->GetEffect(), D2D1_COMPOSITE_MODE_PLUS); // 21
+	auto frontcompo = m_targetItem->AddComponent<Composite_Effect>(info, failBlurcompo->GetEffect(), behindcompo->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 22
 }
 
 bool EnhancementWindow::IsMouseOverObject(const Vec2& mousePos, Object* obj) const
@@ -1234,11 +1250,11 @@ void EnhancementWindow::OnEnhancementButtonClick(size_t buttonIndex)
 
 	std::cout << "주문서 선택: 성공률 " << successRate << "%, 스탯 +" << GetSelectedStatValue() << std::endl;
 
-	auto increase = m_targetItem->GetComponent<Increasing_Effect>();
-	if (increase->GetScale().x != 0.f && increase->GetisStop())	// increase != nullptr && 
-	{
-		increase->OnEvent("DISAPPEAR");
-	}
+	//auto increase = m_targetItem->GetComponent<Increasing_Effect>();
+	//if (increase->GetScale().x != 0.f && increase->GetisStop())	// increase != nullptr && 
+	//{
+	//	increase->OnEvent("DISAPPEAR");
+	//}
 
 	//auto runeFade = m_targetItem->GetComponent<Fade_Effect>();
 	//runeFade->OnEvent("HIDE");

@@ -36,6 +36,15 @@ public:
 
 	void SetStrength(float strength) { m_strength = strength; }
 
+	void SetInputEffect(ID2D1Effect* effect)
+	{
+		m_gaussianBlurEffect->SetInputEffect(0, effect);
+	}
+	void SetInput(ID2D1Bitmap1* bitmap)
+	{
+		m_gaussianBlurEffect->SetInput(0, bitmap);
+	}
+
 	ID2D1Effect* GetEffect() { return m_gaussianBlurEffect.Get(); }
 private:
 	float m_strength;							// 블러 적용 정도 : 1 ~ 6까지 추천
