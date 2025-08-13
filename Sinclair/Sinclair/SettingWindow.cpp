@@ -1,18 +1,20 @@
 #include "SettingWindow.h"
 #include "UI_Renderer.h"
-#include <algorithm>
 #include "ResourceManager.h"
+#include "InputManager.h"
+#include "Renderer.h"
+#include "SoundManager.h" // SoundManager와 통신하기 위해 추가
 
 SettingWindow::SettingWindow() : UIWindow(UIWindowType::SettingsWindow, { 431 , 270 }, { 1059, 540 })
 {
-    m_minValue = 0.0f;          // 또는 원하는 최소값
-    m_maxValue = 1.0f;          // 또는 원하는 최대값
-    m_bgmCurrentValue = 0.5f;   // 기본값 (50%)
-    m_sfxCurrentValue = 0.5f;   // 기본값 (50%)
+    m_minValue = 0.0f;
+    m_maxValue = 1.0f;
 
+    // SoundManager에서 현재 마스터 볼륨 값을 가져와 초기화합니다.
+    m_bgmCurrentValue = SoundManager::Instance().GetMasterBGMVolume();
+    m_sfxCurrentValue = SoundManager::Instance().GetMasterSFXVolume();
 
     m_uiRenderer = std::make_unique<UI_Renderer>();
-
     if (m_uiRenderer)
     {
         m_uiRenderer->SetBitmap("settingwindow", ResourceManager::Get().GetTexture("SettingWindow"));
@@ -28,18 +30,14 @@ SettingWindow::SettingWindow() : UIWindow(UIWindowType::SettingsWindow, { 431 , 
 void SettingWindow::Update()
 {
     Vec2 mousePos = InputManager::Get().GetMousePosition();
-
-    if (m_draggingBGM && m_bgmHandleComponent) 
+    if (m_draggingBGM && m_bgmHandleComponent)
     {
         m_bgmHandleComponent->UpdateValueFromMousePos(mousePos);
-        SoundManager::Instance().SetBGMVal(m_bgmHandleComponent->GetValue());
     }
 
-    if (m_draggingSFX && m_sfxHandleComponent) 
+    if (m_draggingSFX && m_sfxHandleComponent)
     {
         m_sfxHandleComponent->UpdateValueFromMousePos(mousePos);
-        m_sfxCurrentValue = m_sfxHandleComponent->GetValue();
-        SoundManager::Instance().SetSFXVal(m_sfxHandleComponent->GetValue());
     }
 
     if (m_bgmHandleObject) m_bgmHandleObject->Update();
@@ -53,7 +51,6 @@ void SettingWindow::Render()
     RenderSliderBackground();
     RenderCloseButton();
     RenderSliderTrack();
-
     if (m_bgmHandleObject)
     {
         m_bgmHandleComponent->UpdateDestRect();
@@ -70,7 +67,6 @@ void SettingWindow::Render()
 bool SettingWindow::HandleMouseHover(Vec2 mousePos)
 {
     if (m_draggingBGM || m_draggingSFX || m_draggingWindow) return true;
-
     if (m_bgmHandleComponent && m_bgmHandleComponent->IsPointInHandle(mousePos)) {
         m_bgmHandleComponent->SetState(SliderHandleComponent::ButtonState::Hover);
         return true;
@@ -92,17 +88,13 @@ bool SettingWindow::HandleMouseDown(Vec2 mousePos)
     if (m_bgmHandleComponent && m_bgmHandleComponent->IsPointInHandle(mousePos)) {
         m_draggingBGM = true;
         m_bgmHandleComponent->SetState(SliderHandleComponent::ButtonState::Pressed);
-
         return true;
     }
     if (m_sfxHandleComponent && m_sfxHandleComponent->IsPointInHandle(mousePos)) {
         m_draggingSFX = true;
         m_sfxHandleComponent->SetState(SliderHandleComponent::ButtonState::Pressed);
-
         return true;
     }
-
-    // 창 드래그 로직 제거 - UIWindow에서 처리
     return false;
 }
 
@@ -122,7 +114,6 @@ bool SettingWindow::HandleMouseUp(Vec2 mousePos)
         }
         return true;
     }
-    // 창 드래그 해제 로직 제거
     return false;
 }
 
@@ -137,7 +128,6 @@ void SettingWindow::SetBGMValue(float value)
     float normalizedValue = (value - m_minValue) / (m_maxValue - m_minValue);
     normalizedValue = std::clamp(normalizedValue, 0.0f, 1.0f);
     m_bgmCurrentValue = m_minValue + normalizedValue * (m_maxValue - m_minValue);
-
     if (m_bgmHandleComponent)
     {
         m_bgmHandleComponent->SetValue(normalizedValue);
@@ -151,7 +141,6 @@ void SettingWindow::SetSFXValue(float value)
     float normalizedValue = (value - m_minValue) / (m_maxValue - m_minValue);
     normalizedValue = std::clamp(normalizedValue, 0.0f, 1.0f);
     m_sfxCurrentValue = m_minValue + normalizedValue * (m_maxValue - m_minValue);
-
     if (m_sfxHandleComponent)
     {
         m_sfxHandleComponent->SetValue(normalizedValue);
@@ -185,8 +174,10 @@ void SettingWindow::CreateSliderHandle()
     m_bgmHandleComponent->SetWidth(handleWidth);
     m_bgmHandleComponent->SetHeight(handleHeight);
 
+    // 슬라이더 값이 변경될 때 SoundManager의 마스터 볼륨을 업데이트합니다.
     m_bgmHandleComponent->SetOnValueChanged([this](float normalizedValue) {
         m_bgmCurrentValue = m_minValue + normalizedValue * (m_maxValue - m_minValue);
+        SoundManager::Instance().SetMasterBGMVolume(m_bgmCurrentValue);
         if (m_onBGMValueChanged) { m_onBGMValueChanged(m_bgmCurrentValue); }
         });
 
@@ -199,8 +190,11 @@ void SettingWindow::CreateSliderHandle()
     m_sfxHandleComponent = m_sfxHandleObject->AddComponent<SliderHandleComponent>(sfxRenderInfo, m_sfxMinX, m_sfxMaxX, m_sfxCurrentValue);
     m_sfxHandleComponent->SetWidth(handleWidth);
     m_sfxHandleComponent->SetHeight(handleHeight);
+
+    // 슬라이더 값이 변경될 때 SoundManager의 마스터 볼륨을 업데이트합니다.
     m_sfxHandleComponent->SetOnValueChanged([this](float normalizedValue) {
         m_sfxCurrentValue = m_minValue + normalizedValue * (m_maxValue - m_minValue);
+        SoundManager::Instance().SetMasterSFXVolume(m_sfxCurrentValue);
         if (m_onSFXValueChanged) { m_onSFXValueChanged(m_sfxCurrentValue); }
         });
 }
@@ -249,7 +243,6 @@ void SettingWindow::RenderValueText()
         float titleY = m_position.y + 73.0f;
         D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 48.0f);
         D2DRenderer::Get().DrawMessage(L"설정", titleX, titleY, 100, 25.0f, D2D1::ColorF(0xffe6d8));
-
         float bgmTextX = m_position.x + 120;
         float bgmTextY = m_position.y + 228.77f;
         D2DRenderer::Get().CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 30.0f);
@@ -267,9 +260,7 @@ void SettingWindow::RenderCloseButton()
     float rightMargin = 85.0f;
     Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 35.0f };
     Vec2 closeButtonSize = { 35.0f, 35.0f };
-
     D2D1_RECT_F destRect = { closeButtonPos.x, closeButtonPos.y, closeButtonPos.x + closeButtonSize.x, closeButtonPos.y + closeButtonSize.y };
-
     if (m_uiRenderer)
     {
         ID2D1Bitmap1* cb = m_uiRenderer->GetBitmap("close_button").Get();
@@ -279,7 +270,6 @@ void SettingWindow::RenderCloseButton()
 
 void SettingWindow::MoveHandles(Vec2 delta)
 {
-    // 핸들 오브젝트 위치 직접 이동
     if (m_bgmHandleObject)
     {
         Vec2 currentPos = m_bgmHandleObject->GetTransform().GetPosition();
@@ -291,7 +281,6 @@ void SettingWindow::MoveHandles(Vec2 delta)
         m_sfxHandleObject->SetPosition(currentPos + delta);
     }
 
-    // 핸들 범위 업데이트
     m_bgmMinX += delta.x;
     m_bgmMaxX += delta.x;
     m_sfxMinX += delta.x;
@@ -300,33 +289,19 @@ void SettingWindow::MoveHandles(Vec2 delta)
     if (m_bgmHandleComponent)
     {
         m_bgmHandleComponent->UpdateRange(m_bgmMinX, m_bgmMaxX);
-
-        // 현재 핸들 위치에서 새로운 값 계산 (SetValue 호출하지 않음)
         Vec2 bgmPos = m_bgmHandleObject->GetTransform().GetPosition();
         float normalizedBGM = (bgmPos.x - m_bgmMinX) / (m_bgmMaxX - m_bgmMinX);
         normalizedBGM = std::clamp(normalizedBGM, 0.0f, 1.0f);
         m_bgmCurrentValue = m_minValue + normalizedBGM * (m_maxValue - m_minValue);
-
-
-
-
-        // 컴포넌트 내부 값만 직접 업데이트 (위치는 이미 이동했으므로)
         m_bgmHandleComponent->UpdateValueOnly(normalizedBGM);
     }
     if (m_sfxHandleComponent)
     {
         m_sfxHandleComponent->UpdateRange(m_sfxMinX, m_sfxMaxX);
-
-        // 현재 핸들 위치에서 새로운 값 계산 (SetValue 호출하지 않음)
         Vec2 sfxPos = m_sfxHandleObject->GetTransform().GetPosition();
         float normalizedSFX = (sfxPos.x - m_sfxMinX) / (m_sfxMaxX - m_sfxMinX);
         normalizedSFX = std::clamp(normalizedSFX, 0.0f, 1.0f);
-
         m_sfxCurrentValue = m_minValue + normalizedSFX * (m_maxValue - m_minValue);
-
-
-
-        // 컴포넌트 내부 값만 직접 업데이트 (위치는 이미 이동했으므로)
         m_sfxHandleComponent->UpdateValueOnly(normalizedSFX);
     }
 }

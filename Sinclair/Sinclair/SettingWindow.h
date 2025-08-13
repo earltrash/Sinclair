@@ -23,7 +23,6 @@ public:
     bool HandleDoubleClick(Vec2 mousePos) override;
     bool HandleMouseRight(Vec2 mousePos) override;
     bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) override;
-
     UIWindowType GetType() override;
 
     void SetBGMValue(float value);
@@ -43,6 +42,8 @@ public:
     // 창과 핸들을 함께 이동시키는 함수
     void MoveHandles(Vec2 delta);
 
+    /*
+    // SoundManager와의 직접적인 결합을 제거했으므로 더 이상 필요하지 않습니다.
     float& getBgmCurrentValue() {
         return m_bgmCurrentValue;
     }
@@ -50,6 +51,7 @@ public:
     float& getSfxCurrentValue(){
         return m_sfxCurrentValue;
     }
+    */
 
 private:
     std::unique_ptr<UI_Renderer> m_uiRenderer;
