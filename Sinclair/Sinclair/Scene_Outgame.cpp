@@ -651,6 +651,7 @@ void Scene_Outgame::ChangeState(State newState)
 
 		noButton->SetOnClickCallback([this]() {
 			ChangeState(CHOICE_MENU); // 선택지로 돌아가기
+			index = 0;
 			});
 
 		changoButton->SetOnClickCallback([this]() {

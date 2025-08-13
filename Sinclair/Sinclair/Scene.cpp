@@ -6,6 +6,7 @@
 #include "UI_Renderer.h"
 #include "CursorManager.h"
 #include "SceneManager.h"
+#include "UIManager.h"
 
 void SceneStandard::Update()
 {
@@ -132,6 +133,7 @@ void SceneStandard::SafeChangeScene(const std::string& sceneName)
 		m_nextScene = sceneName;
 		m_currentDelay = 0.0f;
 
+		UIManager::Get().CloseAllWindows();
 
 		// 디버그 로그
 		std::cout << "씬 전환 예약: " << sceneName << std::endl;

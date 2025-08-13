@@ -893,7 +893,6 @@ void EnhancementWindow::TryEnhance(int successRate)
 
 		int roll = dist(m_rng);
 		bool success = roll <= successRate;
-
 		auto& results = wearableItem->GetEnchancResult();
 		int currentIndex = -1;
 

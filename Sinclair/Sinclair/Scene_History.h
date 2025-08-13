@@ -45,6 +45,7 @@ public:
 
 	string cur_HM_ID;
 
+	bool  m_inputCheck = false;
 	bool  m_allTextsShown = false;
 	float m_currentShowingDelay = 0.f;
 	float m_showingDelay = 1.3f;			// 텍스트 간격

@@ -245,9 +245,9 @@ void Scene_Title::CreateObj()
 		});
 
 	gameStartButton_buttonComp->SetOnClickCallback([this]() {
+		
+		UIManager::Get().CloseAllWindows();
 
-
-		SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "OutGame", 2.5f);
 		SafeChangeScene("OutGame");
 
 	//	SoundManager::Instance().PauseBGM("Title" , true);
