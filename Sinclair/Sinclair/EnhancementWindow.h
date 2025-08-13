@@ -161,7 +161,7 @@ public:
 				auto sheet3 = ResourceManager::Get().GetTexture("enhancementSheetFail");
 				auto ray = ResourceManager::Get().GetTexture("portalRays");
 
-				explodeTime = 1.f;
+				explodeTime = 0.3f;
 				// 5개 오브젝트 생성
 				for (int i = 0; i < 5; i++)
 				{
