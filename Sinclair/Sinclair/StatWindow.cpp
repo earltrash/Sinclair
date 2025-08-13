@@ -242,10 +242,10 @@ void StatWindow::RenderRadarChart()
     float stats[5] =
     {
         m_RenderStat.Strength,
-        m_RenderStat.Magic_Power,
-        m_RenderStat.Health,
+        m_RenderStat.Charm,
         m_RenderStat.Knowledge,
-        m_RenderStat.Charm
+        m_RenderStat.Magic_Power,
+        m_RenderStat.Health
     };
 
     // 5개의 스탯 포인트를 계산
