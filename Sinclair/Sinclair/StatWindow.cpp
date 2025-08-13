@@ -330,26 +330,7 @@ void StatWindow::RenderRadarChart()
         points[i] = Vec2(actualX, actualY);
     }
 
-
-    // 채우기 효과 - 중심에서 각 스탯 포인트로 방사형 선 그리기
-    for (int i = 0; i < 5; ++i)
-    {
-        int next = (i + 1) % 5;
-
-        // 현재 변을 여러 선으로 분할
-        for (float t = 0.0f; t <= 1.0f; t += 0.003f) // 0.01f = 선 밀도
-        {
-            float x = points[i].x + (points[next].x - points[i].x) * t;
-            float y = points[i].y + (points[next].y - points[i].y) * t;
-
-            // 중심에서 변의 각 점으로 선 그리기
-            D2DRenderer::Get().DrawLine(
-                center.x, center.y,
-                x, y,
-                D2D1::ColorF(D2D1::ColorF::SaddleBrown, 1.0f) // 반투명 원하면 0.1~0.5정도로 줄이기
-            );
-        }
-    }
+    D2DRenderer::Get().FillPolygon(points, 5, D2D1::ColorF(D2D1::ColorF::SaddleBrown, 1));
 
     // 실제 스탯값에 따른 5각형 외곽선 그리기 | 필요없으면 나중에 지울거임.
     //for (int i = 0; i < 5; ++i)
@@ -422,18 +403,31 @@ void StatWindow::UpdateTotalStats()
     totalFundamentalStats.luck = m_equipmentFundamentalStats.luck + m_potionFundamentalStats.luck;
 
     // 4. 2차 스탯 계산
-    m_totalStats.Strength = totalFundamentalStats.power * 0.7f + totalFundamentalStats.agile * 0.3f;
-    m_totalStats.Magic_Power = totalFundamentalStats.intelligence * 1;
-    m_totalStats.Health = totalFundamentalStats.power * 1;
-    m_totalStats.Knowledge = totalFundamentalStats.intelligence * 0.7f + totalFundamentalStats.luck * 0.3f;
-    m_totalStats.Charm = totalFundamentalStats.luck * 0.7f + totalFundamentalStats.agile * 0.3f;
+    m_totalStats.Strength       = totalFundamentalStats.power * 0.7f + totalFundamentalStats.agile * 0.3f;
+    m_totalStats.Magic_Power    = totalFundamentalStats.intelligence * 1;
+    m_totalStats.Health         = totalFundamentalStats.power * 1;
+    m_totalStats.Knowledge      = totalFundamentalStats.intelligence * 0.7f + totalFundamentalStats.luck * 0.3f;
+    m_totalStats.Charm          = totalFundamentalStats.luck * 0.7f + totalFundamentalStats.agile * 0.3f;
 
     // 실제 그릴 용도임.
-    m_RenderStat.Strength = totalFundamentalStats.power * 2 + totalFundamentalStats.agile * 1;
-    m_RenderStat.Magic_Power = totalFundamentalStats.intelligence * 3;
-    m_RenderStat.Health = static_cast<int>(totalFundamentalStats.power * 1 + totalFundamentalStats.intelligence * 0.5f);
-    m_RenderStat.Knowledge = totalFundamentalStats.intelligence * 2 + totalFundamentalStats.luck * 1;
-    m_RenderStat.Charm = totalFundamentalStats.luck * 3 + totalFundamentalStats.agile * 1;
+    //m_RenderStat.Strength = totalFundamentalStats.power * 2 + totalFundamentalStats.agile * 1;
+    //m_RenderStat.Magic_Power = totalFundamentalStats.intelligence * 3;
+    //m_RenderStat.Health = static_cast<int>(totalFundamentalStats.power * 1 + totalFundamentalStats.intelligence * 0.5f);
+    //m_RenderStat.Knowledge = totalFundamentalStats.intelligence * 2 + totalFundamentalStats.luck * 1;
+    //m_RenderStat.Charm = totalFundamentalStats.luck * 3 + totalFundamentalStats.agile * 1;
+    
+    //m_RenderStat.Strength       = totalFundamentalStats.power * 0.7f + totalFundamentalStats.agile * 0.3f;
+    //m_RenderStat.Health = totalFundamentalStats.power * 1;
+    //m_RenderStat.Knowledge = totalFundamentalStats.intelligence * 0.7f + totalFundamentalStats.luck * 0.3f;
+    //m_RenderStat.Magic_Power = totalFundamentalStats.intelligence * 1;
+    //m_RenderStat.Charm = totalFundamentalStats.luck * 0.7f + totalFundamentalStats.agile * 0.3f;
+
+    m_RenderStat.Strength = totalFundamentalStats.power * 1 + totalFundamentalStats.agile * 0.4f;
+    m_RenderStat.Magic_Power = totalFundamentalStats.intelligence * 1.3f;
+    m_RenderStat.Health = static_cast<int>(totalFundamentalStats.power * 1 + totalFundamentalStats.intelligence * 0.3f);
+    m_RenderStat.Knowledge = totalFundamentalStats.intelligence * 0.8f + totalFundamentalStats.luck * 1;
+    m_RenderStat.Charm = totalFundamentalStats.luck * 1 + totalFundamentalStats.agile * .7f;
+
 }
 
 // 무기 고유 id로 체크할거임.

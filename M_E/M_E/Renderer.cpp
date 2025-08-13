@@ -543,4 +543,57 @@ void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1** outBi
     hr = m_d2dContext->CreateBitmapFromWicBitmap(converter.Get(), &bmpProps, outBitmap); //?
 }
 
+void D2DRenderer::FillPolygon(const D2D_VECTOR_2F* points, UINT count, const D2D1::ColorF& color)
+{
+    // 점이 3개 미만이거나 D2D Context가 없으면 다각형을 그릴 수 없으므로 함수를 종료합니다.
+    if (count < 3 || !m_d2dContext) return;
 
+    // D2D Context에서 ID2D1Factory 타입의 팩토리를 얻어옵니다.
+    // GetAddressOf()를 사용하여 ComPtr가 관리하는 포인터의 주소를 넘깁니다.
+    ComPtr<ID2D1Factory> pFactory;
+    m_d2dContext->GetFactory(pFactory.GetAddressOf());
+
+    // 경로(Path)를 정의할 Geometry 객체 생성
+    ComPtr<ID2D1PathGeometry> pPathGeometry;
+    HRESULT hr = S_OK;
+
+    if (pFactory)
+    {
+        hr = pFactory->CreatePathGeometry(&pPathGeometry);
+    }
+
+    if (SUCCEEDED(hr))
+    {
+        // Geometry에 점을 추가하기 위한 싱크(sink)를 엽니다.
+        ComPtr<ID2D1GeometrySink> pSink;
+        hr = pPathGeometry->Open(&pSink);
+
+        if (SUCCEEDED(hr))
+        {
+            // 다각형의 첫 번째 점으로 시작하여 채우기를 시작합니다.
+            pSink->BeginFigure(D2D1::Point2F(points[0].x, points[0].y), D2D1_FIGURE_BEGIN_FILLED);
+
+            // 나머지 점들을 선으로 추가합니다.
+            for (UINT i = 1; i < count; ++i)
+            {
+                pSink->AddLine(D2D1::Point2F(points[i].x, points[i].y));
+            }
+            // 도형을 닫아 다각형을 완성합니다.
+            pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+            hr = pSink->Close();
+        }
+    }
+
+    if (SUCCEEDED(hr))
+    {
+        // 도형을 채울 브러시(Brush) 생성
+        ComPtr<ID2D1SolidColorBrush> pBrush;
+        hr = m_d2dContext->CreateSolidColorBrush(color, &pBrush);
+
+        if (SUCCEEDED(hr))
+        {
+            // Geometry를 브러시로 채웁니다.
+            m_d2dContext->FillGeometry(pPathGeometry.Get(), pBrush.Get());
+        }
+    }
+}

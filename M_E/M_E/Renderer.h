@@ -87,6 +87,10 @@ public:
     ComPtr <IDWriteTextFormat>   GetTFormat() { return  m_textFormat; }
 
     D2D1_SIZE_F MeasureText(const std::wstring& text, float fontSize, const std::wstring& fontName);
+
+
+    void FillPolygon(const D2D_VECTOR_2F* points, UINT count, const D2D1::ColorF& color);
+
 private:
 
     void CreateDeviceAndSwapChain(HWND hwnd);
