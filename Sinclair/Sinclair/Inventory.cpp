@@ -407,7 +407,7 @@ bool Inventory::HandleMouseDown(Vec2 mousePos) //어차피 Inven 위치 내에 있어야 �
         slot->Clear();
         slot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
-        return true; // 입력 처리 완료
+       // return true; // 입력 처리 완료
     }
     // 영역 안 클릭 시 최상단으로.
     if (IsInBounds(mousePos))
@@ -492,7 +492,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
 
 
                 ItemDrop(draggedItemData);
-
+                UIManager::Get().OpenWindow(m_windowType);
                 CursorManager::Get().RE_ItemCount();
                 CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
                 return true;
@@ -508,7 +508,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
 
 
                 ItemDrop(draggedItemData);
-
+                UIManager::Get().OpenWindow(m_windowType);
                 CursorManager::Get().RE_ItemCount();
                 CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
                 return true;
@@ -524,6 +524,14 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
     }
     else
     {
+        if (IsInBounds(mousePos))
+        {
+            UIManager::Get().OpenWindow(m_windowType);
+            CursorManager::Get().RE_ItemCount();
+            CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
+            return true;
+        }
+
         // 이때만 호출해야함.
         return HandleDropFailure(mousePos, draggedItemData, dragSource);
     }
@@ -546,6 +554,7 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
 
             ItemDrop(draggedItem);
             // 드래그 종료 및 아이템 개수 초기화
+            UIManager::Get().OpenWindow(m_windowType);
             CursorManager::Get().EndItemDrag();
             CursorManager::Get().RE_ItemCount(); // 개수 초기화
             return true; // 처리 완료

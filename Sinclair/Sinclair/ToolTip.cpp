@@ -164,7 +164,7 @@ void ToolTip::DrawMessageCenterHorizontal(const std::wstring& text, float topY, 
 		text.c_str(),
 		centerX,
 		topY,
-		textWidth,  // width는 "길이"로
+		textWidth+50,  // width는 "길이"로
 		fontSize,   // height는 폰트 크기 기반
 		color
 	);
@@ -217,11 +217,11 @@ void ToolTip::TextRender(Item*& item)
 		// 아이템명 (가로 중앙 정렬)
 
 
-	    DrawMessageCenterHorizontal(ItemNm, m_text_pos[TextType::ItemNm].y, PtToPx(14), L"빛의 계승자 Bold", D2D1::ColorF::White);
+	    DrawMessageCenterHorizontal(ItemNm, m_text_pos[TextType::ItemNm].y, PtToPx(12), L"빛의 계승자 Bold", D2D1::ColorF::White);
 
 		// 강화 / 합성
-		DrawMessageCenterHorizontal(Ehchan, m_text_pos[TextType::Enchancable].y, PtToPx(12.36f), L"빛의 계승자 Bold", D2D1::ColorF::Orange);
-		DrawMessageCenterHorizontal(Syn, m_text_pos[TextType::Synthesisable].y, PtToPx(12.36f), L"빛의 계승자 Bold", D2D1::ColorF::Orange);
+		DrawMessageCenterHorizontal(Ehchan, m_text_pos[TextType::Enchancable].y, PtToPx(10.0f), L"빛의 계승자 Bold", D2D1::ColorF::Orange);
+		DrawMessageCenterHorizontal(Syn, m_text_pos[TextType::Synthesisable].y, PtToPx(10.0f), L"빛의 계승자 Bold", D2D1::ColorF::Orange);
 
 		
 
@@ -263,7 +263,7 @@ void ToolTip::TextRender(Item*& item)
 		//DrawMessageCenterHorizontal(des.c_str(), m_text_pos[TextType::DES_N].y, PtToPx(12.07f), L"빛의 계승자 Bold", D2D1::ColorF::White);
 
 		// 비장비 아이템 처리
-		DrawMessageCenterHorizontal(ItemNm, m_text_pos[TextType::ItemNm].y, PtToPx(15), L"빛의 계승자 Bold", D2D1::ColorF::White);
+		DrawMessageCenterHorizontal(ItemNm, m_text_pos[TextType::ItemNm].y, PtToPx(12), L"빛의 계승자 Bold", D2D1::ColorF::White);
 		//DrawMessageCenterHorizontal(des, m_text_pos[TextType::DES].y, PtToPx(12), L"빛의 계승자 Bold", D2D1::ColorF::White);
 	}
 
