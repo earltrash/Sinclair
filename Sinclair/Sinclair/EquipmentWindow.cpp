@@ -96,9 +96,7 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
         {
             //std::cout << "DEBUG: 장비 장착 조건 만족. 아이템을 장착합니다." << std::endl;
             // 장비 착용 성공
-            // 스탯창 가져오기.
-            auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow));
-
+            
             Item* previousItem = GetEquippedItem(slotType); // 원래 슬롯에 있던 아이템
             m_equippedItems[slotType] = draggedItem;
 
@@ -114,8 +112,6 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
                 inventoryWindow->AddItem(previousItem->m_data.id, 1);
 
                 std::cout << "DEBUG: 기존 아이템이 있어 인벤토리로 복구시킴." << std::endl;
-
-
             }
 
             // 슬롯 전부 다시 가져와서 다시 계산해주기.
@@ -128,26 +124,13 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
             CursorManager::Get().EndItemDrag();
             return true;
         }
-        else
-        {
-            return HandleDropFailure(mousePos, draggedItem, dragSource);
-        }
+        // uimanager가 알아서 복구 처리.
+        return false;
     }
 
     //  창 내부 클릭 시 최상단으로 올리기 (드래그 드롭 로직 이후에 처리)
     if (IsInBounds(mousePos))
     {
-        // 창 영역 내에서 드래그된 아이템이 있으면 인벤토리로 반환
-        if (CursorManager::Get().IsDragging())
-        {
-            Item* draggedItem = CursorManager::Get().GetDraggedItem();
-            if (draggedItem)
-            {
-                DragSource source = CursorManager::Get().GetDragSource();
-                HandleDropFailure(mousePos, draggedItem, source);
-            }
-        }
-
         UIManager::Get().OpenWindow(m_windowType);
         return true;
     }

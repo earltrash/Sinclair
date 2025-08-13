@@ -155,27 +155,10 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 	DragSource dragSource = CursorManager::Get().GetDragSource();
 	SynSlot whichSlot = SlotInit(mousePos);
 
-
+	// Result 슬롯에 드롭
 	if (whichSlot == SynSlot::Result && draggedItem != nullptr)
 	{
-		auto* inventoryWindow = dynamic_cast<Inventory*>(
-			UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-
-		// 기존 아이템 복귀
-		Item* previousItem = m_slot_Item[whichSlot];
-		if (previousItem != nullptr) {
-
-			inventoryWindow->AddItem(previousItem->m_data.id, 1);
-		}
-
-		// 드롭한 아이템도 복귀
-		inventoryWindow->AddItem(draggedItem->m_data.id, 1);
-
-		// 결과 슬롯 비우기
-		m_slot_Item[whichSlot] = nullptr;
-		ItemDrop(draggedItem);
-		CursorManager::Get().EndItemDrag();
-		return true;
+			return false; // UIManager에서 복구 처리
 	}
 	// 일반 슬롯에 드롭하는 경우
 	else if (whichSlot != SynSlot::Nothing && draggedItem != nullptr)
@@ -203,48 +186,9 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 	// 합성창 영역 내에서 빈 공간에 드롭한 경우
 	else if (IsInBounds(mousePos) && draggedItem != nullptr)
 	{
-		// 합성창 내부의 빈 공간이므로 HandleDropFailure 호출
-		bool handled = HandleDropFailure(mousePos, draggedItem, dragSource);
-		CursorManager::Get().EndItemDrag();
-		return handled;
+			return false;
 	}
-	// 합성창 밖으로 드롭한 경우 - 여기가 핵심 수정 부분
-	else if (!IsInBounds(mousePos) && draggedItem != nullptr)
-	{
-		// 다른 창에 드롭을 시도하고 실패했을 경우에만 복구
-		bool handledByOtherWindow = false;
-
-		// 다른 창들이 처리할 수 있는지 확인
-		auto windows = {
-				UIWindowType::InventoryWindow,
-				UIWindowType::EquipmentWindow,
-				UIWindowType::EnhancementWindow
-		};
-
-		for (auto windowType : windows)
-		{
-			UIWindow* window = UIManager::Get().GetWindow(windowType);
-			if (window && window->IsActive() && window->IsInBounds(mousePos))
-			{
-				// 다른 창이 처리할 수 있으므로 합성창에서는 처리하지 않음
-				handledByOtherWindow = true;
-				break;
-			}
-		}
-
-		// 다른 창이 처리하지 않는 경우에만 복구 처리
-		if (!handledByOtherWindow)
-		{
-			bool handled = HandleDropFailure(mousePos, draggedItem, dragSource);
-			CursorManager::Get().EndItemDrag();
-			return handled;
-		}
-
-		// 다른 창이 처리할 예정이므로 false 반환 (UIManager가 처리하도록)
-		return false;
-	}
-
-		CursorManager::Get().HoveredReleased();
+	
 		return false;
 }
 

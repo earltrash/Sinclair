@@ -181,6 +181,8 @@ void UIManager::OnInput(const MSG& msg)
         // CursorManager가 현재 아이템을 드래그 중인지 확인
         if (CursorManager::Get().IsDragging())
         {
+            bool handled = false;
+
             // 가장 상단에 있는 창부터 탐색하여 드롭 위치를 찾음.
             for (auto it = m_activeWindowOrder.rbegin(); it != m_activeWindowOrder.rend(); ++it)
             {
@@ -188,10 +190,13 @@ void UIManager::OnInput(const MSG& msg)
 
                 UIWindow* window = GetWindow(*it);
                 // 마우스가 현재 창 영역 안에 있고, 그 창이 드롭 처리를 성공했다면
-                if (window && window->IsInBounds(mousePos) && window->HandleMouseUp(mousePos))
+                if (window && window->IsInBounds(mousePos))
                 {
-                    CursorManager::Get().EndItemDrag(); // 드래그 종료
-                    return; // 입력 처리 완료
+                    handled = window->HandleMouseUp(mousePos);
+                    if (handled)
+                    {
+                        return; // 성공적으로 처리됨. EndItemDrag는 각 창에서 처리
+                    }
                 }
             }
 
@@ -199,9 +204,10 @@ void UIManager::OnInput(const MSG& msg)
             if (CursorManager::Get().IsDragging())
             {
                 Item* draggedItem = CursorManager::Get().GetDraggedItem();
+                DragSource source = CursorManager::Get().GetDragSource();
+
                 if (draggedItem)
                 {
-                    DragSource source = CursorManager::Get().GetDragSource();
                     // 인벤토리 창의 HandleDropFailure 함수를 직접 호출하여 처리 위임
                     if (auto* inventory = dynamic_cast<Inventory*>(GetWindow(UIWindowType::InventoryWindow)))
                     {
@@ -214,6 +220,9 @@ void UIManager::OnInput(const MSG& msg)
                         }
                     }
                 }
+
+                CursorManager::Get().EndItemDrag();
+                return;
             }
         }
 

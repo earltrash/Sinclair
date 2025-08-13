@@ -74,7 +74,7 @@ public:
 			// 인벤토리만 예외처리
 			if (m_windowType == UIWindowType::InventoryWindow)
 			{
-				rightMargin = 75.0f; // x값
+				rightMargin = 85.0f; // x값
 				yOffset = 30.0f;     // y값
 			}
 			else if (m_windowType == UIWindowType::SettingsWindow || m_windowType == UIWindowType::CreditWindow)

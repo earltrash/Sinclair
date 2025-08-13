@@ -57,7 +57,7 @@ void Inventory::InitializeRegions()
     //닫기 버튼 영역
     float closeButtonSize = 35.0f;
     closeButtonBounds = Rect(
-        m_position.x + m_size.x - (closeButtonSize + 75), //14
+        m_position.x + m_size.x - (closeButtonSize + 85), //14
         m_position.y + 30,      // 35였음 원래
         closeButtonSize,
         closeButtonSize);
@@ -407,7 +407,7 @@ bool Inventory::HandleMouseDown(Vec2 mousePos) //어차피 Inven 위치 내에 있어야 �
         slot->Clear();
         slot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
-       // return true; // 입력 처리 완료
+        return true; // 입력 처리 완료
     }
     // 영역 안 클릭 시 최상단으로.
     if (IsInBounds(mousePos))
@@ -423,122 +423,104 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
 {
     if (!m_isActive) return false;
 
-    // CursorManager에서 드래그 중인 아이템이 있는지 확인
-    InventorySlot* targetSlot = GetSlotAt(mousePos); // 현재 마우스 위치의 슬롯을 다시 찾음
-    Item* draggedItemData = CursorManager::Get().GetDraggedItem(); // CursorManager에서 드래그 중인 아이템 가져오기
-    DragSource dragSource = CursorManager::Get().GetDragSource();
-
-    // 만약 장비창에서 온거면 스탯 업데이트
-    if (dragSource == DragSource::Equipment)
+    if (CursorManager::Get().IsDragging())
     {
-        if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
+        // CursorManager에서 드래그 중인 아이템이 있는지 확인
+        InventorySlot* targetSlot = GetSlotAt(mousePos); // 현재 마우스 위치의 슬롯을 다시 찾음
+        Item* draggedItemData = CursorManager::Get().GetDraggedItem(); // CursorManager에서 드래그 중인 아이템 가져오기
+        DragSource dragSource = CursorManager::Get().GetDragSource();
+
+        // 만약 장비창에서 온거면 스탯 업데이트
+        if (dragSource == DragSource::Equipment)
         {
-            statWindow->UpdateTotalStats();
-        }
-    }
-
-    bool placed = false;
-
-    if (targetSlot && targetSlot->isEnabled && draggedItemData)
-    {
-        // 스택 가능한 아이템이라면 합치기 시도
-        if (draggedItemData->IsStackable() &&
-            targetSlot->item.id == draggedItemData->m_data.id &&
-            (targetSlot->item.count + 1) <= draggedItemData->maxCount) // count는 CursorManager에서 관리해야 함
-        {
-
-            ItemDrop(draggedItemData);
-            //std::cout << "스택 가능. 아이템 합칠거임." << std::endl; 조건은 맞게 들어옴.
-            targetSlot->item.count += 1; // 드래그된 아이템의 실제 count를 더해야 함
-            targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
-            placed = true;
-        }
-        else if (targetSlot->IsEmpty())
-        {
-            int Count = CursorManager::Get().GetItemCount(); //기존은 그냥 database에서 가져온 거라 1값이 무조건 나옴 ㅇㅇ 
-
-            // 빈 슬롯에 드롭
-            ItemDrop(draggedItemData);
-
-            targetSlot->SetItem(draggedItemData->m_data.id, Count); // count는 CursorManager에서 관리해야 함
-            targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
-            placed = true;
-            CursorManager::Get().RE_ItemCount();
-
-        }
-        else // 슬롯이 비어있지 않고 스택 불가능하거나 다른 아이템인 경우 (교환 로직)
-        {
-            // 원본 슬롯 정보 가져오기
-            InventorySlot* sourceSlot = CursorManager::Get().GetSourceSlot();
-
-            if (sourceSlot)
+            if (auto* statWindow = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow)))
             {
-                // 현재 타겟 슬롯의 아이템을 임시 저장
-                ItemInstance tempItem = targetSlot->item;
-
-                // 타겟 슬롯에 드래그된 아이템 놓기
-
-                int Count = CursorManager::Get().GetItemCount(); //기존은 그냥 database에서 가져온 거라 1값이 무조건 나옴 ㅇㅇ 
-                targetSlot->SetItem(draggedItemData->m_data.id, Count);
-
-                std::cout << "갯수요 "<<Count << endl;
-
-                //targetSlot->SetItem(draggedItemData->m_data.id, 1);
-                targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
-
-                // 원본 슬롯에 교환된 아이템 놓기
-                sourceSlot->SetItem(tempItem.id, tempItem.count);
-                sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
-
-
-                ItemDrop(draggedItemData);
-                UIManager::Get().OpenWindow(m_windowType);
-                CursorManager::Get().RE_ItemCount();
-                CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
-                return true;
+                statWindow->UpdateTotalStats();
             }
-            else
+        }
+
+        bool placed = false;
+
+        if (targetSlot && draggedItemData)
+        {
+            // 스택 가능한 아이템이라면 합치기 시도
+            if (draggedItemData->IsStackable() &&
+                targetSlot->item.id == draggedItemData->m_data.id &&
+                (targetSlot->item.count + 1) <= draggedItemData->maxCount) // count는 CursorManager에서 관리해야 함
+            {
+                //std::cout << "스택 가능. 아이템 합칠거임." << std::endl; 조건은 맞게 들어옴.
+                targetSlot->item.count += 1; // 드래그된 아이템의 실제 count를 더해야 함
+                targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
+                placed = true;
+            }
+            else if (targetSlot->IsEmpty())
             {
                 int Count = CursorManager::Get().GetItemCount(); //기존은 그냥 database에서 가져온 거라 1값이 무조건 나옴 ㅇㅇ 
-                // 빈 슬롯에 추가
-                ItemInstance tempItem = targetSlot->item;
-                targetSlot->SetItem(draggedItemData->m_data.id, Count);
+
+                // 빈 슬롯에 드롭
+                targetSlot->SetItem(draggedItemData->m_data.id, Count); // count는 CursorManager에서 관리해야 함
                 targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
-                AddItem(tempItem.id, tempItem.count);
+                placed = true;
+            }
+            else // 슬롯이 비어있지 않고 스택 불가능하거나 다른 아이템인 경우 (교환 로직)
+            {
+                // 원본 슬롯 정보 가져오기
+                InventorySlot* sourceSlot = CursorManager::Get().GetSourceSlot();
 
+                if (sourceSlot)
+                {
+                    // 현재 타겟 슬롯의 아이템을 임시 저장
+                    ItemInstance tempItem = targetSlot->item;
 
-                ItemDrop(draggedItemData);
-                UIManager::Get().OpenWindow(m_windowType);
-                CursorManager::Get().RE_ItemCount();
-                CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
-                return true;
+                    // 타겟 슬롯에 드래그된 아이템 놓기
+                    int Count = CursorManager::Get().GetItemCount(); //기존은 그냥 database에서 가져온 거라 1값이 무조건 나옴 ㅇㅇ 
+                    targetSlot->SetItem(draggedItemData->m_data.id, Count);
+
+                    std::cout << "갯수요 " << Count << endl;
+
+                    //targetSlot->SetItem(draggedItemData->m_data.id, 1);
+                    targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
+
+                    // 원본 슬롯에 교환된 아이템 놓기
+                    if (dragSource == DragSource::Enhancement || dragSource == DragSource::Synthesis)
+                    {
+                        AddItem(draggedItemData->m_data.id, Count);
+                    }
+                    else
+                    {
+                        sourceSlot->SetItem(tempItem.id, tempItem.count);
+                        sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
+                    }
+                    placed = true;
+                }
+                else
+                {
+                    int Count = CursorManager::Get().GetItemCount(); //기존은 그냥 database에서 가져온 거라 1값이 무조건 나옴 ㅇㅇ 
+                    // 빈 슬롯에 추가
+                    ItemInstance tempItem = targetSlot->item;
+                    targetSlot->SetItem(draggedItemData->m_data.id, Count);
+                    targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
+                    AddItem(tempItem.id, tempItem.count);
+
+                    placed = true;
+                }
             }
         }
-    }
-    if (placed)
-    {
-        // 아이템을 성공적으로 놓았으므로 드래그를 완전히 종료하고 성공을 반환
-        CursorManager::Get().EndItemDrag();
-        CursorManager::Get().RE_ItemCount();
-        return true;
-    }
-    else
-    {
-        if (IsInBounds(mousePos))
+        if (placed)
         {
-            if (CursorManager::Get().GetDraggedItem())
-            {
-                AddItem(CursorManager::Get().GetDraggedItem()->m_data.id, 1);
-            }
-            UIManager::Get().OpenWindow(m_windowType);
+            // 아이템을 성공적으로 놓았으므로 드래그를 완전히 종료하고 성공을 반환
+            CursorManager::Get().EndItemDrag();
             CursorManager::Get().RE_ItemCount();
-            CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
             return true;
         }
-
-        // 이때만 호출해야함.
-        return HandleDropFailure(mousePos, draggedItemData, dragSource);
+        else
+        {
+            // 이때만 호출해야함.
+            return false;
+        }
     }
+
+    return false;
 }
 
 bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
@@ -546,7 +528,7 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
     if (!draggedItem) return false;
 
     // 드래그 시작점이 인벤토리였는지 확인
-    if (source == DragSource::Inventory || source == DragSource::Equipment || source == DragSource::Enhancement || source == DragSource::Synthesis)
+    if (source == DragSource::Inventory)
     {
         InventorySlot* sourceSlot = CursorManager::Get().GetSourceSlot();
         if (sourceSlot)
@@ -563,6 +545,13 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
             CursorManager::Get().RE_ItemCount(); // 개수 초기화
             return true; // 처리 완료
         }
+    }
+    else if (source == DragSource::Enhancement || source == DragSource::Equipment || source == DragSource::Synthesis) 
+    {
+        AddItem(draggedItem->m_data.id, 1);
+        CursorManager::Get().EndItemDrag();
+        CursorManager::Get().RE_ItemCount(); // 개수 초기화
+        return true; // 처리 완료
     }
 
     // 다른 창에서 온 경우 등 다른 시나리오는 여기서 처리하지 않음
@@ -715,7 +704,7 @@ void Inventory::RenderCloseButton()
     if (closeButton.bitmap)
     {
         // 닫기 버튼 위치를 현재 창 위치에 따라 업데이트
-        float rightMargin = 75; // 원래 65
+        float rightMargin = 85; // 원래 65
         Vec2 currentCloseButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 30 };
 
         D2D1_RECT_F destRect = D2D1::RectF(
