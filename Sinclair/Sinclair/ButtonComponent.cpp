@@ -16,7 +16,7 @@ ComPtr<ID2D1Bitmap1> ButtonComponent::GetBitmap()
     {
     case ButtonState::Normal:   SetOpacity(1.0f); break;
     case ButtonState::Hover:    SetOpacity(0.55f); break;
-    case ButtonState::Pressed:  SetOpacity(0.1f); break;
+    case ButtonState::Pressed:  SetOpacity(0.2f); break;
     case ButtonState::Disabled: SetOpacity(0.0f); break;
     default:  break;
     }
@@ -78,6 +78,32 @@ void ButtonComponent::Worked(const MSG& msg)
         {
             SetState(ButtonState::Normal);
         }
+    }
+}
+
+void ButtonComponent::Worked2(const MSG& msg)
+{
+    if (isInside)
+    {
+        if (msg.message == WM_LBUTTONDOWN)
+        {
+            SetState(ButtonState::Pressed);
+            // 클릭 이벤트는 마우스 버튼을 뗄 때 발생시키는 것이 일반적
+        }
+        else if (msg.message == WM_LBUTTONUP && m_currentState == ButtonState::Pressed)
+        {
+            // 버튼이 눌린 상태에서 마우스를 뗐을 때만 클릭으로 처리
+            if (m_onClick) m_onClick();
+            SetState(ButtonState::Pressed);
+        }
+        else if (msg.message == WM_MOUSEMOVE && m_currentState != ButtonState::Pressed)
+        {
+            SetState(ButtonState::Hover);
+        }
+    }
+    else if(m_currentState != ButtonState::Pressed)
+    {
+        SetState(ButtonState::Normal);
     }
 }
 

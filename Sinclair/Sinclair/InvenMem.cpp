@@ -78,16 +78,16 @@ void InventorySlot::UpdateItemBitmap(SlotBitmapController* controller, ItemDatab
         Item* data = itemDB->GetItemData(item.id);
         if (data)
         {
-            if (data->m_data.Momnet == Need_Moment::Fam3_a)
-            {
-                itemBitmap.item = data;
-                if (data->GetRenderInfo()->GetBitmap() != nullptr)   itemBitmap.item->ComponentClear();
-                auto info = itemBitmap.item->GetRenderInfo();
-                info->SetBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item.id)->atlas.Get());
-                info->SetSrcRect(ResourceManager::Get().Get_ItemBank().GetItemClip(item.id)->srcRect);
-                itemBitmap.item->GetTransform().SetScale({ 0.8f, 0.8f }); // render쪽에 position 설정값도 수정 필요
-                ProcessItem(itemBitmap.item, {1.f, 1.f, 1.f, 1.f});
-            }
+            //if (data->m_data.Momnet == Need_Moment::Fam3_a)
+            //{
+            //    itemBitmap.item = data;
+            //    if (data->GetRenderInfo()->GetBitmap() != nullptr)   itemBitmap.item->ComponentClear();
+            //    auto info = itemBitmap.item->GetRenderInfo();
+            //    info->SetBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item.id)->atlas.Get());
+            //    info->SetSrcRect(ResourceManager::Get().Get_ItemBank().GetItemClip(item.id)->srcRect);
+            //    itemBitmap.item->GetTransform().SetScale({ 0.8f, 0.8f }); // render쪽에 position 설정값도 수정 필요
+            //    ProcessItem(itemBitmap.item, {1.f, 1.f, 1.f, 1.f});
+            //}
             //else if (data->m_data.Momnet == Need_Moment::Fam4_a)      // fam4_a는 아직 없나봄 넣으면 throw발생
             //{
             //    itemBitmap.item = data;
@@ -98,12 +98,12 @@ void InventorySlot::UpdateItemBitmap(SlotBitmapController* controller, ItemDatab
             //    itemBitmap.item->GetTransform().SetScale({ 0.8f, 0.8f }); // render쪽에 position 설정값도 수정 필요
             //    ProcessItem(itemBitmap.item, { 1.f, 215.f/255.f, 0.f, 1.f });
             //}
-            else
-            {
+            //else
+            //{
                 itemBitmap.bitmap = ResourceManager::Get().Get_ItemBank().GetItemClip(item.id)->atlas.Get();
                 itemBitmap.srcRect = ResourceManager::Get().Get_ItemBank().GetItemClip(item.id)->srcRect;
                 itemBitmap.opacity = 1.0f;
-            }
+            //}
             std::cout << &itemBitmap.bitmap << endl;
 
         }

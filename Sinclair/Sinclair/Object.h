@@ -66,9 +66,10 @@ public:
 		T* AddComponent(Args&&... args);
 		template<typename T>
 		T* GetComponent() const;
+		template<typename T>
+		T* GetComponent(int num);
 
 		void ComponentClear() { m_Components.clear(); }
-
 protected:
 
 		std::vector<std::unique_ptr<Component>> m_Components;
@@ -110,6 +111,17 @@ inline T* Object::GetComponent() const //이걸 안 쓸거면 Component 구조를 쓸 필요
 				}
 		}
 
+		return nullptr;
+}
+template<typename T>
+inline T* Object::GetComponent(int num)
+{
+	if (m_Components[num])
+	{
+		auto ptr = dynamic_cast<T*>(m_Components[num].get());
+		return ptr;
+	}
+	else 
 		return nullptr;
 }
 #pragma endregion

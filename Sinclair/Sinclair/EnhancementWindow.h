@@ -11,6 +11,9 @@
 #include "Object.h"
 #include "BackgroundComponent.h"
 
+#include "PlayComponent.h"
+#include "EffectComponent.h"
+
 #include <random>
 
 
@@ -36,8 +39,6 @@ enum class SheetImageType
 class EnhancementWindow : public UIWindow
 {
 public:
-
-
 		EnhancementWindow() : UIWindow(UIWindowType::EnhancementWindow, { 0, 0 }, { 524, 766 })
 		{
 				UI_Renderer* uiRenderer = AddComponent<UI_Renderer>();
@@ -158,28 +159,52 @@ public:
 				auto sheet1 = ResourceManager::Get().GetTexture("enhancementSheetNormal");
 				auto sheet2 = ResourceManager::Get().GetTexture("enhancementSheetSuccess");
 				auto sheet3 = ResourceManager::Get().GetTexture("enhancementSheetFail");
+				auto ray = ResourceManager::Get().GetTexture("portalRays");
 
+				explodeTime = 1.f;
 				// 5개 오브젝트 생성
 				for (int i = 0; i < 5; i++)
 				{
-						auto ordersheet = std::make_unique<Object>();
+						m_sheetPosition[i] = { 85.f + (i * 60.f), 185.f };
 
-						// 기본 렌더 정보 설정
-						auto renderInfo = ordersheet->GetRenderInfo();
-						renderInfo->SetBitmap(sheet1.Get());
+						auto normalSheet = std::make_unique<Object>();
+						auto normalInfo = normalSheet->GetRenderInfo();
+						normalInfo->SetBitmap(sheet1.Get());
+						normalSheet->GetTransform().SetPosition(Vec2(129 + (i * 60), 236));
+						auto ray14normal = normalSheet->AddComponent<Rotate3D_Effect>(normalInfo, 0.f, ray->GetSize().width / 2.f, ray->GetSize().height / 2.f, 0.f, 0.f, 0.1f, ray.Get());
+						auto ray24normal = normalSheet->AddComponent<Rotate3D_Effect>(normalInfo, 0.f, ray->GetSize().width / 2.f, ray->GetSize().height / 2.f, 0.f, 0.f, -0.1f, ResourceManager::Get().GetTexture("portalRays").Get());
+						auto rayComposite = normalSheet->AddComponent<Composite_Effect>(normalInfo, ray14normal->GetEffect(), ray24normal->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+						auto rayExplode = normalSheet->AddComponent<Explode_Effect>(normalInfo, D2D1_POINT_2F{ ray->GetSize().width / 2.f, ray->GetSize().height / 2.f }, D2D1_VECTOR_2F{ 1.f, 1.f }, D2D1_VECTOR_2F{ 0.2f, 0.2f }, explodeTime, rayComposite->GetEffect());
+						auto shadow4normal = normalSheet->AddComponent<Shadow_Effect>(normalInfo, 3.f, 211.f / 255.f, 211.f / 255.f, 211.f / 255.f, 1.f, sheet1.Get());
+						auto shadowScale4normal = normalSheet->AddComponent<Scale_Effect>(normalInfo, sheet1->GetSize().width / 2.f, sheet1->GetSize().height / 2.f, 1.1f, 1.1f, shadow4normal->GetEffect());
+						auto rayShdwComposite = normalSheet->AddComponent<Composite_Effect>(normalInfo, shadowScale4normal->GetEffect(), rayExplode->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+						auto normal = normalSheet->AddComponent<Composite_Effect>(normalInfo, sheet1.Get(), rayShdwComposite->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
 
-						ordersheet->AddComponent<BackgroundComponent>(renderInfo);
+						//back->EffectPush("Normal", normal->GetEffect());
+						m_normalImages.push_back(std::move(normalSheet));
 
-						// X 좌표만 60씩 증가 (129, 189, 249, 309, 369)
-						ordersheet->SetPosition(Vec2(129 + (i * 60), 236));
+						auto successSheet = std::make_unique<Object>();
+						auto successInfo = successSheet->GetRenderInfo();
+						successInfo->SetBitmap(sheet2.Get());
+						successSheet->GetTransform().SetPosition(Vec2(129 + (i * 60), 236));
+						auto shadow4success = successSheet->AddComponent<Shadow_Effect>(successInfo, 3.f, 1.f, 1.f, 1.f, 1.f, sheet2.Get());
+						auto shadowScale4success = successSheet->AddComponent<Scale_Effect>(successInfo, sheet2->GetSize().width / 2.f, sheet2->GetSize().height / 2.f, 1.1f, 1.1f, shadow4success->GetEffect());
+						auto successShadowComposite = successSheet->AddComponent<Composite_Effect>(successInfo, shadow4success->GetEffect(), shadowScale4success->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+						auto success = successSheet->AddComponent<Composite_Effect>(successInfo, sheet2.Get(), successShadowComposite->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
 
-						// 텍스처 설정 (모든 오브젝트 동일)
-						ordersheet->GetComponent<BackgroundComponent>()->BitmapPush("Normal", sheet1);
-						ordersheet->GetComponent<BackgroundComponent>()->BitmapPush("Success", sheet2);
-						ordersheet->GetComponent<BackgroundComponent>()->BitmapPush("Fail", sheet3);
+						//back->EffectPush("Success", success->GetEffect());
+						m_successImages.push_back(std::move(successSheet));
 
-						// 벡터에 추가
-						m_sheetImages.push_back(std::move(ordersheet));
+						auto failSheet = std::make_unique<Object>();
+						auto failInfo = failSheet->GetRenderInfo();
+						failInfo->SetBitmap(sheet3.Get());
+						failSheet->GetTransform().SetPosition(Vec2(129 + (i * 60), 236));
+						auto shadow4fail = failSheet->AddComponent<Shadow_Effect>(failInfo, 3.f, 1.f, 1.f, 1.f, 1.f, sheet3.Get());
+						auto shadowScale4fail = failSheet->AddComponent<Scale_Effect>(failInfo, sheet3->GetSize().width / 2.f, sheet3->GetSize().height / 2.f, 1.1f, 1.1f, shadow4fail->GetEffect());
+						auto failShadowComposite = failSheet->AddComponent<Composite_Effect>(failInfo, shadow4fail->GetEffect(), shadowScale4fail->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+						auto fail = failSheet->AddComponent<Composite_Effect>(failInfo, sheet3.Get(), failShadowComposite->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
+						
+						m_failImages.push_back(std::move(failSheet));
 				}
 				// 랜덤 시드 초기화
 				m_rng.seed(std::random_device{}());
@@ -187,8 +212,8 @@ public:
 				// 모든 주문서 버튼 초기 opacity 설정
 				for (auto& btn : m_enhancementButtons)
 				{
-						auto btnComponent = btn->GetComponent<ButtonComponent>();
-						if (btnComponent) btnComponent->SetOpacity(0.7f);
+					auto btnComponent = btn->GetComponent<ButtonComponent>();
+					if (btnComponent) btnComponent->SetOpacity(1.f);
 				}
 
 				// 버튼 콜백 설정
@@ -198,6 +223,8 @@ public:
 		virtual ~EnhancementWindow() = default;
 
 		void Update() override;
+		void FixedUpdate(float dt) override;
+		float Timer(float dt);
 		void Render() override;
 
 		// 마우스 인풋 관련 함수들.
@@ -217,6 +244,9 @@ public:
 
 		// 타입 체크용
 		UIWindowType GetType() override { return m_windowType; }
+
+		// 스크롤 버튼 눌린 거 있는지 체크용 -> 업데이트에서 쓸 거. 아이템 이펙트 확인용
+		void Check4ItemEffect();
 		
 		// 렌더용
 		void RenderBackground();
@@ -239,11 +269,14 @@ public:
 
 		// 강화
 		void TryEnhance(int successRate);
-		void SetTargetItem(Item* item) { m_targetItem = item; }
+		void SetTargetItem(Item* item);
+
 		Item* GetTargetItem() const { return m_targetItem; }
 
 		// 시트 이미지 렌더링 개수 업데이트
 		void UpdateSheetVisibility();
+		// 들어온 아이템 설정 초기화
+		void InitializeItemObject();
 
 		// 마우스가 호버상태인지 체크.
 		bool IsMouseOverObject(const Vec2& mousePos, Object* obj) const;
@@ -267,12 +300,16 @@ public:
 		SynSlot SlotInit(Vec2 pos);
 private:
 
-		std::unique_ptr<Object> m_enhancementSlot;									     // 슬롯.
+		std::unique_ptr<Object> m_enhancementSlot;									 // 슬롯.
 		std::unique_ptr<Object> m_statSelectionButton;						    	 // 중앙 강화버튼.
-		std::unique_ptr<Object> m_leftArrowButton;								    	 // 좌측 화살표
-		std::unique_ptr<Object> m_rightArrowButton;								    	 // 우측 화살표
-		std::vector<std::unique_ptr<Object>> m_enhancementButtons;       // 주문서 버튼 3개.
-		std::vector<std::unique_ptr<Object>> m_sheetImages;					     // 강화 유무 5개. 
+		std::unique_ptr<Object> m_leftArrowButton;								     // 좌측 화살표
+		std::unique_ptr<Object> m_rightArrowButton;								     // 우측 화살표
+		std::vector<std::unique_ptr<Object>> m_enhancementButtons;					 // 주문서 버튼 3개.
+		//std::vector<std::unique_ptr<Object>> m_sheetImages;						 // 강화 유무 5개. 
+		std::vector<std::unique_ptr<Object>> m_normalImages;					     // 강화 유무 5개. 
+		std::vector<std::unique_ptr<Object>> m_successImages;					     // 강화 유무 5개. 
+		std::vector<std::unique_ptr<Object>> m_failImages;							 // 강화 유무 5개. 
+		std::unordered_map<int, D2D_VECTOR_2F> m_sheetPosition;
 
 		std::unique_ptr<UI_Renderer> uirender = nullptr;
 		Stat m_selectedStat = Stat::STR;
@@ -280,7 +317,11 @@ private:
 		// 렌더링할 시트 개수
 		int m_renderSheetCount = 0;
 		Item* m_targetItem = nullptr;
+		float explodeTime = 0.f;	// explode effect play time
 
+		// fixedUpdate에서 이펙트 time check
+		float time = 0.f;
+		float x = 0.f;
 		// 랜덤
 		std::mt19937 m_rng;
 

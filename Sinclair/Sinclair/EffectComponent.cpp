@@ -121,31 +121,7 @@ void Composite_Effect::Initialize()
 
 void Composite_Effect::Update()
 {
-	if (m_EffectT != nullptr && m_EffectB != nullptr)
-	{
-		m_compositeEffect->SetInputEffect(0, m_EffectB);
-		m_compositeEffect->SetInputEffect(1, m_EffectT);
-		m_compositeEffect->SetValue(D2D1_COMPOSITE_PROP_MODE, m_mode);
-	}
-	else if (m_bitmapT != nullptr && m_EffectB != nullptr)
-	{
-		m_compositeEffect->SetInputEffect(0, m_EffectB);
-		m_compositeEffect->SetInput(1, m_bitmapT.Get());
-		m_compositeEffect->SetValue(D2D1_COMPOSITE_PROP_MODE, m_mode);
-	}
-	else if (m_EffectT != nullptr && m_bitmapB != nullptr)
-	{
-		m_compositeEffect->SetInput(0, m_bitmapB.Get());
-		m_compositeEffect->SetInputEffect(1, m_EffectT);
-		m_compositeEffect->SetValue(D2D1_COMPOSITE_PROP_MODE, m_mode);
-	}
-	else if (m_bitmapT != nullptr && m_bitmapB != nullptr)
-	{
-		m_compositeEffect->SetInput(0, m_bitmapB.Get());
-		m_compositeEffect->SetInput(1, m_bitmapT.Get());
-		m_compositeEffect->SetValue(D2D1_COMPOSITE_PROP_MODE, m_mode);
-	}
-
+	m_compositeEffect->SetValue(D2D1_COMPOSITE_PROP_MODE, m_mode);
 	m_renderInfo->SetEffect(m_compositeEffect.Get());
 }
 
@@ -363,6 +339,20 @@ Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float pivo
 	Initialize();
 }
 
+Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_depth(depth), m_rotate{ rotateX, rotateY, rotateZ }, m_bitmap(bitmap)
+{
+	m_pivot = { m_renderInfo->GetSize().width / 2.f, m_renderInfo->GetSize().height / 2.f };
+	Initialize();
+}
+
+Rotate3D_Effect::Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_depth(depth), m_rotate{ rotateX, rotateY, rotateZ }, m_effect(effect)
+{
+	m_pivot = { m_renderInfo->GetSize().width / 2.f, m_renderInfo->GetSize().height / 2.f };
+	Initialize();
+}
+
 void Rotate3D_Effect::Initialize()
 {
 	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D13DPerspectiveTransform, &m_perspectiveEffect);
@@ -379,9 +369,9 @@ void Rotate3D_Effect::Initialize()
 
 	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION_ORIGIN, m_pivot);
 
-	m_rotation.x = fmod((m_rotation.x + m_rotate.x), 360.f);	m_rotation.y = fmod((m_rotation.y + m_rotate.y), 360.f);	m_rotation.z = fmod((m_rotation.z + m_rotate.z), 360.f);
+	//m_rotation.x = fmod((m_rotation.x + m_rotate.x), 360.f);	m_rotation.y = fmod((m_rotation.y + m_rotate.y), 360.f);	m_rotation.z = fmod((m_rotation.z + m_rotate.z), 360.f);
 
-	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION, m_rotation);
+	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_ROTATION, D2D1_VECTOR_3F{ 0.f, 0.f, 0.f });
 
 	m_perspectiveEffect->SetValue(D2D1_3DPERSPECTIVETRANSFORM_PROP_DEPTH, m_depth);
 
@@ -417,7 +407,7 @@ void Offset_Effect::Initialize()
 	else
 		m_offsetEffect->SetInputEffect(0, m_effect);
 
-	D2D1_MATRIX_3X2_F offsetMT = D2D1::Matrix3x2F::Translation(m_xOffset, m_yOffset);
+	offsetMT = D2D1::Matrix3x2F::Translation(m_xOffset, m_yOffset);
 	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, offsetMT);
 	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_INTERPOLATION_MODE, D2D1_2DAFFINETRANSFORM_INTERPOLATION_MODE_LINEAR);
 
@@ -426,7 +416,9 @@ void Offset_Effect::Initialize()
 
 void Offset_Effect::Update()
 {
+	m_offsetEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, offsetMT);
 
+	m_renderInfo->SetEffect(m_offsetEffect.Get());
 }
 
 Color_Effect::Color_Effect(RenderInfo* renderInfo, float r, float g, float b, float a, ID2D1Effect* effect)
@@ -490,8 +482,43 @@ void Border_Effect::Initialize()
 		m_borderEffect->SetInputEffect(0, m_effect);
 	m_borderEffect->SetValue(D2D1_BORDER_PROP_EDGE_MODE_X, D2D1_BORDER_EDGE_MODE_CLAMP);
 	m_borderEffect->SetValue(D2D1_BORDER_PROP_EDGE_MODE_Y, D2D1_BORDER_EDGE_MODE_CLAMP);
+
+	m_renderInfo->SetEffect(m_borderEffect.Get());
 }
 
 void Border_Effect::Update()
 {
+}
+
+Opacity_Effect::Opacity_Effect(RenderInfo* renderInfo, float opacity, ID2D1Effect* effect)
+	: m_renderInfo(renderInfo), m_opacity(opacity), m_effect(effect)
+{
+	Initialize();
+}
+
+Opacity_Effect::Opacity_Effect(RenderInfo* renderInfo, float opacity, ID2D1Bitmap1* bitmap)
+	: m_renderInfo(renderInfo), m_opacity(opacity), m_bitmap(bitmap)
+{
+	Initialize();
+}
+
+void Opacity_Effect::Initialize()
+{
+	HRESULT hr = D2DRenderer::Get().GetD2DContext()->CreateEffect(CLSID_D2D1Opacity, &m_opacityEffect);
+	DX::ThrowIfFailed(hr);
+
+	if (m_effect == nullptr)
+		m_opacityEffect->SetInput(0, m_bitmap.Get());
+	else
+		m_opacityEffect->SetInputEffect(0, m_effect);
+	m_opacityEffect->SetValue(D2D1_COMPOSITE_MODE_SOURCE_OVER, m_opacity);
+
+	m_renderInfo->SetEffect(m_opacityEffect.Get());
+}
+
+void Opacity_Effect::Update()
+{
+	m_opacityEffect->SetValue(D2D1_COMPOSITE_MODE_SOURCE_OVER, m_opacity);
+
+	m_renderInfo->SetEffect(m_opacityEffect.Get());
 }

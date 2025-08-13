@@ -281,6 +281,7 @@ void UIManager::HandleKeyboardInput(WPARAM& msg)
     }
 }
 
+
 void UIManager::ToggleWindow(UIWindowType type)
 {
     if (IsWindowActive(type))

@@ -255,6 +255,8 @@ void SynthesisWin::MemBitmapLoad()
 		uiRenderer->SetBitmap("Cancle_But", ResourceManager::Get().GetTexture("CancleBut"));
 		uiRenderer->SetBitmap("Syn_But", ResourceManager::Get().GetTexture("SynBut"));
 	}
+
+
 }
 
 void SynthesisWin::MemInit() //0 1 2 -> 위치 넣어주고. 0은 제외하고 넣어주는 식으로 해야겠다.  
@@ -406,7 +408,7 @@ void SynthesisWin::PerformSynthesis()
 	{
 		SoundManager::Instance().PlaySFX("SS");
 		unique_ptr<Item> resultitem = ResourceManager::Get().Get_ItemBank().Get_Item_Status(result);
-
+		//resultitem.get()->AddComponent<> 여기서 건들여서 한번 실행 시키고 없애버리는게 맞을듯.
 		Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 		if (inven != nullptr)
 		{
@@ -420,8 +422,9 @@ void SynthesisWin::PerformSynthesis()
 	}
 	else
 	{
+		// 이게 실패임.
+			// 아이템이 nullptr일 확률이 가장 높음 가져오면 터질거야. 
 		SoundManager::Instance().PlaySFX("SN");
-
 	}
 
 }

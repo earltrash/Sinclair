@@ -21,6 +21,7 @@ class Gray_Effect;							// 무채색화 효과
 class Rotate3D_Effect;						// 3D 회전 효과
 class Color_Effect;							// 색상 바꾸기 효과
 class Border_Effect;						// 이미지가 해상도를 벗어낫을 때 설정 효과
+class Opacity_Effect;						// 투명도 조절 효과
 
 class GaussianBlur_Effect : public Component				// 블러 효과
 {
@@ -34,6 +35,15 @@ public:
 	void Update() override;
 
 	void SetStrength(float strength) { m_strength = strength; }
+
+	void SetInputEffect(ID2D1Effect* effect)
+	{
+		m_gaussianBlurEffect->SetInputEffect(0, effect);
+	}
+	void SetInput(ID2D1Bitmap1* bitmap)
+	{
+		m_gaussianBlurEffect->SetInput(0, bitmap);
+	}
 
 	ID2D1Effect* GetEffect() { return m_gaussianBlurEffect.Get(); }
 private:
@@ -88,12 +98,21 @@ public:
 	void Update() override;
 
 	void SetOffset(float xOffset, float yOffset) { m_xOffset = xOffset; m_yOffset = yOffset; }
+	void SetInputEffect(ID2D1Effect* effect)
+	{
+		m_offsetEffect->SetInputEffect(0, effect);
+	}
+	void SetInput(ID2D1Bitmap1* bitmap)
+	{
+		m_offsetEffect->SetInput(0, bitmap);
+	}
 
 	ID2D1Effect* GetEffect() { return m_offsetEffect.Get(); }
 private:
 	float m_xOffset;
 	float m_yOffset;
 
+	D2D1_MATRIX_3X2_F offsetMT;
 	ID2D1Effect* m_effect = nullptr;			// 이동 효과 적용할 이펙트
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;	// 이동 그림자 효과 적용할 비트맵
 
@@ -116,7 +135,14 @@ public:
 	void Update() override;
 
 	void SetCompositeMode(D2D1_COMPOSITE_MODE mode) { m_mode = mode; }
-
+	void SetInputEffect(int num, ID2D1Effect* effect)
+	{
+		m_compositeEffect->SetInputEffect(num, effect);
+	}
+	void SetInput(int num, ID2D1Bitmap1* bitmap)
+	{
+		m_compositeEffect->SetInput(num, bitmap);
+	}
 	ID2D1Effect* GetEffect() { return m_compositeEffect.Get(); }
 private:
 	D2D1_COMPOSITE_MODE m_mode;
@@ -309,6 +335,8 @@ class Rotate3D_Effect : public Component	// 회전 효과
 public:
 	Rotate3D_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect);
 	Rotate3D_Effect(RenderInfo* renderInfo, float depth, float pivotX, float pivotY, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap);
+	Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rotateX, float rotateY, float rotateZ, ID2D1Bitmap1* bitmap);
+	Rotate3D_Effect(RenderInfo* renderInfo, float depth, float rotateX, float rotateY, float rotateZ, ID2D1Effect* effect);
 	~Rotate3D_Effect() { m_perspectiveEffect.Reset(); }
 
 	void Initialize();
@@ -317,6 +345,15 @@ public:
 
 	void SetPivot(float x, float y) { m_pivot.x = x; m_pivot.y = y; }
 	void SetRotate(float x, float y, float z) { m_rotate.x = x; m_rotate.y = y; m_rotate.z = z; }
+
+	void SetInputEffect(ID2D1Effect* effect)
+	{
+		m_perspectiveEffect->SetInputEffect(0, effect);
+	}
+	void SetInput(int num, ID2D1Bitmap1* bitmap)
+	{
+		m_perspectiveEffect->SetInput(0, bitmap);
+	}
 
 	ID2D1Effect* GetEffect() { return m_perspectiveEffect.Get(); }
 private:
@@ -377,6 +414,31 @@ private:
 	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
 
 	ComPtr<ID2D1Effect> m_borderEffect;
+
+	RenderInfo* m_renderInfo = nullptr;
+};
+
+class Opacity_Effect : public Component
+{
+public:
+	Opacity_Effect(RenderInfo* renderInfo, float opacity, ID2D1Effect* effect);
+	Opacity_Effect(RenderInfo* renderInfo, float opacity, ID2D1Bitmap1* bitmap);
+	~Opacity_Effect() { m_opacityEffect.Reset(); }
+
+	void Initialize();
+
+	void Update();
+
+	void SetOpacity(float op) { m_opacity = op; }
+	ID2D1Effect* GetEffect() { return m_opacityEffect.Get(); }
+
+private:
+	float m_opacity;
+
+	ID2D1Effect* m_effect = nullptr;
+	ComPtr<ID2D1Bitmap1> m_bitmap = nullptr;
+
+	ComPtr<ID2D1Effect> m_opacityEffect;
 
 	RenderInfo* m_renderInfo = nullptr;
 };

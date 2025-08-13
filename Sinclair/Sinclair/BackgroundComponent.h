@@ -17,9 +17,12 @@ public:
 	void Update() override;
 
 	void BitmapPush(string NM, ComPtr<ID2D1Bitmap1> Bitmap);
+	void EffectPush(string NM, ID2D1Effect* Effect);
 
 	void SetCurrentBitmap(string Nm);
+	void SetCurrentEffect(string Nm);
 	ComPtr<ID2D1Bitmap1> GetCurrentBitmap();
+	const string GetCurrentName() { return m_currentName; }
 
 	// 이거 두 함수는 내 의도에 맞진 않음
 	ComPtr<ID2D1Bitmap1> GetBitmap();
@@ -39,7 +42,9 @@ public:
 private:
 	RenderInfo* m_renderInfo;
 	unordered_map<string, ComPtr<ID2D1Bitmap1>> m_Bitmaps;
+	unordered_map<string, ID2D1Effect*> m_Effects;
 	ComPtr<ID2D1Bitmap1> m_currentBitmap;
+	ID2D1Effect* m_currentEffect;
 	string m_currentName;
 	float width, height;
 };
