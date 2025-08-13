@@ -174,7 +174,8 @@ public:
 						auto ray14normal = normalSheet->AddComponent<Rotate3D_Effect>(normalInfo, 0.f, ray->GetSize().width / 2.f, ray->GetSize().height / 2.f, 0.f, 0.f, 0.1f, ray.Get());
 						auto ray24normal = normalSheet->AddComponent<Rotate3D_Effect>(normalInfo, 0.f, ray->GetSize().width / 2.f, ray->GetSize().height / 2.f, 0.f, 0.f, -0.1f, ResourceManager::Get().GetTexture("portalRays").Get());
 						auto rayComposite = normalSheet->AddComponent<Composite_Effect>(normalInfo, ray14normal->GetEffect(), ray24normal->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
-						auto rayExplode = normalSheet->AddComponent<Explode_Effect>(normalInfo, D2D1_POINT_2F{ ray->GetSize().width / 2.f, ray->GetSize().height / 2.f }, D2D1_VECTOR_2F{ 1.f, 1.f }, D2D1_VECTOR_2F{ 0.2f, 0.2f }, explodeTime, rayComposite->GetEffect());
+						auto rayOpacity = normalSheet->AddComponent<Opacity_Effect>(normalInfo, 0.4f, rayComposite->GetEffect());
+						auto rayExplode = normalSheet->AddComponent<Explode_Effect>(normalInfo, D2D1_POINT_2F{ ray->GetSize().width / 2.f, ray->GetSize().height / 2.f }, D2D1_VECTOR_2F{ 1.f, 1.f }, D2D1_VECTOR_2F{ 0.2f, 0.2f }, explodeTime, rayOpacity->GetEffect());
 						auto shadow4normal = normalSheet->AddComponent<Shadow_Effect>(normalInfo, 3.f, 211.f / 255.f, 211.f / 255.f, 211.f / 255.f, 1.f, sheet1.Get());
 						auto shadowScale4normal = normalSheet->AddComponent<Scale_Effect>(normalInfo, sheet1->GetSize().width / 2.f, sheet1->GetSize().height / 2.f, 1.1f, 1.1f, shadow4normal->GetEffect());
 						auto rayShdwComposite = normalSheet->AddComponent<Composite_Effect>(normalInfo, shadowScale4normal->GetEffect(), rayExplode->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
