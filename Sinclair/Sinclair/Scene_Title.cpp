@@ -245,6 +245,9 @@ void Scene_Title::CreateObj()
 		});
 
 	gameStartButton_buttonComp->SetOnClickCallback([this]() {
+		
+		UIManager::Get().CloseAllWindows();
+
 		SafeChangeScene("OutGame");
 		SoundManager::Instance().PauseBGM("Title" , true);
 		std::cout << "SceneManager::Get().ChangeScene(\"OutGame\");" << std::endl;

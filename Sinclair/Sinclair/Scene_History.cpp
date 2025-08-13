@@ -73,6 +73,7 @@ void Scene_History::Exit()
 {
 	DeactivateAllImgs();
 	Clean();
+	m_isTransitioning = false;
 }
 
 void Scene_History::Clean()
@@ -94,7 +95,6 @@ void Scene_History::Update()
 		if (m_currentDelay >= m_transitionDelay)
 		{
 			SceneManager::Get().ChangeScene(m_nextScene);
-			m_isTransitioning = false;
 			m_nextScene = "";
 			m_currentDelay = 0.0f;
 
@@ -345,18 +345,24 @@ void Scene_History::CreateObj()
 	// 5. 마우스 리스너 컴포넌트 (버튼 컴포넌트를 캡처로 전달)
 	auto 스킵리스너 = 스킵버튼->AddComponent<MouseListenerComponent>(
 		[스킵컴포넌트](const MSG& msg) {
-			GameManager::Get().Game_Reset();
 			스킵컴포넌트->CheckCollision(msg);
 			스킵컴포넌트->Worked(msg);
 		}
 	);
 
 	스킵컴포넌트->SetOnClickCallback([this]() {
+
+		if (m_allTextsShown || m_isTransitioning)
+		{
+			return;
+		}
+
 		std::cout << "스킵 버튼 클릭됨" << std::endl;
 		// History 스킵 로직 추가
 
 		SafeChangeScene("Title");
 		SoundManager::Instance().PauseBGM(cur_HM_ID, true);
+		GameManager::Get().Game_Reset();
 		});
 
 	/// 9
@@ -1129,11 +1135,11 @@ void Scene_History::ActivateSingleImg(int idx)
 			float o = std::clamp(m_currentShowingDelay, 0.0f, 1.0f);
 			bgComp->SetOpacity(o);
 			//bgComp->SetCurrentBitmap("Background");
-			cout << idx << "번 텍스트 활성화됨" << endl;
+			//cout << idx << "번 텍스트 활성화됨" << endl;
 		}
 	}
 	else
 	{
-		cout << "경고: 오브젝트 " << objName << "를 찾을 수 없습니다" << endl;
+		//cout << "경고: 오브젝트 " << objName << "를 찾을 수 없습니다" << endl;
 	}
 }

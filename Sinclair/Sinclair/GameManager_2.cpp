@@ -446,12 +446,17 @@ void GameManager::Default_Item_TO_Inven(int GEN) //폐기
 
 int GameManager::GetResultFam()
 {
-    int i = 0;
+    cout << "================================\n";
+    int finalFam = 0;
     for (int i = 0; i < arrTotalFam.size(); i++)
     {
-        i += arrTotalFam[i];
+        cout << i + 2 << "의 명성치: " << arrTotalFam[i] << endl;
+
+        finalFam += arrTotalFam[i];
     }
-    return i;
+
+    cout << "\n최종 명성치: " << finalFam << "\n";
+    return finalFam;
 }
 
 void GameManager::Game_Reset() //히스토리 보고 title로 넘어갈 떄 해야할 일
@@ -511,7 +516,7 @@ void GameManager::FindEnding()
     vector<Status_Total> negativeStats;
 
     for (const auto& stat : statMap) {
-        if (stat.second >= 50) {
+        if (stat.second >= 40) {
             positiveStats.push_back(stat.first);
         }
         else if (stat.second <= 20) {

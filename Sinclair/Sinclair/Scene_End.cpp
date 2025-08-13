@@ -81,13 +81,14 @@ void Scene_End::Enter()
 
 void Scene_End::Exit()
 {
+	Clean();
 
 	m_image1Opacity = 0.f;
 	m_image2Opacity = 0.f;
 	m_image3Opacity = 0.f;
 	after_fadeStarted = false;
 	m_fadeStarted = false;
-	Clean();
+	m_isTransitioning = false;
 }
 
 void Scene_End::Clean()
@@ -109,7 +110,6 @@ void Scene_End::Update()
 		if (m_currentDelay >= m_transitionDelay)
 		{
 			SceneManager::Get().ChangeScene(m_nextScene);
-			m_isTransitioning = false;
 			m_nextScene = "";
 			m_currentDelay = 0.0f;
 
@@ -315,6 +315,12 @@ void Scene_End::CreateObj()
 	);
 
 	½ºÅµÄÄÆ÷³ÍÆ®->SetOnClickCallback([this]() {
+		
+		if (m_isTransitioning)
+		{
+			return;
+		}
+
 		std::cout << "½ºÅµ ¹öÆ° Å¬¸¯µÊ" << std::endl;
 		// ¿£µù ½ºÅµ ·ÎÁ÷ Ãß°¡
 		
