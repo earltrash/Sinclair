@@ -387,7 +387,12 @@ bool EnhancementWindow::HandleMouseRight(Vec2 mousePos)
 {
 	if (!IsInBounds(mousePos)) return false;
 	
-
+	if (SlotInit(mousePos) != SynSlot::Result || m_targetItem == nullptr)
+	{
+		UIManager::Get().OpenWindow(m_windowType);
+		CursorManager::Get().EndItemDrag();
+		return true;
+	}
 
 		Item* item = m_targetItem;
 
