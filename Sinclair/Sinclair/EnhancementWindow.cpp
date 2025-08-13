@@ -358,32 +358,35 @@ bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, Drag
 bool EnhancementWindow::HandleMouseRight(Vec2 mousePos)
 {
 	if (!IsInBounds(mousePos)) return false;
-	
-	if (SlotInit(mousePos) != SynSlot::Result || m_targetItem == nullptr)
+
+	// 상대좌표 이슈
+	Vec2 relativeMousePos = mousePos - m_position;
+
+	if (SlotInit(relativeMousePos) != SynSlot::Result || m_targetItem == nullptr)
 	{
 		UIManager::Get().OpenWindow(m_windowType);
 		CursorManager::Get().EndItemDrag();
 		return true;
 	}
 
-		Item* item = m_targetItem;
+	Item* item = m_targetItem;
 
-		Wearable* wearableItem = dynamic_cast<Wearable*>(item);
-		// 만약 현재 착용한 아이템 있으면.
-		if (wearableItem->Getpart() != Wearable_part::UnKnown)
+	Wearable* wearableItem = dynamic_cast<Wearable*>(item);
+	// 만약 현재 착용한 아이템 있으면.
+	if (wearableItem->Getpart() != Wearable_part::UnKnown)
+	{
+		// 인벤토리로 복귀
+		if (auto inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
 		{
-				// 인벤토리로 복귀
-				if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
-				{
-						// 슬롯 아이템 지워주기.
-					    ItemDrop(item);
-						inventory->AddItem(item->m_data.id, 1);
-						m_targetItem = nullptr;
-						return true;
-				}
+			// 슬롯 아이템 지워주기.
+			ItemDrop(item);
+			inventory->AddItem(item->m_data.id, 1);
+			m_targetItem = nullptr;
+			return true;
 		}
+	}
 
-		return false;
+	return false;
 }
 void EnhancementWindow::RenderBackground()
 {
