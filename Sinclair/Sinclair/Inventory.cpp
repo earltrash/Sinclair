@@ -393,6 +393,7 @@ bool Inventory::HandleMouseDown(Vec2 mousePos) //어차피 Inven 위치 내에 있어야 �
     InventorySlot* slot = GetSlotAt(mousePos);
     if (slot && !slot->IsEmpty() && slot->isEnabled)
     {
+
         // CursorManager를 통해 전역적으로 아이템 드래그 시작
         CursorManager::Get().StartItemDrag(slot->item.id, DragSource::Inventory, slot);
         CursorManager::Get().SetDraggedItem(m_itemDatabase.GetItemData(slot->item.id)); // 실제 Item* 전달 -> id만 넘겨서 문제가 생긴듯. 
@@ -602,8 +603,10 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아�
             m_pendingPotionSlot = slot;
             UIManager::Get().ShowPotionWindow(much);
         }
-        else if (Wearable* wear = dynamic_cast<Wearable*>(itemData))
+        else
         {
+            // 포션을 너무 많이 클릭하면 오류가 터짐 그거 해결했음 
+            Wearable* wear = dynamic_cast<Wearable*>(itemData);
             // 착용 아이템 처리 로직
             UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow);
             auto equipWindow = dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));

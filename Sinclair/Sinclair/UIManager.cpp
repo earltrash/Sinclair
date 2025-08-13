@@ -214,6 +214,7 @@ void UIManager::OnInput(const MSG& msg)
                         // HandleDropFailure가 아이템 복원 및 드래그 종료까지 처리
                         if (inventory->HandleDropFailure(mousePos, draggedItem, source))
                         {
+                            std::cout << "아이템복원" << std::endl;
                             CursorManager::Get().EndItemDrag();
                             // 성공적으로 처리되었으면 여기서 함수 종료
                             return;
