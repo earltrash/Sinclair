@@ -64,7 +64,7 @@ private:
 	};
 	int index = 0;
 	string stringENTER_OUTGAME{ "창고에 들어가시겠습니까?" };
-	string stringENTER_END{ "여행을 떠나시겠습니까?\n(주의: 모험을 떠나면 되돌릴 수 없습니다.) " };
+	string stringENTER_END{ "모험을 떠나시겠습니까?\n(주의: 모험을 떠나면 되돌릴 수 없습니다.) " };
 
 	std::wstring characterName;
 	std::string curText;
