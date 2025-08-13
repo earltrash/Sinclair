@@ -146,3 +146,13 @@ bool UIWindow::HandleInput(const MSG& msg)
 
 		return false; 
 }
+
+void UIWindow::ItemDrop(Item* item)
+{
+	ES sound = item->m_data.Sound;
+	string sound_Id = ESToString(sound);
+	SoundManager::Instance().PlaySFX(sound_Id);
+	std::cout << " ID:" << sound_Id << endl;
+
+
+}

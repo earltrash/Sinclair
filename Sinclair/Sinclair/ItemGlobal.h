@@ -11,3 +11,5 @@ Wearable_part StringToWP(std::string& val);
 Need_Moment StringToNM(std::string& val);
 std::wstring StrToWstr(const std::string& source);
 std::wstring UTF8ToWstr(const std::string& str);
+ES StringToES(std::string& val);
+std::string ESToString(ES& val);

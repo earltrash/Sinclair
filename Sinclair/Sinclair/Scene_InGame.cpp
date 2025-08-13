@@ -8,7 +8,7 @@
 #include "Renderer.h"
 #include "UIManager.h"
 #include "SliderHandleComponent.h"
-#include "GameManager.h"
+#include "GameManager_2.h"
 #include "Status.h"
 
 Scene_InGame::Scene_InGame(string name)
@@ -33,6 +33,9 @@ void Scene_InGame::Initalize()
 	{
 		UIManager::Get().AddSceneObject(obj);
 	}
+
+	//SoundManager::Instance().PlayBGM("TIM", false);
+
 }
 
 void Scene_InGame::Enter()
@@ -166,6 +169,8 @@ void Scene_InGame::CreateObj()
 		std::cout << "뒤로가기 버튼 클릭됨 - 현재 씬: " << typeid(*this).name() << std::endl;
 		isSETTING = false;
 		UIManager::Get().CloseAllWindows();
+
+		SoundManager::Instance().PauseBGM("TIM", true);
 		SafeChangeScene("OutGame");
 		});
 

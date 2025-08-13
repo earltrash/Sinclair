@@ -2,7 +2,7 @@
 #include "UI_Bank.h"
 #include "UI_Renderer.h"
 #include "ResourceManager.h"
-#include "GameManager.h"
+#include "GameManager_2.h"
 
 
 UIPotion::UIPotion()

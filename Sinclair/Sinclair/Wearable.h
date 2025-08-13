@@ -14,6 +14,7 @@ public:
         , m_EnchanceResult(other.m_EnchanceResult)
     {
         m_data.wearablePart = m_part;
+        m_data.Sound = other.m_data.Sound;
     }
 
 
@@ -35,6 +36,7 @@ public:
 private:
 fundamentalStatus m_stat{}; //장비의 스텟 
 Wearable_part m_part; //장비 중에서도 어떤 파츠인지
+
 
 int Enchan_Count; //무기면 5, 갑옷 3번 
 vector<EnchancerType> m_EnchanceResult;

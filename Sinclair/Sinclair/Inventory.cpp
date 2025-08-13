@@ -446,6 +446,8 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
             targetSlot->item.id == draggedItemData->m_data.id &&
             (targetSlot->item.count + 1) <= draggedItemData->maxCount) // count는 CursorManager에서 관리해야 함
         {
+
+            ItemDrop(draggedItemData);
             //std::cout << "스택 가능. 아이템 합칠거임." << std::endl; 조건은 맞게 들어옴.
             targetSlot->item.count += 1; // 드래그된 아이템의 실제 count를 더해야 함
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
@@ -456,6 +458,8 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
             int Count = CursorManager::Get().GetItemCount(); //기존은 그냥 database에서 가져온 거라 1값이 무조건 나옴 ㅇㅇ 
 
             // 빈 슬롯에 드롭
+            ItemDrop(draggedItemData);
+
             targetSlot->SetItem(draggedItemData->m_data.id, Count); // count는 CursorManager에서 관리해야 함
             targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
             placed = true;
@@ -486,6 +490,9 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
                 sourceSlot->SetItem(tempItem.id, tempItem.count);
                 sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
+
+                ItemDrop(draggedItemData);
+
                 CursorManager::Get().RE_ItemCount();
                 CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
                 return true;
@@ -498,6 +505,9 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
                 targetSlot->SetItem(draggedItemData->m_data.id, Count);
                 targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
                 AddItem(tempItem.id, tempItem.count);
+
+
+                ItemDrop(draggedItemData);
 
                 CursorManager::Get().RE_ItemCount();
                 CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
@@ -533,6 +543,8 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
             sourceSlot->SetItem(draggedItem->m_data.id, CursorManager::Get().GetItemCount());
             sourceSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
 
+
+            ItemDrop(draggedItem);
             // 드래그 종료 및 아이템 개수 초기화
             CursorManager::Get().EndItemDrag();
             CursorManager::Get().RE_ItemCount(); // 개수 초기화
@@ -601,6 +613,7 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아�
             if (EQUIPWIN != nullptr)
             {
                 slot->Clear();
+                ItemDrop(wear);
                 EQUIPWIN->EquipItem(wear);
                 //slot->UpdateItemBitmap(&controller, &m_itemDatabase);
             }

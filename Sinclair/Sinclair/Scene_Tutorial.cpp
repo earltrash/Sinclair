@@ -29,6 +29,8 @@ void Scene_Tutorial::Initalize()
 	{
 		UIManager::Get().AddSceneObject(obj);
 	}
+	SoundManager::Instance().PlayBGM("TIM", false);
+
 }
 
 void Scene_Tutorial::Enter()
@@ -199,6 +201,7 @@ void Scene_Tutorial::CreateObj()
 
 	tutorialButton1Comp->SetOnClickCallback([this]() {
 		cout << "°Ç³Ê¶Ù±â" << endl;
+		SoundManager::Instance().PauseBGM("TIM", true);
 		SafeChangeScene("InGame");
 		});
 
@@ -214,6 +217,8 @@ void Scene_Tutorial::CreateObj()
 		{
 			cout << "17¹ø °Ç³Ê¶Ù±â" << endl;
 			SafeChangeScene("InGame");
+			SoundManager::Instance().PauseBGM("TIM", true);
+
 		}
 
 		});

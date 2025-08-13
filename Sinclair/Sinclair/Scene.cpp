@@ -132,6 +132,7 @@ void SceneStandard::SafeChangeScene(const std::string& sceneName)
 		m_nextScene = sceneName;
 		m_currentDelay = 0.0f;
 
+
 		// 디버그 로그
 		std::cout << "씬 전환 예약: " << sceneName << std::endl;
 	}

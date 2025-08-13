@@ -2,7 +2,7 @@
 
 Wearable::Wearable(const ItemCommonData& data, const json& j) : Item(data)
 {
-    for (const auto& s : j["stats"]) //여러개인 경우가 있으니깐 
+     for (const auto& s : j["stats"]) //여러개인 경우가 있으니깐 
     {
         std::string statName = s["stat"]; //이거 enum으로 바꿔야 할 듯. ㅇㅇ 
         float amount = s["amount"];
@@ -15,9 +15,12 @@ Wearable::Wearable(const ItemCommonData& data, const json& j) : Item(data)
         m_part = StringToWP(part);
         m_data.wearablePart = m_part;
 
+        //m_data.Sound = So
+
         Enchan_Count = (m_part == Wearable_part::Weapon) ? 5 : 3; //깔끔하다
 
         m_EnchanceResult.assign(Enchan_Count, EnchancerType::Default);
+
 
     }
     else

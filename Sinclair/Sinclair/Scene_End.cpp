@@ -7,7 +7,7 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "UIManager.h"
-#include "GameManager.h"
+#include "GameManager_2.h"
 
 
 Scene_End::Scene_End(string name)
@@ -27,8 +27,18 @@ void Scene_End::Initalize()
 	dirty = true;
 	for (const auto& [Name, obj] : m_gameObjects)
 	{
-		UIManager::Get().AddSceneObject(obj);
+		UIManager::Get().AddSceneObject(obj); // 1011 1. 일단 id를 받아야 함 2. 노래를 위한 id 변환
 	}
+
+
+	int id = GameManager::Get().arrEndingID[GameManager::Get().GetCurrentGen() - 2];
+	PlayEDM(id);
+
+	
+
+	//id를 받고 엔딩에 맞는 사운드가 나와야 함. id -> index -> vector = channel 식으로 
+
+
 }
 
 void Scene_End::Enter()
@@ -301,11 +311,13 @@ void Scene_End::CreateObj()
 		{
 			temp = 2;
 			SafeChangeScene("History" , temp);
+			SoundManager::Instance().PauseBGM(cur_EDM_ID, true);
 		}
 		else
 		{
 			temp++;
 			SafeChangeScene("OutGame", temp);
+			SoundManager::Instance().PauseBGM(cur_EDM_ID, true);
 			Inventory* statwin = dynamic_cast<Inventory*>(UIManager::
 				Get().GetWindow(UIWindowType::InventoryWindow));
 
@@ -344,6 +356,21 @@ void Scene_End::CreateObj()
 
 	/// 9
 	m_gameObjects.emplace("바", std::move(바));
+
+}
+
+void Scene_End::PlayEDM(int id)
+{
+	//string sid = to_string(id);
+
+	string idStr = to_string(id); // "1011"
+	string first3 = idStr.substr(0, 3); // "101"
+
+	string EDMID = first3 + "1";
+
+	SoundManager::Instance().PlayBGM(EDMID, false);
+
+	cur_EDM_ID = EDMID;
 
 }
 

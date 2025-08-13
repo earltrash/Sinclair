@@ -17,6 +17,7 @@ struct ItemCommonData {
 	bool enchantable;
 	bool synthesizable;
 	Need_Moment Momnet;
+	ES Sound;
 	Wearable_part wearablePart;
 };
 

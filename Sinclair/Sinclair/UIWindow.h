@@ -45,6 +45,8 @@ public:
 	Vec2 GetPosition() const { return m_position; }
 
 	void SetPosition(Vec2 Pos) { m_position = Pos; } //왜 Object랑 별개의 position이 되어있는가...
+	
+	void ItemDrop(Item* item);
 
 
 	// 켜져있는지 체크

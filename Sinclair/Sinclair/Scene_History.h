@@ -19,6 +19,7 @@ public:
 
 public:
 	void CreateObj();
+	void PlayHM(int id);
 
 	//void ActivateAllTexts();
 	void DeactivateAllTexts();
@@ -42,6 +43,8 @@ public:
 	enum class History { H1, H2, H3, H4 };
 
 	History m_History;
+
+	string cur_HM_ID;
 
 	bool  m_allTextsShown = false;
 	float m_currentShowingDelay = 0.f;

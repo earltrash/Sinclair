@@ -8,9 +8,14 @@
 #include "Renderer.h"
 #include "UIManager.h"
 #include "SliderHandleComponent.h"
-#include "GameManager.h"
+#include "GameManager_2.h"
 #include "EffectComponent.h"
 #include "PlayComponent.h"
+
+
+#include "SoundBank_.h"
+
+#include "SoundManager.h"
 
 Scene_Title::Scene_Title(string name)
 {
@@ -32,6 +37,10 @@ void Scene_Title::Initalize()
 	{
 		UIManager::Get().AddSceneObject(obj);
 	}
+
+	//auto* music = ResourceManager::Get().Get_SoundBank().GetBGM("SM");
+	SoundManager::Instance().SetBGMVolume(0, 1.0f);
+	SoundManager::Instance().PlayBGM("Title", false);
 }
 
 void Scene_Title::Enter()
@@ -275,6 +284,7 @@ void Scene_Title::CreateObj()
 
 	gameStartButton_buttonComp->SetOnClickCallback([this]() {
 		SafeChangeScene("OutGame");
+		SoundManager::Instance().PauseBGM("Title" , true);
 		std::cout << "SceneManager::Get().ChangeScene(\"OutGame\");" << std::endl;
 		});
 

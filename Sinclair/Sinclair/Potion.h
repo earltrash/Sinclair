@@ -11,6 +11,7 @@ public:
 		, much(other.much) // 자기 멤버 복사
 	{
 		m_data.Momnet = (other.Momnet);
+		m_data.Sound = other.m_data.Sound;
 	}
 
 	int GetMuch() { return much; }
@@ -21,6 +22,5 @@ public:
 
 private:
 	int much =0; //얼마나 올려줄 거임? 
-
 };
 

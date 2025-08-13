@@ -9,6 +9,9 @@
 #include "Material.h"
 #include "Wearable.h"
 #include "Inventory.h"
+
+
+
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
@@ -57,6 +60,7 @@ void ItemBank::LoadItemStatus(const string& path) { //½ºÅÝ JSON - Item_S
         for (const auto& itemData : j["items"]) {
             std::string type = itemData["type"];
             std::string moment = itemData["Moment"];
+            std::string Sound = itemData["sound"];
 
             ItemCommonData common = {
                 itemData["id"],
@@ -64,7 +68,8 @@ void ItemBank::LoadItemStatus(const string& path) { //½ºÅÝ JSON - Item_S
                 itemData["description"],
                 itemData["enchantable"],
                 itemData["synthesizable"],
-                StringToNM(moment)
+                StringToNM(moment),     
+                StringToES(Sound)
             };
 
 

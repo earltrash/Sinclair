@@ -4,7 +4,7 @@
 #include "UIManager.h"
 #include "CursorManager.h"
 
-#include "GameManager.h"
+#include "GameManager_2.h"
 
 SynthesisWin::SynthesisWin() :UIWindow(UIWindowType::SynthesisWindow, Vec2{ 0,0 }, Vec2{ 524,766 })
 {
@@ -127,6 +127,8 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 	{
 		//뭐 합성이겠지 
 		PerformSynthesis();
+		SoundManager::Instance().PlaySFX("SY");
+
 		return true;
 
 	}
@@ -162,6 +164,7 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 		// 기존 아이템 복귀
 		Item* previousItem = m_slot_Item[whichSlot];
 		if (previousItem != nullptr) {
+
 			inventoryWindow->AddItem(previousItem->m_data.id, 1);
 		}
 
@@ -170,7 +173,7 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 
 		// 결과 슬롯 비우기
 		m_slot_Item[whichSlot] = nullptr;
-
+		ItemDrop(draggedItem);
 		CursorManager::Get().EndItemDrag();
 		return true;
 	}
@@ -179,11 +182,13 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 	{
 		Item* previousItem = m_slot_Item[whichSlot];
 		m_slot_Item[whichSlot] = draggedItem;
+		ItemDrop(draggedItem);
 
 		if (previousItem)
 		{
 			auto* inventoryWindow = dynamic_cast<Inventory*>(
 				UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+			ItemDrop(previousItem);
 			inventoryWindow->AddItem(previousItem->m_data.id, 1);
 		}
 
@@ -264,6 +269,7 @@ bool SynthesisWin::HandleMouseRight(Vec2 mousePos) //slot 위치에 mousepos -> 1 2
 
 			if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
 			{
+				ItemDrop(Clicked_Item);
 				inventory->AddItem(Clicked_Item->m_data.id, 1);
 
 				return true;
@@ -410,6 +416,8 @@ bool SynthesisWin::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSourc
 	// 드래그 소스가 합성창인 경우 인벤토리로 복구
 	if (source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Enhancement || source == DragSource::Synthesis)
 	{
+		ItemDrop(draggedItem);
+
 		if (inventoryWindow->AddItem(draggedItem->m_data.id, 1))
 		{
 			std::cout << "합성 불가능한 아이템을 인벤토리로 복구: " << draggedItem->m_data.id << std::endl;
@@ -452,6 +460,7 @@ void SynthesisWin::PerformSynthesis()
 
 	if (result != "F") //성공인 경우 
 	{
+		SoundManager::Instance().PlaySFX("SS");
 		unique_ptr<Item> resultitem = ResourceManager::Get().Get_ItemBank().Get_Item_Status(result);
 
 		Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
@@ -467,7 +476,8 @@ void SynthesisWin::PerformSynthesis()
 	}
 	else
 	{
-		//뭐 없긴 함 
+		SoundManager::Instance().PlaySFX("SN");
+
 	}
 
 }

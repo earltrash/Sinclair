@@ -1,6 +1,6 @@
 #include "SoundManager.h"
-/*
-
+#include "SoundBank_.h"
+#include "ResourceManager.h"
 
 
 SoundManager& SoundManager::Instance()
@@ -121,10 +121,19 @@ FMOD_RESULT SoundManager::PauseBGM(int index, bool pause)
     if (!initialized || index < 0 || index >= bgmChannels.size())
         return FMOD_ERR_INVALID_PARAM;
 
-    if (bgmChannels[index]) {
-        return FMOD_Channel_SetPaused(bgmChannels[index], pause);
-    }
-    return FMOD_ERR_INVALID_HANDLE;
+    std::cout << "[PauseBGM-int] 요청 index=" << index
+        << " / bgmChannels.size=" << bgmChannels.size()
+        << " / channel_ptr=" << bgmChannels[index]
+        << std::endl;
+
+        if (bgmChannels[index]) {
+            FMOD_BOOL isPlaying = 0;
+            FMOD_Channel_IsPlaying(bgmChannels[index], &isPlaying);
+            std::cout << "   -> 현재 상태: " << (isPlaying ? "재생 중" : "정지됨") << std::endl;
+            return FMOD_Channel_SetPaused(bgmChannels[index], pause);
+        }
+
+        return FMOD_ERR_INVALID_HANDLE;
 }
 
     void SoundManager::CleanupFinishedSFX()
@@ -208,4 +217,121 @@ FMOD_RESULT SoundManager::PauseBGM(int index, bool pause)
     {
         Shutdown();
     }
-*/
+
+
+    FMOD_RESULT SoundManager::AddBGM(const std::string& key, FMOD_SOUND* sound)
+    {
+        bgmKeyMap[key] = static_cast<int>(bgms.size());
+        bgms.push_back(sound);
+        bgmChannels.push_back(nullptr);
+        return FMOD_OK;
+    }
+
+    FMOD_RESULT SoundManager::AddSFX(const std::string& key, FMOD_SOUND* sound)
+    {
+        sfxKeyMap[key] = static_cast<int>(sfx.size());
+        sfx.push_back(sound);
+        return FMOD_OK;
+    }
+
+    FMOD_RESULT SoundManager::PlayBGM(const std::string& key, bool fadeIn)
+    {
+        auto it = bgmKeyMap.find(key);
+        if (it == bgmKeyMap.end()) return FMOD_ERR_INVALID_PARAM;
+        return PlayBGM(it->second, fadeIn);
+    }
+
+    FMOD_RESULT SoundManager::PlaySFX(const std::string& key, float volume)
+    {
+        auto it = sfxKeyMap.find(key);
+        if (it == sfxKeyMap.end()) return FMOD_ERR_INVALID_PARAM;
+        return PlaySFX(it->second, volume);
+    }
+
+    FMOD_RESULT SoundManager::PauseBGM(const std::string& key, bool pause)
+    {
+        auto it = bgmKeyMap.find(key);
+        if (it == bgmKeyMap.end()) {
+            std::cout << "[PauseBGM-str] 키 '" << key << "'를 bgmKeyMap에서 찾을 수 없음" << std::endl;
+            return FMOD_ERR_INVALID_PARAM;
+        }
+
+        std::cout << "[PauseBGM-str] key='" << key << "' -> index=" << it->second << std::endl;
+        return PauseBGM(it->second, pause);
+    }
+
+    FMOD_RESULT SoundManager::PauseSFX(const std::string& key, bool pause)
+    {
+        auto it = sfxKeyMap.find(key);
+        if (it == sfxKeyMap.end()) return FMOD_ERR_INVALID_PARAM;
+        return PauseSFX(it->second, pause); // 기존 index 기반 함수 재사용
+    }
+
+    FMOD_RESULT SoundManager::PauseSFX(int index, bool pause)
+    {
+        if (!initialized || index < 0 || index >= sfx.size())
+            return FMOD_ERR_INVALID_PARAM;
+
+        // activeSfxChannels에서 일치하는 채널을 찾아서 모두 일시정지
+        for (auto& channel : activeSfxChannels)
+        {
+            if (!channel) continue;
+
+            FMOD_SOUND* currentSound = nullptr;
+            if (FMOD_Channel_GetCurrentSound(channel, &currentSound) == FMOD_OK &&
+                currentSound == sfx[index])
+            {
+                FMOD_Channel_SetPaused(channel, pause);
+            }
+        }
+
+        return FMOD_OK;
+    }
+
+    void SoundManager::TakeAllClip()
+    {
+        auto map = ResourceManager::Get().Get_SoundBank().Get_EDM_MAP();
+
+        for (auto [name, source] : map)
+        {
+            string key = name; //편의 목적이긴 해 
+            AddBGM(key, ResourceManager::Get().Get_SoundBank().GetEndingBGM(name));
+        }
+
+        map = ResourceManager::Get().Get_SoundBank().Get_BGM_MAP();
+
+        for (auto [name, source] : map)
+        {
+            string key = name; //편의 목적이긴 해 
+            AddBGM(key, ResourceManager::Get().Get_SoundBank().GetBGM(name));
+        }
+
+        map = ResourceManager::Get().Get_SoundBank().Get_EUIM_MAP();
+
+        for (auto [name, source] : map)
+        {
+            string key = name; //편의 목적이긴 해 
+            AddSFX(key, ResourceManager::Get().Get_SoundBank().GetUIBGM(name));
+        }
+
+        map = ResourceManager::Get().Get_SoundBank().Get_HM_MAP();
+
+        for (auto [name, source] : map)
+        {
+            string key = name; //편의 목적이긴 해 
+            AddBGM(key, ResourceManager::Get().Get_SoundBank().GetHistoryBGM(name));
+        }
+
+        map = ResourceManager::Get().Get_SoundBank().Get_ES_MAP();
+
+        for (auto [name, source] : map)
+        {
+            string key = name; //편의 목적이긴 해 
+            AddSFX(key, ResourceManager::Get().Get_SoundBank().GetESBGM(name));
+        }
+
+
+    }
+
+
+    

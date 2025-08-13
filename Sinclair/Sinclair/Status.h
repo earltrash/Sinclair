@@ -138,3 +138,16 @@ struct PoolCount {
 	Need_Moment pool;
 	int count;
 };
+
+enum class ES {
+	Book,
+	Fabric,
+	Jewel,
+	Mask,
+	Metal1,
+	Metal2,
+	Potion,
+	Stone,
+	Wood,
+	Nothing
+};

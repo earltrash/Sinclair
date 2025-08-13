@@ -5,7 +5,7 @@
 #include "MouseListenerComponent.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
-#include "GameManager.h"
+#include "GameManager_2.h"
 #include "Renderer.h"
 #include "UIManager.h"
 #include "SliderHandleComponent.h"
@@ -29,7 +29,7 @@ void Scene_Outgame::Initalize()
 	{
 		UIManager::Get().AddSceneObject(obj);
 	}
-
+	SoundManager::Instance().PlayBGM("OutGame", false);
 	dirty = true;
 }
 
@@ -746,6 +746,8 @@ void Scene_Outgame::ChangeState(State newState)
 			{
 				m_state = CHOICE_MENU;
 				SafeChangeScene("Tutorial");
+				SoundManager::Instance().PauseBGM("OutGame", true);
+
 			}
 		});
 
@@ -789,6 +791,7 @@ void Scene_Outgame::ChangeState(State newState)
 
 		yesButton->SetOnClickCallback([this]() {
 			cout << "창고에 들어가시겠습니까?..." << endl;
+			SoundManager::Instance().PauseBGM("OutGame", true);
 			SafeChangeScene("InGame");
 			});
 
@@ -815,6 +818,8 @@ void Scene_Outgame::ChangeState(State newState)
 			cout << "여행을 떠나시겠습니까?..." << endl;
 			GameManager::Get().PreAdv();
 			SafeChangeScene("End");
+			SoundManager::Instance().PauseBGM("OutGame", true);
+
 			});
 
 		noButton->SetOnClickCallback([this]() {

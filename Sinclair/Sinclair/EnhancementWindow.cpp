@@ -64,6 +64,7 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 		msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 		m_statSelectionButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
 		m_statSelectionButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
+		SoundManager::Instance().PlaySFX("EH");
 	}
 
 	// left 버튼 영역.
@@ -206,6 +207,7 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 						auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 						if (inventoryWindow)
 						{
+							ItemDrop(m_targetItem);
 							inventoryWindow->AddItem(m_targetItem->m_data.id, 1);
 							std::cout << "기존 아이템을 인벤토리로 반환: " << m_targetItem->m_data.name << std::endl;
 						}
@@ -215,6 +217,7 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 					CursorManager::Get().EndItemDrag();
 
 										// 무기 종류에 따라 시트 렌더링 개수 결정
+					ItemDrop(m_targetItem);
 										UpdateSheetVisibility();
 										UIManager::Get().OpenWindow(m_windowType);
 										return true;
@@ -371,6 +374,7 @@ bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, Drag
 		auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 		if (inventoryWindow)
 		{
+			ItemDrop(draggedItem); //-> soundmanager 
 			inventoryWindow->AddItem(draggedItem->m_data.id, 1);
 			std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
 		}
@@ -395,6 +399,7 @@ bool EnhancementWindow::HandleMouseRight(Vec2 mousePos)
 				if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
 				{
 						// 슬롯 아이템 지워주기.
+					    ItemDrop(item);
 						inventory->AddItem(item->m_data.id, 1);
 						m_targetItem = nullptr;
 						return true;
@@ -643,6 +648,7 @@ void EnhancementWindow::TryEnhance(int successRate)
 
 		if (success)
 		{
+			SoundManager::Instance().PlaySFX("SC");
 				std::cout << "강화 성공!" << std::endl;
 				// 성공 애니메이션 및 아이템 스탯 업데이트
 				// 아이템 정보 가져와서 스탯 올려주기.
@@ -673,6 +679,8 @@ void EnhancementWindow::TryEnhance(int successRate)
 		}
 		else
 		{
+			SoundManager::Instance().PlaySFX("FA");
+
 				std::cout << "강화 실패..." << std::endl;
 				// 실패 애니메이션
 				// 실패로 바꿔주기.

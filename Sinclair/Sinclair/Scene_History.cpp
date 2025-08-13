@@ -7,7 +7,7 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "UIManager.h"
-#include "GameManager.h"
+#include "GameManager_2.h"
 
 
 Scene_History::Scene_History(string name)
@@ -30,6 +30,9 @@ void Scene_History::Initalize()
 	{
 		UIManager::Get().AddSceneObject(obj);
 	}
+
+	PlayHM(static_cast<int>(m_History) +1 );
+
 }
 
 void Scene_History::Enter()
@@ -271,6 +274,7 @@ void Scene_History::CreateObj()
 		// History 스킵 로직 추가
 
 		SafeChangeScene("Title");
+		SoundManager::Instance().PauseBGM(cur_HM_ID, true);
 		});
 
 	/// 9
@@ -921,6 +925,15 @@ void Scene_History::CreateObj()
 	}
 	break;
 	}
+}
+
+void Scene_History::PlayHM(int id)
+{
+
+	string HM_ID = to_string(id);
+
+	cur_HM_ID = HM_ID;
+	SoundManager::Instance().PlayBGM(HM_ID, false);
 }
 
 void Scene_History::DeactivateAllTexts()

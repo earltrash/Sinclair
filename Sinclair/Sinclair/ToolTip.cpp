@@ -24,12 +24,12 @@ void ToolTip::Update()
 
 		if (item != nullptr) 
 		{
-				std::cout << "아이템 툴팁 보이게 할거임." << std::endl;
+			//	std::cout << "아이템 툴팁 보이게 할거임." << std::endl;
 				m_isActive = true;
 		}
 		else
 		{
-				std::cout << "아이템 툴팁 안보이게 할거임." << std::endl;
+			//	std::cout << "아이템 툴팁 안보이게 할거임." << std::endl;
 				m_isActive = false;
 		}
 }

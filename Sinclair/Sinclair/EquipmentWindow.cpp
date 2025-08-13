@@ -102,9 +102,14 @@ bool EquipmentWindow::HandleMouseUp(Vec2 mousePos)
             Item* previousItem = GetEquippedItem(slotType); // 원래 슬롯에 있던 아이템
             m_equippedItems[slotType] = draggedItem;
 
+            ItemDrop(wearableItem);
+
             // 기존 아이템이 있었다면 인벤토리로 복구.
             if (previousItem)
             {
+
+                ItemDrop(wearableItem); //얘 터질 거 같은디 
+
                 auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
                 inventoryWindow->AddItem(previousItem->m_data.id, 1);
 
@@ -162,6 +167,7 @@ bool EquipmentWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSo
             auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
             if (inventoryWindow)
             {
+                ItemDrop(draggedItem);
                 inventoryWindow->AddItem(draggedItem->m_data.id, 1);
                 std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
             }
@@ -250,6 +256,7 @@ bool EquipmentWindow::HandleMouseRight(Vec2 mousePos)
         {
             if (auto* inventory = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
             {
+                ItemDrop(item);
                 inventory->AddItem(item->m_data.id, 1);
 
                 return true;

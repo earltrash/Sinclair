@@ -2,6 +2,8 @@
 #include "ResourceManager.h"
 #include "MouseListenerComponent.h"
 
+#include "SoundBank_.h"
+
 void ButtonComponent::BitmapPush(string NM, ComPtr<ID2D1Bitmap1> Bitmap)
 {
 	m_Bitmaps.emplace(NM, Bitmap);
@@ -52,11 +54,20 @@ void ButtonComponent::Worked(const MSG& msg)
         else if (msg.message == WM_LBUTTONUP && m_currentState == ButtonState::Pressed)
         {
             // 버튼이 눌린 상태에서 마우스를 뗐을 때만 클릭으로 처리
-            if (m_onClick) m_onClick();
+            if (m_onClick)
+            {
+                m_onClick();
+                SoundManager::Instance().PlaySFX("BC");
+
+            }
             SetState(ButtonState::Hover);
+
+
+
         }
         else if (msg.message == WM_MOUSEMOVE && m_currentState != ButtonState::Pressed)
         {
+            SoundManager::Instance().PlaySFX("CB");
             SetState(ButtonState::Hover);
         }
     }

@@ -47,6 +47,39 @@ Need_Moment StringToNM(std::string& val)
 }
 
 
+ES StringToES(std::string& val)
+{
+	if (val == "ES_Book") return ES::Book;
+	else if (val == "ES_Fabric") return ES::Fabric;
+	else if (val == "ES_Jewel") return ES::Jewel;
+	else if (val == "ES_Mask") return ES::Mask;
+	else if (val == "ES_Metal1") return ES::Metal1;
+	else if (val == "ES_Metal2") return ES::Metal2;
+	else if (val == "ES_Potion") return ES::Potion;
+	else if (val == "ES_Stone") return ES::Stone;
+	else if (val == "ES_Wood") return ES::Wood;
+	return ES::Nothing;
+
+}
+
+
+ std::string ESToString(ES& val)
+{
+	if (val == ES::Book) return "Book";
+	else if (val == ES::Fabric) return "Fabric";
+	else if (val == ES::Jewel) return "Jewel";
+	else if (val == ES::Mask) return "Mask";
+	else if (val == ES::Metal1) return "Metal1";
+	else if (val == ES::Metal2) return "Metal2";
+	else if (val == ES::Potion) return "Potion";
+	else if (val == ES::Stone) return "Stone";
+	else if (val == ES::Wood) return "Wood";
+	return "F";
+
+}
+
+
+
 std::wstring UTF8ToWstr(const std::string& str)
 {
 	if (str.empty()) return std::wstring();

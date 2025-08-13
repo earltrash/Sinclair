@@ -32,13 +32,15 @@ public:
 		return result;
 	}
 
+	void PlayEDM(int id);
+
 	void SafeChangeScene(const std::string& sceneName, int gen);
 
 private:
 	// 엔딩의 텍스트 테이블은 아웃게임의 테이블하고 다르게 
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ebm;
 
-
+	string cur_EDM_ID;
 
 	bool  m_textShown = false;
 	bool  m_titleShown = false;

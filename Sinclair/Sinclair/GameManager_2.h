@@ -3,7 +3,7 @@
 #include "status.h"
 #include <array>
 #include "Item.h"
-//#include "fmod.h"
+#include "fmod.h"
 
 
 using namespace std;
@@ -23,9 +23,9 @@ public:
     void PoolInit();
     static GameManager& Get();
 
-    std::vector<std::string> GetRandomItemsByFam( int fam,
+    std::vector<std::string> GetRandomItemsByFam(int fam,
         const std::unordered_map<int, std::vector<PoolCount>>& poolMap
-    ,  std::unordered_set<std::string>& alreadyPicked);
+        , std::unordered_set<std::string>& alreadyPicked);
 
     void FamValue();
 
@@ -40,7 +40,6 @@ public:
     void FindEnding();
 
     void SaveEndingBgm(int id);
-
     void PotionUsed(Status_fundamental stat, int Much);
 
     int GetCurrentGen() { return curGen; }
@@ -69,7 +68,7 @@ public:// get set 만들기 전
     // soundmanager야 가져가
     float bgmValue = 1.0f;
     float sfxValue = 1.0f;
-    
+
     // 엔딩에 필요한 숫자
     std::array<int, 3> arrEndingID{};
     std::array<TotalStatus, 3> arrTotalStatus{};
@@ -80,18 +79,18 @@ public:// get set 만들기 전
     std::vector<Recipe> m_SynTable;
     std::vector<bool> m_wearable_part;
 
-        std::unordered_map<std::string, std::string> weaponMap = {
-        { "W001", "I016" },
-        { "W002", "I017" },
-        { "W003", "I018" },
-        { "W004", "I019" },
-        { "W005", "I020" },
-        { "W006", "I021" },
-        { "W007", "I022" },
-        { "W008", "I023" },
-        { "W009", "I024" },
-        { "W010", "I025" },
-        { "W016", "I016" }
+    std::unordered_map<std::string, std::string> weaponMap = {
+    { "W001", "I016" },
+    { "W002", "I017" },
+    { "W003", "I018" },
+    { "W004", "I019" },
+    { "W005", "I020" },
+    { "W006", "I021" },
+    { "W007", "I022" },
+    { "W008", "I023" },
+    { "W009", "I024" },
+    { "W010", "I025" },
+    { "W016", "I016" }
     };
 
     std::unordered_map<Need_Moment, std::vector<std::string>> poolItems;
@@ -107,7 +106,7 @@ public:// get set 만들기 전
     { 7, { { Need_Moment::Fam3_a, 4 }, { Need_Moment::Fam3_b, 4 } } },
     };
 
-    std::unordered_map<int, std::vector<PoolCount>>famToPoolCounts_Gen3to4  {
+    std::unordered_map<int, std::vector<PoolCount>>famToPoolCounts_Gen3to4{
     { 1, { { Need_Moment::Fam4_a, 1 }, { Need_Moment::Fam4_b, 0 } } },
     { 2, { { Need_Moment::Fam4_a, 2 }, { Need_Moment::Fam4_b, 0 } } },
     { 3, { { Need_Moment::Fam4_a, 3 }, { Need_Moment::Fam4_b, 1 } } },
@@ -129,7 +128,7 @@ public:// get set 만들기 전
      { 6, { {"I013", 3}, {"I014", 3}, {"I015", 2} } },
      { 7, { {"I013", 3}, {"I014", 3}, {"I015", 3} } }
     };
-    
+
 
 
     string GetStatName(Status_Total stat) {

@@ -10,6 +10,7 @@ public:
 		: Item(other)
 		, m_stat(other.m_stat)
 	{
+		m_data.Sound = other.m_data.Sound;
 	}
 
 	std::unique_ptr<Item> Clone() const override {
@@ -18,6 +19,6 @@ public:
 
 private:
 	fundamentalStatus m_stat{};
-
+	ES Sound;
 
 };

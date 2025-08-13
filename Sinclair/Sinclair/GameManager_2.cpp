@@ -1,11 +1,14 @@
-#include "GameManager.h"
+#include "GameManager_2.h"
+#include "SoundBank_.h"
+
 #include "StatWindow.h"
 #include "Inventory.h"
 #include "EquipmentWindow.h"
 #include "ItemBank.h"
 #include "TextBank.h"
+
+#include "SoundManager.h"
 #include "ResourceManager.h"
-#include "SoundBank.h"
 #include <random>
 #include <algorithm>
 
@@ -64,8 +67,8 @@ std::vector<std::string> GameManager::GetRandomItemsByFam
 (
     int fam,
     const std::unordered_map<int, std::vector<PoolCount>>& poolMap,
-     std::unordered_set<std::string>& alreadyPicked // 이미 뽑힌 아이템들
-) 
+    std::unordered_set<std::string>& alreadyPicked // 이미 뽑힌 아이템들
+)
 
 {
     std::vector<std::string> result;
@@ -141,34 +144,48 @@ string GameManager::Synthesis(const string& id1, const string& id2)
 }
 
 //ending Scene 들어가기 전 -> endingScene에 필요한게 bitmap = id // stat 처리를 다 해서 id를 구해오는 과정 
-void GameManager::PreAdv() 
+void GameManager::PreAdv()
 {
-    FindEnding();
 
-    //1. 스탯을 받아옴
-    //2. 기존 장비를 정리함.
-    //3. 스탯을 통한 ending id & ending id를 통한 한 세대의 명성치를 받아와야 함. 
-    //4. 아이템을 넘겨줌까지 함. 
+
     int index = GetCurrentGen() - 2; //int curGen 2 ; 
 
     StatWindow* statwin = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow));
     if (statwin != nullptr)
     {
         arrTotalStatus[index] = statwin->GetTotalStatus(); //저장 하고 이거로 보내주면 됨 -> 보내줄거야. 
-        statwin->ResetStat(); 
+        statwin->ResetStat();
     }
+
+    FindEnding();
+    std::cout << arrTotalFam[curGen - 2] << endl;
+    
+
+   
     UsedEquipedClean(); // temp에다가 저장, 기존 인벤은 싹다 정리함.
     AdvResult(); //명성치와 세대에 따른 인벤 & 임시 vector 업데이트 함. ㅇㅇ 
-    TempToNext(); 
-   
+    TempToNext();
 
-  
+
+
 
 
 
 
 }
 
+void GameManager::SaveEndingBgm(int id)
+{
+    string st_id = std::to_string(id); //4자리수 
+
+   // SoundManager::Instance().g
+   //// endingBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //그냥 멤버에 담아두었다가 해제 식
+
+   // if (GetCurrentGen() == 4)
+   // {
+   //     //historyBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //일단 임시값 
+   // }
+}
 
 //EndingScene의 Enter 부분인가 
 //id를 통해서 비트맵 준비할 거고 
@@ -176,26 +193,22 @@ void GameManager::PreAdv()
 
 std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> GameManager::AftAdv() //ending scene -> endingScene의 id를 받을거고 ? 
 {
-   
+
     int index = GetCurrentGen() - 2;
     int id = arrEndingID[index];
 
+   // SaveEndingBgm(id);
 
 
-  SaveEndingBgm(id);
-  
-  //-> 얘를 이제 사운드 매니저한테 보내줘야 하는 건가 
-
-    
-    
 
     std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ending_bitmap =
         ResourceManager::Get().GetEndingBitmap(std::to_string(id));
-    
-  //  UpdateGen(); 
+
+    //  UpdateGen(); 
 
     return ending_bitmap;
 }
+
 
 //장비 스텟이랑 수치값 
 void GameManager::PotionUsed(Status_fundamental stat, int Much)
@@ -262,14 +275,14 @@ void GameManager::AdvResult_Wep(string itemkey) //
     int idx = 0;
     for (const auto& [key, val] : weaponMap) // val이 곧 아이템
     {
-        if (key == itemkey && adv_wepon[idx] != true ) //true 인경우에는 치울게요 
+        if (key == itemkey && adv_wepon[idx] != true) //true 인경우에는 치울게요 
         {
             inven->GetItemBase().AddItemData(std::move(ResourceManager::Get().Get_ItemBank().CreateItem(val)
-));
+            ));
 
-            if (idx >= 0 && idx < adv_wepon.size()) 
+            if (idx >= 0 && idx < adv_wepon.size())
                 adv_wepon[idx] = true;
-            break; 
+            break;
         }
         ++idx;
     }
@@ -277,7 +290,7 @@ void GameManager::AdvResult_Wep(string itemkey) //
 
 void GameManager::AdvResult()
 {
-    
+
 
     int this_Gen_Fam = GetCurrentFam();
 
@@ -286,7 +299,7 @@ void GameManager::AdvResult()
 
     AdvResult_Potion(this_Gen_Fam);
 
-    switch(Gen)
+    switch (Gen)
     {
     case 2:
         AdvResult_Item_Gen2_Gen3(this_Gen_Fam);
@@ -333,7 +346,7 @@ void GameManager::AdvResult_Item_Gen2_Gen3(int Fam)
         UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
     if (!inven) return;
 
-    auto items = GetRandomItemsByFam(Fam , famToPoolCounts_Gen2to3 , alreadyPicked); //id를 받은거고 
+    auto items = GetRandomItemsByFam(Fam, famToPoolCounts_Gen2to3, alreadyPicked); //id를 받은거고 
     for (auto& id : items)
     {
         inven->GetItemBase().AddItemData(ResourceManager::Get().Get_ItemBank().CreateItem(id));
@@ -353,7 +366,7 @@ void GameManager::AdvResult_Item_Gen3_Gen4(int Fam)
     {
         inven->GetItemBase().AddItemData(ResourceManager::Get().Get_ItemBank().CreateItem(id));
     }
-   // inven->PackItem();
+    // inven->PackItem();
 
 }
 
@@ -364,14 +377,14 @@ void GameManager::AdvResult_Potion(int Fam)
 
 void GameManager::TempToNext()
 {
-   
+
     Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
     if (inven != nullptr)
     {
         for (auto& item : m_tempItem)
         {
             inven->GetItemBase().AddItemData(std::move(item));
-       }
+        }
         inven->PackItem();
     }
     m_tempItem.clear();
@@ -384,7 +397,7 @@ void GameManager::Default_Item_TO_Inven(int GEN) //폐기
         Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
         if (inven != nullptr)
         {
-            inven-> LoadItemDatabase(Need_Moment::Gen_3);
+            inven->LoadItemDatabase(Need_Moment::Gen_3);
             inven->PackItem();
 
         }
@@ -416,7 +429,7 @@ void GameManager::FindEnding()
 {
     bool debug = true;
 
-    if(debug)
+    if (debug)
     {
         cout << "\n=== FindEnding 디버깅 시작 ===" << endl;
         cout << "현재 스탯: 근력(" << arrTotalStatus[curGen - 2].Strength << "), ";
@@ -594,7 +607,7 @@ void GameManager::FindEnding()
         arrEndingID[curGen - 2] = ending.ID;
         arrTotalFam[curGen - 2] = ending.fame;
 
-        if(debug) cout << "매칭된 엔딩: " << ending.ID << " - " << ending.job << endl;
+        if (debug) cout << "매칭된 엔딩: " << ending.ID << " - " << ending.job << endl;
         return;
     }
 
@@ -607,15 +620,3 @@ void GameManager::FindEnding()
     }
 }
 
-void GameManager::SaveEndingBgm(int id)
-{
-
-   auto st_id = std::to_string(id);
-   //endingBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //그냥 멤버에 담아두었다가 해제 식
-
-   if (GetCurrentGen() == 4)
-   {
-       //historyBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //일단 임시값 
-   }
-
-}

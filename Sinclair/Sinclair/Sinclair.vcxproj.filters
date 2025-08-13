@@ -191,9 +191,6 @@
     <ClInclude Include="TextBank.h">
       <Filter>Bank</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
-      <Filter>Module</Filter>
-    </ClInclude>
     <ClInclude Include="ToolTip.h">
       <Filter>UI</Filter>
     </ClInclude>
@@ -212,11 +209,14 @@
     <ClInclude Include="SliderHandleComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="SoundBank.h">
+    <ClInclude Include="SoundManager.h">
+      <Filter>Module</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundBank_.h">
       <Filter>Bank</Filter>
     </ClInclude>
-    <ClInclude Include="SoundManager.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="GameManager_2.h">
+      <Filter>Module</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -313,9 +313,6 @@
     <ClCompile Include="TextBank.cpp">
       <Filter>Bank</Filter>
     </ClCompile>
-    <ClCompile Include="GameManager.cpp">
-      <Filter>Module</Filter>
-    </ClCompile>
     <ClCompile Include="Scene_BJ.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -355,11 +352,14 @@
     <ClCompile Include="Scene_Tutorial.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SoundBank.cpp">
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>Module</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundBank_.cpp">
       <Filter>Bank</Filter>
     </ClCompile>
-    <ClCompile Include="SoundManager.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="GameManager_2.cpp">
+      <Filter>Module</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
