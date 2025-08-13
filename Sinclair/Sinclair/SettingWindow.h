@@ -43,6 +43,14 @@ public:
     // 창과 핸들을 함께 이동시키는 함수
     void MoveHandles(Vec2 delta);
 
+    float getBgmCurrentValue() const {
+        return m_bgmCurrentValue;
+    }
+
+    float getSfxCurrentValue() const {
+        return m_sfxCurrentValue;
+    }
+
 private:
     std::unique_ptr<UI_Renderer> m_uiRenderer;
 

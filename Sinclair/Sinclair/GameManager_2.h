@@ -65,9 +65,6 @@ public:// get set 만들기 전
 
     int curGen = 2;
 
-    // soundmanager야 가져가
-    float bgmValue = 1.0f;
-    float sfxValue = 1.0f;
 
     // 엔딩에 필요한 숫자
     std::array<int, 3> arrEndingID{};

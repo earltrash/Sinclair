@@ -218,16 +218,16 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 
 										// 무기 종류에 따라 시트 렌더링 개수 결정
 					ItemDrop(m_targetItem);
-										UpdateSheetVisibility();
-										UIManager::Get().OpenWindow(m_windowType);
-										return true;
-								}
-						}
-						// 위에 조건 안들어왔으면 창으로 반환.
-						DragSource source = CursorManager::Get().GetDragSource();
-						return HandleDropFailure(mousePos, dragged, source);
+					UpdateSheetVisibility();
+					UIManager::Get().OpenWindow(m_windowType);
+					return true;
 				}
 		}
+		// 위에 조건 안들어왔으면 창으로 반환.
+		DragSource source = CursorManager::Get().GetDragSource();
+		return HandleDropFailure(mousePos, dragged, source);
+	}
+}
 
 		if (IsInBounds(mousePos))
 		{

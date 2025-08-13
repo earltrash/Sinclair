@@ -5,6 +5,12 @@
 
 SettingWindow::SettingWindow() : UIWindow(UIWindowType::SettingsWindow, { 431 , 270 }, { 1059, 540 })
 {
+    m_minValue = 0.0f;          // 또는 원하는 최소값
+    m_maxValue = 1.0f;          // 또는 원하는 최대값
+    m_bgmCurrentValue = 0.5f;   // 기본값 (50%)
+    m_sfxCurrentValue = 0.5f;   // 기본값 (50%)
+
+
     m_uiRenderer = std::make_unique<UI_Renderer>();
 
     if (m_uiRenderer)
@@ -83,11 +89,13 @@ bool SettingWindow::HandleMouseDown(Vec2 mousePos)
     if (m_bgmHandleComponent && m_bgmHandleComponent->IsPointInHandle(mousePos)) {
         m_draggingBGM = true;
         m_bgmHandleComponent->SetState(SliderHandleComponent::ButtonState::Pressed);
+
         return true;
     }
     if (m_sfxHandleComponent && m_sfxHandleComponent->IsPointInHandle(mousePos)) {
         m_draggingSFX = true;
         m_sfxHandleComponent->SetState(SliderHandleComponent::ButtonState::Pressed);
+
         return true;
     }
 
@@ -268,12 +276,12 @@ void SettingWindow::RenderCloseButton()
 void SettingWindow::MoveHandles(Vec2 delta)
 {
     // 핸들 오브젝트 위치 직접 이동
-    if (m_bgmHandleObject) 
+    if (m_bgmHandleObject)
     {
         Vec2 currentPos = m_bgmHandleObject->GetTransform().GetPosition();
         m_bgmHandleObject->SetPosition(currentPos + delta);
     }
-    if (m_sfxHandleObject) 
+    if (m_sfxHandleObject)
     {
         Vec2 currentPos = m_sfxHandleObject->GetTransform().GetPosition();
         m_sfxHandleObject->SetPosition(currentPos + delta);
@@ -285,12 +293,30 @@ void SettingWindow::MoveHandles(Vec2 delta)
     m_sfxMinX += delta.x;
     m_sfxMaxX += delta.x;
 
-    if (m_bgmHandleComponent) 
+    if (m_bgmHandleComponent)
     {
         m_bgmHandleComponent->UpdateRange(m_bgmMinX, m_bgmMaxX);
+
+        // 현재 핸들 위치에서 새로운 값 계산 (SetValue 호출하지 않음)
+        Vec2 bgmPos = m_bgmHandleObject->GetTransform().GetPosition();
+        float normalizedBGM = (bgmPos.x - m_bgmMinX) / (m_bgmMaxX - m_bgmMinX);
+        normalizedBGM = std::clamp(normalizedBGM, 0.0f, 1.0f);
+        m_bgmCurrentValue = m_minValue + normalizedBGM * (m_maxValue - m_minValue);
+
+        // 컴포넌트 내부 값만 직접 업데이트 (위치는 이미 이동했으므로)
+        m_bgmHandleComponent->UpdateValueOnly(normalizedBGM);
     }
-    if (m_sfxHandleComponent) 
+    if (m_sfxHandleComponent)
     {
         m_sfxHandleComponent->UpdateRange(m_sfxMinX, m_sfxMaxX);
+
+        // 현재 핸들 위치에서 새로운 값 계산 (SetValue 호출하지 않음)
+        Vec2 sfxPos = m_sfxHandleObject->GetTransform().GetPosition();
+        float normalizedSFX = (sfxPos.x - m_sfxMinX) / (m_sfxMaxX - m_sfxMinX);
+        normalizedSFX = std::clamp(normalizedSFX, 0.0f, 1.0f);
+        m_sfxCurrentValue = m_minValue + normalizedSFX * (m_maxValue - m_minValue);
+
+        // 컴포넌트 내부 값만 직접 업데이트 (위치는 이미 이동했으므로)
+        m_sfxHandleComponent->UpdateValueOnly(normalizedSFX);
     }
 }

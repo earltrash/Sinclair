@@ -146,6 +146,17 @@ public:
         UpdateDestRect();
     }
 
+    void UpdateValueOnly(float normalizedValue)
+    {
+        float newValue = std::clamp(normalizedValue, 0.0f, 1.0f);
+        GetCurrentValueRef() = newValue;
+
+        if (m_onValueChanged)
+        {
+            m_onValueChanged(newValue);
+        }
+    }
+
 private:
     RenderInfo* m_renderInfo;
     float m_minX;
