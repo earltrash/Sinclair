@@ -35,8 +35,10 @@ public:
     virtual bool HandleMouseRight(Vec2 mousePos) override;
     virtual void SetActivate(bool active) { m_isActive = active; }
 
+    void ItemInitialize(Item* item);
 
     void Update() override;
+    void FixedUpdate(float dt) override;
     void Render() override;
 
     // 타입 체크용

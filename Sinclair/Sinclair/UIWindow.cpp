@@ -177,6 +177,7 @@ bool UIWindow::HandleInput(const MSG& msg)
 
 void UIWindow::ItemDrop(Item* item)
 {
+	if (item == nullptr)	return;
 	ES sound = item->m_data.Sound;
 	string sound_Id = ESToString(sound);
 
