@@ -231,6 +231,7 @@ bool EnhancementWindow::HandleMouseUp(Vec2 mousePos)
 				// 창 영역 내에서 드래그된 아이템이 있으면 인벤토리로 반환
 				if (CursorManager::Get().IsDragging())
 				{
+						std::cout << "바운드 안이여서 handledropFailure 호출할거임" << std::endl;
 						Item* draggedItem = CursorManager::Get().GetDraggedItem();
 						if (draggedItem)
 						{
@@ -310,7 +311,6 @@ bool EnhancementWindow::HandleMouseHover(Vec2 mousePos)
 
 				if (whichSlot == SynSlot::Result)
 				{
-						std::cout << "슬롯에 위치해있음." << std::endl;
 						Item* Clicked_Item = m_targetItem;
 						if (Clicked_Item != nullptr)
 						{
@@ -326,8 +326,6 @@ bool EnhancementWindow::HandleMouseHover(Vec2 mousePos)
 				}
 				else
 				{
-
-						std::cout << "슬롯 아이템이 없거나 위치 아니여서 닫음." << std::endl;
 						UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip);
 						CursorManager::Get().HoveredReleased(); //추적 금지 
 						return false;
@@ -341,43 +339,19 @@ bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, Drag
 {
 	if (!draggedItem) return false;
 
-	// 다른 창들의 영역인지 확인
-	bool isInOtherWindow = false;
-
-	// 인벤창 영역 확인
-	UIWindow* inventoryWindow = UIManager::Get().GetWindow(UIWindowType::InventoryWindow);
-	if (inventoryWindow && inventoryWindow->IsActive() && inventoryWindow->IsInBounds(mousePos))
+	if (source == DragSource::Enhancement || source == DragSource::Equipment || source == DragSource::Inventory || source == DragSource::Synthesis)
 	{
-		isInOtherWindow = true;
+			auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+			if (inventoryWindow)
+			{
+					inventoryWindow->AddItem(draggedItem->m_data.id, 1);
+					std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
+					CursorManager::Get().EndItemDrag();
+					return true;
+			}
 	}
 
-	// 장비창 영역 확인
-	UIWindow* equipmentWindow = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
-	if (equipmentWindow && equipmentWindow->IsActive() && equipmentWindow->IsInBounds(mousePos))
-	{
-		isInOtherWindow = true;
-	}
-
-	// 다른 창 영역이면 해당 창에서 처리하도록 넘김
-	if (isInOtherWindow)
-	{
-		return false;
-	}
-
-	// 어떤 창 영역도 아니면 원래 위치로 복구
-	if (source == DragSource::Equipment  || source == DragSource::Inventory  || source == DragSource::Enhancement || source == DragSource::Synthesis)
-	{
-		// sheetimage 다시 render 해야해서 그냥 inven으로 복구.
-		auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
-		if (inventoryWindow)
-		{
-			inventoryWindow->AddItem(draggedItem->m_data.id, 1);
-			std::cout << "인벤토리 아이템을 인벤토리로 복구했습니다: " << draggedItem->m_data.name << std::endl;
-		}
-	}
-
-	CursorManager::Get().EndItemDrag();
-	return true;
+	return false;
 }
 bool EnhancementWindow::HandleMouseRight(Vec2 mousePos)
 {

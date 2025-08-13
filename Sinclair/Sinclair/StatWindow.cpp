@@ -53,16 +53,14 @@ bool StatWindow::HandleMouseUp(Vec2 mousePos)
         // 창 영역 내에서 드래그된 아이템이 있으면 인벤토리로 반환
         if (CursorManager::Get().IsDragging())
         {
-            Item* draggedItem = CursorManager::Get().GetDraggedItem();
-            if (draggedItem)
+            if (CursorManager::Get().IsDragging())
             {
-                DragSource source = CursorManager::Get().GetDragSource();
-                HandleDropFailure(mousePos, draggedItem, source);
+                // 스탯창에서는 아이템 드롭을 허용하지 않음 즉 uimanager가 처리할거임.
+                return false; 
             }
+            UIManager::Get().OpenWindow(m_windowType);
+            return true;
         }
-
-        UIManager::Get().OpenWindow(m_windowType);
-        return true;
     }
     // 영역 밖이면 체크 안하기
     return false;
@@ -90,64 +88,8 @@ bool StatWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource 
 }
 bool StatWindow::HandleMouseRight(Vec2 mousePos)
 {
-    return false;
+    return true;
 }
-
-//void StatWindow::CalculateStats()
-//{
-//    m_playerBaseFundamentalStats = { 0,0,0,0 };
-//    //m_totalStats.Strength = 100;
-//    //m_totalStats.Magic_Power = 70;
-//    //m_totalStats.Health = 100;
-//    //m_totalStats.Knowledge = 100;
-//    //m_totalStats.Charm = 100;
-//    // 1. UIManager에서 UIWindow 포인터를 가져오기.
-//    UIWindow* window = UIManager::Get().GetWindow(UIWindowType::EquipmentWindow);
-//    // 2. 포인터 타입 맞는지 체크
-//    if (auto* equipmentWindow = dynamic_cast<EquipmentWindow*>(window))
-//    {
-//        // 모든 슬롯 타입을 반복하며 아이템을 가져옴
-//        for (int i = 0; i < static_cast<int>(Wearable_part::UnKnown); ++i)
-//        {
-//            // 장비창에서 현재 슬롯에 맞는 아이템 가져오기.
-//            Wearable_part slotType = static_cast<Wearable_part>(i);
-//            Item* equippedItem = equipmentWindow->GetEquippedItem(slotType);
-//
-//            // 장비 있으면
-//            if (equippedItem != nullptr)
-//            {
-//                // 아이템 데이터 가져오기
-//                unique_ptr<Item> item = ResourceManager::Get().Get_ItemBank().Get_Item_Status(equippedItem->m_data.id);
-//                if (item != nullptr) // unique_ptr 체크
-//                {
-//                    Wearable* wearableItem = dynamic_cast<Wearable*>(item.get());
-//                    if (wearableItem != nullptr) // dynamic_cast 결과 체크
-//                    {
-//                        // 1차 스탯 누적
-//                        m_playerBaseFundamentalStats.power += wearableItem->GetStat(Status_fundamental::power);
-//                        m_playerBaseFundamentalStats.agile += wearableItem->GetStat(Status_fundamental::agile);
-//                        m_playerBaseFundamentalStats.intelligence += wearableItem->GetStat(Status_fundamental::intelligence);
-//                        m_playerBaseFundamentalStats.luck += wearableItem->GetStat(Status_fundamental::luck);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    m_totalStats.Strength = m_playerBaseFundamentalStats.power * 2 + m_playerBaseFundamentalStats.agile * 1;
-//    m_totalStats.Magic_Power = m_playerBaseFundamentalStats.intelligence * 3;
-//    m_totalStats.Health = static_cast<int>(m_playerBaseFundamentalStats.power * 1 + m_playerBaseFundamentalStats.intelligence * 0.5f);
-//    m_totalStats.Knowledge = m_playerBaseFundamentalStats.intelligence * 2 + m_playerBaseFundamentalStats.luck * 1;
-//    m_totalStats.Charm = m_playerBaseFundamentalStats.luck * 3 + m_playerBaseFundamentalStats.agile * 1;
-//
-//    // 디버그 출력
-//    std::cout << "Final Stats - Strength: " << m_totalStats.Strength
-//        << ", Magic Power: " << m_totalStats.Magic_Power
-//        << ", Health: " << m_totalStats.Health
-//        << ", Knowledge: " << m_totalStats.Knowledge
-//        << ", Charm: " << m_totalStats.Charm << std::endl;
-//
-//}
 
 void StatWindow::RenderBackground()
 {
@@ -337,7 +279,7 @@ void StatWindow::RenderRadarChart()
         int next = (i + 1) % 5;
 
         // 현재 변을 여러 선으로 분할
-        for (float t = 0.0f; t <= 1.0f; t += 0.003f) // 0.01f = 선 밀도
+        for (float t = 0.0f; t <= 1.0f; t += 0.01f) // 0.001f = 선 밀도
         {
             float x = points[i].x + (points[next].x - points[i].x) * t;
             float y = points[i].y + (points[next].y - points[i].y) * t;
@@ -346,7 +288,7 @@ void StatWindow::RenderRadarChart()
             D2DRenderer::Get().DrawLine(
                 center.x, center.y,
                 x, y,
-                D2D1::ColorF(D2D1::ColorF::SaddleBrown, 1.0f) // 반투명 원하면 0.1~0.5정도로 줄이기
+                D2D1::ColorF(D2D1::ColorF::SaddleBrown, 1) // 반투명 원하면 0.1~0.5정도로 줄이기
             );
         }
     }
@@ -429,11 +371,11 @@ void StatWindow::UpdateTotalStats()
     m_totalStats.Charm = totalFundamentalStats.luck * 0.7f + totalFundamentalStats.agile * 0.3f;
 
     // 실제 그릴 용도임.
-    m_RenderStat.Strength = totalFundamentalStats.power * 2 + totalFundamentalStats.agile * 1;
-    m_RenderStat.Magic_Power = totalFundamentalStats.intelligence * 3;
+    m_RenderStat.Strength = totalFundamentalStats.power * 1 + totalFundamentalStats.agile * 0.6f;
+    m_RenderStat.Magic_Power = totalFundamentalStats.intelligence * 1.5f;
     m_RenderStat.Health = static_cast<int>(totalFundamentalStats.power * 1 + totalFundamentalStats.intelligence * 0.5f);
-    m_RenderStat.Knowledge = totalFundamentalStats.intelligence * 2 + totalFundamentalStats.luck * 1;
-    m_RenderStat.Charm = totalFundamentalStats.luck * 3 + totalFundamentalStats.agile * 1;
+    m_RenderStat.Knowledge = totalFundamentalStats.intelligence * 1 + totalFundamentalStats.luck * 1;
+    m_RenderStat.Charm = totalFundamentalStats.luck * 1 + totalFundamentalStats.agile * 1;
 }
 
 // 무기 고유 id로 체크할거임.

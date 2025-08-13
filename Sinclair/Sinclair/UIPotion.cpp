@@ -117,7 +117,25 @@ bool UIPotion::HandleMouseDown(Vec2 mousePos)
     return false;
 }
 
-bool UIPotion::HandleMouseUp(Vec2) { return false; }
+bool UIPotion::HandleMouseUp(Vec2 mousePos)
+{
+    if (!m_isActive) return false;
+
+    // 포션창 영역 내 클릭이면 창을 최상단으로
+    if (IsInBounds(mousePos))
+    {
+        // 드래그 중인 아이템이 있어도 포션창에서는 받지 않음
+        if (CursorManager::Get().IsDragging())
+        {
+            return false; // UIManager가 다른 창에서 처리하도록
+        }
+
+        UIManager::Get().OpenWindow(m_windowType);
+        return true;
+    }
+
+    return false;
+}
 bool UIPotion::HandleDoubleClick(Vec2) { return false; }
 bool UIPotion::HandleMouseRight(Vec2) { return false; }
 
