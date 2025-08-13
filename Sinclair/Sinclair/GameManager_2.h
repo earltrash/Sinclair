@@ -60,6 +60,13 @@ public:
     int GetCurrentFam() { return arrTotalFam[GetCurrentGen() - 2]; }; //한 세대 기준 
     int GetResultFam();
 
+
+    void Game_Reset();
+    void Value_Reset();
+
+    void Inven_Reset();
+
+
 public:// get set 만들기 전
     bool isFirst = true;
 

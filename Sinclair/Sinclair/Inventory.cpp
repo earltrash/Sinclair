@@ -526,6 +526,10 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
     {
         if (IsInBounds(mousePos))
         {
+            if (CursorManager::Get().GetDraggedItem())
+            {
+                AddItem(CursorManager::Get().GetDraggedItem()->m_data.id, 1);
+            }
             UIManager::Get().OpenWindow(m_windowType);
             CursorManager::Get().RE_ItemCount();
             CursorManager::Get().EndItemDrag(); // 드롭 성공 시 드래그 종료
@@ -542,7 +546,7 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
     if (!draggedItem) return false;
 
     // 드래그 시작점이 인벤토리였는지 확인
-    if (source == DragSource::Inventory)
+    if (source == DragSource::Inventory || source == DragSource::Equipment || source == DragSource::Enhancement || source == DragSource::Synthesis)
     {
         InventorySlot* sourceSlot = CursorManager::Get().GetSourceSlot();
         if (sourceSlot)

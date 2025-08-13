@@ -63,13 +63,11 @@ GameManager& GameManager::Get()
 }
 
 
-std::vector<std::string> GameManager::GetRandomItemsByFam
-(
+std::vector<std::string> GameManager::GetRandomItemsByFam(
     int fam,
     const std::unordered_map<int, std::vector<PoolCount>>& poolMap,
-    std::unordered_set<std::string>& alreadyPicked // 이미 뽑힌 아이템들
+    std::unordered_set<std::string>& alreadyPicked // 누적 중복 방지(원하면 유지)
 )
-
 {
     std::vector<std::string> result;
 
@@ -79,43 +77,61 @@ std::vector<std::string> GameManager::GetRandomItemsByFam
     static std::random_device rd;
     static std::mt19937 gen(rd());
 
-    for (auto& pc : famIt->second) {
+    // 아이템 id -> wearable_part 인덱스를 얻는 람다
+    auto getPartIndex = [](const std::string& id) -> int {
+        // 성능상 부담되면 ItemBank에 id->part 캐시를 따로 두세요.
+        auto item = ResourceManager::Get().Get_ItemBank().CreateItem(id);
+        return static_cast<int>(item->m_data.wearablePart);
+        };
+
+    for (const auto& pc : famIt->second)
+    {
+        // 1) 풀 가져오기 -> 특정 needmoment에 해당하는 모든 아이템의 id 
         auto poolIt = poolItems.find(pc.pool);
         if (poolIt == poolItems.end() || poolIt->second.empty()) continue;
 
-        std::vector<std::string> temp = poolIt->second;
+        // 2) 풀을 wearable_part별로 그룹핑
+        std::unordered_map<int, std::vector<std::string>> byPart;
+        byPart.reserve(16);
+        for (const auto& id : poolIt->second)
+        {
+            int p = getPartIndex(id);
+            byPart[p].push_back(id);
+        }
 
-        int count = pc.count;
-        while (count > 0 && !temp.empty()) {
-            std::shuffle(temp.begin(), temp.end(), gen);
-            bool found = false;
+        // 3) 각 wearable_part 그룹에서 count개 뽑기 (중복 아이템 금지)
+        //    - “wearable_part가 겹치는 건 허용”
+        //    - “같은 아이템 id가 또 나오면 재뽑기(=중복 방지)”
+        //    - alreadyPicked를 계속 활용(전역/세션 중복 방지)
+        std::unordered_map<int, std::unordered_set<std::string>> pickedPerPart;
 
-            for (auto it = temp.begin(); it != temp.end();) {
-                if (alreadyPicked.find(*it) == alreadyPicked.end()) {
-                    int index_num = static_cast<int>(
-                        ResourceManager::Get().Get_ItemBank().CreateItem(*it)->m_data.wearablePart
-                        );
-                    if (!m_wearable_part[index_num]) {
-                        result.push_back(*it);
-                        alreadyPicked.insert(*it);
-                        m_wearable_part[index_num] = true;
-                        count--;
-                        it = temp.erase(it);
-                        found = true;
-                        if (count == 0) break;
-                    }
-                    else {
-                        ++it; // 파츠 중복이면 다음 후보
-                    }
-                }
-                else {
-                    ++it; // 아이템 중복이면 다음 후보
-                }
+        for (auto& [partIdx, ids] : byPart)
+        {
+            if (ids.empty()) continue;
+
+            // 무작위화
+            std::shuffle(ids.begin(), ids.end(), gen);
+
+            int need = pc.count;
+            // ids에서 중복 없는 선에서 최대 need개까지 선택
+            if (need == 0) break;
+            for (const auto& cand : ids)
+            {
+                // 같은 아이템 중복 금지: (1) 누적 중복(alreadyPicked), (2) 같은 파트 내 중복
+                if (alreadyPicked.find(cand) != alreadyPicked.end()) continue;
+                if (pickedPerPart[partIdx].find(cand) != pickedPerPart[partIdx].end()) continue;
+
+                result.push_back(cand);
+                pickedPerPart[partIdx].insert(cand);
+                alreadyPicked.insert(cand); // 누적 중복도 막고 싶지 않다면 이 줄을 지우세요.
+
+                if (--need == 0) break;
             }
-            if (!found) break; // 이번 라운드에서 아무것도 못 뽑았으면 종료
+            // 만약 해당 파트에 유효한 아이템 수가 count보다 적으면, 있는 만큼만 뽑고 지나감.
         }
     }
-    std::fill(m_wearable_part.begin(), m_wearable_part.end(), false);
+
+    // 기존 m_wearable_part 리셋/사용은 제거: 이제 파트 겹침 허용
     return result;
 }
 
@@ -158,10 +174,10 @@ void GameManager::PreAdv()
     }
 
     FindEnding();
-    std::cout << arrTotalFam[curGen - 2] << endl;
-    
+    std::cout << "이번 생 명성값은 ???" << arrTotalFam[curGen - 2] << endl;
 
-   
+
+
     UsedEquipedClean(); // temp에다가 저장, 기존 인벤은 싹다 정리함.
     AdvResult(); //명성치와 세대에 따른 인벤 & 임시 vector 업데이트 함. ㅇㅇ 
     TempToNext();
@@ -178,13 +194,13 @@ void GameManager::SaveEndingBgm(int id)
 {
     string st_id = std::to_string(id); //4자리수 
 
-   // SoundManager::Instance().g
-   //// endingBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //그냥 멤버에 담아두었다가 해제 식
+    // SoundManager::Instance().g
+    //// endingBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //그냥 멤버에 담아두었다가 해제 식
 
-   // if (GetCurrentGen() == 4)
-   // {
-   //     //historyBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //일단 임시값 
-   // }
+    // if (GetCurrentGen() == 4)
+    // {
+    //     //historyBgm = ResourceManager::Get().Get_SoundBank().GetEndingBGM(st_id); //일단 임시값 
+    // }
 }
 
 //EndingScene의 Enter 부분인가 
@@ -197,13 +213,13 @@ std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> GameManage
     int index = GetCurrentGen() - 2;
     int id = arrEndingID[index];
 
-   // SaveEndingBgm(id);
+    // SaveEndingBgm(id);
 
 
 
     std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ending_bitmap =
         ResourceManager::Get().GetEndingBitmap(std::to_string(id));
-    
+
     if (ending_bitmap.size() == 1)
     {
         auto it = ending_bitmap.begin();
@@ -216,7 +232,7 @@ std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> GameManage
         arrTotalEndingImg[index] = it->second;
     }
 
-  //  UpdateGen(); 
+    //  UpdateGen(); 
 
     return ending_bitmap;
 }
@@ -289,9 +305,9 @@ void GameManager::AdvResult_Wep(string itemkey) //
     {
         if (key == itemkey && adv_wepon[idx] != true) //true 인경우에는 치울게요 
         {
-            inven->GetItemBase().AddItemData(std::move(ResourceManager::Get().Get_ItemBank().CreateItem(val)
-            ));
+            // inven->GetItemBase().AddItemData(std::move(ResourceManager::Get().Get_ItemBank().CreateItem(val)));
 
+            m_tempItem.push_back((std::move(ResourceManager::Get().Get_ItemBank().CreateItem(val))));
             if (idx >= 0 && idx < adv_wepon.size())
                 adv_wepon[idx] = true;
             break;
@@ -437,6 +453,37 @@ int GameManager::GetResultFam()
     return i;
 }
 
+void GameManager::Game_Reset() //히스토리 보고 title로 넘어갈 떄 해야할 일
+{
+
+    Value_Reset(); //수치값 다 바꿈
+    // inven에 들어가는 에셋 다시 2회
+    Inven_Reset();
+}
+
+void GameManager::Value_Reset()
+{
+    isFirst = true;
+    arrTotalStatus = {};
+    arrTotalFam = {};
+    std::fill(adv_wepon.begin(), adv_wepon.end(), false);
+    std::fill(m_wearable_part.begin(), m_wearable_part.end(), false);
+    alreadyPicked.clear();
+}
+
+void GameManager::Inven_Reset()
+{
+    Inventory* inven = dynamic_cast<Inventory*>((UIManager::Get().GetWindow(UIWindowType::InventoryWindow)));
+    if (inven)
+    {
+        inven->GetItemBase().ClearAllItems();
+        inven->ClearAllSlots();
+        inven->LoadItemDatabase(Need_Moment::Gen_2);
+        inven->PackItem();
+
+    }
+}
+
 void GameManager::FindEnding()
 {
     bool debug = true;
@@ -486,7 +533,7 @@ void GameManager::FindEnding()
         cout << ")" << endl;
     }
 
-
+    //범진 물럿거라ㅏㅏㅏㅏㅏ
     // 전체 상위 엔딩 (모든 스탯 50% 이상)
     if (positiveStats.size() >= 5) {
         arrEndingID[curGen - 2] = 3011;

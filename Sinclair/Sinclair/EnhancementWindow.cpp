@@ -589,8 +589,10 @@ void EnhancementWindow::RenderStatText()
 		case Stat::LUK:
 				statText = L"LUK + " + std::to_wstring(statValue);
 				break;
+		
 		}
 
+		D2DRenderer::Get().CreateWriteResource(L"ºûÀÇ °è½ÂÀÚ Bold", DWRITE_FONT_WEIGHT_BOLD, PtToPx(12));
 		D2DRenderer::Get().DrawMessage(statText.c_str(), textPos.x, textPos.y, 150, 70, D2D1::ColorF(D2D1::ColorF::White));
 }
 

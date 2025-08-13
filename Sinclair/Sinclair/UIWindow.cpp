@@ -89,6 +89,7 @@ bool UIWindow::HandleInput(const MSG& msg)
 						return true;
 				}
 				// 바가 아니면 각자 윈도우 위치 내부 로직 처리.
+				std::cout << "각자 윈도우" << std::endl;
 				return HandleMouseDown(CORD);
 		}
 
