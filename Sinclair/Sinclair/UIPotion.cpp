@@ -4,6 +4,7 @@
 #include "ResourceManager.h"
 #include "GameManager_2.h"
 
+#include "SoundManager.h"
 
 UIPotion::UIPotion()
     : UIWindow(UIWindowType::StatPotionUseWindow, Vec2{ 0,0 }, Vec2{ 524,766 })
@@ -118,6 +119,13 @@ bool UIPotion::HandleMouseDown(Vec2 mousePos)
 
                 //스탯창의 스탯 수치를 올리는 식으로 진행 함. -> 이는 후에 최종적으로 gm으로
                 GameManager::Get().PotionUsed(m_Stat, Much);
+
+                SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+                if (SETWin)
+                {
+                    float val = SETWin->GetSFXValue();
+                    SoundManager::Instance().PlaySFX("BC", val);
+                }
 
                 if (auto* inv = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow)))
                 {

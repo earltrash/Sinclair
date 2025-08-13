@@ -144,11 +144,11 @@ bool M_Core::ModuleInit()
     SoundManager::Instance().Init(); //리소스 전에 있어야 함.
     ResourceManager::Get().GameAssetLoad();
     SoundManager::Instance().TakeAllClip();
-
+    UIManager::Get().Initialize(); //UI 들 생성하기. 
     m_Scene_map = make_shared<unordered_map<string, shared_ptr<SceneStandard>>>();  //Core가 UPdate로 돌려야 하니
     SceneManager::Get().Initalize(m_Scene_map); //받은 map 멤버로 시작 
 
-    UIManager::Get().Initialize(); //UI 들 생성하기. 
+   
     GameManager::Get().Initalize();
 
 

@@ -43,11 +43,11 @@ public:
     // 창과 핸들을 함께 이동시키는 함수
     void MoveHandles(Vec2 delta);
 
-    float getBgmCurrentValue() const {
+    float& getBgmCurrentValue() {
         return m_bgmCurrentValue;
     }
 
-    float getSfxCurrentValue() const {
+    float& getSfxCurrentValue(){
         return m_sfxCurrentValue;
     }
 

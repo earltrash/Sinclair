@@ -4,6 +4,9 @@
 
 #include "SoundBank_.h"
 
+#include "SettingWindow.h"
+#include "UIManager.h"
+
 void ButtonComponent::BitmapPush(string NM, ComPtr<ID2D1Bitmap1> Bitmap)
 {
 	m_Bitmaps.emplace(NM, Bitmap);
@@ -57,7 +60,12 @@ void ButtonComponent::Worked(const MSG& msg)
             if (m_onClick)
             {
                 m_onClick();
-                SoundManager::Instance().PlaySFX("BC");
+                SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+                if (SETWin)
+                {
+                    float val = SETWin->GetSFXValue();
+                    SoundManager::Instance().PlaySFX("BC", val);
+                }
 
             }
             SetState(ButtonState::Hover);
@@ -67,7 +75,6 @@ void ButtonComponent::Worked(const MSG& msg)
         }
         else if (msg.message == WM_MOUSEMOVE && m_currentState != ButtonState::Pressed)
         {
-            SoundManager::Instance().PlaySFX("CB");
             SetState(ButtonState::Hover);
         }
     }

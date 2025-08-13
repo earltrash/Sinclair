@@ -127,7 +127,12 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 	{
 		//뭐 합성이겠지 
 		PerformSynthesis();
-		SoundManager::Instance().PlaySFX("SY");
+		SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+		if (SETWin)
+		{
+			float val = SETWin->GetSFXValue();
+			SoundManager::Instance().PlaySFX("SY", val);
+		}
 
 		return true;
 
@@ -406,7 +411,12 @@ void SynthesisWin::PerformSynthesis()
 
 	if (result != "F") //성공인 경우 
 	{
-		SoundManager::Instance().PlaySFX("SS");
+		SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+		if (SETWin)
+		{
+			float val = SETWin->GetSFXValue();
+			SoundManager::Instance().PlaySFX("SS", val);
+		}
 		unique_ptr<Item> resultitem = ResourceManager::Get().Get_ItemBank().Get_Item_Status(result);
 		//resultitem.get()->AddComponent<> 여기서 건들여서 한번 실행 시키고 없애버리는게 맞을듯.
 		Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
@@ -422,9 +432,13 @@ void SynthesisWin::PerformSynthesis()
 	}
 	else
 	{
-		// 이게 실패임.
-			// 아이템이 nullptr일 확률이 가장 높음 가져오면 터질거야. 
-		SoundManager::Instance().PlaySFX("SN");
+		SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+		if (SETWin)
+		{
+			float val = SETWin->GetSFXValue();
+			SoundManager::Instance().PlaySFX("SN", val);
+		}
+
 	}
 
 }

@@ -39,7 +39,7 @@ void Scene_Title::Initalize()
 	}
 
 	//auto* music = ResourceManager::Get().Get_SoundBank().GetBGM("SM");
-	SoundManager::Instance().SetBGMVolume(0, 1.0f);
+	//SoundManager::Instance().SetBGMVolume(0, 1.0f);
 	SoundManager::Instance().PlayBGM("Title", false);
 }
 
@@ -245,8 +245,16 @@ void Scene_Title::CreateObj()
 		});
 
 	gameStartButton_buttonComp->SetOnClickCallback([this]() {
+
+
+		SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "OutGame", 2.5f);
 		SafeChangeScene("OutGame");
-		SoundManager::Instance().PauseBGM("Title" , true);
+
+	//	SoundManager::Instance().PauseBGM("Title" , true);
+		//SoundManager::Instance().PauseBGM(SoundManager::Instance().Get_Playing_Key(), true);
+
+
+
 		std::cout << "SceneManager::Get().ChangeScene(\"OutGame\");" << std::endl;
 		});
 

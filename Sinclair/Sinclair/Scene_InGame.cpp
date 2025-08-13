@@ -155,7 +155,8 @@ void Scene_InGame::CreateObj()
 
 		UIManager::Get().CloseAllWindows();
 
-		SoundManager::Instance().PauseBGM("TIM", true);
+		//SoundManager::Instance().PauseBGM("TIM", true);
+		SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "OutGame", 2.5f);
 		SafeChangeScene("OutGame");
 		});
 

@@ -224,7 +224,16 @@ bool EnhancementWindow::HandleMouseDown(Vec2 mousePos)
 		msg.lParam = MAKELPARAM((int)relativePos.x, (int)relativePos.y);
 		m_statSelectionButton->GetComponent<ButtonComponent>()->CheckCollision(msg);  // 충돌 검사 먼저
 		m_statSelectionButton->GetComponent<ButtonComponent>()->Worked(msg);          // 그 다음 버튼 처리
-		SoundManager::Instance().PlaySFX("EH");
+
+
+		SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+		if (SETWin)
+		{
+			float val = SETWin->GetSFXValue();
+			SoundManager::Instance().PlaySFX("EH", val);
+		}
+
+		//SoundManager::Instance().PlaySFX("EH");
 	}
 
 	// left 버튼 영역.
@@ -905,7 +914,13 @@ void EnhancementWindow::TryEnhance(int successRate)
 
 		if (success)
 		{
-			SoundManager::Instance().PlaySFX("SC");
+
+			SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+			if (SETWin)
+			{
+				float val = SETWin->GetSFXValue();
+				SoundManager::Instance().PlaySFX("SC", val);
+			}
 				std::cout << "강화 성공!" << std::endl;
 				// 성공 애니메이션 및 아이템 스탯 업데이트
 				// 아이템 정보 가져와서 스탯 올려주기.
@@ -936,7 +951,12 @@ void EnhancementWindow::TryEnhance(int successRate)
 		}
 		else
 		{
-			SoundManager::Instance().PlaySFX("FA");
+			SettingWindow* SETWin = dynamic_cast<SettingWindow*>(UIManager::Get().GetWindow(UIWindowType::SettingsWindow));
+			if (SETWin)
+			{
+				float val = SETWin->GetSFXValue();
+				SoundManager::Instance().PlaySFX("FA",val);
+			}
 
 				std::cout << "강화 실패..." << std::endl;
 				// 실패 애니메이션

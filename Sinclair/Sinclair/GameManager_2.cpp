@@ -19,7 +19,7 @@
 void GameManager::Initalize()
 {
 
-    adv_wepon.assign(11, false); //  -> 이거 4->2로 갈 때 다시 초기화 해야 함. 
+    adv_wepon.assign(20, false); //  -> 이거 4->2로 갈 때 다시 초기화 해야 함. 
     m_wearable_part.assign(static_cast<int>(Wearable_part::UnKnown), false); // 명셩-아이템 풀 관련 
 
     SyntableInit();
@@ -103,6 +103,7 @@ std::vector<std::string> GameManager::GetRandomItemsByFam(
         //    - “wearable_part가 겹치는 건 허용”
         //    - “같은 아이템 id가 또 나오면 재뽑기(=중복 방지)”
         //    - alreadyPicked를 계속 활용(전역/세션 중복 방지)
+
         std::unordered_map<int, std::unordered_set<std::string>> pickedPerPart;
 
         for (auto& [partIdx, ids] : byPart)
@@ -300,18 +301,23 @@ void GameManager::UsedEquipedClean() //청소하는 김에 추가까지 해버릴래 .
 void GameManager::AdvResult_Wep(string itemkey) //
 {
     Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
+    if (!inven) return;
 
+    auto it = weaponMap.find(itemkey);
+    if (it == weaponMap.end()) return; // 없는 key면 종료
+
+    const std::string& val = it->second;
+
+    // 아이템 추가
+    m_tempItem.push_back(std::move(ResourceManager::Get().Get_ItemBank().CreateItem(val)));
+
+    // 같은 value를 가진 모든 key의 idx를 true로 설정
     int idx = 0;
-    for (const auto& [key, val] : weaponMap) // val이 곧 아이템
+    for (const auto& [key, map_val] : weaponMap)
     {
-        if (key == itemkey && adv_wepon[idx] != true) //true 인경우에는 치울게요 
+        if (map_val == val && idx < adv_wepon.size())
         {
-            // inven->GetItemBase().AddItemData(std::move(ResourceManager::Get().Get_ItemBank().CreateItem(val)));
-
-            m_tempItem.push_back((std::move(ResourceManager::Get().Get_ItemBank().CreateItem(val))));
-            if (idx >= 0 && idx < adv_wepon.size())
-                adv_wepon[idx] = true;
-            break;
+            adv_wepon[idx] = true;
         }
         ++idx;
     }
