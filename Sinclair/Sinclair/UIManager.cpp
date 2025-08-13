@@ -277,6 +277,10 @@ void UIManager::HandleKeyboardInput(WPARAM& msg)
                 CloseWindow(m_activeWindowOrder.back());
             }
         }
+        else
+        {
+            CloseWindow(m_activeWindowOrder.back());
+        }
         
         break;
     case 'I':

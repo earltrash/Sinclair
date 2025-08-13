@@ -345,19 +345,19 @@ void StatWindow::UpdateTotalStats()
     totalFundamentalStats.luck = m_equipmentFundamentalStats.luck + m_potionFundamentalStats.luck;
 
     // 4. 2차 스탯 계산
-    m_totalStats.Strength       = totalFundamentalStats.power * 0.7f + totalFundamentalStats.agile * 0.3f;
+    m_totalStats.Strength       = totalFundamentalStats.power * 0.7f + totalFundamentalStats.agile * 0.7f;
     m_totalStats.Magic_Power    = totalFundamentalStats.intelligence * 1;
     m_totalStats.Health         = totalFundamentalStats.power * 1;
-    m_totalStats.Knowledge      = totalFundamentalStats.intelligence * 0.7f + totalFundamentalStats.luck * 0.3f;
-    m_totalStats.Charm          = totalFundamentalStats.luck * 0.7f + totalFundamentalStats.agile * 0.3f;
+    m_totalStats.Knowledge      = totalFundamentalStats.intelligence * 0.7f + totalFundamentalStats.luck * 0.7f;
+    m_totalStats.Charm          = totalFundamentalStats.luck * 0.7f + totalFundamentalStats.agile * 0.7f;
 
 
     // 그리는용도임.
-    m_RenderStat.Strength = totalFundamentalStats.power * 1 + totalFundamentalStats.agile * 0.4f;
-    m_RenderStat.Magic_Power = totalFundamentalStats.intelligence * 1.3f;
-    m_RenderStat.Health = static_cast<int>(totalFundamentalStats.power * 1 + totalFundamentalStats.intelligence * 0.3f);
-    m_RenderStat.Knowledge = totalFundamentalStats.intelligence * 0.8f + totalFundamentalStats.luck * 1;
-    m_RenderStat.Charm = totalFundamentalStats.luck * 1 + totalFundamentalStats.agile * .7f;
+    m_RenderStat.Strength = totalFundamentalStats.power * 0.7f + totalFundamentalStats.agile * 0.7f;
+    m_RenderStat.Magic_Power = totalFundamentalStats.intelligence * 1.3f; // 이 부분은 원래 왜곡된 값을 그대로 유지
+    m_RenderStat.Health = static_cast<int>(totalFundamentalStats.power * 1 + totalFundamentalStats.intelligence * 0.3f); // 이 부분도 원래 값을 유지
+    m_RenderStat.Knowledge = totalFundamentalStats.intelligence * 0.7f + totalFundamentalStats.luck * 0.7f;
+    m_RenderStat.Charm = totalFundamentalStats.luck * 0.7f + totalFundamentalStats.agile * 0.7f;
 
 }
 
