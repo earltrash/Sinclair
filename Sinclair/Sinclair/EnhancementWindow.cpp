@@ -892,8 +892,8 @@ void EnhancementWindow::TryEnhance(int successRate)
 		std::uniform_int_distribution<int> dist(1, 100);
 
 		int roll = dist(m_rng);
-		//bool success = roll <= successRate;
-		bool success = true;
+		bool success = roll <= successRate;
+		//bool success = true;
 		auto& results = wearableItem->GetEnchancResult();
 		int currentIndex = -1;
 

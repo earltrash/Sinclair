@@ -257,7 +257,27 @@ void UIManager::HandleKeyboardInput(WPARAM& msg)
             // 바로 씬 오브젝트들에게 입력 전달
             return;
         }
-        CloseWindow(m_activeWindowOrder.back());
+        // 강화창인 경우 슬롯의 아이템을 인벤토리로 반환
+        if (m_activeWindowOrder.back() == UIWindowType::EnhancementWindow)
+        {
+            auto* enhancementWindow = dynamic_cast<EnhancementWindow*>(this);
+            if (enhancementWindow)
+            {
+                enhancementWindow->ReturnItemToInventory();
+                CloseWindow(m_activeWindowOrder.back());
+            }
+        }
+        // 합성창인 경우 슬롯의 아이템들을 인벤토리로 반환
+        else if (m_activeWindowOrder.back() == UIWindowType::SynthesisWindow)
+        {
+            auto* synthesisWindow = dynamic_cast<SynthesisWin*>(this);
+            if (synthesisWindow)
+            {
+                synthesisWindow->ReturnItemToInventory();
+                CloseWindow(m_activeWindowOrder.back());
+            }
+        }
+        
         break;
     case 'I':
         if (SceneManager::Get().GetCurrentIndex() != "InGame")
