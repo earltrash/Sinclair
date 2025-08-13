@@ -323,6 +323,28 @@ void GameManager::AdvResult_Wep(string itemkey) //
     }
 }
 
+string GameManager::GetHistory()
+{
+    int resultFame = GameManager::Get().GetResultFam();
+
+    if (resultFame >= 19)
+    {
+        return "1";
+    }
+    else if (resultFame >= 15)
+    {
+        return "2";
+    }
+    else if (resultFame >= 10)
+    {
+        return "3";
+    }
+    else
+    {
+        return "4";
+    }
+}
+
 void GameManager::AdvResult()
 {
 

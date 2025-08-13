@@ -47,6 +47,7 @@ public:
     void UsedEquipedClean();
     void AdvResult_Wep(string key);
 
+    string GetHistory();
 
     void AdvResult();
     void SpawnItemsByFame(int fame);

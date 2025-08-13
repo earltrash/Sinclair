@@ -253,6 +253,7 @@ void Scene_Title::CreateObj()
 	//	SoundManager::Instance().PauseBGM("Title" , true);
 		//SoundManager::Instance().PauseBGM(SoundManager::Instance().Get_Playing_Key(), true);
 
+		SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "OutGame", 2.5f);
 
 
 		std::cout << "SceneManager::Get().ChangeScene(\"OutGame\");" << std::endl;

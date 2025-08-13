@@ -31,7 +31,7 @@ void Scene_History::Initalize()
 		UIManager::Get().AddSceneObject(obj);
 	}
 
-	PlayHM(static_cast<int>(m_History) +1 );
+	//(static_cast<int>(m_History) +1 );
 
 }
 
@@ -361,7 +361,7 @@ void Scene_History::CreateObj()
 		// History 스킵 로직 추가
 
 		SafeChangeScene("Title");
-		SoundManager::Instance().PauseBGM(cur_HM_ID, true);
+		SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "Title" , 2.5f);
 		GameManager::Get().Game_Reset();
 		});
 
@@ -1063,6 +1063,8 @@ void Scene_History::PlayHM(int id)
 	string HM_ID = to_string(id);
 
 	cur_HM_ID = HM_ID;
+	SoundManager::Instance().CrossfadeBGM(SoundManager::Instance().Get_Playing_Key(), "Title", 2.5f);
+
 	SoundManager::Instance().PlayBGM(HM_ID, false);
 }
 
