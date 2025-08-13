@@ -231,7 +231,13 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 	// 일반 슬롯에 드롭하는 경우
 	else if (whichSlot != SynSlot::Nothing && draggedItem != nullptr)
 	{
+		// 합성 불가능 아이템일 경우
+		if (!draggedItem->m_data.synthesizable)
+		{
+			return false;
+		}
 		Item* previousItem = m_slot_Item[whichSlot];
+		//ItemInitialize(draggedItem);
 		m_slot_Item[whichSlot] = draggedItem;
 		ItemDrop(draggedItem);
 
@@ -511,12 +517,14 @@ void SynthesisWin::PerformSynthesis()
 			SoundManager::Instance().PlaySFX("SS", val);
 		}
 		unique_ptr<Item> resultitem = ResourceManager::Get().Get_ItemBank().Get_Item_Status(result);
+
 		//resultitem.get()->AddComponent<> 여기서 건들여서 한번 실행 시키고 없애버리는게 맞을듯.
 		Inventory* inven = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 		if (inven != nullptr)
 		{
 			inven->GetItemBase().AddItemData(std::move(resultitem));
 			m_slot_Item[SynSlot::Result] = inven->GetItemBase().GetItemData(result);
+			//ItemInitialize(m_slot_Item[SynSlot::Result]);
 			m_slot_Item[SynSlot::Slot1] = nullptr;
 			m_slot_Item[SynSlot::Slot2] = nullptr;
 		}
@@ -564,12 +572,95 @@ void SynthesisWin::ReturnItemToInventory()
 	std::cout << "합성창 닫기 전 모든 아이템 인벤토리로 반환 완료" << std::endl;
 }
 
+void SynthesisWin::ItemInitialize(Item* item)
+{
+	item->ComponentClear();
+	auto rayBM = ResourceManager::Get().GetTexture("treasureRay");
+	auto glowBM = ResourceManager::Get().GetTexture("basicglow");
+	auto runeBM = ResourceManager::Get().GetTexture("runeword02");
+	//auto comBM1 = ResourceManager::Get().GetTexture("readyattac00");
+	//auto comBM2 = ResourceManager::Get().GetTexture("readyattac01");
+	//auto comBM3 = ResourceManager::Get().GetTexture("readyattac02");
+	//auto comBM4 = ResourceManager::Get().GetTexture("readyattac03");
+	//auto comBM5 = ResourceManager::Get().GetTexture("readyattac04");
+	//auto comBM6 = ResourceManager::Get().GetTexture("readyattac05");
+	//auto comBM7 = ResourceManager::Get().GetTexture("readyattac06");
+	//auto comBM8 = ResourceManager::Get().GetTexture("readyattac07");
+	//auto comBM9 = ResourceManager::Get().GetTexture("readyattac08");
+	//auto comBM10 = ResourceManager::Get().GetTexture("readyattac09");
+	//auto comBM11 = ResourceManager::Get().GetTexture("readyattac10");
+	//auto comBM12 = ResourceManager::Get().GetTexture("readyattac11");
+	//auto comBM13 = ResourceManager::Get().GetTexture("readyattac12");
+	//auto comBM14 = ResourceManager::Get().GetTexture("readyattac13");
+	//auto comBM15 = ResourceManager::Get().GetTexture("readyattac14");
+	//auto comBM16 = ResourceManager::Get().GetTexture("readyattac15");
+	//auto comBM17 = ResourceManager::Get().GetTexture("readyattac16");
+	//auto comBM18 = ResourceManager::Get().GetTexture("readyattac17");
+	//auto comBM19 = ResourceManager::Get().GetTexture("readyattac18");
+	//auto comBM20 = ResourceManager::Get().GetTexture("readyattac19");
+	//auto comBM21 = ResourceManager::Get().GetTexture("readyattac20");
+	//auto comBM22 = ResourceManager::Get().GetTexture("readyattac21");
+	//auto comBM23 = ResourceManager::Get().GetTexture("readyattac22");
+	//auto comBM24 = ResourceManager::Get().GetTexture("readyattac23");
+	//auto comBM25 = ResourceManager::Get().GetTexture("readyattac24");
+
+	item->ComponentClear();
+	item->GetTransform().SetScale({ 0.8f, 0.8f });
+	auto info = item->GetRenderInfo();
+
+	auto ray1 = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, 0.2f, rayBM.Get()); // 0
+	auto ray2 = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, -0.2f, rayBM.Get());	// 1
+	auto rayComposite = item->AddComponent<Composite_Effect>(info, ray1->GetEffect(), ray2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); //2
+	auto rayBlur = item->AddComponent<GaussianBlur_Effect>(info, 2.f, rayComposite->GetEffect()); // 3
+	auto increase = item->AddComponent<Increasing_Effect>(info, D2D1_POINT_2F{ rayBM->GetSize().width / 2.f, rayBM->GetSize().height / 2.f }, 1.5f, 1.f, rayBlur->GetEffect()); // 4
+	auto offsetRay = item->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, increase->GetEffect()); // 5
+
+	auto glowColor = item->AddComponent<Color_Effect>(info, 1.f, 1.0f, 1.0f, 0.6f, glowBM.Get()); // 6
+	auto glowMove = item->AddComponent<Sideway_Effect>(info, 2.f, 0.02f, 0.02f, glowColor->GetEffect()); // 7
+	auto glowOffset = item->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, glowMove->GetEffect()); // 8
+
+	auto runeRo = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, 0.2f, runeBM.Get()); // 9
+	auto runeOffset = item->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, runeRo->GetEffect()); // 10
+
+	auto glowruneCompo = item->AddComponent<Composite_Effect>(info, runeOffset->GetEffect(), glowOffset->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 11
+	auto fade = item->AddComponent<Fade_Effect>(info, 0.f, 0.9f, 0.005f, glowruneCompo->GetEffect()); // 12
+	fade->OnEvent("SHOW");
+
+	auto rayGlowruneCompo = item->AddComponent<Composite_Effect>(info, fade->GetEffect(), offsetRay->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 13
+
+	//auto itemOpacity = item->AddComponent<Opacity_Effect>(info, 1.f, info->GetBitmap()); // 14
+	auto behindcompo = item->AddComponent<Composite_Effect>(info, info->GetBitmap(), rayGlowruneCompo->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 15
+
+	//auto fail = item->AddComponent<Clip_Effect>(info, fail1BM.Get(), fail2BM.Get(), fail3BM.Get(), fail4BM.Get(), fail5BM.Get()); // 16
+	//auto failRotate = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, 3.f, fail->GetEffect()); // 17
+	//auto failOffset = item->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, failRotate->GetEffect()); // 18
+	//auto failBlur1 = item->AddComponent<GaussianBlur_Effect>(info, 1.f, failOffset->GetEffect()); // 19
+	//auto failBlur2 = item->AddComponent<GaussianBlur_Effect>(info, 3.f, failOffset->GetEffect()); // 20
+	//auto failBlurcompo = item->AddComponent<Composite_Effect>(info, failBlur1->GetEffect(), failBlur2->GetEffect(), D2D1_COMPOSITE_MODE_PLUS); // 21
+	//auto frontcompo = item->AddComponent<Composite_Effect>(info, failBlurcompo->GetEffect(), behindcompo->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 22
+}
+
 void SynthesisWin::Update()
 {
 	if (!m_isActive) return;
 	//m_position = mousePos - m_dragOffset;
 	UpdatePosition();
+	for (auto& [type, item] : m_slot_Item)
+	{
+		if (item == nullptr) continue;
+		item->Update();
+	}
+}
 
+void SynthesisWin::FixedUpdate(float dt)
+{
+	if (!m_isActive) return;
+
+	for (auto& [type, item] : m_slot_Item)
+	{
+		if (item == nullptr) continue;
+		item->Update();
+	}
 }
 
 void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → 닫기 버튼
@@ -608,8 +699,6 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 
 			if (item != nullptr)
 			{
-
-
 				ID2D1Bitmap1* SlotBitmap = (type == SynSlot::Result) ? uiRenderer->GetBitmap("Syn_Result").Get() : uiRenderer->GetBitmap("Syn_Slot").Get();
 				D2DRenderer::Get().DrawBitmap(SlotBitmap, DEST);
 
@@ -622,6 +711,9 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 				D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get(),
 					DEST, src, 1);
 
+				//auto info = item->GetRenderInfo();
+				//item->GetTransform().SetPosition({ pos.x - 91.f * 0.8f + 8.f, pos.y - 91.f * 0.8f + 8.f });
+				//D2DRenderer::Get().DrawBitmap(info->GetRenderInfo());
 			}
 			else
 

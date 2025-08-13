@@ -295,7 +295,8 @@ void ToolTip::BitmapRender(Item*& item)
 		D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get() //비트맵 정도야 가능하긴 하지 
 			,destRect, src, 1.0f);
 
-
+			
+		if (!wear->m_data.enchantable)	return;	// 강화 불가능하면 주문서 띄우지 않음
 			for (int i = 0; i < wear->GetEnchancResult().size(); i++) //횟수가 고정이라 굳이? 싶었음 iterator는 
 			{
 				destRect = (wear->Getpart() != Wearable_part::Weapon) ? //무기면 
