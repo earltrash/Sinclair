@@ -3,12 +3,14 @@
 #include "Component.h"
 #include "Transform.h"
 #include "SimpleMathHelper.h"
+#include "RenderInfo.h"
+
 using namespace D2DTM;
 
 class Object //발사되는 투사체도 되겠는데
 {
 public:
-		Object() = default;
+	Object() : m_renderInfo{}, m_transform(&m_renderInfo) {}
 		virtual ~Object();
 		
 
@@ -28,6 +30,14 @@ public:
 		}
 		virtual void Render() {};
 
+		virtual void OnEvent(const std::string& ev)
+		{
+			for (auto& compo : m_Components)
+			{
+				compo->OnEvent(ev);
+			}
+		}
+
 		void SetActive(bool b) { activated = b; };
 		bool isActive() { return activated; }
 public:
@@ -42,6 +52,11 @@ public:
 				return m_transform;
 		}
 
+		RenderInfo* GetRenderInfo()
+		{
+			return &m_renderInfo;
+		}
+
 public:
 
 		//position 값은 update를 통해서 바뀌어야 하겠지 
@@ -51,14 +66,17 @@ public:
 		T* AddComponent(Args&&... args);
 		template<typename T>
 		T* GetComponent() const;
+		template<typename T>
+		T* GetComponent(int num);
 
-		//void ComponentClear(); //이건 뭐임
-
+		void ComponentClear() { m_Components.clear(); }
 protected:
 
 		std::vector<std::unique_ptr<Component>> m_Components;
 
+		RenderInfo m_renderInfo;
 		Transform m_transform;
+
 		bool activated = true;
 };
 
@@ -93,6 +111,17 @@ inline T* Object::GetComponent() const //이걸 안 쓸거면 Component 구조를 쓸 필요
 				}
 		}
 
+		return nullptr;
+}
+template<typename T>
+inline T* Object::GetComponent(int num)
+{
+	if (m_Components[num])
+	{
+		auto ptr = dynamic_cast<T*>(m_Components[num].get());
+		return ptr;
+	}
+	else 
 		return nullptr;
 }
 #pragma endregion

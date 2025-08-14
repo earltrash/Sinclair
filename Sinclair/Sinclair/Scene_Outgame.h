@@ -1,5 +1,10 @@
 #pragma once
 #include "Scene.h"
+#include <iostream>
+#include <map>
+#include <string>
+#include <Windows.h>
+
 class Scene_Outgame : public SceneStandard
 {
 		
@@ -18,7 +23,51 @@ public:
 
 		virtual void Exit() override; //하위 클래스에서 처리 
 		virtual void Render()override;
+private:
+	void CreateObj();
 
+
+	void SetupCharacterAndBackground();
+	
+
+	enum State {
+		FIRST_ENTER = 80001,
+		CHOICE_MENU = 80002,
+		ENTER_OUTGAME = 80003,
+		ENTER_END = 80004
+	};
+
+	void ChangeState(State newState);
+
+
+	std::wstring StrToWstr(const std::string& source)
+	{
+		if (source.empty()) return std::wstring();
+
+		// CP_ACP: 시스템 기본 코드 페이지 (한국어 Windows = CP949)
+		int size = MultiByteToWideChar(CP_ACP, 0, source.c_str(), -1, nullptr, 0);
+		if (size <= 0) return std::wstring();
+
+		std::wstring result(size - 1, 0);
+		MultiByteToWideChar(CP_ACP, 0, source.c_str(), -1, &result[0], size);
+		return result;
+	}
+	
+private:
+
+	State m_state = FIRST_ENTER;
+	bool wasInGame = false;
+
+	vector<string> stringFIRST_ENTER{ "늘 나도 언젠가는 아버지처럼\n모험을 떠나고 싶다고 생각해왔어." ,
+		"이제는 때가 된 것 같아.\n하지만… 장비는 어떡하지 ?",
+		"분명 아버지도 이해해주실거야.\n아버지의 창고에 들어가볼까 ?"
+	};
+	int index = 0;
+	string stringENTER_OUTGAME{ "창고에 들어가시겠습니까?" };
+	string stringENTER_END{ "모험을 떠나시겠습니까?\n(주의: 모험을 떠나면 되돌릴 수 없습니다.) " };
+
+	std::wstring characterName;
+	std::string curText;
 
 };
 

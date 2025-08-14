@@ -24,6 +24,8 @@ public: //다 열어주는 거 맘에 안 들긴 하는데, core랑 manager에서 쓸려면 어쩔 수 
 		virtual void Render();
 
 
+		void SafeChangeScene(const std::string& sceneName);
+
 protected:
 		
 		void GetAsset(string info) { ResourceManager::Get().GetClips(info); } //ResourceManager 싱글톤으로 받아와서 함 ㅇㅇ
@@ -35,12 +37,23 @@ protected:
 
 		std::vector<Clip_Asset> SceneAssets;
 
-		std::multimap<std::string, std::shared_ptr<Object>> m_gameObjects; //이번Scene에 사용되는 게임 obj
-		std::multimap<std::string, std::shared_ptr<Object>> m_uiObjects;   //이번Scene에 사용되는 UI obj
-		std::multimap<std::string, std::shared_ptr<Object>> m_itemObjects; //이번Scene에 사용되는 Item obj
+
+		std::map<std::string, std::shared_ptr<Object>> m_gameObjects; //이번Scene에 사용되는 게임 obj
+		//// 아래의 오브젝트는 안 씀 모두 다, UI매니저로 갔음
+		//std::multimap<std::string, std::shared_ptr<Object>> m_uiObjects;   //이번Scene에 사용되는 UI obj
+		//std::multimap<std::string, std::shared_ptr<Object>> m_itemObjects; //이번Scene에 사용되는 Item obj
 
 		bool dirty = false;
 		string m_name;
+
+
+
+	// Scene에 추가할 지연을 위한 멤버 변수들
+	bool m_isTransitioning = false;
+	std::string m_nextScene = "";
+	float m_transitionDelay = 0.1f; // 0.1초 지연
+	float m_currentDelay = 0.0f;
+
 
 };
 

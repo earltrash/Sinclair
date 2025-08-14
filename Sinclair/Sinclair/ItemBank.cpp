@@ -5,16 +5,34 @@
 #include <filesystem>    // std::filesystem
 #include "UI_Renderer.h"
 #include "Renderer.h"
+#include "Potion.h"
+#include "Material.h"
+#include "Wearable.h"
+#include "Inventory.h"
+
+
 
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
 
-void ItemBank::LoadItemStatus(const string& path) {
+void ItemBank::LoadItemStatus(const string& path) { //½ºÅÝ JSON - Item_S
 
     namespace fs = std::filesystem;
     fs::path base = fs::current_path();
-    fs::path resourceFolder = base.parent_path() / path;
+
+#ifdef _DEBUG
+    fs::path resourceFolder = base.parent_path() / "Item" / path;
+
+#else NDEBUG 
+    //fs::path resourceFolder = base.parent_path().parent_path() / "Item" / path;
+    fs::path resourceFolder = base.parent_path()/ "Item" / path;
+
+#endif
+    
+
+
+    int times = 0;
 
     for (const auto& entry : fs::recursive_directory_iterator(resourceFolder, fs::directory_options::skip_permission_denied)) {
         if (!entry.is_regular_file() || entry.path().extension() != ".json")
@@ -43,6 +61,7 @@ void ItemBank::LoadItemStatus(const string& path) {
         for (const auto& itemData : j["items"]) {
             std::string type = itemData["type"];
             std::string moment = itemData["Moment"];
+            std::string Sound = itemData["sound"];
 
             ItemCommonData common = {
                 itemData["id"],
@@ -50,33 +69,64 @@ void ItemBank::LoadItemStatus(const string& path) {
                 itemData["description"],
                 itemData["enchantable"],
                 itemData["synthesizable"],
-                StringToNM(moment)
+                StringToNM(moment),     
+                StringToES(Sound)
             };
 
-            std::unique_ptr<Item> item;
 
+            std::unique_ptr<Item> item;
+            times++;
             if (type == "Potion")
+            {
                 item = std::make_unique<Potion>(common, itemData);
+                m_prototypes[itemData["id"]] = std::make_unique<Potion>(common, itemData);
+            }
+
             else if (type == "Wearable")
+            {
                 item = std::make_unique<Wearable>(common, itemData);
+                m_prototypes[itemData["id"]] = std::make_unique<Wearable>(common, itemData);
+
+            }
             else if (type == "Material")
+            {
                 item = std::make_unique<Material>(common, itemData);
+                m_prototypes[itemData["id"]] = std::make_unique<Material>(common, itemData);
+
+            }
             else {
                 std::cerr << "[WARN] Unknown item type: " << type << std::endl;
                 continue;
             }
            // std::cout << moment << endl;
 
+
             m_S_Item.emplace(item->m_data.Momnet, std::move(item));
         }
     }
+
+  //  std::cout << "¾ÆÀÌÅÛ Å©±â´Â?" << " " << m_S_Item.size() << std::endl;
 }
 
-void ItemBank::LoadItemRect(const string& path) //Á¤È®È÷´Â Rect¸¦ ÀúÀåÇÑ °ÍÀÓ. //Atlas °æ·Î¸¦ ¾î¶»°Ô ÇØ¾ß ÇÒ±î ÀÌ°Ç °í¹ÎÁ» ÇØºÁ¾ß ÇÒ µí.
+void ItemBank::LoadItemRect(const string& path) //Json°ú Png´Â ÀÌ¸§ÀÌ °°°í °°Àº °æ·Î¿¡ µÎ¾î¾ß ÇÔ.
 {
     namespace fs = std::filesystem;
     fs::path base = fs::current_path();
-    fs::path resourceFolder = base.parent_path() / path;
+
+
+#ifdef _DEBUG
+    fs::path resourceFolder = base.parent_path() / "Item" / path;
+
+#else NDEBUG 
+    // fs::path resourceFolder = base.parent_path().parent_path() / "Item" / path;
+    fs::path resourceFolder = base.parent_path() / "Item" / path;
+
+#endif
+    //fs::path resourceFolder = base.parent_path() / "Item" / path;
+
+
+   // fs::path resourceFolder = base.parent_path() /"Item" / path;
+    int times = 0;
 
     for (const auto& entry : fs::recursive_directory_iterator(resourceFolder, fs::directory_options::skip_permission_denied)) {
         if (!entry.is_regular_file() || entry.path().extension() != ".json")
@@ -118,10 +168,20 @@ void ItemBank::LoadItemRect(const string& path) //Á¤È®È÷´Â Rect¸¦ ÀúÀåÇÑ °ÍÀÓ. /
             D2D_RECT_F srcRect = D2D1::RectF(x, y, x + w, y + h);
 
             std::string atlasName = entry.path().stem().string();
+
+
+            std::filesystem::path atlasPath = entry.path();
+            atlasPath.replace_extension(".png");
            
-            m_Atlas.emplace(name, ItemBitmapClip{ GetItemAtlas(atlasName) ,srcRect}); // name ¡æ rect ÀúÀå
+            m_Atlas.emplace(name, ItemBitmapClip{ GetItemAtlas(atlasPath.string()) ,srcRect}); // name ¡æ rect ÀúÀå
+            //std::cout << name << endl;
+            times++;
         }
     }
+
+   // std::cout << "¸ÅÇÎµÈ ¿ÀºêÁ§Æ® °¹¼ö"<<" " << m_Atlas.size() << endl;
+   // std::cout << "¾ÆÆ²¶ó½º Á¾·ùÀÇ °³¼ö" << " " << m_LoadedAtlases.size() << endl;
+   // std::cout << times << endl;;
 }
 
 ComPtr<ID2D1Bitmap1> ItemBank::GetItemAtlas(const string& path)
@@ -142,13 +202,14 @@ ComPtr<ID2D1Bitmap1> ItemBank::GetItemAtlas(const string& path)
 
 //È£Ãâ ½Ã±â´Â Inven ÃÊ±âÈ­ ÇÒ ¶§µµ °¡´ÉÇÒ µí? ¤·¤· Â÷ÇÇ ResourceManager ½Ì±ÛÅæÀÌ´Ï±ñ.
 
-const ItemBitmapClip& ItemBank::GetItemClip(string name) //atlas°¡ ¿©·¯°³¸é ±×°Íµµ ±¸ºÐ ÇØ¾ß ÇÔ.
+const ItemBitmapClip* ItemBank::GetItemClip(string id) //atlas°¡ ¿©·¯°³¸é ±×°Íµµ ±¸ºÐ ÇØ¾ß ÇÔ.
 {
-    if (m_Atlas.find(name) != m_Atlas.end())
-        return m_Atlas[name];
+    if (auto it = m_Atlas.find(id); it != m_Atlas.end())
+        return &it->second;
     else
     {
-        std::cout << name << " " << "¿¡ ÇØ´çÇÏ´Â °ªÀÌ ¾ø´Âµ¥¿ä?" << std::endl;
+        std::cout << id << " " << "¿¡ ÇØ´çÇÏ´Â °ªÀÌ ¾ø´Âµ¥¿ä?" << std::endl;
+        return nullptr;
     }
 
 } 
@@ -157,17 +218,23 @@ void ItemBank::GiveItem(Need_Moment Moment, ItemDatabase& InvenDatabase) //ÀÏ´Ü 
 {
     for (auto it = m_S_Item.begin(); it != m_S_Item.end(); ) {
         if (it->first == Moment) {
-            InvenDatabase.AddItemData(std::move(it->second));
-            it = m_S_Item.erase(it); //key ÀÚÃ¼´Â ÀÎ½Ä °¡´ÉÇÏ´Ï erase ÇÏ´Â °Å·Î 
+            // ¿øº»¿¡¼­ º¹Á¦º» »ý¼º
+            auto newItem = CreateItem(it->second->m_data.id); //Å¬·ÐÀ» ¸¸µé¾î¼­ º¸³»ÁÜ -> base´Â º¯°æ °ª ¾øÀ½ 
+            if (newItem) {
+                InvenDatabase.AddItemData(std::move(newItem));
+            }
+            ++it; // ¿øº»Àº Áö¿ìÁö ¾ÊÀ½
         }
         else {
             ++it;
         }
     }
-
-   
-
 }
+
+
+// È®·ê °è»êÇØ¼­ Æ¯Á¤ ¼¼´ë -> Need_Moment / ¹Þ¾Æ¿Í¾ß ÇÏ´Â °³¼ö¸¦ ³Ö¾î¼­, ·£´ý -> Àåºñ RETURN ÇØÁÖ´Â ÇÔ¼ö¸¦ ¸¸µé¾î¾ß ÇÒ µí ? 
+
+
 
 unique_ptr<Item> ItemBank::Get_Item_Status(string id) //ÇÕ¼º¿¡¼­ ¾µ °Å¸é ÇÊ¿ä. È¤Àº ±×³É 
 {
@@ -179,7 +246,37 @@ unique_ptr<Item> ItemBank::Get_Item_Status(string id) //ÇÕ¼º¿¡¼­ ¾µ °Å¸é ÇÊ¿ä. È
         m_S_Item.erase(it); // key ÀÚÃ¼´Â ÀÎ½Ä °¡´ÉÇÏ´Ï erase ÇÏ´Â °Å·Î 
         return result;
     }
+}
+
+void ItemBank::clean()
+{
+    m_S_Item.clear();
+    m_Atlas.clear();
+    m_LoadedAtlases.clear();
+}
+
+vector<string> ItemBank::GetItemIDsByMoment(Need_Moment moment)
+{
+    vector<string> result;
+
+    for (auto& pair : m_S_Item)
+    {
+        if (pair.first == moment )
+        {
+            result.push_back(pair.second->m_data.id);
+        }
+    }
+
+    return result;
+
 
 }
 
 
+std::unique_ptr<Item> ItemBank::CreateItem(const std::string& id) {
+    auto it = m_prototypes.find(id);
+    if (it != m_prototypes.end()) {
+        return it->second->Clone(); // º¹»çº» ¸®ÅÏ
+    }
+    return nullptr;
+}

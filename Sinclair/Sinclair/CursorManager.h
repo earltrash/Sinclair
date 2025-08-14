@@ -1,11 +1,15 @@
 #pragma once
 #include "pch.h"
 #include "UIManager.h"
-#include "Status.h" // UIWindowType 가져올려고해서.
+#include "Status.h" 
 #include "Item.h"
+#include "ResourceManager.h"
+#include "UI_Renderer.h"
+#include "InvenMem.h"
 
+class UIManager;
 
-class CursorManager
+class CursorManager : public UI_Renderer
 {
 public:
     // 싱글톤
@@ -15,95 +19,81 @@ public:
         return instance;
     }
 
-    void Update()
+    void Initialize()
     {
-        if (m_isDragging)
-        {
-            //m_ghostImagePos = InputManager::Get().GetMousePosition();
-            // 약간의 오프셋으로 마우스 커서와 겹치지 않게
-            m_ghostImagePos.x += 5;
-            m_ghostImagePos.y += 5;
-        }
+        LoadCursorBitmaps();
     }
 
-    void Render()
-    {
-        if (m_isDragging && m_draggedItem)
-        {
-            // 드래그 중인 아이템 이미지 렌더링 로직
-            // Renderer::DrawImage(m_draggedItem->GetImage(), m_ghostImagePos, ...);
-        }
-    }
+    void Update();
 
-    void RenderCursor()
-    {
-        //Vec2 mousePos = InputManager::Get().GetMousePosition();
-        //switch (m_currentCursor)
-        //{
-        //case CursorType::Normal:
-        //    RenderNormalCursor(mousePos);
-        //    break;
-        //case CursorType::Move:
-        //    RenderMoveCursor(mousePos);
-        //    break;
-        //case CursorType::Pointer:
-        //    RenderPointerCursor(mousePos);
-        //    break;
-        //case CursorType::Drag:
-        //    RenderDragCursor(mousePos);
-        //    break;
-        //}
-    }
+    void Render();
+
+    void RenderCursor();
+    void LoadCursorBitmaps();
+
+    // 마우스 상태 업데이트
+    void UpdateMouseState(bool isPressed);
 
     // 드래그 시작
-    void StartItemDrag(Item& item, DragSource source)
-    {
-        m_isDragging = true;
-        m_draggedItem = &item;
-        m_dragSource = source;
-        SetCursor(CursorType::Drag);
-    }
+    void StartItemDrag(std::string itemid, DragSource source, InventorySlot* sourceSlot = nullptr);
+    void StartItemDrag_NS(std::string itemid, DragSource sourc);
 
     // 드래그 종료
-    void EndItemDrag()
-    {
-        m_isDragging = false;
-        m_draggedItem = nullptr;
-        m_dragSource = DragSource::None;
-        SetCursor(CursorType::Normal);
-    }
+    void EndItemDrag();
 
     // 드래그 중인지 확인
     bool IsDragging() const { return m_isDragging; }
 
     // 드래그 중인 아이템 가져오기
     Item* GetDraggedItem() const { return m_draggedItem; }
+    void SetDraggedItem(Item* item);
 
+    void SetHoveredItem(Item* item) { m_hoveredItem = item; }
+    Item* GetHoveredItem() { return m_hoveredItem; }
+    void HoveredReleased();
     // 드래그 시작 소스 가져오기
     DragSource GetDragSource() const { return m_dragSource; }
 
-    // 커서 타입 설정
-    void SetCursor(CursorType type)
-    {
-        m_currentCursor = type;
-        // 실제 커서 이미지 변경 로직 
-        // type에 따라서 cursor 이미지 변경.
-    }
-
-    // 현재 커서 타입 가져오기
+    // 상태 확인
     CursorType GetCurrentCursor() const { return m_currentCursor; }
 
-private:
-		CursorManager() = default;
-		~CursorManager() = default;
+    // 커서 타입 설정
+    void SetCursor(CursorType type) { m_currentCursor = type; }
 
-        CursorManager(const CursorManager&) = delete;
-        CursorManager& operator=(const CursorManager&) = delete;
+    // 원본 슬롯 정보 가져오기
+    InventorySlot* GetSourceSlot() const { return m_sourceSlot; }
+    
+    int  GetItemCount() { return m_draggedItem_Count;  }
+    void SetItemCount(int count) { m_draggedItem_Count = count; }
+    void RE_ItemCount() { m_draggedItem_Count = 0; }
+
+private:
+    CursorManager() = default;
+    ~CursorManager() = default;
+
+    CursorManager(const CursorManager&) = delete;
+    CursorManager& operator=(const CursorManager&) = delete;
 
     // 드래그 관련
     bool m_isDragging = false;
+    bool m_isMousePressed = false;
     Item* m_draggedItem = nullptr;
+    Item* m_hoveredItem = nullptr;
+    Item* m_stopDraggingItem = nullptr;
+
+    int m_draggedItem_Count = 1;
+
     DragSource m_dragSource = DragSource::None;
     CursorType m_currentCursor = CursorType::Normal;
+    InventorySlot* m_sourceSlot = nullptr;
+
+
+
+
     Vec2 m_ghostImagePos;
+    ComPtr<ID2D1Bitmap1> m_ghostImage = nullptr;
+
+    // 임시
+    ComPtr<ID2D1Bitmap1> m_cursorNormal = nullptr;
+    ComPtr<ID2D1Bitmap1> m_cursorDown = nullptr;
 };

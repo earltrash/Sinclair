@@ -1,0 +1,580 @@
+{
+    "items": [
+        {
+            "type": "Wearable",
+            "id": "W001",
+            "name": "낡은 영웅의 검",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Gen_2",
+            "stats": [
+                {
+                    "stat": "power",
+                    "amount": 2
+                },
+                {
+                    "stat": "agile",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W002",
+            "name": "빛바랜 십자가",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Gen_2",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W003",
+            "name": "보석이 깨진 지팡이",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Gen_2",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 1
+                },
+                {
+                    "stat": "intelligence",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W004",
+            "name": "알아볼 수 없는 마법서",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Gen_2",
+            "stats": [
+                {
+                    "stat": "intelligence",
+                    "amount": 2
+                },
+                {
+                    "stat": "luck",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W005",
+            "name": "검날이 없는 단검",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Gen_2",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 2
+                },
+                {
+                    "stat": "luck",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W006",
+            "name": "복구된 영웅의 검",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Syn",
+            "stats": [
+                {
+                    "stat": "power",
+                    "amount": 4
+                },
+                {
+                    "stat": "agile",
+                    "amount": 3
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W007",
+            "name": "신비로운 십자가",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Syn",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W008",
+            "name": "보석이 달린 지팡이",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Syn",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 3
+                },
+                {
+                    "stat": "intelligence",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W009",
+            "name": "고대의 서 1장",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Syn",
+            "stats": [
+                {
+                    "stat": "intelligence",
+                    "amount": 4
+                },
+                {
+                    "stat": "luck",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W010",
+            "name": "기이한 단검",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Syn",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 4
+                },
+                {
+                    "stat": "luck",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W011",
+            "name": "빛나는 영웅의 검",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Syn",
+            "stats": [
+                {
+                    "stat": "power",
+                    "amount": 10
+                },
+                {
+                    "stat": "agile",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W012",
+            "name": "성자의 십자가",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Syn",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 10
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W013",
+            "name": "대마법사의 지팡이",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Syn",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 2
+                },
+                {
+                    "stat": "intelligence",
+                    "amount": 10
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W014",
+            "name": "지식의 서 최종장",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Syn",
+            "stats": [
+                {
+                    "stat": "intelligence",
+                    "amount": 2
+                },
+                {
+                    "stat": "luck",
+                    "amount": 10
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W015",
+            "name": "그림자의 비애",
+            "description": "",
+            "enchantable": false,
+            "synthesizable": true,
+            "part": "Weapon",
+            "Moment": "Syn",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 2
+                },
+                {
+                    "stat": "luck",
+                    "amount": 10
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W016",
+            "name": "평범한 철검",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_2",
+            "stats": [
+                {
+                    "stat": "power",
+                    "amount": 4
+                },
+                {
+                    "stat": "agile",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W017",
+            "name": "나무 십자가",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_2",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W018",
+            "name": "나무 지팡이",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_2",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 1
+                },
+                {
+                    "stat": "intelligence",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W019",
+            "name": "마법 기초 1장",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_2",
+            "stats": [
+                {
+                    "stat": "intelligence",
+                    "amount": 2
+                },
+                {
+                    "stat": "luck",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W020",
+            "name": "투박한 단검",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_2",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 2
+                },
+                {
+                    "stat": "luck",
+                    "amount": 4
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W021",
+            "name": "가공된 철검",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_3",
+            "stats": [
+                {
+                    "stat": "power",
+                    "amount": 6
+                },
+                {
+                    "stat": "agile",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W022",
+            "name": "철 십자가",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_3",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 6
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W023",
+            "name": "참나무 지팡이",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_3",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 2
+                },
+                {
+                    "stat": "intelligence",
+                    "amount": 6
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W024",
+            "name": "마법 중급 1장",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_3",
+            "stats": [
+                {
+                    "stat": "intelligence",
+                    "amount": 3
+                },
+                {
+                    "stat": "luck",
+                    "amount": 6
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W025",
+            "name": "철 단검",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_3",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 3
+                },
+                {
+                    "stat": "luck",
+                    "amount": 6
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W026",
+            "name": "훌륭한 철검",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_4",
+            "stats": [
+                {
+                    "stat": "power",
+                    "amount": 8
+                },
+                {
+                    "stat": "agile",
+                    "amount": 3
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W027",
+            "name": "화려한 십자가",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_4",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 8
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W028",
+            "name": "고목나무 지팡이",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_4",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 3
+                },
+                {
+                    "stat": "intelligence",
+                    "amount": 8
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W029",
+            "name": "마법 심화 1장",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_4",
+            "stats": [
+                {
+                    "stat": "intelligence",
+                    "amount": 3
+                },
+                {
+                    "stat": "luck",
+                    "amount": 8
+                }
+            ]
+        },
+        {
+            "type": "Wearable",
+            "id": "W030",
+            "name": "미스릴 단검",
+            "description": "",
+            "enchantable": true,
+            "synthesizable": false,
+            "part": "Weapon",
+            "Moment": "Gen_4",
+            "stats": [
+                {
+                    "stat": "agile",
+                    "amount": 3
+                },
+                {
+                    "stat": "luck",
+                    "amount": 8
+                }
+            ]
+        }
+    ]
+}

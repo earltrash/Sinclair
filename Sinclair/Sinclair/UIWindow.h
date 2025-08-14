@@ -4,18 +4,25 @@
 #include "Status.h"
 #include "SimpleMathHelper.h"
 #include "Inputmanager.h"
+#include "MouseInput.h"
+
+#include "Item.h"
+
+#define F_GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
+#define F_GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
 
 using namespace D2DTM;
 
-class UIWindow	: public Object
+class UIWindow : public Object
 {
 public:
-		UIWindow(UIWindowType type, Vec2 pos, Vec2 size)
+	UIWindow(UIWindowType type, Vec2 pos, Vec2 size)
 		: Object(), m_windowType(type), m_position(pos), m_size(size) {} // Object 생성자 호출
-		virtual ~UIWindow() = default;
+	virtual ~UIWindow() = default;
 
 		virtual void Update() override {};
 		virtual void Render() override = 0;
+		virtual void FixedUpdate(float dt) override {}
 		
 		// 마우스 인풋 관련 함수들.
 		virtual bool HandleMouseHover(Vec2 mousePos) = 0;
@@ -23,90 +30,90 @@ public:
 		virtual bool HandleMouseUp(Vec2 mousePos) = 0;
 		virtual bool HandleDoubleClick(Vec2 mousePos) = 0;
 
-		// 활성화용도
-		virtual void SetActivate(bool active) { m_isActive = active; }
+	virtual bool HandleMouseRight(Vec2 mousePos) = 0;
 
-		// 타입 체크용
-		virtual UIWindowType GetType() = 0;
+	// 활성화용도
+	virtual void SetActivate(bool active) { m_isActive = active; }
 
-		// 위치 체크용
-		Vec2 GetPosition() const { return m_position; }
 
-		// 켜져있는지 체크
-		bool IsActive() const { return m_isActive; }
+	virtual bool HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source) = 0;
 
-		// 영역 체크 함수들
-		bool IsInBounds(Vec2 pos) const
-		{
-			return pos.x >= m_position.x && pos.x <= m_position.x + m_size.x &&
-				pos.y >= m_position.y && pos.y <= m_position.y + m_size.y;
-		}
+	// 타입 체크용
+	virtual UIWindowType GetType() = 0;
 
-		// 타이틀바 높이 42이여서 (모든 창 다 같음.)
-		bool IsInTitleBar(Vec2 pos) const
-		{
-			return pos.x >= m_position.x && pos.x <= m_position.x + m_size.x &&
-				pos.y >= m_position.y && pos.y <= m_position.y + 42; 
-		}
+	// 위치 체크용
+	Vec2 GetPosition() const { return m_position; }
+
+	void SetPosition(Vec2 Pos) { m_position = Pos; } //왜 Object랑 별개의 position이 되어있는가...
+	
+	void ItemDrop(Item* item);
+
+
+	// 켜져있는지 체크
+	bool IsActive() const { return m_isActive; }
+
+	// 영역 체크 함수들
+	bool IsInBounds(Vec2 pos) const
+	{
+		return pos.x >= m_position.x && pos.x <= m_position.x + m_size.x &&
+			pos.y >= m_position.y && pos.y <= m_position.y + m_size.y;
+	}
+
+	// 타이틀바 높이 42이여서 (모든 창 다 같음.)
+	bool IsInTitleBar(Vec2 pos) const
+	{
+		return pos.x >= m_position.x && pos.x <= m_position.x + m_size.x &&
+			pos.y >= m_position.y && pos.y <= m_position.y + 42;
+	}
 
 		bool IsInCloseButton(Vec2 pos) const
 		{
-			// 오른쪽에서 47 떨어진 지점이 기준이라.
-			float rightMargin = 47.0f;
+			float rightMargin;
+			float yOffset;
 
-			// 닫기 버튼 x,y 위치 계산임. +7는 기획서 보고 넣어둠.
-			Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + 7 };
+			// 인벤토리만 예외처리
+			if (m_windowType == UIWindowType::InventoryWindow)
+			{
+				rightMargin = 85.0f; // x값
+				yOffset = 30.0f;     // y값
+			}
+			else if (m_windowType == UIWindowType::SettingsWindow || m_windowType == UIWindowType::CreditWindow)
+			{
+				rightMargin = 85.0f; // x값
+				yOffset = 35.0f;     // y값
+			}
+			else
+			{
+				rightMargin = 65.0f; // 일반적인 경우
+				yOffset = 35.0f;     // 일반적인 경우
+			}
+
+			// 닫기 버튼 x,y 위치 계산
+			Vec2 closeButtonPos = { m_position.x + m_size.x - rightMargin, m_position.y + yOffset };
 
 			// 닫기 버튼 크기. 마찬가지로 기획서에 있는 그대로임.
-			float closeButtonWidth = 27.0f;
-			float closeButtonHeight = 27.0f;
+			float closeButtonWidth = 35;
+			float closeButtonHeight = 35;
 
 			// 닫기 버튼 안에 있는지 체크.
 			return pos.x >= closeButtonPos.x && pos.x <= closeButtonPos.x + closeButtonWidth &&
 				pos.y >= closeButtonPos.y && pos.y <= closeButtonPos.y + closeButtonHeight;
 		}
 
-		virtual bool HandleInput()
-		{
-			Vec2 mousePos = InputManager::Get().GetMousePosition();
 
-			// 창이 비활성화되어 있으면 처리 안함
-			if (!m_isActive)
-				return false;
 
-			// 마우스가 창 영역 밖이면 처리 안함
-			if (!IsInBounds(mousePos))
-				return false;
+	bool HandleInput(const MSG& msg);
 
-			// 각종 마우스 이벤트 처리
-			if (InputManager::Get().IsDoubleClicked())
-			{
-				return HandleDoubleClick(mousePos);
-			}
 
-			if (InputManager::Get().IsMouseClicked(MouseButton::Left))
-			{
-				return HandleMouseDown(mousePos);
-			}
 
-			if (InputManager::Get().IsMouseReleased(MouseButton::Left))
-			{
-				return HandleMouseUp(mousePos);
-			}
-
-			// 호버는 항상 처리 (툴팁 등을 위해)
-			HandleMouseHover(mousePos);
-
-			return true; // 창 영역 안의 입력은 모두 "처리됨"으로 간주
-		}
 
 protected:
 	UIWindowType m_windowType;
 	Vec2 m_position;
 	Vec2 m_size;
+	Vec2 m_dragOffset;
 	bool m_isActive = false;
 	bool m_isDragging = false;
-	Vec2 m_dragOffset;
 
 private:
 };

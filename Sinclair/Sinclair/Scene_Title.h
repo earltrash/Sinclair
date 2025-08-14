@@ -19,9 +19,19 @@ public:
 		virtual void Enter() override;
 		virtual void Exit() override; //하위 클래스에서 처리 
 		virtual void Render()override;
+public:
+	void CreateObj();
+
+//private:
+//	std::multimap<std::string, std::unique_ptr<Object>> m_gameObjects;
+	//bool isCredit = false;
+	enum Window {
+		CREDIT,
+		SETTING,
+		NORMAL
+	};
 
 private:
-		std::multimap<std::string, std::unique_ptr<Object>> m_gameObjects;
-
+	//Window m_window = NORMAL;
 };
 

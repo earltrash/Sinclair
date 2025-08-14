@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "TMHelper.h"
 #include "Component.h"
+#include "RenderInfo.h"
 
 
 using Vec2 = MYHelper::Vector2F;
@@ -21,10 +22,9 @@ namespace D2DTM
     {
     public:
 
-
-        Transform()
+        Transform(RenderInfo* renderInfo)
             : m_position{ 0, 0 }, m_rotation(0.0f), m_scale{ 1.0f, 1.0f },
-            m_dirty(false), m_parent(nullptr)
+            m_dirty(false), m_parent(nullptr), m_renderInfo(renderInfo)
         {
             m_matrixLocal = D2D1::Matrix3x2F::Identity();
             m_matrixWorld = D2D1::Matrix3x2F::Identity();
@@ -97,9 +97,24 @@ namespace D2DTM
         }
 
         // ** ∆Æ∑£Ω∫∆˚ º≥¡§ **
-        void SetPosition(const Vec2& pos) { m_position = pos; SetDirty(); }
-        void SetRotation(float degree) { m_rotation = degree; SetDirty(); }
-        void SetScale(const Vec2& scale) { m_scale = scale; SetDirty(); }
+        void SetPosition(const Vec2& pos) 
+        { 
+            m_position = pos; SetDirty(); 
+
+            m_renderInfo->SetDestLeft(m_position.x);
+            m_renderInfo->SetDestTop(m_position.y);
+            m_renderInfo->SetWorldTM(GetWorldMatrix());
+        }
+        void SetRotation(float degree) 
+        { 
+            m_rotation = degree; SetDirty(); 
+            m_renderInfo->SetWorldTM(GetWorldMatrix());
+        }
+        void SetScale(const Vec2& scale) 
+        { 
+            m_scale = scale; SetDirty();
+            m_renderInfo->SetWorldTM(GetWorldMatrix());
+        }
 
         const Vec2& GetPosition() const { return m_position; }
         float GetRotation() const { return m_rotation; }
@@ -110,6 +125,10 @@ namespace D2DTM
             m_position.x += delta.x;
             m_position.y += delta.y;
             SetDirty();
+
+            m_renderInfo->SetDestLeft(m_position.x);
+            m_renderInfo->SetDestTop(m_position.y);
+            m_renderInfo->SetWorldTM(GetWorldMatrix());
         }
 
         void Translate(const float x, const float y)
@@ -117,12 +136,18 @@ namespace D2DTM
             m_position.x += x;
             m_position.y += y;
             SetDirty();
+
+            m_renderInfo->SetDestLeft(m_position.x);
+            m_renderInfo->SetDestTop(m_position.y);
+            m_renderInfo->SetWorldTM(GetWorldMatrix());
         }
 
         void Rotate(float degree)
         {
             m_rotation += degree;
             SetDirty();
+
+            m_renderInfo->SetWorldTM(GetWorldMatrix());
         }
 
         // ** πÊ«‚ ∫§≈Õ **
@@ -162,6 +187,7 @@ namespace D2DTM
             return m_pivot;
         }
 
+        Vec2 GetPosition() { return m_position; }
     private:
         void SetDirty()
         {
@@ -174,6 +200,7 @@ namespace D2DTM
 
         void UpdateMatrices();
 
+
     private:
 
         bool m_dirty;
@@ -183,6 +210,7 @@ namespace D2DTM
         float    m_rotation = 0.f;          // in degrees
         Vec2     m_scale = { 1.f, 1.f };
 
+
         Transform* m_parent;
         std::vector<Transform*> m_children;
 
@@ -190,6 +218,8 @@ namespace D2DTM
         Mat3x2 m_matrixWorld;
 
         D2D1_POINT_2F m_pivot{ 0.0f, 0.0f };
+
+        RenderInfo* m_renderInfo = nullptr;
     };
 }
 

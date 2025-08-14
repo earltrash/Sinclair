@@ -14,17 +14,33 @@ ResourceManager& ResourceManager::Get()
 void ResourceManager::GameAssetLoad()
 {
     //AnimatedAssetLoad(D2DRenderer::Get(), "Resource");
-    m_ItemBank.LoadItemStatus("Item"); //Status Only
+    //m_ItemBank.LoadItemStatus("Resource/Item"); //Status Only
     //m_ItemBank.LoadItemBitmap("") //얘는 Atlas 위치긴 한데 이거 얘기좀 해봐야 할 듯 . 
-    m_UI_Bank.Load_UI_Image("UI"); // Single / Multi Bitmap
 
+    m_UI_Bank.Load_UI_Image("UI"); // Single / Multi Bitmap
+    m_UI_Bank.Load_UI_Image("Resource/UI"); // Single / Multi Bitmap
+    m_ItemBank.LoadItemStatus("Item_S"); //Status Only
+    m_ItemBank.LoadItemRect("Item_A"); //Atlas랑 정확히는 Item 별 srect 
+    m_SoundBank.SoundAssetLoad("Sound");
 }
 
 void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std::string& directory)
 {
     namespace fs = std::filesystem;
     fs::path base = fs::current_path();
-    fs::path resourcePath = base.parent_path() / "Resource";
+
+
+#ifdef _DEBUG
+    fs::path resourcePath = base.parent_path() / "Resource" / directory;
+
+#else NDEBUG 
+    //fs::path resourcePath = base.parent_path().parent_path() / "Resource" / directory;
+    fs::path resourcePath = base.parent_path() / "Resource" / directory;
+
+#endif
+  //  fs::path resourcePath = base.parent_path() / "Resource" / directory;
+
+    //fs::path resourcePath = base.parent_path() / "Resource";
 
     std::cout << "리소스 경로: " << resourcePath << std::endl;
 
@@ -55,9 +71,10 @@ void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std:
             if (entry.is_regular_file()) {
                 std::cout << "path: " << entry.path().string() << std::endl;
 
-                    if (entry.path().extension() == ".json") {
-                        std::string filename = entry.path().stem().string();
-                        std::wstring fullPath = entry.path().wstring();
+                if (entry.path().extension() == ".json") 
+                {
+                    std::string filename = entry.path().stem().string();
+                    std::wstring fullPath = entry.path().wstring();
 
                     std::cout << "name: " << filename << std::endl;
                     wsg name = wsg(filename.begin(), filename.end());
@@ -150,6 +167,28 @@ ComPtr<ID2D1Bitmap1> ResourceManager::GetTexture(const string& Info)
     //return nullptr;
 }
 
+ComPtr<ID2D1Bitmap1> ResourceManager::GetTexture(const string& Info, const string& Info2)
+{
+    if (m_UI_Bank.Get_Image(Info, Info2) != nullptr) //Single bitmap -> 배경화면 같은 애들은 바로 가져올 수 있게.
+    {
+        //std::cout << Info << "_" << Info2 << "에 해당하는 Bitmap이 있습니다" << endl;
+        return m_UI_Bank.Get_Image(Info, Info2);
+    }
+
+    else
+    {
+        std::cout << Info << "_" << Info2 << "에 해당하는 Bitmap이 없습니다" << endl;
+        return nullptr;
+    }
+
+    //std::wstring wInfo(Info.begin(), Info.end());
+    //auto it = m_textures.find(wInfo);
+    //if (it != m_textures.end()) {
+    //    return it->second;
+    //}
+    //return nullptr;
+}
+
 UI_Bank& ResourceManager::Get_UIBank()
 {
     return m_UI_Bank;
@@ -159,6 +198,83 @@ ItemBank& ResourceManager::Get_ItemBank()
 {
     return m_ItemBank;
 }
+
+TextBank& ResourceManager::Get_TextBank()
+{
+    return m_TextBank;
+}
+
+
+
+SoundBank& ResourceManager::Get_SoundBank()
+{
+    return m_SoundBank;
+}
+
+
+
+
+std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ResourceManager::GetEndingBitmap(string id )
+{
+    namespace fs = std::filesystem;
+
+    std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> result;
+
+
+
+
+    // ending/<id> 경로 생성
+    fs::path base = fs::current_path();
+
+
+#ifdef _DEBUG
+    fs::path resourcePath = base.parent_path() / "ending" / id;
+
+#else NDEBUG 
+    //fs::path resourcePath = base.parent_path().parent_path() / "ending" / id;
+    fs::path resourcePath = base.parent_path() / "ending" / id;
+
+#endif
+    //  fs::path resourcePath = base.parent_path() / "Resource" / directory;
+
+
+
+
+    fs::path folderPath = base.parent_path() / "ending" / id;
+
+    if (!fs::exists(folderPath) || !fs::is_directory(folderPath))
+    {
+        std::cerr << "[ERROR] 폴더 없음: " << folderPath << std::endl;
+        return result;
+    }
+
+    // 폴더 내 순회
+    for (const auto& entry : fs::directory_iterator(folderPath, fs::directory_options::skip_permission_denied))
+    {
+        if (!entry.is_regular_file() || entry.path().extension() != ".png")
+            continue;
+
+        // 파일 이름(확장자 제거)
+        std::string fileName = entry.path().stem().string();
+
+        // 비트맵 로드
+        Microsoft::WRL::ComPtr<ID2D1Bitmap1> bitmap;
+        D2DRenderer::Get().CreateBitmapFromFile(entry.path().c_str(), bitmap.GetAddressOf());
+
+        if (bitmap)
+        {
+            result.emplace(fileName, bitmap);
+        }
+        else
+        {
+            std::cerr << "[WARN] 비트맵 로드 실패: " << entry.path() << std::endl;
+        }
+    }
+
+    return result;
+}
+
+
 
 std::vector<Clip_Asset> ResourceManager::GetClips(const string& Info)
 {
@@ -192,6 +308,8 @@ std::vector<Clip_Asset> ResourceManager::GetClips(const string& Info)
 void ResourceManager::Clean()
 {
     //일단 만들어는 둠... 혹여나 모르니깐 
+    //m_ItemBank.clean();
+    //m_UI_Bank.clean();
 
 }
 

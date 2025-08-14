@@ -27,6 +27,14 @@ void D2DRenderer::Initialize(HWND hwnd)
     DX::ThrowIfFailed(hr);
 
     m_wicFactory = wicFactory;
+
+     hr = DWriteCreateFactory(
+        DWRITE_FACTORY_TYPE_SHARED,
+        __uuidof(IDWriteFactory),
+        reinterpret_cast<IUnknown**>(m_dwriteFactory.GetAddressOf())
+    );
+    DX::ThrowIfFailed(hr);
+
 }
 
 void D2DRenderer::Uninitialize()
@@ -74,6 +82,21 @@ void D2DRenderer::DrawRectangle(float left, float top, float right, float bottom
     m_d2dContext->DrawRectangle(D2D1::Rect(left, top, right, bottom), m_brush.Get());
 }
 
+void D2DRenderer::DrawRectangle(D2D1_RECT_F destRect, const D2D1::ColorF& color)
+{
+    m_brush->SetColor(color);
+
+    m_d2dContext->DrawRectangle(D2D1::Rect(destRect.left, destRect.top, destRect.right, destRect.bottom), m_brush.Get());
+}
+
+void D2DRenderer::FillRectangle(D2D1_RECT_F destRect, const D2D1::ColorF& color, float opacity)
+{
+    m_brush->SetColor(color);
+    m_brush->SetOpacity(opacity);
+    m_d2dContext->FillRectangle(D2D1::Rect(destRect.left, destRect.top, destRect.right, destRect.bottom), m_brush.Get());
+}
+
+
 void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F dest)
 {
     m_d2dContext->DrawBitmap(bitmap, dest);
@@ -93,23 +116,24 @@ void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F destRect, D2D1_RE
 void D2DRenderer::DrawBitmap(const renderInfo& renderInfo)
 {
     if (renderInfo.activated == false)   return;
-
-    m_d2dContext->SetTransform(renderInfo.mt);
-
+    
     if (renderInfo.effect != nullptr)
     {
-        ComPtr<ID2D1Effect> m_opacity;
-        m_d2dContext->CreateEffect(CLSID_D2D1Opacity, &m_opacity);
-        m_opacity->SetInputEffect(0, renderInfo.effect);
-        m_opacity->SetValue(D2D1_COMPOSITE_MODE_SOURCE_OVER, renderInfo.opacity);
+        SetTransform(renderInfo.mt);
+        //ComPtr<ID2D1Effect> m_opacity;
+        //m_d2dContext->CreateEffect(CLSID_D2D1Opacity, &m_opacity);
+        //m_opacity->SetInputEffect(0, renderInfo.effect);
+        //m_opacity->SetValue(D2D1_COMPOSITE_MODE_SOURCE_OVER, renderInfo.opacity);
 
-        m_d2dContext->DrawImage(m_opacity.Get(),
+        m_d2dContext->DrawImage(renderInfo.effect,
             {0.f, 0.f},                                                         // 렌더타겟에서 그려지는 위치. SetTransform 때문에 좌상단 고정
             renderInfo.srcRect,
             D2D1_INTERPOLATION_MODE_LINEAR, D2D1_COMPOSITE_MODE_SOURCE_OVER);
+        SetTransform(D2D1::Matrix3x2F::Identity());
     }
     else
     {
+        SetTransform(D2D1::Matrix3x2F::Identity());
         DrawBitmap(renderInfo.bitmap, renderInfo.destRect , renderInfo.srcRect, renderInfo.opacity);
     }
 }
@@ -133,6 +157,91 @@ void D2DRenderer::DrawMessage(const wchar_t* text, float left, float top, float 
         m_textBrush.Get(),
         D2D1_DRAW_TEXT_OPTIONS_NONE,
         DWRITE_MEASURING_MODE_NATURAL);
+}
+
+void D2DRenderer::DrawMessage(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color, float opacity)
+{
+    D2D1_COLOR_F aaa = D2D1::ColorF(color);
+    aaa.a = opacity;
+
+    if (nullptr == m_textBrush)
+    {
+        m_d2dContext->CreateSolidColorBrush(aaa, &m_textBrush);
+    }
+    m_textBrush->SetOpacity(opacity);
+    m_textBrush->SetColor(color);
+    D2D1_RECT_F layoutRect = D2D1::RectF(left, top, left + width, top + height);
+
+    m_d2dContext->DrawTextW(
+        text,
+        static_cast<UINT32>(wcslen(text)),
+        m_textFormat.Get(),
+        layoutRect,
+        m_textBrush.Get(),
+        D2D1_DRAW_TEXT_OPTIONS_NONE,
+        DWRITE_MEASURING_MODE_NATURAL);
+}
+
+void D2DRenderer::DrawMessageCenter(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color)
+{
+    if (nullptr == m_textBrush)
+    {
+        m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(color), &m_textBrush);
+    }
+
+    m_textBrush->SetColor(color);
+
+    // 가운데 정렬로 변경 
+    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+
+    D2D1_RECT_F layoutRect = D2D1::RectF(left, top, left + width, top + height);
+
+    m_d2dContext->DrawTextW(
+        text,
+        static_cast<UINT32>(wcslen(text)),
+        m_textFormat.Get(),
+        layoutRect,
+        m_textBrush.Get(),
+        D2D1_DRAW_TEXT_OPTIONS_NONE,
+        DWRITE_MEASURING_MODE_NATURAL);
+
+    // 다시 좌상단 정렬로 변경
+    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+}
+
+void D2DRenderer::DrawMessageCenter(const wchar_t* text, float left, float top, float width, float height, const D2D1::ColorF& color, float opacity)
+{
+    D2D1_COLOR_F aaa = D2D1::ColorF(color);
+    aaa.a = opacity;
+
+    if (nullptr == m_textBrush)
+    {
+        m_d2dContext->CreateSolidColorBrush(aaa, &m_textBrush);
+    }
+
+    m_textBrush->SetColor(color);
+    m_textBrush->SetOpacity(opacity);
+
+    // 가운데 정렬로 변경 
+    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+
+    D2D1_RECT_F layoutRect = D2D1::RectF(left, top, left + width, top + height);
+
+    m_d2dContext->DrawTextW(
+        text,
+        static_cast<UINT32>(wcslen(text)),
+        m_textFormat.Get(),
+        layoutRect,
+        m_textBrush.Get(),
+        D2D1_DRAW_TEXT_OPTIONS_NONE,
+        DWRITE_MEASURING_MODE_NATURAL);
+
+    // 다시 좌상단 정렬로 변경
+    m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 }
 
 void D2DRenderer::SetTransform(const D2D1_MATRIX_3X2_F tm)
@@ -170,6 +279,40 @@ void D2DRenderer::Present()
     {
         DX::ThrowIfFailed(hr);
     }
+}
+
+D2D1_SIZE_F D2DRenderer::MeasureText(const std::wstring& text, float fontSize, const std::wstring& fontName)
+{
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> textFormat;
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> textLayout;
+
+    // 폰트 포맷 생성
+    m_dwriteFactory->CreateTextFormat(
+        fontName.c_str(),
+        nullptr,
+        DWRITE_FONT_WEIGHT_NORMAL,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        fontSize,
+        L"ko-kr",
+        &textFormat
+    );
+
+    // 텍스트 레이아웃 생성 (크기: 제한 없음)
+    m_dwriteFactory->CreateTextLayout(
+        text.c_str(),
+        (UINT32)text.length(),
+        textFormat.Get(),
+        FLT_MAX,
+        FLT_MAX,
+        &textLayout
+    );
+
+    // 텍스트 크기 반환
+    DWRITE_TEXT_METRICS metrics;
+    textLayout->GetMetrics(&metrics);
+
+    return { metrics.width, metrics.height };
 }
 
 void D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
@@ -314,8 +457,11 @@ void D2DRenderer::CreateRenderTargets()
 
 void D2DRenderer::CreateWriteResource()
 {
-    CreateWriteResource(L"맑은 고딕", DWRITE_FONT_WEIGHT_NORMAL, 15.0f);
+    CreateWriteResource(L"빛의 계승자 Bold", DWRITE_FONT_WEIGHT_BOLD, 100.0f);
 }
+
+//CreateWriteResource(L"빛의 계승자 Regular", DWRITE_FONT_WEIGHT_NORMAL, 15.0f);
+//CreateWriteResource(L"맑은 고딕", DWRITE_FONT_WEIGHT_NORMAL, 15.0f);
 
 void D2DRenderer::CreateWriteResource(const wchar_t* fontName, DWRITE_FONT_WEIGHT fontWeight, float fontSize)
 {
@@ -368,7 +514,6 @@ void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1** outBi
 
     DX::ThrowIfFailed(hr);
 
-
     hr = decoder->GetFrame(0, &frame);
 
     DX::ThrowIfFailed(hr);
@@ -376,7 +521,6 @@ void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1** outBi
     hr = m_wicFactory->CreateFormatConverter(&converter);
 
     DX::ThrowIfFailed(hr);
-
 
     hr = converter->Initialize(
         frame.Get(),
@@ -399,4 +543,57 @@ void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1** outBi
     hr = m_d2dContext->CreateBitmapFromWicBitmap(converter.Get(), &bmpProps, outBitmap); //?
 }
 
+void D2DRenderer::FillPolygon(const D2D_VECTOR_2F* points, UINT count, const D2D1::ColorF& color)
+{
+    // 점이 3개 미만이거나 D2D Context가 없으면 다각형을 그릴 수 없으므로 함수를 종료합니다.
+    if (count < 3 || !m_d2dContext) return;
 
+    // D2D Context에서 ID2D1Factory 타입의 팩토리를 얻어옵니다.
+    // GetAddressOf()를 사용하여 ComPtr가 관리하는 포인터의 주소를 넘깁니다.
+    ComPtr<ID2D1Factory> pFactory;
+    m_d2dContext->GetFactory(pFactory.GetAddressOf());
+
+    // 경로(Path)를 정의할 Geometry 객체 생성
+    ComPtr<ID2D1PathGeometry> pPathGeometry;
+    HRESULT hr = S_OK;
+
+    if (pFactory)
+    {
+        hr = pFactory->CreatePathGeometry(&pPathGeometry);
+    }
+
+    if (SUCCEEDED(hr))
+    {
+        // Geometry에 점을 추가하기 위한 싱크(sink)를 엽니다.
+        ComPtr<ID2D1GeometrySink> pSink;
+        hr = pPathGeometry->Open(&pSink);
+
+        if (SUCCEEDED(hr))
+        {
+            // 다각형의 첫 번째 점으로 시작하여 채우기를 시작합니다.
+            pSink->BeginFigure(D2D1::Point2F(points[0].x, points[0].y), D2D1_FIGURE_BEGIN_FILLED);
+
+            // 나머지 점들을 선으로 추가합니다.
+            for (UINT i = 1; i < count; ++i)
+            {
+                pSink->AddLine(D2D1::Point2F(points[i].x, points[i].y));
+            }
+            // 도형을 닫아 다각형을 완성합니다.
+            pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+            hr = pSink->Close();
+        }
+    }
+
+    if (SUCCEEDED(hr))
+    {
+        // 도형을 채울 브러시(Brush) 생성
+        ComPtr<ID2D1SolidColorBrush> pBrush;
+        hr = m_d2dContext->CreateSolidColorBrush(color, &pBrush);
+
+        if (SUCCEEDED(hr))
+        {
+            // Geometry를 브러시로 채웁니다.
+            m_d2dContext->FillGeometry(pPathGeometry.Get(), pBrush.Get());
+        }
+    }
+}

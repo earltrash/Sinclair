@@ -104,13 +104,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\M_E\M_E</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\M_E\M_E;$(SolutionDir)\FMod\FMOD_API</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;$(SolutionDir)\FMod\Lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -121,12 +122,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\M_E\M_E;$(SolutionDir)\FMod\FMOD_API</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;$(SolutionDir)\FMod\Lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -137,15 +142,13 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="CallbackType.h" />
-    <ClInclude Include="CursorManager.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="CreditWindow.h" />
+    <ClInclude Include="CursorManager.h" />
     <ClInclude Include="Dispatcher.h" />
     <ClInclude Include="EffectComponent.h" />
-    <ClInclude Include="Enchancer.h" />
-    <ClInclude Include="EquipmentWindow.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="EnhancementWindow.h" />
+    <ClInclude Include="EquipmentWindow.h" />
+    <ClInclude Include="GameManager_2.h" />
     <ClInclude Include="IAssetProvider.h" />
     <ClInclude Include="InvenMem.h" />
     <ClInclude Include="Inventory.h" />
@@ -154,9 +157,13 @@
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="PlayComponent.h" />
+    <ClInclude Include="MouseInput.h" />
     <ClInclude Include="Potion.h" />
+    <ClInclude Include="PotionWin.h" />
+    <ClInclude Include="Scene_BJ.h" />
     <ClInclude Include="RenderInfo.h" />
-    <ClInclude Include="Scene_hyoje.h" />
+    <ClInclude Include="Scene_End.h" />
+    <ClInclude Include="Scene_History.h" />
     <ClInclude Include="Scene_InGame.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ItemGlobal.h" />
@@ -172,14 +179,22 @@
     <ClInclude Include="Scene_MK.h" />
     <ClInclude Include="Scene_Outgame.h" />
     <ClInclude Include="Scene_Title.h" />
+    <ClInclude Include="Scene_Tutorial.h" />
+    <ClInclude Include="SettingWindow.h" />
     <ClInclude Include="SimpleMathHelper.h" />
+    <ClInclude Include="SliderHandleComponent.h" />
+    <ClInclude Include="SoundBank_.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Status.h" />
+    <ClInclude Include="SynthesisWin.h" />
+    <ClInclude Include="TextBank.h" />
+    <ClInclude Include="StatWindow.h" />
     <ClInclude Include="TMHelper.h" />
+    <ClInclude Include="ToolTip.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="UIManager.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="UIPotion.h" />
     <ClInclude Include="UIWindow.h" />
     <ClInclude Include="UI_Bank.h" />
     <ClInclude Include="UI_Renderer.h" />
@@ -190,11 +205,12 @@
     <ClCompile Include="BackgroundComponent.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
+    <ClCompile Include="CreditWindow.cpp" />
+    <ClCompile Include="CursorManager.cpp" />
     <ClCompile Include="EffectComponent.cpp" />
-    <ClCompile Include="Enchancer.cpp" />
-    <ClCompile Include="EquipmentWindow.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="EnhancementWindow.cpp" />
+    <ClCompile Include="EquipmentWindow.cpp" />
+    <ClCompile Include="GameManager_2.cpp" />
     <ClCompile Include="InvenMem.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="ItemBank.cpp" />
@@ -202,8 +218,11 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="PlayComponent.cpp" />
     <ClCompile Include="Potion.cpp" />
+    <ClCompile Include="PotionWin.cpp" />
     <ClCompile Include="RenderInfo.cpp" />
-    <ClCompile Include="Scene_hyoje.cpp" />
+    <ClCompile Include="Scene_End.cpp" />
+    <ClCompile Include="Scene_History.cpp" />
+    <ClCompile Include="Scene_BJ.cpp" />
     <ClCompile Include="Scene_InGame.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ItemGlobal.cpp" />
@@ -215,11 +234,19 @@
     <ClCompile Include="Scene_Outgame.cpp" />
     <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Scene_Tutorial.cpp" />
+    <ClCompile Include="SettingWindow.cpp" />
+    <ClCompile Include="SoundBank_.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="StatWindow.cpp" />
+    <ClCompile Include="SynthesisWin.cpp" />
+    <ClCompile Include="TextBank.cpp" />
+    <ClCompile Include="ToolTip.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="UIManager.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="UIPotion.cpp" />
+    <ClCompile Include="UIWindow.cpp" />
     <ClCompile Include="UI_Bank.cpp" />
     <ClCompile Include="UI_Renderer.cpp" />
     <ClCompile Include="Wearable.cpp" />

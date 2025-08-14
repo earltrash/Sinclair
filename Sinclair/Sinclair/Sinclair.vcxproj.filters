@@ -27,7 +27,7 @@
     <Filter Include="Bank">
       <UniqueIdentifier>{d2f89555-7c54-4380-b0a7-5026decec4fe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Inventory">
+    <Filter Include="UI">
       <UniqueIdentifier>{2370e0cf-166a-4cb0-8322-de791ca209e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -113,9 +113,6 @@
     <ClInclude Include="Scene_InGame.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Enchancer.h">
-      <Filter>Item</Filter>
-    </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>Item</Filter>
     </ClInclude>
@@ -131,22 +128,10 @@
     <ClInclude Include="Wearable.h">
       <Filter>Item</Filter>
     </ClInclude>
-    <ClInclude Include="Inventory.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ButtonComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
     <ClInclude Include="CursorManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="EquipmentWindow.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UIManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UIWindow.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="UI_Bank.h">
@@ -156,10 +141,7 @@
       <Filter>Bank</Filter>
     </ClInclude>
     <ClInclude Include="InvenMem.h">
-      <Filter>Inventory</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene_hyoje.h">
-      <Filter>Scene</Filter>
+      <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="BackgroundComponent.h">
       <Filter>Component</Filter>
@@ -170,11 +152,77 @@
     <ClInclude Include="EffectComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="UIWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
     <ClInclude Include="RenderInfo.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="MouseInput.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
     <ClInclude Include="PlayComponent.h">
       <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_BJ.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_End.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="StatWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="EnhancementWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_History.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TextBank.h">
+      <Filter>Bank</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolTip.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PotionWin.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UIPotion.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SynthesisWin.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Tutorial.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SliderHandleComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>Module</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundBank_.h">
+      <Filter>Bank</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager_2.h">
+      <Filter>Module</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CreditWindow.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -220,9 +268,6 @@
     <ClCompile Include="Scene_InGame.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Enchancer.cpp">
-      <Filter>Item</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Item</Filter>
     </ClCompile>
@@ -235,17 +280,8 @@
     <ClCompile Include="ItemParseing.cpp">
       <Filter>Item</Filter>
     </ClCompile>
-    <ClCompile Include="Inventory.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="ButtonComponent.cpp">
       <Filter>Component</Filter>
-    </ClCompile>
-    <ClCompile Include="EquipmentWindow.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="UIManager.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="UI_Bank.cpp">
       <Filter>Bank</Filter>
@@ -257,10 +293,7 @@
       <Filter>Module</Filter>
     </ClCompile>
     <ClCompile Include="InvenMem.cpp">
-      <Filter>Inventory</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene_hyoje.cpp">
-      <Filter>Scene</Filter>
+      <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="BackgroundComponent.cpp">
       <Filter>Component</Filter>
@@ -276,6 +309,69 @@
     </ClCompile>
     <ClCompile Include="PlayComponent.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_End.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_History.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TextBank.cpp">
+      <Filter>Bank</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_BJ.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="StatWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="EnhancementWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CursorManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolTip.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PotionWin.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UIPotion.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SynthesisWin.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Tutorial.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>Module</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundBank_.cpp">
+      <Filter>Bank</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager_2.cpp">
+      <Filter>Module</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CreditWindow.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
