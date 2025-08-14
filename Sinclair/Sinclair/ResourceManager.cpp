@@ -34,7 +34,8 @@ void ResourceManager::AnimatedAssetLoad(static D2DRenderer& renderer, const std:
     fs::path resourcePath = base.parent_path() / "Resource" / directory;
 
 #else NDEBUG 
-    fs::path resourcePath = base.parent_path().parent_path() / "Resource" / directory;
+    //fs::path resourcePath = base.parent_path().parent_path() / "Resource" / directory;
+    fs::path resourcePath = base.parent_path() / "Resource" / directory;
 
 #endif
   //  fs::path resourcePath = base.parent_path() / "Resource" / directory;
@@ -230,7 +231,8 @@ std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> ResourceMa
     fs::path resourcePath = base.parent_path() / "ending" / id;
 
 #else NDEBUG 
-    fs::path resourcePath = base.parent_path().parent_path() / "ending" / id;
+    //fs::path resourcePath = base.parent_path().parent_path() / "ending" / id;
+    fs::path resourcePath = base.parent_path() / "ending" / id;
 
 #endif
     //  fs::path resourcePath = base.parent_path() / "Resource" / directory;

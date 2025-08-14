@@ -25,7 +25,8 @@ void ItemBank::LoadItemStatus(const string& path) { //스텟 JSON - Item_S
     fs::path resourceFolder = base.parent_path() / "Item" / path;
 
 #else NDEBUG 
-    fs::path resourceFolder = base.parent_path().parent_path() / "Item" / path;
+    //fs::path resourceFolder = base.parent_path().parent_path() / "Item" / path;
+    fs::path resourceFolder = base.parent_path()/ "Item" / path;
 
 #endif
     
@@ -117,7 +118,8 @@ void ItemBank::LoadItemRect(const string& path) //Json과 Png는 이름이 같고 같은 
     fs::path resourceFolder = base.parent_path() / "Item" / path;
 
 #else NDEBUG 
-    fs::path resourceFolder = base.parent_path().parent_path() / "Item" / path;
+    // fs::path resourceFolder = base.parent_path().parent_path() / "Item" / path;
+    fs::path resourceFolder = base.parent_path() / "Item" / path;
 
 #endif
     //fs::path resourceFolder = base.parent_path() / "Item" / path;

@@ -540,33 +540,50 @@ bool EnhancementWindow::HandleMouseHover(Vec2 mousePos)
 
 bool EnhancementWindow::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource source)
 {
+	// 드래그된 아이템이 없으면 아무것도 하지 않음
 	if (!draggedItem) return false;
 
-	Vec2 relativePos = mousePos - m_position;
-	SynSlot whichSlot = SlotInit(relativePos);
+	// 인벤토리 창의 포인터를 가져옴
+	auto* inventoryWindow = dynamic_cast<Inventory*>(UIManager::Get().GetWindow(UIWindowType::InventoryWindow));
 
-				if (whichSlot == SynSlot::Result)
-				{
-						Item* Clicked_Item = m_targetItem;
-						if (Clicked_Item != nullptr)
-						{
-								CursorManager::Get().SetHoveredItem(Clicked_Item);
-								Vec2 tooltipPos = mousePos + Vec2(10, 10);
+	// 인벤토리 창이 유효하면 아이템을 추가
+	if (inventoryWindow)
+	{
+		// ItemDrop 함수가 필요한 경우 호출 (코드에 따라 다름)
+		ItemDrop(draggedItem);
+		inventoryWindow->AddItem(draggedItem->m_data.id, 1);
+		std::cout << "강화창 드래그 실패: 아이템을 인벤토리로 복구합니다: " << draggedItem->m_data.name << std::endl;
+	}
 
-								UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //위치 변경시키고, 활성화까지 
-								return true;
-						}
-						else
-								return true;
+	// UIManager가 드래그 종료를 처리하겠지만, 안전하게 여기서 호출해줄 수 있음
+	CursorManager::Get().EndItemDrag();
+	return true;
 
-				}
-				else
-				{
-						UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip);
-						CursorManager::Get().HoveredReleased(); //추적 금지 
-						return false;
-				}
-		return true;
+	//Vec2 relativePos = mousePos - m_position;
+	//SynSlot whichSlot = SlotInit(relativePos);
+
+	//if (whichSlot == SynSlot::Result)
+	//{
+	//	Item* Clicked_Item = m_targetItem;
+	//	if (Clicked_Item != nullptr)
+	//	{
+	//		CursorManager::Get().SetHoveredItem(Clicked_Item);
+	//		Vec2 tooltipPos = mousePos + Vec2(10, 10);
+
+	//		UIManager::Get().ShowTooltip(UIWindowType::InventoryTooltip, tooltipPos); //위치 변경시키고, 활성화까지 
+	//		return true;
+	//	}
+	//	else
+	//		return true;
+
+	//}
+	//else
+	//{
+	//	UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip);
+	//	CursorManager::Get().HoveredReleased(); //추적 금지 
+	//	return false;
+	//}
+	return true;
 }
 
 bool EnhancementWindow::HandleMouseRight(Vec2 mousePos)

@@ -579,7 +579,8 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
             return true; // 처리 완료
         }
     }
-    else if (source == DragSource::Enhancement || source == DragSource::Equipment || source == DragSource::Synthesis) 
+    // 모든 창을 트루로 받게 하면 생기는 문제점은 뭔가요?
+    else //if (source == DragSource::Enhancement || source == DragSource::Equipment || source == DragSource::Synthesis) 
     {
         AddItem(draggedItem->m_data.id, 1);
         CursorManager::Get().EndItemDrag();

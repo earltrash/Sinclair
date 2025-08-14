@@ -595,8 +595,9 @@ Wearable_part EquipmentWindow::GetSlotTypeAt(Vec2 mousePos) const
 bool EquipmentWindow::CanEquipItem(Item* item, Wearable_part slotType) const
 {
 
-    Wearable* t_item = dynamic_cast<Wearable*>(item);
     if (!item) return false;
+    Wearable* t_item = dynamic_cast<Wearable*>(item);
+    if (!t_item) return false;
 
     // 아이템의 착용 부위와 슬롯 타입이 일치하는지 확인
     if (t_item->Getpart() == Wearable_part::Helmet) return true;

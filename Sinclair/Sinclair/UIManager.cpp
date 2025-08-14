@@ -260,22 +260,26 @@ void UIManager::HandleKeyboardInput(WPARAM& msg)
         // 강화창인 경우 슬롯의 아이템을 인벤토리로 반환
         if (m_activeWindowOrder.back() == UIWindowType::EnhancementWindow)
         {
-            auto* enhancementWindow = dynamic_cast<EnhancementWindow*>(this);
+            auto* enhancementWindow = dynamic_cast<EnhancementWindow*>(GetWindow(UIWindowType::EnhancementWindow));
             if (enhancementWindow)
             {
                 enhancementWindow->ReturnItemToInventory();
-                CloseWindow(m_activeWindowOrder.back());
             }
+            CloseWindow(m_activeWindowOrder.back());
         }
         // 합성창인 경우 슬롯의 아이템들을 인벤토리로 반환
         else if (m_activeWindowOrder.back() == UIWindowType::SynthesisWindow)
         {
-            auto* synthesisWindow = dynamic_cast<SynthesisWin*>(this);
+            auto* synthesisWindow = dynamic_cast<SynthesisWin*>(GetWindow(UIWindowType::SynthesisWindow));
             if (synthesisWindow)
             {
                 synthesisWindow->ReturnItemToInventory();
-                CloseWindow(m_activeWindowOrder.back());
             }
+            CloseWindow(m_activeWindowOrder.back());
+        }
+        else
+        {
+            CloseWindow(m_activeWindowOrder.back());
         }
         
         break;
