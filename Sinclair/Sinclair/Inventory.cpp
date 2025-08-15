@@ -5,6 +5,7 @@
 #include "InvenMem.h"
 #include "Potion.h"
 #include "Wearable.h"
+#include "Material.h"
 //: UI_Object(MWP) //?ì„±?ë¡œ ?ì—­?€ ?¼ë‹¨ ?¤ì •??(Inven ?ê¸° ?ì—­ ë§ì„)
 Inventory::Inventory() :UIWindow(UIWindowType::InventoryWindow, Vec2{ 0,0 }, Vec2{ 1208,825 })  // Vec2{ 1097,766 }) 
 {
@@ -629,7 +630,12 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //»ç¿ëÇÑ ¾ÆÀÌÅÛÀÇ Æ÷ÀÎÅÍ¸¦ ¹Ş¾Æ¿
         // ¾ÆÀÌÅÛ µ¥ÀÌÅÍº£ÀÌ½º¿¡¼­ ¾ÆÀÌÅÛ Æ÷ÀÎÅÍ °¡Á®¿À±â
         Item* itemData = m_itemDatabase.GetItemData(slot->item.id);
 
-        if (Potion* potion = dynamic_cast<Potion*>(itemData))
+        if (Material* material = dynamic_cast<Material*>(itemData))
+        {
+            std::cout << "ÇØ´ç ¾ÆÀÌÅÛÀº Àåºñ Âø¿ëÀÌ ºÒ°¡´É ÇÕ´Ï´Ù.\n";
+            return false;
+        }
+        else if (Potion* potion = dynamic_cast<Potion*>(itemData))
         {
             // Æ÷¼Ç Ã³¸® ·ÎÁ÷
             int much = potion->GetMuch() - 1;
@@ -640,6 +646,9 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //»ç¿ëÇÑ ¾ÆÀÌÅÛÀÇ Æ÷ÀÎÅÍ¸¦ ¹Ş¾Æ¿
         {
             // Æ÷¼ÇÀ» ³Ê¹« ¸¹ÀÌ Å¬¸¯ÇÏ¸é ¿À·ù°¡ ÅÍÁü ±×°Å ÇØ°áÇßÀ½ 
             Wearable* wear = dynamic_cast<Wearable*>(itemData);
+
+            //
+            wear->m_data.wearablePart;
             // Âø¿ë ¾ÆÀÌÅÛ Ã³¸® ·ÎÁ÷
             UIManager::Get().OpenWindow(UIWindowType::EquipmentWindow);
             auto equipWindow = dynamic_cast<EquipmentWindow*>(UIManager::Get().GetWindow(UIWindowType::EquipmentWindow));

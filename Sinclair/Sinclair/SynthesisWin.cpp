@@ -12,7 +12,7 @@ SynthesisWin::SynthesisWin() :UIWindow(UIWindowType::SynthesisWindow, Vec2{ 0,0 
 
 	MemInit();
 	MemBitmapLoad();
-	InitializeObj();
+	ButtonInitialize();
 }
 
 SynthesisWin::~SynthesisWin()
@@ -91,8 +91,26 @@ bool SynthesisWin::HandleMouseHover(Vec2 mousePos) //hover?
 
 bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot position 결국 위치값이랑 
 {
-
 	if (!m_isActive) return false;
+
+	// 합성된 아이템이 있을 경우, 해당 아이템만 클릭 가능.
+	SynSlot whichSlot = SlotInit(mousePos);
+	if (whichSlot == SynSlot::Result && m_slot_Item[whichSlot] != nullptr)
+	{
+		auto itemResult = m_slot_Item[whichSlot];
+		CursorManager::Get().StartItemDrag_NS(itemResult->m_data.id, DragSource::Synthesis);
+		CursorManager::Get().SetDraggedItem(itemResult);
+
+		//아이템이 있는 result 슬롯을 누르면 다 반환
+		m_slot_Item[SynSlot::Result] = nullptr;
+		m_slot_Item[SynSlot::Slot1] = nullptr;
+		m_slot_Item[SynSlot::Slot2] = nullptr;
+
+		// 드래그 시작 시에는 무조건 true 반환
+		return true; 
+	}
+
+	if (m_slot_Item[SynSlot::Result] != nullptr)	return false;
 
 	MSG msg{};
 	msg.message = WM_LBUTTONDOWN;
@@ -107,7 +125,7 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 	}
 	else
 	{
-		for (auto& [tyep, bt] : m_buttons)
+		for (auto& [type, bt] : m_buttons)
 		{
 			auto btCompo = bt->GetComponent<ButtonComponent>();
 			btCompo->SetCollision(false);
@@ -115,31 +133,31 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 		}
 	}
 
-	SynSlot whichSlot = SlotInit(mousePos);
+	//SynSlot whichSlot = SlotInit(mousePos);
 
-	if (whichSlot != SynSlot::Nothing)
-	{
-		Item* Clicked_Item = m_slot_Item[whichSlot];
+	//if (whichSlot != SynSlot::Nothing)
+	//{
+	//	Item* Clicked_Item = m_slot_Item[whichSlot];
 
-		if (Clicked_Item == nullptr)
-			return false; // 빈 슬롯이면 드래그 안 함
+	//	if (Clicked_Item == nullptr)
+	//		return false; // 빈 슬롯이면 드래그 안 함
 
-		CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Synthesis);
-		CursorManager::Get().SetDraggedItem(Clicked_Item);
+	//	CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Synthesis);
+	//	CursorManager::Get().SetDraggedItem(Clicked_Item);
 
-		if (whichSlot == SynSlot::Result) //아이템이 있는 result 슬롯을 누르면 다 반환시킨다라 
-		{
-			m_slot_Item[SynSlot::Result] = nullptr;
-			m_slot_Item[SynSlot::Slot1] = nullptr;
-			m_slot_Item[SynSlot::Slot2] = nullptr;
-		}
-		else //아닌 경우에는, 그치 기존 슬롯에 있던거 빼야지 
-		{
-			m_slot_Item[whichSlot] = nullptr;
-		}
+	//	if (whichSlot == SynSlot::Result) //아이템이 있는 result 슬롯을 누르면 다 반환시킨다라 
+	//	{
+	//		m_slot_Item[SynSlot::Result] = nullptr;
+	//		m_slot_Item[SynSlot::Slot1] = nullptr;
+	//		m_slot_Item[SynSlot::Slot2] = nullptr;
+	//	}
+	//	else //아닌 경우에는, 그치 기존 슬롯에 있던거 빼야지 
+	//	{
+	//		m_slot_Item[whichSlot] = nullptr;
+	//	}
 
-		return true; // 드래그 시작 시에는 무조건 true 반환
-	}
+	//	return true; // 드래그 시작 시에는 무조건 true 반환
+	//}
 
 	SynButton whichBut = ButtonInit(mousePos);
 
@@ -193,6 +211,7 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리 
 {
 	if (!m_isActive) return false;
+	if (m_slot_Item[SynSlot::Result] != nullptr)	return false;
 
 	MSG msg{};
 	msg.message = WM_LBUTTONUP;
@@ -237,7 +256,7 @@ bool SynthesisWin::HandleMouseUp(Vec2 mousePos) //내려놓을 때의 처리
 			return false;
 		}
 		Item* previousItem = m_slot_Item[whichSlot];
-		//ItemInitialize(draggedItem);
+		ItemInitialize(draggedItem);
 		m_slot_Item[whichSlot] = draggedItem;
 		ItemDrop(draggedItem);
 
@@ -273,6 +292,7 @@ bool SynthesisWin::HandleDoubleClick(Vec2 mousePos) //swap 정도? sort도 필요할 �
 
 bool SynthesisWin::HandleMouseRight(Vec2 mousePos) //slot 위치에 mousepos -> 1 2 번째인 경우에만. 
 {
+	if (m_slot_Item[SynSlot::Result] != nullptr)	return false;
 
 	SynSlot whichSlot = SlotInit(mousePos); //마우스 오른쪽 클릭된 슬롯 
 
@@ -293,9 +313,6 @@ bool SynthesisWin::HandleMouseRight(Vec2 mousePos) //slot 위치에 mousepos -> 1 2
 				return true;
 			}
 		}
-
-
-
 	}
 
 	return false;
@@ -334,7 +351,7 @@ void SynthesisWin::MemBitmapLoad()
 
 }
 
-void SynthesisWin::InitializeObj()
+void SynthesisWin::ButtonInitialize()
 {
 	// 취소 버튼
 	auto cancleBM = ResourceManager::Get().GetTexture("CancleBut");
@@ -483,6 +500,13 @@ void SynthesisWin::PerformSynthesis()
 	// 슬롯1과 슬롯2에 아이템이 있는지 확인
 	Item* item1 = m_slot_Item[SynSlot::Slot1];
 	Item* item2 = m_slot_Item[SynSlot::Slot2];
+	Item* itemResult = m_slot_Item[SynSlot::Result];
+
+	if (itemResult)
+	{
+		std::cout << "이미 합성에 쓰인 재료들은 재사용이 불가능 합니다." << std::endl;
+		return;
+	}
 
 	if (!item1 || !item2)
 	{
@@ -524,9 +548,22 @@ void SynthesisWin::PerformSynthesis()
 		{
 			inven->GetItemBase().AddItemData(std::move(resultitem));
 			m_slot_Item[SynSlot::Result] = inven->GetItemBase().GetItemData(result);
-			//ItemInitialize(m_slot_Item[SynSlot::Result]);
-			m_slot_Item[SynSlot::Slot1] = nullptr;
-			m_slot_Item[SynSlot::Slot2] = nullptr;
+
+			// 결과 아이템에 effect 컴포넌트 추가
+			auto item = m_slot_Item[SynSlot::Result];
+			auto itemID = item->m_data.id;
+			auto itemClip = ResourceManager::Get().Get_ItemBank().GetItemClip(itemID);
+			auto itemBM = itemClip->atlas.Get();
+			auto itemSrc = itemClip->srcRect;
+
+			item->GetRenderInfo()->SetBitmap(itemBM);
+			item->GetRenderInfo()->SetSrcRect(itemSrc);
+
+			ItemInitialize(m_slot_Item[SynSlot::Result]);
+
+			// 합성 성공 후, 세 개의 아이템 이펙트가 같이 도는 걸 연출하고 시퍼써효.....
+			//m_slot_Item[SynSlot::Slot1] = nullptr;
+			//m_slot_Item[SynSlot::Slot2] = nullptr;
 		}
 
 
@@ -555,6 +592,9 @@ void SynthesisWin::ReturnItemToInventory()
 	{
 		inventoryWindow->AddItem(m_slot_Item[SynSlot::Result]->m_data.id, 1);
 		m_slot_Item[SynSlot::Result] = nullptr;
+		m_slot_Item[SynSlot::Slot1] = nullptr;
+		m_slot_Item[SynSlot::Slot2] = nullptr;
+		return;
 	}
 
 	if (m_slot_Item[SynSlot::Slot1] != nullptr)
@@ -608,28 +648,27 @@ void SynthesisWin::ItemInitialize(Item* item)
 	item->GetTransform().SetScale({ 0.8f, 0.8f });
 	auto info = item->GetRenderInfo();
 
-	auto ray1 = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, 0.2f, rayBM.Get()); // 0
-	auto ray2 = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, -0.2f, rayBM.Get());	// 1
-	auto rayComposite = item->AddComponent<Composite_Effect>(info, ray1->GetEffect(), ray2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); //2
+	auto ray1 = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, 0.2f, rayBM.Get());
+	auto ray2 = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, -0.2f, rayBM.Get());	
+	auto rayComposite = item->AddComponent<Composite_Effect>(info, ray1->GetEffect(), ray2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); 
 	auto rayBlur = item->AddComponent<GaussianBlur_Effect>(info, 2.f, rayComposite->GetEffect()); // 3
-	auto increase = item->AddComponent<Increasing_Effect>(info, D2D1_POINT_2F{ rayBM->GetSize().width / 2.f, rayBM->GetSize().height / 2.f }, 1.5f, 1.f, rayBlur->GetEffect()); // 4
-	auto offsetRay = item->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, increase->GetEffect()); // 5
+	auto increase = item->AddComponent<Increasing_Effect>(info, D2D1_POINT_2F{ rayBM->GetSize().width / 2.f, rayBM->GetSize().height / 2.f }, 1.5f, 1.f, rayBlur->GetEffect());
+	auto offsetRay = item->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, increase->GetEffect()); 
 
-	auto glowColor = item->AddComponent<Color_Effect>(info, 1.f, 1.0f, 1.0f, 0.6f, glowBM.Get()); // 6
-	auto glowMove = item->AddComponent<Sideway_Effect>(info, 2.f, 0.02f, 0.02f, glowColor->GetEffect()); // 7
-	auto glowOffset = item->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, glowMove->GetEffect()); // 8
+	auto glowColor = item->AddComponent<Color_Effect>(info, 1.f, 1.0f, 1.0f, 0.6f, glowBM.Get());
+	auto glowMove = item->AddComponent<Sideway_Effect>(info, 2.f, 0.02f, 0.02f, glowColor->GetEffect()); 
+	auto glowOffset = item->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, glowMove->GetEffect()); 
 
-	auto runeRo = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, 0.2f, runeBM.Get()); // 9
-	auto runeOffset = item->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, runeRo->GetEffect()); // 10
+	auto runeRo = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, 0.2f, runeBM.Get()); 
+	auto runeOffset = item->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, runeRo->GetEffect()); 
 
-	auto glowruneCompo = item->AddComponent<Composite_Effect>(info, runeOffset->GetEffect(), glowOffset->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 11
-	auto fade = item->AddComponent<Fade_Effect>(info, 0.f, 0.9f, 0.005f, glowruneCompo->GetEffect()); // 12
+	auto glowruneCompo = item->AddComponent<Composite_Effect>(info, runeOffset->GetEffect(), glowOffset->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); 
+	auto fade = item->AddComponent<Fade_Effect>(info, 0.f, 0.9f, 0.005f, glowruneCompo->GetEffect()); 
 	fade->OnEvent("SHOW");
 
-	auto rayGlowruneCompo = item->AddComponent<Composite_Effect>(info, fade->GetEffect(), offsetRay->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 13
+	auto rayGlowruneCompo = item->AddComponent<Composite_Effect>(info, fade->GetEffect(), offsetRay->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); 
 
-	//auto itemOpacity = item->AddComponent<Opacity_Effect>(info, 1.f, info->GetBitmap()); // 14
-	auto behindcompo = item->AddComponent<Composite_Effect>(info, info->GetBitmap(), rayGlowruneCompo->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); // 15
+	auto behindcompo = item->AddComponent<Composite_Effect>(info, info->GetBitmap(), rayGlowruneCompo->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER);
 
 	//auto fail = item->AddComponent<Clip_Effect>(info, fail1BM.Get(), fail2BM.Get(), fail3BM.Get(), fail4BM.Get(), fail5BM.Get()); // 16
 	//auto failRotate = item->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, 3.f, fail->GetEffect()); // 17
@@ -702,18 +741,22 @@ void SynthesisWin::Render() //배경 → 타이틀바 → 슬롯들 → 장착된 아이템들 → �
 				ID2D1Bitmap1* SlotBitmap = (type == SynSlot::Result) ? uiRenderer->GetBitmap("Syn_Result").Get() : uiRenderer->GetBitmap("Syn_Slot").Get();
 				D2DRenderer::Get().DrawBitmap(SlotBitmap, DEST);
 
-				D2D_RECT_F src = ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect;
-				src.left = src.left + 80.f;
-				src.top = src.top + 80.f;
-				src.right = src.right - 80.f;
-				src.bottom = src.bottom - 80.f;
+				//D2D_RECT_F src = ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->srcRect;
+				//src.left = src.left + 80.f;
+				//src.top = src.top + 80.f;
+				//src.right = src.right - 80.f;
+				//src.bottom = src.bottom - 80.f;
 
-				D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get(),
-					DEST, src, 1);
+				auto info = item->GetRenderInfo();
+				//if(info->GetRenderInfo().effect == nullptr)
+				//	D2DRenderer::Get().DrawBitmap(ResourceManager::Get().Get_ItemBank().GetItemClip(item->m_data.id)->atlas.Get(),
+				//	DEST, src, 1);
+				//else
+				//{
+					item->GetTransform().SetPosition({ pos.x - 91.f * 0.8f + 8.f, pos.y - 91.f * 0.8f + 8.f });
+					D2DRenderer::Get().DrawBitmap(info->GetRenderInfo());
+				//}
 
-				//auto info = item->GetRenderInfo();
-				//item->GetTransform().SetPosition({ pos.x - 91.f * 0.8f + 8.f, pos.y - 91.f * 0.8f + 8.f });
-				//D2DRenderer::Get().DrawBitmap(info->GetRenderInfo());
 			}
 			else
 
