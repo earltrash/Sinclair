@@ -46,7 +46,7 @@ public:
 
     void UpdatePosition();
     void MemBitmapLoad();
-    void InitializeObj();
+    void ButtonInitialize();
 
     void MemInit();
     void MemRender();
