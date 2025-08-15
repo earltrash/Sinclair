@@ -7,6 +7,11 @@ struct TotalStatus //2Â÷ ½ºÅ×ÀÌÅÍ½ºÀÓ ¾Õ±ÛÀÚ ´ë¹®ÀÚ·Î Ç¥±â , ÇÃ·¹ÀÌ¾î°¡ °¡Á®¾ß Ç
 		int Health;
 		int Knowledge;
 		int Charm;
+
+		void Clear()
+		{
+			Strength = Magic_Power = Health = Knowledge = Charm = 0;
+		}
 };
 
 struct fundamentalStatus //¾ê´Â ¾Õ ±ÛÀÚ ¼Ò¹®ÀÚ·Î Ç¥±â , ¾ÆÀÌÅÛÀÌ °¡Á®¾ß ÇÒ ±¸Á¶Ã¼ÀÓ

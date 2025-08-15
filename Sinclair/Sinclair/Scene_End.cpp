@@ -89,6 +89,14 @@ void Scene_End::Exit()
 	after_fadeStarted = false;
 	m_fadeStarted = false;
 	m_isTransitioning = false;
+
+	StatWindow* statwin = dynamic_cast<StatWindow*>(UIManager::Get().GetWindow(UIWindowType::StatsWindow));
+	if (statwin)
+	{
+		auto renderstatus = statwin->GetRenderStatus();
+		renderstatus.Clear();
+		statwin->UpdateTotalStats();
+	}
 }
 
 void Scene_End::Clean()

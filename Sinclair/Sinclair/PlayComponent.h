@@ -226,7 +226,7 @@ public:
 	}
 	float GraphDisappear(float x)
 	{
-		float result = -m_maxScale / m_totalTime * x + m_maxScale;
+		float result = -m_maxScale / (m_totalTime - 0.5f) * x + m_maxScale;
 		return result;
 	}
 	float Wave(float t, float period)
