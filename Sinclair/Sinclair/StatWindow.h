@@ -79,6 +79,8 @@ public:
 	// 특수무기 스탯 추가.
 	void CalculateBonusStats(Item* item);
 
+	 TotalStatus& GetRenderStatus()  { return m_RenderStat; }
+
 
 	void ResetStat();
 
@@ -92,4 +94,8 @@ private:
 	ComPtr<ID2D1Bitmap1> m_closeButton;
 	ComPtr<ID2D1Bitmap1> m_backgroundBitmap;
 	ComPtr<ID2D1Bitmap1> m_statBase;
+
+
+
+
 };

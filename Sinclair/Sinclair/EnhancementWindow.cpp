@@ -149,7 +149,7 @@ void EnhancementWindow::FixedUpdate(float dt)
 	if (increase->GetScale().x != 0 && increase->GetisStop())	// increase != nullptr && 
 	{
 		x += dt;
-		if (x >= 1.f)
+		if (x >= 0.01f)
 		{
 			increase->OnEvent("DISAPPEAR");
 			x = 0;
@@ -1080,7 +1080,7 @@ void EnhancementWindow::InitializeItemObject()
 	auto ray2 = m_targetItem->AddComponent<Rotate3D_Effect>(info, 0.f, 0.f, 0.f, -0.2f, rayBM.Get());	// 1
 	auto rayComposite = m_targetItem->AddComponent<Composite_Effect>(info, ray1->GetEffect(), ray2->GetEffect(), D2D1_COMPOSITE_MODE_SOURCE_OVER); //2
 	auto rayBlur = m_targetItem->AddComponent<GaussianBlur_Effect>(info, 2.f, rayComposite->GetEffect()); // 3
-	auto increase = m_targetItem->AddComponent<Increasing_Effect>(info, D2D1_POINT_2F{ rayBM->GetSize().width / 2.f, rayBM->GetSize().height / 2.f }, 1.5f, 1.f, rayBlur->GetEffect()); // 4
+	auto increase = m_targetItem->AddComponent<Increasing_Effect>(info, D2D1_POINT_2F{ rayBM->GetSize().width / 2.f, rayBM->GetSize().height / 2.f }, 1.5f, 0.8f, rayBlur->GetEffect()); // 4
 	auto offsetRay = m_targetItem->AddComponent<Offset_Effect>(info, info->GetRenderInfo().srcRect.left, 0.f, increase->GetEffect()); // 5
 	
 	auto glowColor = m_targetItem->AddComponent<Color_Effect>(info, 0.f, 0.f, 0.f, 0.0f, glowBM.Get()); // 6
