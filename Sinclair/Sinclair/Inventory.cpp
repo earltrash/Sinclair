@@ -476,7 +476,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
                 targetSlot->item.id == draggedItemData->m_data.id &&
                 (targetSlot->item.count + 1) <= draggedItemData->maxCount) // count는 CursorManager에서 관리해야 함
             {
-                //std::cout << "스택 가능. 아이템 합칠거임." << std::endl; 조건은 맞게 들어옴.
+                //조건은 맞게 들어옴.
                 targetSlot->item.count += 1; // 드래그된 아이템의 실제 count를 더해야 함
                 targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
                 placed = true;
@@ -484,7 +484,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
             else if (targetSlot->IsEmpty())
             {
                 int Count = CursorManager::Get().GetItemCount(); //기존은 그냥 database에서 가져온 거라 1값이 무조건 나옴 ㅇㅇ 
-
+                std::cout << "빈슬롯 드롭" << std::endl;
                 // 빈 슬롯에 드롭
                 targetSlot->SetItem(draggedItemData->m_data.id, Count); // count는 CursorManager에서 관리해야 함
                 targetSlot->UpdateItemBitmap(&controller, &m_itemDatabase);
@@ -492,6 +492,7 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
             }
             else // 슬롯이 비어있지 않고 스택 불가능하거나 다른 아이템인 경우 (교환 로직)
             {
+                std::cout << "교환로직임" << std::endl;
                 // 원본 슬롯 정보 가져오기
                 InventorySlot* sourceSlot = CursorManager::Get().GetSourceSlot();
 
@@ -536,20 +537,30 @@ bool Inventory::HandleMouseUp(Vec2 mousePos) //그 놓은 위치에 대한 예외처리를 해
         }
         if (placed)
         {
+            std::cout << "로직 둘 중 한개 성공함. 그래서 끝낼거임" << std::endl;
             // 아이템을 성공적으로 놓았으므로 드래그를 완전히 종료하고 성공을 반환
+            UIManager::Get().OpenWindow(m_windowType);
             CursorManager::Get().EndItemDrag();
             CursorManager::Get().RE_ItemCount();
             return true;
         }
         else
         {
+            std::cout << "로직 실패함 바로 false 리턴할거임" << std::endl;
             // 이때만 호출해야함.
             return false;
         }
     }
     if (IsInInventoryBounds(mousePos))
     {
+        std::cout << "둘 다 아니라서 걍 넘어와서 바운드 체크해서 아이템 있으면 넣고 아니면 drag 끝낼거" << std::endl;
+        if (Item* item = CursorManager::Get().GetDraggedItem())
+        {
+            AddItem(item->m_data.id, 1);
+        }
         UIManager::Get().OpenWindow(m_windowType);
+        CursorManager::Get().EndItemDrag();
+        CursorManager::Get().RE_ItemCount();
         return true;
     }
 
@@ -563,6 +574,7 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
     // 드래그 시작점이 인벤토리였는지 확인
     if (source == DragSource::Inventory)
     {
+        std::cout << "인벤토리 시작점." << std::endl;
         InventorySlot* sourceSlot = CursorManager::Get().GetSourceSlot();
         if (sourceSlot)
         {
@@ -582,12 +594,14 @@ bool Inventory::HandleDropFailure(Vec2 mousePos, Item* draggedItem, DragSource s
     // 모든 창을 트루로 받게 하면 생기는 문제점은 뭔가요?
     else //if (source == DragSource::Enhancement || source == DragSource::Equipment || source == DragSource::Synthesis) 
     {
+        std::cout << "인벤토리 말고 다른 시작점들" << std::endl;
         AddItem(draggedItem->m_data.id, 1);
         CursorManager::Get().EndItemDrag();
         CursorManager::Get().RE_ItemCount(); // 개수 초기화
         return true; // 처리 완료
     }
 
+    std::cout << "니넨누구임?" << std::endl;
     // 다른 창에서 온 경우 등 다른 시나리오는 여기서 처리하지 않음
     return false;
 }

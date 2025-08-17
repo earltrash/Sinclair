@@ -529,7 +529,7 @@ bool EnhancementWindow::HandleMouseHover(Vec2 mousePos)
 				else
 				{
 
-						std::cout << "슬롯 아이템이 없거나 위치 아니여서 닫음." << std::endl;
+						//std::cout << "슬롯 아이템이 없거나 위치 아니여서 닫음." << std::endl;
 						UIManager::Get().CloseWindow(UIWindowType::InventoryTooltip);
 						CursorManager::Get().HoveredReleased(); //추적 금지 
 						return false;
