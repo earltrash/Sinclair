@@ -1,0 +1,168 @@
+#pragma once
+#include "pch.h"
+#include "status.h"
+#include <array>
+#include "Item.h"
+#include "fmod.h"
+
+
+using namespace std;
+
+class FMOD_SOUND;
+
+class GameManager
+{
+private:
+    GameManager() = default;
+    ~GameManager() = default;
+public:
+
+
+    void Initalize();
+    void SyntableInit();
+    void PoolInit();
+    static GameManager& Get();
+
+    std::vector<std::string> GetRandomItemsByFam(int fam,
+        const std::unordered_map<int, std::vector<PoolCount>>& poolMap
+        , std::unordered_set<std::string>& alreadyPicked);
+
+    void FamValue();
+
+    string Synthesis(const string& id1, const string& id2);
+
+    //ending Scene 기존씬 exit
+    void PreAdv(); // -> 현재 ingame string 받아서 스탯 저장하고, 기존 장비 정리하는 과정임. 
+
+    //ending Scene -> 새 InGame 
+    std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID2D1Bitmap1>> AftAdv(); // ->string에 해당하는 장비 넘겨주기
+    //엔딩 구하려고 함
+    void FindEnding();
+
+    void SaveEndingBgm(int id);
+    void PotionUsed(Status_fundamental stat, int Much);
+
+    int GetCurrentGen() { return curGen; }
+    void UpdateGen();
+    void UsedEquipedClean();
+    void AdvResult_Wep(string key);
+
+    string GetHistory();
+
+
+    void ExceptItem();
+    void AdvResult();
+    void SpawnItemsByFame(int fame);
+    void AdvResult_Item_Gen2_Gen3(int Fam);
+    void AdvResult_Item_Gen3_Gen4(int Fam);
+    void AdvResult_Potion(int Fam);
+
+    void TempToNext();
+    void Default_Item_TO_Inven(int GEN);
+
+    int GetCurrentFam() { return arrTotalFam[GetCurrentGen() - 2]; }; //한 세대 기준 
+    int GetResultFam();
+
+
+    void Game_Reset();
+    void Value_Reset();
+
+    void Inven_Reset();
+
+
+public:// get set 만들기 전
+    bool isFirst = true;
+
+    int curGen = 2;
+
+
+    // 엔딩에 필요한 숫자
+    std::array<int, 3> arrEndingID{};
+    std::array<TotalStatus, 3> arrTotalStatus{};
+    std::array<int, 3> arrTotalFam{};
+    std::array<Microsoft::WRL::ComPtr<ID2D1Bitmap1>, 3> arrTotalEndingImg{};
+    vector<bool> adv_wepon;
+
+    std::vector <unique_ptr<Item>> m_tempItem;
+    std::vector<Recipe> m_SynTable;
+    std::vector<bool> m_wearable_part;
+
+    std::unordered_map<std::string, std::string> weaponMap = {
+    { "W001", "I016" },
+    { "W002", "I017" },
+    { "W003", "I018" },
+    { "W004", "I019" },
+    { "W005", "I020" },
+    { "W006", "I021" },
+    { "W007", "I022" },
+    { "W008", "I023" },
+    { "W009", "I024" },
+    { "W010", "I025" },
+
+    { "W016", "I016" },
+    { "W017", "I017" },
+    { "W018", "I018" },
+    { "W019", "I019" },
+    { "W020", "I020" },
+    { "W021", "I021" },
+    { "W022", "I022" },
+    { "W023", "I023" },
+    { "W024", "I024" },
+    { "W025", "I025" }
+
+    };
+
+    std::unordered_map<Need_Moment, std::vector<std::string>> poolItems;
+    std::unordered_set<std::string> alreadyPicked;
+
+    std::unordered_map<int, std::vector<PoolCount>> famToPoolCounts_Gen2to3{
+    { 1, { { Need_Moment::Fam3_a, 1 }, { Need_Moment::Fam3_b, 0 } } },
+    { 2, { { Need_Moment::Fam3_a, 2 }, { Need_Moment::Fam3_b, 0 } } },
+    { 3, { { Need_Moment::Fam3_a, 3 }, { Need_Moment::Fam3_b, 1 } } },
+    { 4, { { Need_Moment::Fam3_a, 3 }, { Need_Moment::Fam3_b, 2 } } },
+    { 5, { { Need_Moment::Fam3_a, 4 }, { Need_Moment::Fam3_b, 2 } } },
+    { 6, { { Need_Moment::Fam3_a, 4 }, { Need_Moment::Fam3_b, 3 } } },
+    { 7, { { Need_Moment::Fam3_a, 4 }, { Need_Moment::Fam3_b, 4 } } },
+    };
+
+    std::unordered_map<int, std::vector<PoolCount>>famToPoolCounts_Gen3to4{
+    { 1, { { Need_Moment::Fam4_a, 1 }, { Need_Moment::Fam4_b, 0 } } },
+    { 2, { { Need_Moment::Fam4_a, 2 }, { Need_Moment::Fam4_b, 0 } } },
+    { 3, { { Need_Moment::Fam4_a, 3 }, { Need_Moment::Fam4_b, 1 } } },
+    { 4, { { Need_Moment::Fam4_a, 3 }, { Need_Moment::Fam4_b, 2 } } },
+    { 5, { { Need_Moment::Fam4_a, 4 }, { Need_Moment::Fam4_b, 2 } } },
+    { 6, { { Need_Moment::Fam4_a, 4 }, { Need_Moment::Fam4_b, 3 } } },
+    { 7, { { Need_Moment::Fam4_a, 4 }, { Need_Moment::Fam4_b, 4 } } },
+    };
+
+    //자료구조 이해가 높으면 진짜 쉽겠다 싶음 
+    using FamePool = std::unordered_map<int, std::vector<std::pair<std::string, int>>>;
+
+    FamePool famePool = {
+     { 1, { {"I013", 1}, {"I014", 1}, {"I015", 0} } },
+     { 2, { {"I013", 2}, {"I014", 1}, {"I015", 0} } },
+     { 3, { {"I013", 3}, {"I014", 2}, {"I015", 0} } },
+     { 4, { {"I013", 3}, {"I014", 2}, {"I015", 1} } },
+     { 5, { {"I013", 3}, {"I014", 3}, {"I015", 1} } },
+     { 6, { {"I013", 3}, {"I014", 3}, {"I015", 2} } },
+     { 7, { {"I013", 3}, {"I014", 3}, {"I015", 3} } }
+    };
+
+
+
+    string GetStatName(Status_Total stat) {
+        switch (stat) {
+        case Status_Total::Strength: return "근력";
+        case Status_Total::Magic_Power: return "마력";
+        case Status_Total::Health: return "건강";
+        case Status_Total::Knowledge: return "지식";
+        case Status_Total::Charm: return "매력";
+        default: return "없음";
+        }
+    }
+
+
+    FMOD_SOUND* endingBgm;
+    FMOD_SOUND* historyBgm;
+
+};

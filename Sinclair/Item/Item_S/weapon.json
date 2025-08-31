@@ -1,0 +1,610 @@
+{
+  "items": [
+    {
+      "type": "Wearable",
+      "id": "W001",
+      "name": "낡은 영웅의 검",
+      "description": "이름 없는 영웅이 썼다고 전해지는 검. 지금은 어떤 힘도 느껴지지 않는다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Gen_2",
+      "stats": [
+        {
+          "stat": "power",
+          "amount": 2
+        },
+        {
+          "stat": "agile",
+          "amount": 1
+        }
+      ],
+      "sound": "ES_Metal2"
+    },
+    {
+      "type": "Wearable",
+      "id": "W002",
+      "name": "녹슬고 낡은 석궁",
+      "description": "창고에서 녹슬고 낡은 석궁. 아직 볼트는 발사할 수 있을 것 같다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Gen_2",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 2
+        }
+      ],
+      "sound": "ES_Stone"
+    },
+    {
+      "type": "Wearable",
+      "id": "W003",
+      "name": "빛을 잃은 지팡이",
+      "description": "지팡이 끝에 달린 보석이 망가진 지팡이. 지금은 어떤 힘도 느껴지지 않는다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Gen_2",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 1
+        },
+        {
+          "stat": "intelligence",
+          "amount": 2
+        }
+      ],
+      "sound": "ES_Wood"
+    },
+    {
+      "type": "Wearable",
+      "id": "W004",
+      "name": "알아볼 수 없는 마법서",
+      "description": "알아볼 수 없는 지식이 새겨진 마법서. 지금은 힘을 끌어낼 방법이 없어 보인다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Gen_2",
+      "stats": [
+        {
+          "stat": "intelligence",
+          "amount": 2
+        },
+        {
+          "stat": "luck",
+          "amount": 2
+        }
+      ],
+      "sound": "ES_Book"
+    },
+    {
+      "type": "Wearable",
+      "id": "W005",
+      "name": "낡은 사브르",
+      "description": "날도 손잡이도 낡아버린 사브르. 절삭력을 크게 기대하긴 힘들 것 같다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Gen_2",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 2
+        },
+        {
+          "stat": "luck",
+          "amount": 2
+        }
+      ],
+      "sound": "ES_Metal1"
+    },
+    {
+      "type": "Wearable",
+      "id": "W006",
+      "name": "복구된 영웅의 검",
+      "description": "완전하진 않지만 힘을 되찾은 검. 무언가 더 강해질 방법이 있을 것 같다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Syn",
+      "stats": [
+        {
+          "stat": "power",
+          "amount": 4
+        },
+        {
+          "stat": "agile",
+          "amount": 3
+        }
+      ],
+      "sound": "ES_Metal2"
+    },
+    {
+      "type": "Wearable",
+      "id": "W007",
+      "name": "룬이 새겨진 석궁",
+      "description": "쇠뇌의 여러 부분을 보강한 석궁. 하지만 아직 부족해 보인다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Syn",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 4
+        }
+      ],
+      "sound": "ES_Stone"
+    },
+    {
+      "type": "Wearable",
+      "id": "W008",
+      "name": "보석 지팡이",
+      "description": "보석을 되찾았지만 아직은 다소 엉성한 지팡이. 개선할 방법이 있을까?",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Syn",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 3
+        },
+        {
+          "stat": "intelligence",
+          "amount": 4
+        }
+      ],
+      "sound": "ES_Jewel"
+    },
+    {
+      "type": "Wearable",
+      "id": "W009",
+      "name": "고대의 서 1장",
+      "description": "아직 완벽하게 해독이 되지 않은 마법서. 지식의 파편이 더 필요해 보인다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Syn",
+      "stats": [
+        {
+          "stat": "intelligence",
+          "amount": 4
+        },
+        {
+          "stat": "luck",
+          "amount": 4
+        }
+      ],
+      "sound": "ES_Book"
+    },
+    {
+      "type": "Wearable",
+      "id": "W010",
+      "name": "기이한 사브르",
+      "description": "날과 손잡이가 제법 날카로운 사브르. 다소 아쉬움이 느껴진다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Syn",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 4
+        },
+        {
+          "stat": "luck",
+          "amount": 4
+        }
+      ],
+      "sound": "ES_Metal1"
+    },
+    {
+      "type": "Wearable",
+      "id": "W011",
+      "name": "신념",
+      "description": "전설로 전해지는 위대한 영웅의 검. 맥동하는 힘이 느껴진다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Syn",
+      "stats": [
+        {
+          "stat": "power",
+          "amount": 10
+        },
+        {
+          "stat": "agile",
+          "amount": 2
+        }
+      ],
+      "sound": "ES_Metal2"
+    },
+    {
+      "type": "Wearable",
+      "id": "W012",
+      "name": "비애",
+      "description": "부조리할 정도의 속도를 보여주는 석궁. 섬뜩한 기운이 느껴진다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Syn",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 10
+        }
+      ],
+      "sound": "ES_Stone"
+    },
+    {
+      "type": "Wearable",
+      "id": "W013",
+      "name": "태양",
+      "description": "태양 빛을 담은 스태프. 얼굴이 후끈거릴 정도의 열기가 느껴진다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Syn",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 2
+        },
+        {
+          "stat": "intelligence",
+          "amount": 10
+        }
+      ],
+      "sound": "ES_Jewel"
+    },
+    {
+      "type": "Wearable",
+      "id": "W014",
+      "name": "진리의 편린",
+      "description": "고대인들의 지식이 담긴 마법서. 신비로운 기운이 책을 감싸고 있다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Syn",
+      "stats": [
+        {
+          "stat": "intelligence",
+          "amount": 2
+        },
+        {
+          "stat": "luck",
+          "amount": 10
+        }
+      ],
+      "sound": "ES_Book"
+    },
+    {
+      "type": "Wearable",
+      "id": "W015",
+      "name": "뱀의 독니",
+      "description": "뱀처럼 유려하고 아름다운 사브르. 유려한 곡선과 섬뜩한 날이 인상적이다.",
+      "enchantable": false,
+      "synthesizable": true,
+      "part": "Weapon",
+      "Moment": "Syn",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 2
+        },
+        {
+          "stat": "luck",
+          "amount": 10
+        }
+      ],
+      "sound": "ES_Metal1"
+    },
+    {
+      "type": "Wearable",
+      "id": "W016",
+      "name": "평범한 철검",
+      "description": "상점에서 파는 철검 그럭저럭 쓸만해 보인다",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_2",
+      "stats": [
+        {
+          "stat": "power",
+          "amount": 4
+        },
+        {
+          "stat": "agile",
+          "amount": 1
+        }
+      ],
+      "sound": "ES_Metal2"
+    },
+    {
+      "type": "Wearable",
+      "id": "W017",
+      "name": "나무 석궁",
+      "description": "평범한 나무 석궁, 거칠게 다루면 망가질 것 같다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_2",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 4
+        }
+      ],
+      "sound": "ES_Wood"
+    },
+    {
+      "type": "Wearable",
+      "id": "W018",
+      "name": "나무 지팡이",
+      "description": "상점에서 파는 지팡이. 그럭저럭 쓸만해 보인다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_2",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 1
+        },
+        {
+          "stat": "intelligence",
+          "amount": 4
+        }
+      ],
+      "sound": "ES_Wood"
+    },
+    {
+      "type": "Wearable",
+      "id": "W019",
+      "name": "마법 기초 1장",
+      "description": "마법용점에서 파는 가장 기초적인 마법서. 기초 마법들이 적혀 있다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_2",
+      "stats": [
+        {
+          "stat": "intelligence",
+          "amount": 2
+        },
+        {
+          "stat": "luck",
+          "amount": 4
+        }
+      ],
+      "sound": "ES_Book"
+    },
+    {
+      "type": "Wearable",
+      "id": "W020",
+      "name": "투박한 단검",
+      "description": "날이 가공되지 않은 단검. 무언가를 자르기에 쉽진 않아 보인다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_2",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 2
+        },
+        {
+          "stat": "luck",
+          "amount": 4
+        }
+      ],
+      "sound": "ES_Metal2"
+    },
+    {
+      "type": "Wearable",
+      "id": "W021",
+      "name": "가공된 철검",
+      "description": "대장간에서 파는 가공된 철검. 날 및 관리가 잘 되어 있다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_3",
+      "stats": [
+        {
+          "stat": "power",
+          "amount": 6
+        },
+        {
+          "stat": "agile",
+          "amount": 2
+        }
+      ],
+      "sound": "ES_Metal1"
+    },
+    {
+      "type": "Wearable",
+      "id": "W022",
+      "name": "불꽃나무 석궁",
+      "description": "속도를 높이는 불꽃나무로 만들어진 석궁. 꽤 쓸만해 보인다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_3",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 6
+        }
+      ],
+      "sound": "ES_Stone"
+    },
+    {
+      "type": "Wearable",
+      "id": "W023",
+      "name": "참나무 지팡이",
+      "description": "마력 전도가 가능한 참나무로 만든 지팡이. 어느 정도 마법은 쓸 수 있다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_3",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 2
+        },
+        {
+          "stat": "intelligence",
+          "amount": 6
+        }
+      ],
+      "sound": "ES_Wood"
+    },
+    {
+      "type": "Wearable",
+      "id": "W024",
+      "name": "마법 중급 1장",
+      "description": "어느 정도 마법이 적혀있는 마법서. 꽤 쓸만한 것 같다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_3",
+      "stats": [
+        {
+          "stat": "intelligence",
+          "amount": 3
+        },
+        {
+          "stat": "luck",
+          "amount": 6
+        }
+      ],
+      "sound": "ES_Book"
+    },
+    {
+      "type": "Wearable",
+      "id": "W025",
+      "name": "철 단검",
+      "description": "철로 이루어진 단검. 절삭력도 괜찮아 보인다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_3",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 3
+        },
+        {
+          "stat": "luck",
+          "amount": 6
+        }
+      ],
+      "sound": "ES_Metal2"
+    },
+    {
+      "type": "Wearable",
+      "id": "W026",
+      "name": "미스릴 검",
+      "description": "미스릴로 이루어진 검. 훌륭한 강도를 자랑한다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_4",
+      "stats": [
+        {
+          "stat": "power",
+          "amount": 8
+        },
+        {
+          "stat": "agile",
+          "amount": 3
+        }
+      ],
+      "sound": "ES_Metal1"
+    },
+    {
+      "type": "Wearable",
+      "id": "W027",
+      "name": "미스릴 석궁",
+      "description": "미스릴로 이루어진 석궁. 룬이 새겨져 있어 훌륭한 성능을 자랑한다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_4",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 8
+        }
+      ],
+      "sound": "ES_Stone"
+    },
+    {
+      "type": "Wearable",
+      "id": "W028",
+      "name": "수정 지팡이",
+      "description": "마법의 매개체인 수정이 빛나는 지팡이. 빛나는 수정이 지팡이의 힘을 증명한다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_4",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 3
+        },
+        {
+          "stat": "intelligence",
+          "amount": 8
+        }
+      ],
+      "sound": "ES_Jewel"
+    },
+    {
+      "type": "Wearable",
+      "id": "W029",
+      "name": "마법 심화 1장",
+      "description": "방대한 마법이 적혀있는 마법서. 아주 유용해 보인다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_4",
+      "stats": [
+        {
+          "stat": "intelligence",
+          "amount": 3
+        },
+        {
+          "stat": "luck",
+          "amount": 8
+        }
+      ],
+      "sound": "ES_Book"
+    },
+    {
+      "type": "Wearable",
+      "id": "W030",
+      "name": "미스릴 단검",
+      "description": "미스릴로 이루어진 단검. 절삭력도 관통력도 우월하다.",
+      "enchantable": true,
+      "synthesizable": false,
+      "part": "Weapon",
+      "Moment": "Gen_4",
+      "stats": [
+        {
+          "stat": "agile",
+          "amount": 3
+        },
+        {
+          "stat": "luck",
+          "amount": 8
+        }
+      ],
+      "sound": "ES_Metal2"
+    }
+  ]
+}
