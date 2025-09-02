@@ -135,29 +135,29 @@ bool SynthesisWin::HandleMouseDown(Vec2 mousePos) //아이템 움직이는 거 // slot p
 
 	//SynSlot whichSlot = SlotInit(mousePos);
 
-	//if (whichSlot != SynSlot::Nothing)
-	//{
-	//	Item* Clicked_Item = m_slot_Item[whichSlot];
+	if (whichSlot != SynSlot::Nothing)
+	{
+		Item* Clicked_Item = m_slot_Item[whichSlot];
 
-	//	if (Clicked_Item == nullptr)
-	//		return false; // 빈 슬롯이면 드래그 안 함
+		if (Clicked_Item == nullptr)
+			return false; // 빈 슬롯이면 드래그 안 함
 
-	//	CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Synthesis);
-	//	CursorManager::Get().SetDraggedItem(Clicked_Item);
+		CursorManager::Get().StartItemDrag_NS(Clicked_Item->m_data.id, DragSource::Synthesis);
+		CursorManager::Get().SetDraggedItem(Clicked_Item);
 
-	//	if (whichSlot == SynSlot::Result) //아이템이 있는 result 슬롯을 누르면 다 반환시킨다라 
-	//	{
-	//		m_slot_Item[SynSlot::Result] = nullptr;
-	//		m_slot_Item[SynSlot::Slot1] = nullptr;
-	//		m_slot_Item[SynSlot::Slot2] = nullptr;
-	//	}
-	//	else //아닌 경우에는, 그치 기존 슬롯에 있던거 빼야지 
-	//	{
-	//		m_slot_Item[whichSlot] = nullptr;
-	//	}
+		if (whichSlot == SynSlot::Result) //아이템이 있는 result 슬롯을 누르면 다 반환시킨다라 
+		{
+			m_slot_Item[SynSlot::Result] = nullptr;
+			m_slot_Item[SynSlot::Slot1] = nullptr;
+			m_slot_Item[SynSlot::Slot2] = nullptr;
+		}
+		else //아닌 경우에는, 그치 기존 슬롯에 있던거 빼야지 
+		{
+			m_slot_Item[whichSlot] = nullptr;
+		}
 
-	//	return true; // 드래그 시작 시에는 무조건 true 반환
-	//}
+		return true; // 드래그 시작 시에는 무조건 true 반환
+	}
 
 	SynButton whichBut = ButtonInit(mousePos);
 
