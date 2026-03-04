@@ -644,6 +644,11 @@ bool Inventory::HandleMouseRight(Vec2 mousePos) //사용한 아이템의 포인터를 받아�
         // 아이템 데이터베이스에서 아이템 포인터 가져오기
         Item* itemData = m_itemDatabase.GetItemData(slot->item.id);
 
+        if (slot != nullptr)
+        {
+            CursorManager::Get().SetItemCount(slot->item.count); // 오른쪽 클릭 장착 시에도 해당 값을 set해주기!
+        }
+
         if (Material* material = dynamic_cast<Material*>(itemData))
         {
             std::cout << "해당 아이템은 장비 착용이 불가능 합니다.\n";
